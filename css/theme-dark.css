@@ -1,0 +1,61 @@
+:root {
+  --bg: #141414;
+  --bg-card: #1e1e1e;
+  --text: #e0dcd4;
+  --text-secondary: #999;
+  --border: #333;
+  --primary: #ff6040;
+  --primary-hover: #e04a2f;
+  --accent: #f0a030;
+  --accent-light: #2a2010;
+  --tab-bg: #222;
+  --tab-active: #1e1e1e;
+  --tab-hover: #2a2a2a;
+  --btn-bg: #444;
+  --btn-text: #eee;
+  --btn-hover: #666;
+  --btn-save-bg: #2d8a3e;
+  --btn-save-hover: #237032;
+  --header-bg: #0a0a0a;
+  --header-text: #e0dcd4;
+  --panel-gold-bg: #2a2010;
+  --panel-gold-border: #f0a030;
+  --input-bg: #2a2a2a;
+  --stat-row-bg: #222;
+  --stat-row-alt: #2a2a2a;
+  --table-stripe: #222;
+  --modal-bg: #1e1e1e;
+  --welcome-bg: #1e1e1e;
+  --welcome-overlay-bg: rgba(0,0,0,0.85);
+  --focus-ring: #ff6040;
+}
+body { background: var(--bg); color: var(--text); }
+header { background: var(--header-bg); color: var(--header-text); }
+.btn-action { background: var(--btn-bg); color: var(--btn-text); }
+.btn-action:hover { background: var(--btn-hover); }
+.btn-save { background: var(--btn-save-bg); color: #fff; }
+.btn-save:hover { background: var(--btn-save-hover); }
+.btn-theme { background: transparent; color: var(--header-text); border: 1px solid rgba(255,255,255,0.15); }
+.tab-btn { background: var(--tab-bg); color: var(--text-secondary); border-right: 1px solid var(--border); }
+.tab-btn:hover { background: var(--tab-hover); color: var(--text); }
+.tab-btn.active { background: var(--tab-active); color: var(--primary); font-weight: 600; }
+.section-card { background: var(--bg-card); border: 1px solid var(--border); }
+.section-title { border-bottom-color: var(--primary); color: var(--primary); }
+input, select { background: var(--input-bg); color: var(--text); border-color: var(--border); }
+input:focus, select:focus { outline: none; border-color: var(--focus-ring); box-shadow: 0 0 0 2px rgba(255,96,64,0.15); }
+.premium-table th { background: var(--tab-bg); }
+.premium-table td, .premium-table th { border-color: var(--border); }
+.premium-table tbody tr:nth-child(even) { background: var(--table-stripe); }
+.panel-gold { background: var(--panel-gold-bg); border: 1px solid var(--panel-gold-border); }
+.modal-box { background: var(--modal-bg); border: 1px solid var(--border); }
+.char-list-item { background: var(--stat-row-bg); }
+.char-list-item:hover { background: var(--stat-row-alt); }
+.stat-row { background: var(--stat-row-bg); }
+.stat-row button { background: var(--tab-bg); color: var(--text); }
+.stat-row button:hover { background: var(--tab-hover); }
+.stat-points-bar { background: var(--accent-light); }
+.welcome-overlay { background: var(--welcome-overlay-bg); }
+.welcome-card { background: var(--welcome-card-bg, #1e1e1e); }
+.btn-welcome { background: var(--primary); color: #fff; }
+.btn-welcome:hover { background: var(--primary-hover); }
+select option { color: #000; background: #fff; }

@@ -1,0 +1,161 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 14px; line-height: 1.5; overflow-x: hidden; }
+header { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.5rem; flex-wrap: wrap; gap: 0.5rem; }
+.header-logo { display: flex; align-items: center; gap: 0.6rem; font-size: 0.9rem; }
+.header-logo h1 { font-size: 1.2rem; font-weight: 700; letter-spacing: 0.03em; }
+.sub-brand { font-size: 0.8rem; opacity: 0.7; display: block; }
+.header-actions { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; }
+.btn-action, .btn-save, .btn-theme, .btn-welcome { padding: 0.4rem 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: transform 0.15s, box-shadow 0.15s; }
+.btn-action:hover, .btn-save:hover, .btn-theme:hover { transform: translateY(-1px); }
+.btn-save { font-weight: 600; }
+.tabs-nav { display: flex; gap: 0; padding: 0 1.5rem; overflow-x: auto; }
+.tab-btn { padding: 0.6rem 1.5rem; border: none; cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: background 0.2s, color 0.2s; white-space: nowrap; }
+.tab-btn:first-child { border-radius: 6px 0 0 0; }
+.tab-btn:last-child { border-radius: 0 6px 0 0; }
+.tab-panel { display: none; padding: 1.5rem; }
+.tab-panel.active { display: block; }
+.main-content { max-width: 1400px; margin: 0 auto; }
+.section-card { border-radius: 8px; padding: 1.25rem; margin-bottom: 1rem; }
+.section-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.75rem; letter-spacing: 0.02em; padding-bottom: 0.4rem; border-bottom: 2px solid; }
+.flex-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
+.flex-header .section-title { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6rem; }
+.grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.6rem; }
+.grid-split { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+label { display: flex; flex-direction: column; font-size: 0.8rem; font-weight: 500; gap: 2px; }
+input, select { padding: 0.4rem 0.6rem; border: 1px solid; border-radius: 4px; font-size: 0.9rem; font-family: inherit; }
+input[type="number"] { width: 100%; }
+.readonly-input { background: transparent; border-style: dashed; opacity: 0.8; cursor: default; }
+.mt-1 { margin-top: 1rem; }
+.table-responsive { overflow-x: auto; }
+.scrollable-table { max-height: 500px; overflow-y: auto; }
+.premium-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.premium-table th, .premium-table td { padding: 0.35rem 0.5rem; text-align: left; border: 1px solid; }
+.premium-table th { font-weight: 600; }
+.premium-table tfoot td { font-weight: 600; }
+.panel-gold { padding: 0.6rem 1rem; border-radius: 6px; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.final-large-num { font-size: 1.2rem; font-weight: 700; }
+.gold-shield { font-size: 1.6rem; }
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; }
+.modal-overlay.active { display: flex; }
+.modal-box { border-radius: 12px; padding: 1.5rem; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; }
+.char-modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.char-list-panel { max-height: 300px; overflow-y: auto; }
+.char-list-item { padding: 0.4rem 0.6rem; cursor: pointer; border-radius: 4px; margin: 2px 0; }
+.char-list-item:hover { opacity: 0.8; }
+.char-buttons { display: flex; gap: 0.4rem; margin-top: 0.5rem; flex-wrap: wrap; }
+.skills-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
+.skill-search { max-width: 250px; padding: 0.4rem 0.8rem; border: 1px solid; border-radius: 6px; font-size: 0.9rem; }
+.stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+.stat-row { display: flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.5rem; border-radius: 4px; }
+.stat-row .stat-name { width: 45px; font-weight: 700; font-size: 0.85rem; }
+.stat-row .stat-value { width: 36px; text-align: center; font-weight: 600; font-size: 1rem; }
+.stat-row .stat-bonus { width: 30px; text-align: center; font-size: 0.8rem; opacity: 0.8; }
+.stat-row input { width: 50px; text-align: center; padding: 0.2rem; }
+.stat-row button { width: 26px; height: 26px; border: none; border-radius: 4px; cursor: pointer; font-weight: 700; font-size: 1rem; line-height: 1; display: flex; align-items: center; justify-content: center; }
+.stat-points-bar { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.5rem; border-radius: 4px; margin-top: 0.3rem; font-size: 0.85rem; font-weight: 600; }
+.role-info { font-size: 0.85rem; padding: 0.4rem 0; }
+.role-ability { font-weight: 600; }
+.stat-input-row { display: flex; gap: 0.5rem; align-items: center; }
+.welcome-overlay { display: flex; position: fixed; inset: 0; z-index: 2000; align-items: center; justify-content: center; }
+.welcome-card { border-radius: 16px; padding: 2rem; max-width: 600px; width: 90%; max-height: 85vh; overflow-y: auto; }
+.welcome-title { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.welcome-subtitle { font-size: 0.95rem; margin-bottom: 1rem; opacity: 0.8; }
+.welcome-tabs { margin: 1rem 0; }
+.welcome-tab { padding: 0.35rem 0; font-size: 0.9rem; }
+.btn-welcome { padding: 0.7rem 2rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 0.5rem; }
+.flex-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+@media (max-width: 768px) {
+  .grid-2, .grid-3, .grid-4, .grid-split { grid-template-columns: 1fr; }
+  .char-modal-grid { grid-template-columns: 1fr; }
+  .stat-grid { grid-template-columns: 1fr; }
+  .tabs-nav { padding: 0 0.5rem; }
+  .tab-btn { padding: 0.5rem 0.8rem; font-size: 0.8rem; }
+  header { padding: 0.5rem 0.75rem; }
+  .header-actions { gap: 0.25rem; }
+  .btn-action { font-size: 0.75rem; padding: 0.3rem 0.5rem; }
+}
+
+@media print {
+  body.printing .tabs-nav,
+  body.printing .header-actions,
+  body.printing .modal-overlay,
+  body.printing .welcome-overlay,
+  body.printing .skill-search,
+  body.printing .skills-header span,
+  body.printing .flex-header .btn-action,
+  body.printing .btn-action,
+  body.printing #lp_random_btn,
+  body.printing #currency_eb,
+  body.printing .weapon-remove,
+  body.printing .armor-remove,
+  body.printing .cyberware-remove,
+  body.printing .gear-remove,
+  body.printing .weapon-rank,
+  body.printing .gear-qty { display: none !important; }
+
+  body.printing .tab-panel { display: contents !important; }
+  body.printing .main-content { display: flex; flex-direction: column; }
+  body.printing #tab-character > .section-card:nth-child(1) { order: 1; }
+  body.printing #tab-character > .grid-split:nth-child(2) { order: 2; }
+  body.printing #tab-character > .section-card:nth-child(4) { order: 3; }
+  body.printing #tab-gear > .grid-split:nth-child(1) { order: 4; }
+  body.printing #tab-gear > .grid-split:nth-child(2) { order: 5; }
+  body.printing #tab-character > .section-card:nth-child(3) { order: 6; page-break-before: always; }
+  body.printing .scrollable-table { max-height: none; overflow: visible; }
+  body.printing .table-responsive { overflow: visible; }
+  body.printing .main-content { max-width: 100%; }
+  body.printing .welcome-overlay { display: none !important; }
+
+  body.printing { font-size: 9pt; }
+  body.printing header { padding: 0.15rem 0.5rem; }
+  body.printing header .header-logo h1 { font-size: 11pt; }
+  body.printing header .sub-brand { font-size: 7pt; }
+  body.printing .main-content { padding: 0.3rem; }
+  body.printing .section-card { padding: 0.3rem 0.5rem; margin-bottom: 0.3rem; }
+  body.printing .section-title { font-size: 9pt; margin-bottom: 0.2rem; padding-bottom: 0.15rem; }
+
+  body.printing .grid-2,
+  body.printing .grid-3,
+  body.printing .grid-4 { gap: 0.3rem; }
+  body.printing label { font-size: 7pt; }
+  body.printing input, body.printing select { padding: 0.1rem 0.3rem; font-size: 8pt; }
+  body.printing .readonly-input { border-style: none; opacity: 1; padding: 0.1rem 0; }
+
+  body.printing .stat-grid { grid-template-columns: repeat(5, 1fr); gap: 0.15rem; }
+  body.printing .stat-row { padding: 0.08rem 0.2rem; }
+  body.printing .stat-row .stat-name { font-size: 7pt; width: 30px; }
+  body.printing .stat-row .stat-value { font-size: 8pt; width: 24px; }
+  body.printing .stat-row .stat-bonus { font-size: 7pt; width: 20px; }
+  body.printing .stat-row button { width: 18px; height: 18px; font-size: 8pt; }
+  body.printing .stat-points-bar { font-size: 7pt; padding: 0.1rem 0.3rem; }
+  body.printing .stat-input-row { gap: 0.2rem; }
+  body.printing #stats_container { margin-top: 0.15rem; }
+
+  body.printing .panel-gold { padding: 0.2rem 0.5rem; gap: 0.3rem; }
+  body.printing .final-large-num { font-size: 9pt; }
+  body.printing .gold-shield { font-size: 11pt; }
+
+  body.printing .premium-table { border-collapse: collapse; }
+  body.printing .premium-table th,
+  body.printing .premium-table td { padding: 0.1rem 0.2rem; font-size: 7pt; border: 1px solid #999; }
+  body.printing .premium-table th { font-weight: 600; border-bottom: 2px solid #666; }
+
+  body.printing .skills-header { margin-bottom: 0.1rem; }
+  body.printing .role-info { font-size: 7pt; padding: 0.15rem 0; }
+
+  body.printing .grid-split { gap: 0.4rem; }
+
+  body.printing .flex-header { margin-bottom: 0.15rem; }
+
+  body.printing thead { display: table-header-group; }
+  body.printing tr { break-inside: avoid; page-break-inside: avoid; }
+
+  body.printing #hp_max, body.printing #hp_current, body.printing #hp_seriously, body.printing #hp_death,
+  body.printing #hum_max, body.printing #hum_current, body.printing #hum_emp, body.printing #hum_hc_total { width: 36px; }
+
+  body.printing .section-card .grid-2 { grid-template-columns: repeat(4, 1fr); gap: 0.1rem; }
+  body.printing .section-card .grid-2 label { font-size: 6pt; gap: 0; }
+  body.printing .section-card .grid-2 input { padding: 0.05rem 0.15rem; font-size: 7pt; }
+}
