@@ -1,4 +1,5 @@
 function exportCharacter() {
+  if (!confirm('Export character as JSON file?')) return;
   var data = getCharacterData();
   var handle = data.handle || data.name || "character";
   var name = handle.replace(/[^a-zA-Z0-9_-]/g, "_") + "_cpr.json";
@@ -14,6 +15,7 @@ function exportCharacter() {
 }
 
 function importCharacter(file) {
+  if (!confirm('Import character from "' + file.name + '"? Current data will be lost.')) return;
   var reader = new FileReader();
   reader.onload = function(e) {
     try {

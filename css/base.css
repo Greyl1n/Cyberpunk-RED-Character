@@ -52,6 +52,7 @@ input[type="number"] { width: 100%; }
 .stat-row .stat-name { width: 45px; font-weight: 700; font-size: 0.85rem; }
 .stat-row .stat-value { width: 36px; text-align: center; font-weight: 600; font-size: 1rem; }
 .stat-row .stat-bonus { width: 30px; text-align: center; font-size: 0.8rem; opacity: 0.8; }
+.stat-row .cyber-stat-bonus { font-size: 0.7rem; color: var(--accent); opacity: 0.9; }
 .stat-row input { width: 50px; text-align: center; padding: 0.2rem; }
 .stat-row button { width: 26px; height: 26px; border: none; border-radius: 4px; cursor: pointer; font-weight: 700; font-size: 1rem; line-height: 1; display: flex; align-items: center; justify-content: center; }
 .stat-points-bar { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.5rem; border-radius: 4px; margin-top: 0.3rem; font-size: 0.85rem; font-weight: 600; }
@@ -128,6 +129,7 @@ input[type="number"] { width: 100%; }
   body.printing .stat-row .stat-name { font-size: 7pt; width: 30px; }
   body.printing .stat-row .stat-value { font-size: 8pt; width: 24px; }
   body.printing .stat-row .stat-bonus { font-size: 7pt; width: 20px; }
+  body.printing .stat-row .cyber-stat-bonus { font-size: 6pt; }
   body.printing .stat-row button { width: 18px; height: 18px; font-size: 8pt; }
   body.printing .stat-points-bar { font-size: 7pt; padding: 0.1rem 0.3rem; }
   body.printing .stat-input-row { gap: 0.2rem; }
@@ -158,4 +160,18 @@ input[type="number"] { width: 100%; }
   body.printing .section-card .grid-2 { grid-template-columns: repeat(4, 1fr); gap: 0.1rem; }
   body.printing .section-card .grid-2 label { font-size: 6pt; gap: 0; }
   body.printing .section-card .grid-2 input { padding: 0.05rem 0.15rem; font-size: 7pt; }
+
+  body.printing #tab-about { display: none !important; }
+
+  body.printing .section-card:first-child .grid-3 { grid-template-columns: repeat(3, 1fr); gap: 0.2rem; }
+  body.printing .section-card:first-child .grid-3 label { font-size: 6pt; gap: 0; }
+  body.printing .section-card:first-child .grid-3 input,
+  body.printing .section-card:first-child .grid-3 select { padding: 0.05rem 0.15rem; font-size: 7pt; }
+  body.printing .section-card:first-child .grid-3 input[type="number"] { width: 100%; }
+  body.printing .section-card:first-child #role_info { display: none; }
+  body.printing .section-card:first-child #multiclass_section { display: none; }
+  body.printing .section-card:first-child { padding-bottom: 0.2rem; }
+  body.printing .section-card:first-child .section-title { margin-bottom: 0.1rem; }
+
+  body.printing .cyber-slot-empty { display: none !important; }
 }

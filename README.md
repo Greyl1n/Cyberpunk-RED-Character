@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/29196747/README.md)
 # Cyberpunk RED Character Generator
 
 A standalone, browser-based character manager for **Cyberpunk RED** by R. Talsorian Games. No server required — just open `index.html` in any modern browser.
@@ -9,14 +8,16 @@ A standalone, browser-based character manager for **Cyberpunk RED** by R. Talsor
 - **10 Roles** — All core roles with rank-by-rank ability descriptions (1–10)
 - **Multiclassing** — Add a secondary role once your primary reaches Rank 4
 - **86 Skills** — Grouped by linked stat, with search, rank input, and item bonuses
-- **Weapons, Armor, Cyberware, Gear** — Add/remove management with data from the Core Rulebook and Black Chrome
-- **Custom Items** — Add your own entries to any gear category
+- **Weapons** — 120+ weapons across all categories (melee, handguns, SMGs, shotguns, assault rifles, snipers, machineguns, heavy weapons, grenade launchers, rocket launchers, exotic, bows, borg weapons)
+- **Armor, Cyberware, Gear** — Add/remove management with data from core rulebook and DLCs
+- **Custom Items** — Add your own entries to any item category
 - **Lifepath Generator** — Randomise or manually select background, motivation, style, and life events
 - **Save/Load** — localStorage-based character manager with named saves
 - **JSON Export/Import** — Transfer characters between devices
 - **Print** — Combined character + gear sheet optimised for printing
 - **Random Character** — One-click generation of a complete, playable character
 - **Dark/Light Theme** — Toggle between themes
+- **Categorised Selectors** — Weapons, gear, and cyberware pickers grouped by type/category
 - **About Tab** — Feature overview and credits
 
 ## How to Use
@@ -34,6 +35,9 @@ A standalone, browser-based character manager for **Cyberpunk RED** by R. Talsor
 - Cyberpunk RED Core Rulebook v1.24
 - Black Chrome v1.0
 - Black Chrome+ v1.0
+- Hornet's Pharmacy — Street drugs, pharmaceuticals, additives, drone, and cyberware (R. Talsorian DLC)
+- Must Have Cyberware Deals — 12 cyberware items (R. Talsorian DLC)
+- Weapons List Update for CPRED — Fan-compiled weapons compendium (melee, bows, pistols, SMGs, shotguns, assault rifles, sniper rifles, machineguns, grenade launchers, heavy weapons, rocket launchers, exotic & borg weapons)
 
 This is a fan-made tool for personal table use. All game text and mechanics are property of R. Talsorian Games.
 
@@ -53,7 +57,8 @@ Cyberpunk_Character/
 │   ├── storage.js        — localStorage save/load/delete
 │   ├── export.js         — JSON export/import and print
 │   └── main.js           — Initialisation and wiring
-└── src/                  — Source PDFs (not required for the app to run)
+├── src/                  — Source PDFs (not required for the app to run)
+└── README.md
 ```
 
 ## Requirements

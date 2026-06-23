@@ -11,7 +11,6 @@ function init() {
   renderGear();
   initLifepath();
   initAddButtons();
-  loadRoleAbilityRank();
   initTabs();
   initWelcome();
   initCharManager();
@@ -81,6 +80,8 @@ function initCharManager() {
   saveBtn.onclick = function() {
     var name = nameInput.value.trim();
     if (!name) { alert("Enter a name to save."); return; }
+    var exists = listCharacters().indexOf(name) !== -1;
+    if (exists && !confirm('Overwrite existing character "' + name + '"?')) return;
     saveCharacter(name);
     buildCharList();
     alert("Character saved as \"" + name + "\"");
@@ -90,6 +91,7 @@ function initCharManager() {
     if (!name) { alert("Select or enter a character name to load."); return; }
     var data = loadCharacter(name);
     if (!data) { alert("Character \"" + name + "\" not found."); return; }
+    if (!confirm('Load "' + name + '"? Current character data will be lost.')) return;
     loadCharacterData(data);
     modal.classList.remove("active");
     modal.style.display = "none";

@@ -61,6 +61,42 @@ function initRoleSelect() {
     updateRoleInfo();
   };
   document.getElementById("role_secondary_rank").oninput = function() { updateRoleInfo(); };
+  setUpRoleRankCost();
+}
+
+function setUpRoleRankCost() {
+  var roleRankEl = document.getElementById("role_ability_rank");
+  var roleRank2El = document.getElementById("role_secondary_rank");
+  roleRankEl.dataset.oldVal = roleRankEl.value;
+  roleRank2El.dataset.oldVal = roleRank2El.value;
+  roleRankEl.oninput = function() {
+    var oldVal = parseInt(this.dataset.oldVal) || 0;
+    var newVal = parseInt(this.value) || 0;
+    if (newVal === oldVal) { updateRoleInfo(); return; }
+    var cost = ipCostBetween(oldVal, newVal, 60);
+    if (cost > 0 && !payIpCost(cost)) {
+      alert("Not enough Improvement Points! Need " + cost + " IP.");
+      this.value = oldVal;
+      return;
+    }
+    if (cost < 0) payIpCost(cost);
+    this.dataset.oldVal = newVal;
+    updateRoleInfo();
+  };
+  roleRank2El.oninput = function() {
+    var oldVal = parseInt(this.dataset.oldVal) || 0;
+    var newVal = parseInt(this.value) || 0;
+    if (newVal === oldVal) { updateRoleInfo(); return; }
+    var cost = ipCostBetween(oldVal, newVal, 60);
+    if (cost > 0 && !payIpCost(cost)) {
+      alert("Not enough Improvement Points! Need " + cost + " IP.");
+      this.value = oldVal;
+      return;
+    }
+    if (cost < 0) payIpCost(cost);
+    this.dataset.oldVal = newVal;
+    updateRoleInfo();
+  };
 }
 
 function updateRoleInfo() {
@@ -99,15 +135,18 @@ function renderStats() {
   container.innerHTML = "";
   for (var i = 0; i < DATA.stats.length; i++) {
     var s = DATA.stats[i];
-    var val = state.stats[s.id] || 2;
-    var bonus = calcStatBonus(val);
+    var baseVal = state.stats[s.id] || 2;
+    var cyberBonus = calcCyberStatBonus(s.id);
+    var effVal = baseVal + cyberBonus;
+    var bonus = calcStatBonus(effVal);
     var row = document.createElement("div");
     row.className = "stat-row";
+    var cyberStr = cyberBonus > 0 ? ' <span class="cyber-stat-bonus">(+' + cyberBonus + ' chrome)</span>' : '';
     row.innerHTML = '<span class="stat-name" title="' + s.desc + '">' + s.name + '</span>' +
       '<button class="stat-dec" data-stat="' + s.id + '">-</button>' +
-      '<input type="number" class="stat-input" data-stat="' + s.id + '" value="' + val + '" min="' + STAT_MIN + '" max="' + STAT_MAX + '">' +
+      '<input type="number" class="stat-input" data-stat="' + s.id + '" value="' + baseVal + '" min="' + STAT_MIN + '" max="' + STAT_MAX + '">' +
       '<button class="stat-inc" data-stat="' + s.id + '">+</button>' +
-      '<span class="stat-bonus">(' + (bonus >= 0 ? "+" : "") + bonus + ')</span>';
+      '<span class="stat-bonus">(' + (bonus >= 0 ? "+" : "") + bonus + ')</span>' + cyberStr;
     container.appendChild(row);
   }
   updateStatPointsBar();
@@ -169,14 +208,16 @@ function renderSkills() {
       if (search && name.toLowerCase().indexOf(search) === -1) continue;
       var ranks = state.skillRanks[skill.id] || 0;
       var item = state.skillItem[skill.id] || 0;
-      var statVal = state.stats[statId] || 2;
-      var total = calcSkillTotal(statVal, ranks, item, 0);
+      var statVal = getEffectiveStat(statId);
+      var cyber = calcSkillCyberBonus(skill.id);
+      var total = calcSkillTotal(statVal, ranks, item, cyber);
       var tr = document.createElement("tr");
       tr.innerHTML = '<td>' + name + '</td>' +
         '<td>' + statId.toUpperCase() + '</td>' +
         '<td>' + calcStatBonus(statVal) + '</td>' +
-        '<td><input type="number" class="skill-rank" data-skill="' + skill.id + '" value="' + ranks + '" min="0" max="20" style="width:50px"></td>' +
+        '<td><input type="number" class="skill-rank" data-skill="' + skill.id + '" value="' + ranks + '" min="0" max="10" style="width:50px"></td>' +
         '<td><input type="number" class="skill-item" data-skill="' + skill.id + '" value="' + item + '" style="width:50px"></td>' +
+        '<td>' + (cyber > 0 ? '+' + cyber : '0') + '</td>' +
         '<td><strong>' + (total >= 0 ? "+" : "") + total + '</strong></td>';
       tbody.appendChild(tr);
     }
@@ -184,13 +225,51 @@ function renderSkills() {
   attachSkillEvents();
 }
 
+function getSkillIpBase(skillId) {
+  for (var k in DATA.skills) {
+    for (var i = 0; i < DATA.skills[k].length; i++) {
+      if (DATA.skills[k][i].id === skillId) {
+        var m = DATA.skills[k][i].ipMult || 1;
+        return m * 20;
+      }
+    }
+  }
+  return 20;
+}
+
+function ipCostBetween(oldRank, newRank, baseCost) {
+  return baseCost * (newRank * (newRank + 1) / 2 - oldRank * (oldRank + 1) / 2);
+}
+
+function payIpCost(cost) {
+  var ipEl = document.getElementById("char_ip");
+  var cur = parseInt(ipEl.value) || 0;
+  if (cur - cost < 0) return false;
+  ipEl.value = cur - cost;
+  return true;
+}
+
 function attachSkillEvents() {
   var ranks = document.querySelectorAll(".skill-rank");
   var items = document.querySelectorAll(".skill-item");
   for (var i = 0; i < ranks.length; i++) {
-    ranks[i].onchange = function() {
+    var input = ranks[i];
+    input.dataset.oldVal = input.value;
+    input.onchange = function() {
       var id = this.dataset.skill;
-      state.skillRanks[id] = parseInt(this.value) || 0;
+      var oldVal = parseInt(this.dataset.oldVal) || 0;
+      var newVal = parseInt(this.value) || 0;
+      if (newVal === oldVal) return;
+      var base = getSkillIpBase(id);
+      var cost = ipCostBetween(oldVal, newVal, base);
+      if (cost > 0 && !payIpCost(cost)) {
+        alert("Not enough Improvement Points! Need " + cost + " IP.");
+        this.value = oldVal;
+        return;
+      }
+      if (cost < 0) payIpCost(cost);
+      state.skillRanks[id] = newVal;
+      this.dataset.oldVal = newVal;
       renderSkills();
     };
   }
@@ -287,10 +366,55 @@ function renderCyberware() {
   tbody.innerHTML = "";
   for (var i = 0; i < state.cyberware.length; i++) {
     var c = state.cyberware[i];
-    var tr = document.createElement("tr");
-    tr.innerHTML = '<td>' + c.name + '</td><td>' + c.type + '</td><td>' + c.hc + '</td><td>' + c.cost + 'eb</td><td><small>' + (c.desc || '') + '</small></td><td><button class="btn-action cyberware-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
-    tbody.appendChild(tr);
+    if (c.slots) {
+      renderCyberwareRow(tbody, c, i, true);
+      for (var s = 0; s < c.slots; s++) {
+        renderCyberwareSlot(tbody, c, i, s);
+      }
+    } else {
+      renderCyberwareRow(tbody, c, i, false);
+    }
   }
+  attachCyberwareEvents();
+}
+
+function renderCyberwareRow(tbody, c, idx) {
+  var tr = document.createElement("tr");
+  var bonusHtml = formatCyberBonus(c.bonus);
+  tr.innerHTML = '<td>' + c.name + '</td><td>' + c.type + '</td><td>' + (c.hc || 0) + '</td><td>' + (c.cost || 0) + 'eb</td><td><small>' + bonusHtml + '</small></td><td><small>' + (c.desc || '') + '</small></td><td><button class="btn-action cyberware-remove" data-idx="' + idx + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
+  tbody.appendChild(tr);
+}
+
+function renderCyberwareSlot(tbody, parent, parentIdx, slotIdx) {
+  var option = (parent.options && parent.options[slotIdx]) || null;
+  var available = getOptionsForParent(parent.id);
+  var tr = document.createElement("tr");
+  tr.style.background = "rgba(128,128,128,0.05)";
+  tr.style.fontSize = "0.85rem";
+  if (!option) tr.className = "cyber-slot-empty";
+  var selectHtml = '<select class="cyber-slot-select" data-parent="' + parentIdx + '" data-slot="' + slotIdx + '" style="width:100%;font-size:0.8rem">';
+  selectHtml += '<option value="">-- Empty --</option>';
+  for (var oi = 0; oi < available.length; oi++) {
+    var opt = available[oi];
+    var sel = (option && option.id === opt.id) ? ' selected' : '';
+    selectHtml += '<option value="' + opt.id + '"' + sel + '>' + opt.name + ' (' + opt.cost + 'eb, ' + (opt.hc || 0) + 'HC)' + '</option>';
+  }
+  selectHtml += '</select>';
+  tr.innerHTML = '<td style="padding-left:1.5rem;border-top:none" colspan="6">Slot ' + (slotIdx + 1) + ': ' + selectHtml + '</td><td style="border-top:none"></td>';
+  tbody.appendChild(tr);
+}
+
+function getOptionsForParent(parentId) {
+  var result = [];
+  for (var i = 0; i < DATA.cyberware.length; i++) {
+    if (DATA.cyberware[i].parentType === parentId) {
+      result.push(DATA.cyberware[i]);
+    }
+  }
+  return result;
+}
+
+function attachCyberwareEvents() {
   var removes = document.querySelectorAll(".cyberware-remove");
   for (var i = 0; i < removes.length; i++) {
     removes[i].onclick = function() {
@@ -298,8 +422,41 @@ function renderCyberware() {
       state.cyberware.splice(idx, 1);
       renderCyberware();
       renderHumanity();
+      renderStats();
+      renderSkills();
     };
   }
+  var selects = document.querySelectorAll(".cyber-slot-select");
+  for (var i = 0; i < selects.length; i++) {
+    selects[i].onclick = function(e) { e.stopPropagation(); };
+    selects[i].onchange = function() {
+      var parentIdx = parseInt(this.dataset.parent);
+      var slotIdx = parseInt(this.dataset.slot);
+      var optionId = this.value;
+      var parent = state.cyberware[parentIdx];
+      if (!parent) return;
+      if (!parent.options) parent.options = [];
+      if (optionId) {
+        var item = getDataItemById(optionId);
+        if (item) {
+          parent.options[slotIdx] = { id: item.id, name: item.name, hc: item.hc || 0, cost: item.cost || 0, desc: item.desc || '', bonus: item.bonus || null, parentType: item.parentType };
+        }
+      } else {
+        parent.options[slotIdx] = null;
+      }
+      renderCyberware();
+      renderHumanity();
+      renderStats();
+      renderSkills();
+    };
+  }
+}
+
+function getDataItemById(id) {
+  for (var i = 0; i < DATA.cyberware.length; i++) {
+    if (DATA.cyberware[i].id === id) return DATA.cyberware[i];
+  }
+  return null;
 }
 
 function renderGear() {
@@ -361,7 +518,7 @@ function initAddButtons() {
     showItemSelector("weapon", DATA.weapons, function(item) {
       state.weapons.push({ id: item.id, name: item.name, dmg: item.dmg, rof: item.rof, mag: item.mag, type: item.type, rank: 0 });
       renderWeapons();
-    });
+    }, "type");
   };
   document.getElementById("add_armor_btn").onclick = function() {
     showItemSelector("armor", DATA.armor, function(item) {
@@ -372,21 +529,39 @@ function initAddButtons() {
   };
   document.getElementById("add_cyberware_btn").onclick = function() {
     showItemSelector("cyberware", DATA.cyberware, function(item) {
-      state.cyberware.push({ id: item.id, name: item.name, type: item.type, hc: item.hc, cost: item.cost, desc: item.desc || '' });
+      var bodyPart = item.bodyPart;
+      if (bodyPart) {
+        var limits = { eye: 2, arm: 2, leg: 2 };
+        var max = limits[bodyPart] || 99;
+        var count = 0;
+        for (var i = 0; i < state.cyberware.length; i++) {
+          var dataItem = getDataItemById(state.cyberware[i].id);
+          if (dataItem && dataItem.bodyPart === bodyPart) count++;
+        }
+        if (count >= max) {
+          alert("Maximum " + max + " " + bodyPart + "(s) allowed. Remove one first.");
+          return;
+        }
+      }
+      var entry = { id: item.id, name: item.name, type: item.type, hc: item.hc, cost: item.cost, desc: item.desc || '', bonus: item.bonus || null };
+      if (item.slots) { entry.slots = item.slots; entry.options = []; }
+      state.cyberware.push(entry);
       renderCyberware();
       renderHumanity();
-    });
+      renderStats();
+      renderSkills();
+    }, "type");
   };
   document.getElementById("add_gear_btn").onclick = function() {
     var allGear = DATA.gear.concat(DATA.fashion.map(function(f) { return { id: f.id, name: f.name, cost: f.cost, cat: "Fashion" }; }));
     showItemSelector("gear", allGear, function(item) {
       state.gear.push({ id: item.id, name: item.name, cost: item.cost, cat: item.cat || "Gear", qty: 1 });
       renderGear();
-    });
+    }, "cat");
   };
 }
 
-function showItemSelector(type, items, callback) {
+function showItemSelector(type, items, callback, groupBy) {
   var overlay = document.createElement("div");
   overlay.className = "modal-overlay active";
   overlay.style.display = "flex";
@@ -430,7 +605,7 @@ function showItemSelector(type, items, callback) {
       var cost = parseInt(prompt("Cost in eb:") || "0");
       var desc = prompt("Description:") || "";
       document.body.removeChild(overlay);
-      callback({ id: "custom_" + Date.now(), name: name, type: cType, hc: hc, cost: cost, desc: desc });
+      callback({ id: "custom_" + Date.now(), name: name, type: cType, hc: hc, cost: cost, desc: desc, bonus: null });
     } else {
       var cost = parseInt(prompt("Cost in eb:") || "0");
       var cat = prompt("Category (Gear, Fashion, Electronics, Medical, etc.):") || "Gear";
@@ -439,7 +614,30 @@ function showItemSelector(type, items, callback) {
     }
   };
   list.appendChild(customBtn);
+  if (groupBy) {
+    items = items.slice().sort(function(a, b) {
+      var ga = (a[groupBy] || "Other").toUpperCase();
+      var gb = (b[groupBy] || "Other").toUpperCase();
+      if (ga < gb) return -1;
+      if (ga > gb) return 1;
+      return 0;
+    });
+  }
+  var lastGroup = null;
   for (var i = 0; i < items.length; i++) {
+    var group = groupBy ? (items[i][groupBy] || "Other") : null;
+    if (group !== null && group !== lastGroup) {
+      var header = document.createElement("div");
+      header.textContent = group;
+      header.style.fontWeight = "700";
+      header.style.padding = "0.5rem 0.25rem 0.25rem";
+      header.style.color = "var(--accent)";
+      header.style.fontSize = "0.85rem";
+      header.style.textTransform = "uppercase";
+      header.style.borderBottom = "1px solid var(--border)";
+      list.appendChild(header);
+      lastGroup = group;
+    }
     var btn = document.createElement("button");
     btn.className = "btn-action";
     btn.style.textAlign = "left";
@@ -469,13 +667,6 @@ function showItemSelector(type, items, callback) {
   box.appendChild(closeBtn);
   overlay.appendChild(box);
   document.body.appendChild(overlay);
-}
-
-function loadRoleAbilityRank() {
-  var el = document.getElementById("role_ability_rank");
-  if (el) {
-    el.oninput = function() { updateRoleInfo(); };
-  }
 }
 
 function updateAllDerived() {
@@ -529,6 +720,8 @@ function loadCharacterData(data) {
   document.getElementById("role_secondary_select").value = data.secondaryRole || "";
   document.getElementById("role_secondary_rank").value = data.secondaryRoleRank || 1;
   document.getElementById("multiclass_fields").style.display = data.multiclassEnabled ? "grid" : "none";
+  document.getElementById("role_ability_rank").dataset.oldVal = document.getElementById("role_ability_rank").value;
+  document.getElementById("role_secondary_rank").dataset.oldVal = document.getElementById("role_secondary_rank").value;
   if (data.stats) {
     for (var id in data.stats) {
       if (state.stats[id] !== undefined) state.stats[id] = data.stats[id];
@@ -566,11 +759,13 @@ function resetCharacter() {
   document.getElementById("char_name").value = "";
   document.getElementById("role_select").value = "";
   document.getElementById("role_ability_rank").value = "4";
+  document.getElementById("role_ability_rank").dataset.oldVal = "4";
   document.getElementById("char_age").value = "22";
   document.getElementById("char_ip").value = "0";
   document.getElementById("multiclass_enabled").checked = false;
   document.getElementById("role_secondary_select").value = "";
   document.getElementById("role_secondary_rank").value = "1";
+  document.getElementById("role_secondary_rank").dataset.oldVal = "1";
   document.getElementById("multiclass_fields").style.display = "none";
   document.getElementById("hp_current").value = "0";
   document.getElementById("currency_eb").value = "0";
