@@ -1,3 +1,6 @@
+// ============================================================
+// INIT — Bootstrap and event binding
+// ============================================================
 function init() {
   initState();
   initRoleSelect();
@@ -9,6 +12,7 @@ function init() {
   renderArmor();
   renderCyberware();
   renderGear();
+  renderAmmoTracker();
   initLifepath();
   initAddButtons();
   initTabs();
@@ -47,9 +51,20 @@ function initTabs() {
 function initWelcome() {
   var overlay = document.getElementById("welcomeOverlay");
   var startBtn = document.getElementById("welcomeStartBtn");
-  startBtn.onclick = function() {
+  function dismissWelcome() {
     overlay.style.display = "none";
-  };
+    overlay.classList.add("hidden");
+  }
+  function onTap(e) {
+    if (e.target === overlay || startBtn.contains(e.target)) {
+      dismissWelcome();
+      e.preventDefault();
+    }
+  }
+  overlay.addEventListener("click", onTap);
+  overlay.addEventListener("touchend", onTap, { passive: false });
+  startBtn.addEventListener("click", dismissWelcome);
+  startBtn.addEventListener("touchend", function(e) { e.preventDefault(); dismissWelcome(); }, { passive: false });
 }
 
 function initCharManager() {

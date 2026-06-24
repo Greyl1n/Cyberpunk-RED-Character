@@ -1,4 +1,10 @@
+// ============================================================
+// DATA — Game content definitions (stats, roles, skills, items)
+// ============================================================
 var DATA = {
+  // ----------------------------------------------------------
+  // STATS — 10 core attributes
+  // ----------------------------------------------------------
   stats: [
     { id: "int", name: "INT", full: "Intelligence", desc: "Memory, deduction, pattern recognition" },
     { id: "ref", name: "REF", full: "Reflexes", desc: "Reaction time, coordination" },
@@ -12,6 +18,9 @@ var DATA = {
     { id: "emp", name: "EMP", full: "Empathy", desc: "Humanity, social awareness" }
   ],
 
+  // ----------------------------------------------------------
+  // ROLES — All 10 roles with rank-by-rank ability descriptions
+  // ----------------------------------------------------------
   roles: [
     { id: "solo", name: "Solo", ability: "Combat Awareness", desc: "Masters of combat. Add REF to initiative. Use Combat Awareness points each turn to boost attacks (+1 to hit), defense (+1 to dodge/block), or damage (+1 to damage).",
       rankDesc: [
@@ -155,6 +164,9 @@ var DATA = {
       ] }
   ],
 
+  // ----------------------------------------------------------
+  // SKILLS — Grouped by linked stat
+  // ----------------------------------------------------------
   skills: {
     int: [
       { id: "accounting", name: "Accounting" },
@@ -238,6 +250,9 @@ var DATA = {
     ]
   },
 
+  // ----------------------------------------------------------
+  // WEAPONS — Standard + exotic weapons from core rulebook & DLCs
+  // ----------------------------------------------------------
   weapons: [
     { id: "heavy_pistol", name: "Heavy Pistol", type: "Handgun", dmg: "3d6", hands: 1, rof: 2, mag: 12, conceal: "Jacket", cost: 500, desc: "Standard heavy pistol" },
     { id: "light_pistol", name: "Light Pistol", type: "Handgun", dmg: "2d6", hands: 1, rof: 2, mag: 15, conceal: "Pocket", cost: 250, desc: "Small concealable pistol" },
@@ -459,6 +474,9 @@ var DATA = {
     { id: "teen_dreem", name: "Teen Dreem", type: "SMG", dmg: "2d6", hands: 1, rof: 1, mag: 10, conceal: "Yes", cost: 20, desc: "Poor Exotic SMG. Autofire (3) drains clip. Destroys weapon on use." }
   ],
 
+  // ----------------------------------------------------------
+  // ARMOR
+  // ----------------------------------------------------------
   armor: [
     { id: "armor_head_light", name: "Light Armorjack (Head)", slots: "Head", sp: 7, cost: 50, enc: 2 },
     { id: "armor_head_medium", name: "Medium Armorjack (Head)", slots: "Head", sp: 11, cost: 100, enc: 4 },
@@ -492,6 +510,9 @@ var DATA = {
     { id: "skidrow_packshield", name: "SkidRow PackShield", slots: "Shield", sp: 10, cost: 100, enc: 2 }
   ],
 
+  // ----------------------------------------------------------
+  // CYBERWARE
+  // ----------------------------------------------------------
   cyberware: [
     { id: "cybereye", name: "Cybereye", type: "Fashion", hc: 2, cost: 500, desc: "Single cybernetic eye.", slots: 3, bodyPart: "eye" },
     { id: "cyberaudio", name: "Cyberaudio Suite", type: "Fashion", hc: 2, cost: 500, desc: "Internal ear comms and audio processing.", slots: 3 },
@@ -516,7 +537,7 @@ var DATA = {
     { id: "agency_record", name: "Agency Record", type: "Fashionware", hc: 1, cost: 500, desc: "Always-on recording of everything you see/hear." },
     { id: "buddy_link", name: "Buddy Link", type: "Fashion", hc: 1, cost: 200, desc: "Private short-range comm with your crew." },
     { id: "bc_budget_chipware", name: "Budget Chipware Socket", type: "Neuralware", hc: 7, cost: 100, desc: "A cheap chipware socket.", parentType: "neural_link" },
-    { id: "bc_discount_audio", name: "Discount Cyberaudio Suite", type: "Cyberaudio", hc: 3, cost: 100, desc: "An inferior audio suite at an affordable price.", slots: 3 },
+    { id: "bc_discount_audio", name: "Discount Cyberaudio Suite", type: "Cyberaudio", hc: 3, cost: 100, desc: "An inferior audio suite at an affordable price.", slots: 3, parentType: "cyberaudio" },
     { id: "bc_explicit_memory", name: "Explicit Memory Stimulator", type: "Chipware", hc: 3, cost: 100, desc: "+2 to Concentration Checks to remember information.", parentType: "neural_link", bonus: { skills: { concentration: 2 } } },
     { id: "bc_extra_jointed", name: "Extra-Jointed Cyberlimb Upgrade", type: "Cyberlimb", hc: 3, cost: 500, desc: "Extra points of articulation. +2 Contortionist per limb (max +8 all limbs).", bonus: { skills: { contortionist: 2 } } },
     { id: "bc_flashbulb", name: "Flashbulb", type: "Cyberarm", hc: 7, cost: 500, desc: "Blind your enemies with your arm.", parentType: "cyberarm" },
@@ -524,13 +545,13 @@ var DATA = {
     { id: "bc_health_monitor", name: "Heuristic Health Monitor", type: "Fashionware", hc: 0, cost: 500, desc: "You're fit and now you can show the world." },
     { id: "bc_integrated_cyberdeck", name: "Integrated Cyberdeck Upgrade", type: "Cyberarm", hc: 7, cost: 500, desc: "An extra option slot for your arm-installed Cyberdeck.", parentType: "cyberarm" },
     { id: "bc_modular_finger_hand", name: "Modular Finger Cyberhand", type: "Cyberarm", hc: 3, cost: 100, desc: "A hand for modular Cyberfingers.", parentType: "cyberarm", slots: 5 },
-    { id: "bc_neo_soviet_arm", name: "Neo-Soviet Cyberarm", type: "Cyberarm", hc: 7, cost: 100, desc: "Neo-Soviet charm for your Cyberarm.", bodyPart: "arm", slots: 4 },
+    { id: "bc_neo_soviet_arm", name: "Neo-Soviet Cyberarm", type: "Cyberarm", hc: 7, cost: 100, desc: "Neo-Soviet charm for your Cyberarm.", bodyPart: "arm", slots: 4, parentType: "cyberarm" },
     { id: "bc_popup_net", name: "Popup Net Launcher", type: "Cyberarm", hc: 7, cost: 500, desc: "Shoot nets from your arm.", parentType: "cyberarm" },
     { id: "bc_popup_shotgun", name: "Popup Shotgun", type: "Cyberarm", hc: 7, cost: 1000, desc: "A shotgun in your arm.", parentType: "cyberarm" },
     { id: "bc_racerbracer", name: "RacerBracer", type: "Internal Body", hc: 7, cost: 500, desc: "Immunity to Whiplash Critical Injury." },
     { id: "bc_reflex_coprocessor", name: "Reflex Co-Processor", type: "Neuralware", hc: 14, cost: 500, desc: "Dodge bullets without REF 8.", parentType: "neural_link" },
     { id: "bc_reinforced_limb", name: "Reinforced Cyberlimb Upgrade", type: "Cyberlimb", hc: 3, cost: 1000, desc: "Say goodbye to breaking this limb." },
-    { id: "bc_sponsored_cybereye", name: "Sponsored Cybereye", type: "Cybereye", hc: 7, cost: 50, desc: "A cheap Cybereye with Chyron and pop-up ads.", bodyPart: "eye", slots: 3 },
+    { id: "bc_sponsored_cybereye", name: "Sponsored Cybereye", type: "Cybereye", hc: 7, cost: 50, desc: "A cheap Cybereye with Chyron and pop-up ads.", bodyPart: "eye", slots: 3, parentType: "cybereye" },
     { id: "bc_trauma_nanomatrix", name: "Trauma Response Nanomatrix", type: "Internal Body", hc: 7, cost: 1000, desc: "Restore all lost Skinweave or Subdermal Armor SP once/day." },
     { id: "bc_standard_cyberfinger", name: "Standard Cyberfinger", type: "Cyberfinger", hc: 0, cost: 20, desc: "A Cyberfinger with no special features. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
     { id: "bc_lockpick_cyberfinger", name: "Lockpick Cyberfinger", type: "Cyberfinger", hc: 2, cost: 100, desc: "Adjustable lockpick and tensioning tool. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
@@ -578,6 +599,8 @@ var DATA = {
     { id: "mood_eye", name: "Mood Eye", type: "Fashionware", hc: 0, cost: 100, desc: "Eye color changes with mood (red=anger, blue=sadness, etc.). Requires Neural Link.", parentType: "neural_link" },
     { id: "neutongue", name: "NeuTongue", type: "Internal Body", hc: 7, cost: 100, desc: "Cybernetic tongue. Add virtual seasoning to food via linked Agent." },
     { id: "perfectfit_cyberfoot", name: "PerfectFit Cyberfoot", type: "Cyberleg Option", hc: 2, cost: 100, desc: "Adjustable foot size/shape. Eliminates penalty from ill-fitting footwear. Can be installed in a meat leg.", parentType: "cyberleg" },
+    { id: "talon_feet", name: "Talon Feet", type: "Cyberleg Option", hc: 3, cost: 500, desc: "Retractable foot talons. Light Melee Weapon (1d6). Requires Cyberlegs.", parentType: "cyberleg" },
+    { id: "jump_boosters", name: "Jump Boosters", type: "Cyberleg Option", hc: 3, cost: 500, desc: "Hydraulic leg boosters. +3d6 dmg vs cover with leg attacks. Requires Cyberlegs.", parentType: "cyberleg" },
     { id: "personalpak_kibblewarmer", name: "PersonalPak KibbleWarmer", type: "Cyberarm Option", hc: 3, cost: 100, desc: "Rotisserie oven in forearm. Warms PersonalPak Kibble cylinders. Requires Cyberarm.", parentType: "cyberarm" },
     { id: "pursuitech_personal_shredder", name: "Pursuit Security Inc. Personal Shredder", type: "Cyberarm Option", hc: 3, cost: 100, desc: "Cross-cut shredder in cyberarm with internal reservoir. Requires Cyberarm.", parentType: "cyberarm" },
     { id: "sponsored_covering", name: "Sponsored Covering", type: "Cyberlimb Option", hc: 0, cost: 50, desc: "Illuminated ad on cyberlimb. Pays 20eb/month. Does not take an Option Slot. Requires Cyberarm or Cyberleg." },
@@ -585,19 +608,19 @@ var DATA = {
     { id: "cyberscanner_integrated", name: "Cyberscanner, Integrated", type: "Cyberarm Option", hc: 7, cost: 500, desc: "Cyberscanner installed in a Cyberarm. Requires 2 Option Slots.", parentType: "cyberarm" },
     { id: "chainripp", name: "ChainRipp", type: "Cyberarm Option", hc: 14, cost: 500, desc: "Retractable chainsaw in wrist. Can be revved into Excellent Quality Very Heavy Melee Weapon. Takes 4 Option Slots.", parentType: "cyberarm" },
     { id: "gang_jazzler", name: "Cybermatrix Gang Jazzler", type: "Cyberarm Option", hc: 7, cost: 500, desc: "Electrode needle in arm. On successful Choke, force DV13 Resist Torture/Drugs or Unconscious 1 min.", parentType: "cyberarm" },
-    { id: "bug_eye", name: "Cyclops International Bug Eye", type: "Borgware", hc: 14, cost: 500, desc: "Oversized Cybereye. Contains 5 slots for Cybereye Options." },
+    { id: "bug_eye", name: "Cyclops International Bug Eye", type: "Borgware", hc: 14, cost: 500, desc: "Oversized Cybereye. Contains 5 slots for Cybereye Options.", slots: 5, parentType: "cybereye" },
     { id: "deathtrance", name: "DeathTrance", type: "Neuralware", hc: 3, cost: 500, desc: "Slow vitals to appear dead. DV17-21 to detect. -4 to all Actions while active.", parentType: "neural_link" },
-    { id: "monovision", name: "Kiroshi MonoVision", type: "Borgware", hc: 14, cost: 500, desc: "Single wide-angle cyberoptic visor. Contains 3 slots. Options count as paired." },
+    { id: "monovision", name: "Kiroshi MonoVision", type: "Borgware", hc: 14, cost: 500, desc: "Single wide-angle cyberoptic visor. Contains 3 slots. Options count as paired.", slots: 3, parentType: "cybereye" },
     { id: "optishield", name: "Kiroshi OptiShield", type: "External Body", hc: 7, cost: 500, desc: "Retractable Anti-Dazzle mirrorshades built into brow. Immune to flashblindness." },
     { id: "watch_man", name: "Psiberstuff Watch-Man", type: "Cyberarm Option", hc: 3, cost: 100, desc: "Agent built into cyberarm with flip-up screen.", parentType: "cyberarm" },
     { id: "poser_chip", name: "Poser Chip", type: "Chipware", hc: 14, cost: 500, desc: "+4 to Acting to impersonate persona. +5 if roleplayed. Famous persona: 500eb. Private: 1000eb.", parentType: "neural_link" },
     { id: "arc_thrower", name: "Radline Blitzkrieg Arc-Thrower Cyberarm", type: "Cyberarm", hc: 14, cost: 1000, desc: "0 Option slots. No hand. Exotic Shotgun (Heavy Weapons), 4d6 Shell fire, 32 charges. Cannot Crit or ablate armor.", bodyPart: "arm" },
     { id: "microwaldo", name: "Raven Microcybernetics MicroWaldo", type: "Cyberarm Option", hc: 7, cost: 1000, desc: "+1 to Surgery Skill. Neuralware and Cyberarm Option.", parentType: "cyberarm" },
     { id: "fleshweave", name: "Sycust Fleshweave", type: "External Body", hc: 7, cost: 1000, desc: "Skinweave. Body and Head SP7. Self-repairs to full after 10 min without strenuous activity." },
-    { id: "romanova_cyberlegs", name: "Wyzard Technologies Romanova Cyberlegs", type: "Cyberleg", hc: 14, cost: 1000, desc: "Paired Cyberlegs. 3 Option Slots each. Pre-installed Talon Feet.", bodyPart: "leg" },
+    { id: "romanova_cyberlegs", name: "Wyzard Technologies Romanova Cyberlegs", type: "Cyberleg", hc: 14, cost: 1000, desc: "Paired Cyberlegs. 3 Option Slots each. Pre-installed Talon Feet.", bodyPart: "leg", slots: 3, parentType: "cyberleg" },
     { id: "faceplate_mount", name: "Quick Change Faceplate Mount", type: "Internal Body", hc: 14, cost: 1000, desc: "Replace meat face with mounting. Comes with 1 personalized Faceplate. Additional: 100eb." },
     { id: "quick_digits", name: "Rocklin Augmentics Quick Digits", type: "Cyberarm Option", hc: 3, cost: 250, desc: "Cyberhand. Two+ grants +1 to Conceal/Reveal, Contortionist, First Aid, Forgery, Paramedic, Pick Lock, Pick Pocket.", parentType: "cyberarm" },
-    { id: "skydrivers", name: "Rocklin Augmentics Skydrivers", type: "Cyberleg", hc: 14, cost: 1000, desc: "Paired Cyberlegs. 2 Option Slots each. Pre-installed Jump Boosters. +3d6 dmg vs cover with leg attacks.", bodyPart: "leg" },
+    { id: "skydrivers", name: "Rocklin Augmentics Skydrivers", type: "Cyberleg", hc: 14, cost: 1000, desc: "Paired Cyberlegs. 2 Option Slots each. Pre-installed Jump Boosters. +3d6 dmg vs cover with leg attacks.", bodyPart: "leg", slots: 2, parentType: "cyberleg" },
     { id: "cyberspine", name: "Sycust Cyberspine", type: "Internal Body", hc: 7, cost: 1000, desc: "Requires 3 Option Slots. Immune to Spinal Injury. Hardened. +1 Contortionist. Can house Cybersnake." },
     { id: "cyberconductor_integrated", name: "Zetatech CyberConductor, Integrated", type: "Borgware", hc: 14, cost: 1000, desc: "FBC only. All cyberdecks connected. Switch between them with no HP damage. Requires 3 Option Slots." },
     { id: "hello_cutie_mono_paw", name: "Hello Cutie Mono-Paw", type: "Cyberarm Option", hc: 7, cost: 500, desc: "Retractable cat claws. Excellent Quality Medium Melee, 1d6, ignores armor SP<11. Cannot hold items while active.", parentType: "cyberarm" },
@@ -605,6 +628,9 @@ var DATA = {
     { id: "dynalar_xtradex_glove", name: "Dynalar Xtra-Dex Smart Glove", type: "Cyberarm Option", hc: 0, cost: 1000, desc: "2 Option Slots. Counts as Modular Finger Cyberhand (up to 5 Cyberfingers). Requires Interface Plugs.", parentType: "cyberarm" }
   ],
 
+  // ----------------------------------------------------------
+  // GEAR — All purchasable items (drugs, ammo, tools, etc.)
+  // ----------------------------------------------------------
   gear: [
     { id: "berserker", name: "Berserker", cat: "Street Drug", cost: 100, desc: "Lasts 10 min. Ignore Critical Injury bonus dmg; halve wound state & facedown penalties. SE DV17." },
     { id: "prime_time", name: "Prime Time", cat: "Street Drug", cost: 50, desc: "Lasts 4 hrs. +2 COOL/WILL (no extra HP). 4d6 Humanity Loss (returned after). SE DV17." },
@@ -616,9 +642,22 @@ var DATA = {
     { id: "distilling_compound", name: "Distilling Compound", cat: "Additive", cost: 100, desc: "Increase Resist Torture/Drugs DV of poison/biotoxin by 2." },
     { id: "osmosis_compound", name: "Osmosis Compound", cat: "Additive", cost: 50, desc: "Turn poison/biotoxin into contact-based hazard on a surface." },
     { id: "suzumebachi_drone", name: "Suzumebachi Assassin Drone", cat: "Drone", cost: 5000, desc: "Flying insectoid drone. 6 MOVE, 7SP, 10HP. Observation Camera (LL/IR/UV), Dartgun w/ 8 Biotoxin Arrows, Airhypo." },
-    { id: "bcp_bullet_to_slug", name: "Bullet to Slug Adapter Casings", cost: 100, wt: 0.5, cat: "Weapons" },
-    { id: "bcp_junk_ammo", name: "Junk Ammunition", cost: 10, wt: 0.5, cat: "Weapons" },
-    { id: "bcp_small_game_ammo", name: "Small Game Ammunition", cost: 10, wt: 0.5, cat: "Weapons" },
+    { id: "bcp_bullet_to_slug", name: "Bullet to Slug Adapter Casings", cost: 100, wt: 0.5, cat: "Weapons", desc: "Converts bullet Ammunition into Shotgun Slugs. Reusable. 10 casings per box.", ammo: 10 },
+    { id: "bcp_junk_ammo", name: "Junk Ammunition", cost: 10, wt: 0.5, cat: "Weapons", desc: "Reduces damage by 1d6 (min 1d6) vs SP 1+ targets. Reduces Autofire Rating by 1 (min 3). 50 rounds. Arrows, Bullets, Slugs.", ammo: 50 },
+    { id: "bcp_small_game_ammo", name: "Small Game Ammunition", cost: 10, wt: 0.5, cat: "Weapons", desc: "Reduces damage by 2d6 (min 1d6). Reduces Autofire Rating by 1 (min 3). 100 rounds. Bullets only.", ammo: 100 },
+    { id: "ammo_basic", name: "Basic Ammunition", cost: 10, cat: "Weapons", desc: "Standard ammunition. No special features. All ammo types except Grenades and Rockets. 10 units.", ammo: 10 },
+    { id: "ammo_ap", name: "Armor-Piercing Ammunition", cost: 100, cat: "Weapons", desc: "Ablates armor by 2 instead of 1. All ammo types except Shotgun Shells. 10 units.", ammo: 10 },
+    { id: "ammo_expansive", name: "Expansive Ammunition", cost: 100, cat: "Weapons", desc: "Arrows, Bullets, Slugs. Foreign Object Critical Injury causes a second Critical Injury roll.", ammo: 10 },
+    { id: "ammo_incendiary", name: "Incendiary Ammunition", cost: 100, cat: "Weapons", desc: "Ignites target (2 HP/turn). Arrows, Bullets, Grenades, Shotgun Shells, Slugs.", ammo: 10 },
+    { id: "ammo_rubber", name: "Rubber Ammunition", cost: 10, cat: "Weapons", desc: "Less-lethal. Cannot cause Critical Injury or ablate armor. Leaves target at min 1 HP. Arrows, Bullets, Slugs.", ammo: 10 },
+    { id: "ammo_smart", name: "Smart Ammunition", cost: 500, cat: "Weapons", desc: "Requires Targeting Scope. Miss by ≤4: reroll with +10. Arrows, Bullets, Rockets, Slugs.", ammo: 10 },
+    { id: "ammo_poison", name: "Poison Ammunition", cost: 100, cat: "Weapons", desc: "Arrows and Grenades only. Deals 2d6 direct HP damage (DV13 Resist Torture/Drugs). No initial damage.", ammo: 1 },
+    { id: "ammo_biotoxin", name: "Biotoxin Ammunition", cost: 500, cat: "Weapons", desc: "Arrows and Grenades only. Deals 3d6 direct HP damage (DV15 Resist Torture/Drugs). No initial damage.", ammo: 1 },
+    { id: "ammo_flashbang", name: "Flashbang Ammunition", cost: 100, cat: "Weapons", desc: "Grenades only. Damaged Eye and Damaged Ear Critical Injuries for 1 min (DV15 Resist Torture/Drugs).", ammo: 1 },
+    { id: "ammo_sleep", name: "Sleep Ammunition", cost: 500, cat: "Weapons", desc: "Arrows and Grenades only. Target becomes Prone and Unconscious for 1 min (DV13 Resist Torture/Drugs).", ammo: 1 },
+    { id: "ammo_smoke", name: "Smoke Ammunition", cost: 50, cat: "Weapons", desc: "Grenades only. Obscures 10m x 10m area for 1 min. -4 to perception tasks through smoke.", ammo: 1 },
+    { id: "ammo_teargas", name: "Teargas Ammunition", cost: 50, cat: "Weapons", desc: "Grenades only. Damaged Eye Critical Injury for 1 min (DV13 Resist Torture/Drugs).", ammo: 1 },
+    { id: "ammo_emp", name: "EMP Ammunition", cost: 500, cat: "Weapons", desc: "Grenades only. Disables 2 pieces of cyberware/electronics for 1 min (DV15 Cybertech).", ammo: 1 },
     { id: "bcp_piranha_smash", name: "Piranha Smash", cost: 10, wt: 0.5, cat: "Medical" },
     { id: "bcp_solo_pillow", name: "Solo of Fortune Bodypillow", cost: 100, wt: 2, cat: "Fashion" },
     { id: "bc_chipvault", name: "ChipVault by SecSystems", cost: 100, wt: 0.5, cat: "Electronics" },
@@ -675,6 +714,9 @@ var DATA = {
     { id: "zonda_metrocar", name: "Zonda Metrocar", cat: "Gear", cost: 1000, desc: "Compact Groundcar. Nomad Access 1. SDP 25. Combat Speed 10 MOVE. Narrative Speed 30 MPH. 2 seats." }
   ],
 
+  // ----------------------------------------------------------
+  // FASHION
+  // ----------------------------------------------------------
   fashion: [
     { id: "generic_rack", name: "Generic (Rack)", cost: 10, desc: "Cheap, mass-produced clothing" },
     { id: "generic_urban", name: "Generic (Urban)", cost: 50, desc: "Everyday street wear" },
@@ -687,6 +729,9 @@ var DATA = {
     { id: "night_city_leathers", name: "Night City Leathers", cost: 200, desc: "Classic leather jacket and pants" }
   ],
 
+  // ----------------------------------------------------------
+  // LIFEPATH — Random generation tables
+  // ----------------------------------------------------------
   lifepath: {
     backgrounds: [
       "Corporate - You grew up in the corporate world.",

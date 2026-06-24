@@ -28,6 +28,7 @@
   --welcome-bg: #1e1e1e;
   --welcome-overlay-bg: rgba(0,0,0,0.85);
   --focus-ring: #ff6040;
+  --welcome-card-bg: #1e1e1e;
 }
 body { background: var(--bg); color: var(--text); }
 header { background: var(--header-bg); color: var(--header-text); }

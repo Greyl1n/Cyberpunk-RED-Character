@@ -4,13 +4,90 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Cyberpunk RED Character Generator</title>
+<!-- ===== STYLES ===== -->
+<style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+#dismissWelcome:checked~#welcomeOverlay{display:none!important}
+body{font-family:sans-serif;font-size:16px;line-height:1.5;overflow-x:hidden;-webkit-tap-highlight-color:rgba(212,65,43,0.3);touch-action:manipulation;-webkit-text-size-adjust:100%}
+.tab-panel{display:none;padding:1rem}
+.tab-panel.active{display:block}
+.welcome-overlay{display:flex;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;background:rgba(0,0,0,0.7)}
+.welcome-overlay.hidden{display:none}
+.welcome-card{background:#fff;color:#000;border-radius:16px;padding:2rem;max-width:600px;width:90%;max-height:85vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,0.5)}
+.welcome-title{font-size:1.5rem;margin-bottom:0.5rem;color:#111}
+.welcome-subtitle{font-size:0.95rem;margin-bottom:1rem;color:#555}
+.welcome-tab{padding:0.35rem 0;font-size:0.9rem;color:#333}
+.welcome-card .btn-welcome{display:block;width:100%;padding:14px 0;margin-top:0.75rem;background:#d4412b;color:#fff;border:none;border-radius:8px;font-size:1.1rem;font-weight:700;text-align:center;cursor:pointer;-webkit-appearance:none;appearance:none}
+.btn-action,.btn-save,.btn-theme,.tab-btn{cursor:pointer;padding:8px 12px;border:none;border-radius:4px;font-size:0.9rem;font-weight:500;-webkit-appearance:none;appearance:none}
+.tab-btn{background:#e8e4de;color:#666;padding:10px 16px}
+.tab-btn.active{background:#fff;color:#d4412b;font-weight:600}
+.btn-action{background:#333;color:#fff}
+.tabs-nav{display:flex;overflow-x:auto}
+header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;flex-wrap:wrap;gap:6px;background:#1a1a1a;color:#f0ece4}
+.header-logo{display:flex;align-items:center;gap:0.4rem}
+.header-logo h1{font-size:1rem;font-weight:700}
+.header-actions{display:flex;flex-wrap:wrap;gap:4px}
+.section-card{background:#fff;color:#111;border-radius:8px;padding:1rem;margin-bottom:1rem;border:1px solid #ddd}
+.section-title{font-weight:700;font-size:1rem;margin-bottom:0.5rem;padding-bottom:0.3rem;border-bottom:2px solid #d4412b;color:#d4412b}
+.flex-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem}
+.grid-2,.grid-3,.grid-4,.grid-split{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
+.grid-3{grid-template-columns:1fr 1fr 1fr}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem}
+label{display:flex;flex-direction:column;font-size:0.8rem;font-weight:500;color:#444;gap:2px}
+input,select{padding:8px;border:1px solid #ccc;border-radius:4px;font-size:16px;font-family:inherit;background:#fff;color:#111}
+input[type="number"]{width:100%}
+.premium-table{width:100%;border-collapse:collapse;font-size:0.85rem}
+.premium-table th,.premium-table td{padding:4px 6px;text-align:left;border:1px solid #ddd}
+.premium-table th{background:#e8e4de;font-weight:600}
+.premium-table tbody tr:nth-child(even){background:#faf8f5}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:5000;align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal-box{background:#fff;color:#111;border-radius:12px;padding:1.5rem;max-width:500px;width:90%;max-height:80vh;overflow-y:auto}
+.char-list-item{padding:6px 8px;cursor:pointer;border-radius:4px;margin:2px 0;background:#faf8f5}
+.char-buttons{display:flex;gap:4px;margin-top:0.5rem;flex-wrap:wrap}
+.char-modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.panel-gold{padding:0.5rem 0.75rem;border-radius:6px;display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;background:#fef3e7;border:1px solid #e88d2a;color:#111}
+.flex-row{display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap}
+.mt-1{margin-top:1rem}
+.stat-row{display:flex;align-items:center;gap:4px;padding:4px 6px;border-radius:4px;background:#faf8f5}
+.stat-row .stat-name{width:40px;font-weight:700;font-size:0.85rem}
+.stat-row .stat-value{width:30px;text-align:center;font-weight:600}
+.stat-row button{width:36px;height:36px;border:none;border-radius:4px;cursor:pointer;font-weight:700;font-size:1.1rem;display:flex;align-items:center;justify-content:center;background:#e8e4de;color:#111}
+.stat-points-bar{display:flex;align-items:center;gap:0.5rem;padding:4px 6px;border-radius:4px;margin-top:4px;font-size:0.85rem;font-weight:600;background:#fef3e7;color:#111}
+.skills-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
+.skill-search{max-width:250px;padding:6px 10px;border:1px solid #ccc;border-radius:6px;font-size:16px}
+.role-info{font-size:0.85rem;padding:4px 0;color:#444}
+.readonly-input{background:transparent;border-style:dashed;opacity:0.8}
+.table-responsive{overflow-x:auto}
+.main-content{max-width:1400px;margin:0 auto}
+@media(max-width:768px){
+.grid-2,.grid-3,.grid-4,.grid-split,.char-modal-grid,.stat-grid{grid-template-columns:1fr}
+header{padding:6px 8px;flex-wrap:nowrap;gap:4px}
+.header-logo h1{font-size:0.85rem}
+.header-actions{gap:3px}
+.tab-btn{padding:10px 10px;font-size:0.85rem;min-height:48px}
+.tab-panel{padding:0.5rem}
+.section-card{padding:0.75rem}
+.welcome-card{padding:1.25rem}
+.modal-box{padding:1rem;width:95%}
+.stat-row button{width:40px;height:40px}
+input,select{font-size:16px;padding:10px}
+}
+@media(max-width:480px){
+.header-logo h1{font-size:0.75rem}
+.tab-btn{padding:8px 6px;font-size:0.75rem;min-height:44px}
+}
+</style>
+<!-- ===== END STYLES ===== -->
+
 <link id="theme" href="css/theme-light.css" rel="stylesheet">
 <link href="css/base.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
+<!-- ===== BODY / HEADER ===== -->
 <body>
+<input type="checkbox" id="dismissWelcome" style="display:none">
 <header>
-<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v1.3</span></div></div>
+<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v1.5</span></div></div>
 <div class="header-actions">
 <button id="charactersBtn" class="btn-action">&#128194; Characters</button>
 <button id="importBtn" class="btn-action">&#128229; Import</button>
@@ -22,24 +99,30 @@
 <button id="themeToggle" class="btn-theme">&#127763; Theme</button>
 </div>
 </header>
+
+<!-- ===== TAB NAVIGATION ===== -->
 <nav id="tabs" class="tabs-nav">
 <button class="tab-btn active" data-tab="tab-character">&#128196; Character</button>
 <button class="tab-btn" data-tab="tab-gear">&#127890; Gear</button>
 <button class="tab-btn" data-tab="tab-about">&#8505; About</button>
 </nav>
+
+<!-- ===== WELCOME / SPLASH OVERLAY ===== -->
 <div id="welcomeOverlay" class="welcome-overlay">
 <div class="welcome-card">
 <h1 class="welcome-title">&#9881; Cyberpunk RED Generator</h1>
 <p class="welcome-subtitle">Interactive Character Manager for Cyberpunk RED</p>
 <div class="welcome-tabs">
 <div class="welcome-tab"><strong>&#128196; Character</strong> — Stats, role, skills, health, humanity, and lifepath generation</div>
-<div class="welcome-tab"><strong>&#127890; Gear</strong> — Weapons, armor, cyberware, fashion, equipment, and currency tracking</div>
+<div class="welcome-tab"><strong>&#127890; Gear</strong> — Weapons, armor, cyberware, fashion, equipment, currency tracking, and ammunition consumption</div>
 </div>
-<button id="welcomeStartBtn" class="btn-welcome">&#9654; Get Started</button>
+<label for="dismissWelcome" id="welcomeStartBtn" class="btn-welcome" onclick="document.getElementById('welcomeOverlay').style.display='none';document.getElementById('welcomeOverlay').classList.add('hidden')">&#9654; Get Started</label>
 </div>
 </div>
+<script>document.getElementById('welcomeOverlay').addEventListener('click',function(e){if(e.target===this||e.target.id==='welcomeStartBtn'){this.style.display='none';this.classList.add('hidden')}})</script>
 <main class="main-content">
 
+<!-- ===== TAB: CHARACTER ===== -->
 <section id="tab-character" class="tab-panel active">
 <div class="section-card">
 <h2 class="section-title">Identity & Role</h2>
@@ -114,6 +197,7 @@
 </div>
 </section>
 
+<!-- ===== TAB: GEAR ===== -->
 <section id="tab-gear" class="tab-panel">
 <div class="grid-split">
 <div class="section-card">
@@ -150,43 +234,66 @@
 <div class="flex-header"><h2 class="section-title">Fashion & Gear</h2><button id="add_gear_btn" class="btn-action">+ Add Item</button></div>
 <div class="table-responsive">
 <table class="premium-table">
-<thead><tr><th>Item</th><th>Category</th><th>Cost</th><th>Qty</th><th></th></tr></thead>
+<thead><tr><th>Item</th><th>Category</th><th>Cost</th><th>Qty</th><th>Description</th><th></th></tr></thead>
 <tbody id="gear_body"></tbody>
 </table>
 </div>
 <div class="mt-1"><label>Currency (eb) <input id="currency_eb" type="number" value="0" style="width:120px"></label></div>
+<div class="mt-1">
+<h3 style="font-size:0.85rem;margin:0.5rem 0 0.3rem">Ammunition Tracker</h3>
+<div class="table-responsive">
+<table class="premium-table" style="font-size:0.85rem">
+<thead><tr><th>Ammunition</th><th>Rounds / Bundle</th><th>Total Rounds</th><th>Use</th></tr></thead>
+<tbody id="ammo_body"></tbody>
+</table>
+</div>
+<p style="font-size:0.75rem;opacity:0.6;margin-top:0.3rem">Purchase ammo from the Gear tab. Consuming the last rounds removes the item from the gear list (no refund).</p>
+</div>
 </div>
 </div>
 </section>
 
+<!-- ===== TAB: ABOUT ===== -->
 <section id="tab-about" class="tab-panel">
 <div class="section-card">
 <h2 class="section-title">About Cyberpunk RED Generator</h2>
-<p style="margin-bottom:0.8rem;line-height:1.7">A standalone interactive character manager for <strong>Cyberpunk RED</strong> by R. Talsorian Games. This tool lets you create, customise, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing.</p>
-<p style="margin-bottom:0.8rem;line-height:1.7">All game data is based on the <em>Cyberpunk RED Core Rulebook</em> and the <em>Black Chrome</em> supplementary sourcebook. This is a fan-made tool intended for personal use at the table.</p>
+<p style="margin-bottom:0.8rem;line-height:1.7">A fully self-contained, mobile-friendly interactive character manager for <strong>Cyberpunk RED</strong> by R. Talsorian Games. This tool lets you create, customise, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. No server, no build tools, no internet — just open the file.</p>
+<p style="margin-bottom:0.8rem;line-height:1.7">All game data is based on the <em>Cyberpunk RED Core Rulebook</em>, <em>Black Chrome</em>, and numerous official DLC releases. This is a fan-made tool intended for personal use at the table.</p>
 <h3 style="margin:1rem 0 0.4rem">Features</h3>
 <ul style="line-height:1.8;padding-left:1.2rem">
 <li>10 Stats with point-buy system (62 points, min 2 / max 8)</li>
 <li>All 10 Roles with detailed rank-by-rank ability descriptions</li>
 <li>Multiclass support — take a secondary role once your primary reaches Rank 4</li>
-<li>Skills grouped by linked stat with search, ranks, and item bonuses</li>
-<li>Weapons, Armor, Cyberware, Fashion &amp; Gear with add/remove management</li>
+<li>86 Skills grouped by linked stat with search, ranks, and item bonuses</li>
+<li>140+ Weapons, Armor, Cyberware, Fashion &amp; Gear with add/remove management</li>
 <li>Custom item entry for all gear categories</li>
+<li>Categorised item selectors grouped by weapon type, gear category, or cyberware type</li>
 <li>Lifepath generation with randomise button</li>
 <li>Character save/load/delete (localStorage), JSON export/import</li>
 <li>Combined print layout optimised for physical character sheets</li>
+<li>Random character generator — one-click complete, playable character</li>
 <li>Dark/light theme toggle</li>
+<li>Mobile-responsive layout with touch-optimised controls</li>
+<li>Single-file app — zero external dependencies, works offline</li>
 </ul>
+<h3 style="margin:1rem 0 0.4rem">Source Material</h3>
+<p style="line-height:1.8">
+Cyberpunk RED Core Rulebook v1.24 &bull; Black Chrome v1.0 &bull; Black Chrome+ v1.0<br>
+Hornet's Pharmacy &bull; Must Have Cyberware Deals &bull; Weapons List Update for CPRED<br>
+Toggle's Temple &bull; Woodchipper's Garage &bull; 12 Days of Cutiemas<br>
+12 Days of Cybermas &bull; 12 Days of REDmas &bull; 12 Days of Gearmas &bull; 12 Days of Gunmas
+</p>
 <h3 style="margin:1rem 0 0.4rem">Credits</h3>
-<p style="line-height:1.8"><strong>Development</strong> — Built with vanilla HTML, CSS, and JavaScript.<br>
+<p style="line-height:1.8"><strong>Development</strong> — Built with vanilla HTML, CSS, and JavaScript (no frameworks).<br>
 <strong>Game Design</strong> — Cyberpunk RED &copy; R. Talsorian Games. All game text and mechanics are property of their respective owners.<br>
-<strong>Source Material</strong> — Cyberpunk RED Core Rulebook v1.24, Black Chrome v1.0, Black Chrome+ v1.0.<br>
-<strong>Fonts</strong> — Inter (body), Orbitron (headings) via Google Fonts.
+<strong>Fonts</strong> — Inter (body), Orbitron (headings) via Google Fonts (loaded on demand, not required).
 </p>
 </div>
 </section>
 
 </main>
+
+<!-- ===== MODAL: CHARACTER SAVE/LOAD ===== -->
 <div id="characterModal" class="modal-overlay">
 <div class="modal-box">
 <h2>Character Manager</h2>
@@ -197,11 +304,2187 @@
 <button id="charCloseBtn" class="btn-action" style="margin-top:1rem">Close</button>
 </div>
 </div>
-<script src="js/data.js"></script>
-<script src="js/calculations.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/storage.js"></script>
-<script src="js/export.js"></script>
-<script src="js/main.js"></script>
-</body>
+<!-- ============================================================
+     JAVASCRIPT — All game data, logic, and rendering inlined
+     ============================================================ -->
+<script>
+// ============================================================
+// DATA — Game content definitions (stats, roles, skills, items)
+// ============================================================
+var DATA = {
+  // ----------------------------------------------------------
+  // STATS — 10 core attributes
+  // ----------------------------------------------------------
+  stats: [
+    { id: "int", name: "INT", full: "Intelligence", desc: "Memory, deduction, pattern recognition" },
+    { id: "ref", name: "REF", full: "Reflexes", desc: "Reaction time, coordination" },
+    { id: "dex", name: "DEX", full: "Dexterity", desc: "Fine motor control, steady hands" },
+    { id: "tech", name: "TECH", full: "Technical Ability", desc: "Repair, crafting, operating devices" },
+    { id: "cool", name: "COOL", full: "Composure", desc: "Nerves under pressure, charisma" },
+    { id: "will", name: "WILL", full: "Willpower", desc: "Mental fortitude, resistance" },
+    { id: "luck", name: "LUCK", full: "Luck", desc: "Fortune, fate. Spend to reroll or add to a roll" },
+    { id: "move", name: "MOVE", full: "Movement", desc: "Speed, agility, distance covered" },
+    { id: "body", name: "BODY", full: "Body", desc: "Strength, toughness, endurance" },
+    { id: "emp", name: "EMP", full: "Empathy", desc: "Humanity, social awareness" }
+  ],
+
+  // ----------------------------------------------------------
+  // ROLES — All 10 roles with rank-by-rank ability descriptions
+  // ----------------------------------------------------------
+  roles: [
+    { id: "solo", name: "Solo", ability: "Combat Awareness", desc: "Masters of combat. Add REF to initiative. Use Combat Awareness points each turn to boost attacks (+1 to hit), defense (+1 to dodge/block), or damage (+1 to damage).",
+      rankDesc: [
+        "",
+        "1 Combat Awareness point per turn. Can distribute 1 point among +1 Attack, +1 Defense, or +1 Damage.",
+        "2 points per turn. May split between Attack, Defense, and Damage.",
+        "3 points per turn.",
+        "4 points per turn. Gain the ability to Spot敌人的弱点 as a Free Action once per turn.",
+        "5 points per turn.",
+        "6 points per turn. Gain Foresight — go first in combat regardless of initiative once per session.",
+        "7 points per turn.",
+        "8 points per turn. Gain Always Watching — cannot be surprised and ignore ambush penalties.",
+        "9 points per turn.",
+        "10 points per turn. Gain One-Man Army — once per combat, take an additional full round of actions."
+      ] },
+    { id: "rockerboy", name: "Rockerboy", ability: "Charismatic Impact", desc: "Megastars who move the masses. Use Charismatic Impact to spread messages through society using Perform (or similar) checks.",
+      rankDesc: [
+        "",
+        "Affects 1 person. Can deliver a simple message. DV9 to sway them.",
+        "Affects up to 2 people. DV9 to sway a small group.",
+        "Affects up to 4 people. DV13 to sway a small crowd.",
+        "Affects up to 8 people. DV13 to sway a moderate crowd. Message can spread by word of mouth over 1d6 days.",
+        "Affects up to 15 people. DV15 to sway a large crowd.",
+        "Affects up to 30 people. DV15 to sway a very large crowd. Message spreads across a district in 1d6 days.",
+        "Affects up to 60 people. DV17 to sway a massive crowd.",
+        "Affects up to 120 people. DV17. Message spreads across a city in 1d6/2 days.",
+        "Affects up to 250 people. DV19. Message spreads across a region in 1d6/3 days.",
+        "Affects up to 500+ people. DV19. Message spreads across the entire city in 1d6 hours. Gain a loyal following."
+      ] },
+    { id: "netrunner", name: "Netrunner", ability: "Interface", desc: "Cyberspace hackers who breach NET architectures and control programs. Interface Rank determines the maximum NET Architecture floor you can reach.",
+      rankDesc: [
+        "",
+        "Interface Rank 1. Can enter NET architectures up to 1 floor deep. +1 Program slot. Can control 1 program at a time.",
+        "Interface Rank 2. Can enter up to 2 floors deep. +1 Program slot. May control up to 2 programs.",
+        "Interface Rank 3. Up to 3 floors. +1 Program slot. Control up to 3 programs.",
+        "Interface Rank 4. Up to 4 floors. +1 Program slot. Control up to 4 programs. Gain +1 to all NET actions.",
+        "Interface Rank 5. Up to 5 floors. +1 Program slot. Control up to 5 programs.",
+        "Interface Rank 6. Up to 6 floors. +1 Program slot. Control up to 6 programs. Gain +2 to all NET actions.",
+        "Interface Rank 7. Up to 7 floors. +1 Program slot. Control up to 7 programs.",
+        "Interface Rank 8. Up to 8 floors. +1 Program slot. Control up to 8 programs. Gain +3 to all NET actions.",
+        "Interface Rank 9. Up to 9 floors. +1 Program slot. Control up to 9 programs.",
+        "Interface Rank 10. Up to 10 floors. +1 Program slot. Control up to 10 programs. Gain +4 to all NET actions."
+      ] },
+    { id: "tech", name: "Tech", ability: "Maker", desc: "Inventors and repairers. Fabricate items using Invention Slots and upgrade gear with Fabrication Checks.",
+      rankDesc: [
+        "",
+        "1 Invention Slot. Can fabricate DV9 items. Can Field Strip a single device as an Action.",
+        "1 Invention Slot. Can upgrade weapons/armor by 1 level (DV13).",
+        "2 Invention Slots. Can fabricate DV13 items. Field Strip as a Free Action once per turn.",
+        "2 Invention Slots. Can upgrade weapons/armor by 2 levels (DV15).",
+        "3 Invention Slots. Can fabricate DV15 items. Can upgrade cyberware (DV15).",
+        "3 Invention Slots. Can upgrade weapons/armor by 3 levels (DV17). Field Strip any device instantly.",
+        "4 Invention Slots. Can fabricate DV17 items. Can upgrade cyberware by 2 levels (DV17).",
+        "4 Invention Slots. Can upgrade weapons/armor by 4 levels (DV19). Can invent entirely new items (Referee approval).",
+        "5 Invention Slots. Can fabricate DV19 items. Upgrades cost half time and materials.",
+        "5 Invention Slots. Master Maker. Can upgrade anything by any level (DV19). Fabrication takes half time."
+      ] },
+    { id: "medtech", name: "Medtech", ability: "Medicine", desc: "Trauma surgeons and cyber-docs. Perform surgery, treat critical injuries, and install/remove cyberware using their Medicine skill.",
+      rankDesc: [
+        "",
+        "Crisis/Surgery Rank 1. Can treat 1 Critical Injury per operation. Can install Standard cyberware (DV9). Can diagnose injuries as an Action.",
+        "Crisis/Surgery Rank 2. Can treat up to 2 Critical Injuries per operation.",
+        "Crisis/Surgery Rank 3. Can install Premium cyberware (DV13). Can perform emergency field surgery.",
+        "Crisis/Surgery Rank 4. Can treat up to 3 Critical Injuries per operation. Stabilize a dying patient as a Single Action.",
+        "Crisis/Surgery Rank 5. Can install Excellent cyberware (DV15). Surgery recovery time halved.",
+        "Crisis/Surgery Rank 6. Can treat up to 4 Critical Injuries per operation. Can install cyberware in half the normal time.",
+        "Crisis/Surgery Rank 7. Can install Borg cyberware (DV17). Can perform surgery without a clinic (field conditions).",
+        "Crisis/Surgery Rank 8. Can treat any number of Critical Injuries per operation. Surgery recovery time reduced to 1/3.",
+        "Crisis/Surgery Rank 9. Can install any cyberware including prototype/Beta (DV19).",
+        "Crisis/Surgery Rank 10. Master Medtech. Surgery takes 1/4 normal time. Can revive a clinically dead patient within 1 minute (Referee discretion)."
+      ] },
+    { id: "exec", name: "Exec", ability: "Team", desc: "Corporate officers with access to resources and a team of loyal subordinates. Team members scale with rank.",
+      rankDesc: [
+        "",
+        "1 team member (Rank 1 — intern/assistant). Access to a modest corporate apartment. Small expense account (500eb/month).",
+        "2 team members (Ranks 1-2). Slightly better apartment. Expense account of 1,000eb/month.",
+        "2 team members (Ranks 1-3). Mid-range corporate housing. 2,000eb/month expense account. Access to corporate gym.",
+        "3 team members (Ranks 1-4). 1 team member can be Rank 4. 4,000eb/month. Corporate vehicle (Economy).",
+        "3 team members (Ranks 1-5). 1 team member can be Rank 5. 8,000eb/month expense account. Corporate vehicle (Mid-Range).",
+        "4 team members (Ranks 1-6). 1 team member can be Rank 6. 12,000eb/month. Executive suite. Corporate vehicle (Luxury).",
+        "5 team members (Ranks 1-7). 1 team member can be Rank 7. 20,000eb/month. Floor of corporate tower. AV-4 access.",
+        "5 team members (Ranks 1-8). 1 team member can be Rank 8. 30,000eb/month. Corporate jet for inter-city travel.",
+        "6 team members (Ranks 1-9). 1 team member can be Rank 9. 50,000eb/month. Full executive floor. Company helicopter.",
+        "6 team members (Ranks 1-10). 1 team member can be Rank 10. 100,000eb/month. Near-total corporate resource access (subject to Referee)."
+      ] },
+    { id: "lawman", name: "Lawman", ability: "Backup", desc: "Badges who call in backup. The higher the rank, the faster and more powerful the response.",
+      rankDesc: [
+        "",
+        "Call Backup (arrives in 1d10/2 rounds). 1 officer arrives (armed with Heavy Pistol, Light Armorjack).",
+        "Call Backup (1d10/2 rounds). 2 officers arrive.",
+        "Call Backup (1d10/2 rounds). 3 officers. One has a Shotgun.",
+        "Call Backup (1d10/2 rounds). 4 officers. Squad has one AV-4 for transport.",
+        "Call Backup (1d10 rounds). 2 officers + 1 AV-4 gunship with door gunner. Officers carry Assault Rifles.",
+        "Call Backup (1d10 rounds). 3 officers + 1 AV-4. One officer carries a Sniper Rifle.",
+        "Call Backup (1d10 rounds). 4 officers + 1 AV-4 + Air Support (attack helicopter). Can declare a Code Red — all officers in district respond.",
+        "Call Backup (1d6 rounds). MaxTac team arrives (4 operatives with heavy weapons and full borg conversion).",
+        "Call Backup (1d6 rounds). MaxTac team + AV-4 gunship. Can declare a Code Black — MaxTac and all available LEOs respond.",
+        "Call Backup (1d6 rounds). Full MaxTac strike force (6 operatives, 2 AV-4s, Air Support). Once per session, call in an airstrike or orbital strike (Referee discretion)."
+      ] },
+    { id: "fixer", name: "Fixer", ability: "Operator", desc: "Dealers who find anything for a price. Gain Contacts and street price reduction on purchased items.",
+      rankDesc: [
+        "",
+        "1 Contact. Gain a 100eb x Rank discount on purchased items (max 50% off). Can find any item up to Premium availability.",
+        "2 Contacts. 200eb x Rank discount. Can find any item up to Premium availability.",
+        "3 Contacts. 300eb x Rank discount. Can find items up to Excellent availability.",
+        "4 Contacts. 400eb x Rank discount. Can find items up to Excellent availability.",
+        "5 Contacts. 500eb x Rank discount. Can find items up to Luxury availability. Can fence stolen goods for 50% value.",
+        "6 Contacts. 600eb x Rank discount. Can find items up to Luxury availability. Fence for 60% value.",
+        "7 Contacts. 700eb x Rank discount. Can find any item (including military/restricted). Fence for 70% value.",
+        "8 Contacts. 800eb x Rank discount. Can find any item. One contact is a Fixer — can source jobs. Fence for 80%.",
+        "9 Contacts. 900eb x Rank discount. Can find multiple units of restricted items. Fence for 90%.",
+        "10 Contacts. 1000eb x Rank discount (max 50% off). Can find anything within 1d6 days. Fence for 100%. Gain a private Night Market."
+      ] },
+    { id: "nomad", name: "Nomad", ability: "Moto", desc: "Transport experts who call in vehicles and modify them. Gains vehicles, upgrade slots, and the ability to drive anything.",
+      rankDesc: [
+        "",
+        "1 vehicle (Economy — car or bike). +1 upgrade slot. Can hotwire any ground vehicle in 1d10 rounds.",
+        "1 vehicle (Economy). +2 upgrade slots. Can drive any ground vehicle without penalty.",
+        "1 vehicle (Mid-Range quality). +3 upgrade slots. Can pilot any air vehicle without penalty.",
+        "1 vehicle (Mid-Range). +4 upgrade slots. Once per session, call in a favor for a temporary vehicle.",
+        "1 vehicle (Luxury or Performance quality). +5 upgrade slots. Can pilot any vehicle without penalty (including watercraft).",
+        "2 vehicles (1 Luxury/Performance, 1 Mid-Range). +6 upgrade slots. Vehicles can be called in within 1d10 minutes.",
+        "2 vehicles (1 Super/Luxury, 1 Mid-Range). +7 upgrade slots. Can modify vehicles to add hidden weapon mounts.",
+        "2 vehicles (1 Super/Luxury, 1 Economy). +8 upgrade slots. One vehicle can be a Heavy (armored truck/tank).",
+        "3 vehicles (varying quality). +9 upgrade slots. Vehicles can be called in within 1d10/2 minutes. Can have a home base (garage/compound).",
+        "3 vehicles (1 Supercar/Luxury custom). +10 upgrade slots. Can call in a favor for any vehicle (including military/experimental). Gain a mobile command vehicle."
+      ] },
+    { id: "media", name: "Media", ability: "Credibility", desc: "Investigative reporters who dig up the truth. Credibility determines sources per story and questions per source.",
+      rankDesc: [
+        "",
+        "1 source per story. 1 question per source. Can identify public information with a DV9 Library Search check.",
+        "1 source per story. 2 questions per source. Sources are more willing to talk (DV9 Human Perception to detect lies).",
+        "2 sources per story. 2 questions per source. Can access city records with a DV13 check.",
+        "2 sources per story. 3 questions per source. Sources will share documents/proof (DV13).",
+        "3 sources per story. 3 questions per source. Can access corporate records with a DV15 check.",
+        "3 sources per story. 4 questions per source. Gain a Deep Source — a high-level informant (Referee-assigned).",
+        "4 sources per story. 4 questions per source. Can access military/government records (DV17). Stories reach a city-wide audience.",
+        "4 sources per story. 5 questions per source. Deep Source becomes a reliable contact. Stories can start investigations by authorities (DV17 resist).",
+        "5 sources per story. 5 questions per source. Can access any records with a DV19 check. Stories spread region-wide in 1d6 days.",
+        "5 sources per story. Unlimited questions. Gain an Anonymous Source Network — once per session, get a piece of critical information from an unknown source. Stories can topple corporations (subject to play)."
+      ] }
+  ],
+
+  // ----------------------------------------------------------
+  // SKILLS — Grouped by linked stat
+  // ----------------------------------------------------------
+  skills: {
+    int: [
+      { id: "accounting", name: "Accounting" },
+      { id: "animal_handling", name: "Animal Handling" },
+      { id: "bureaucracy", name: "Bureaucracy" },
+      { id: "business", name: "Business" },
+      { id: "composition", name: "Composition" },
+      { id: "conceal_reveal_object", name: "Conceal/Reveal Object" },
+      { id: "criminology", name: "Criminology" },
+      { id: "cryptography", name: "Cryptography" },
+      { id: "deduction", name: "Deduction" },
+      { id: "education", name: "Education" },
+      { id: "gamble", name: "Gamble" },
+      { id: "language", name: "Language" },
+      { id: "library_search", name: "Library Search" },
+      { id: "lip_reading", name: "Lip Reading" },
+      { id: "local_expert", name: "Local Expert" },
+      { id: "perception", name: "Perception" },
+      { id: "science", name: "Science" },
+      { id: "tactics", name: "Tactics" },
+      { id: "tracking", name: "Tracking" },
+      { id: "wilderness_survival", name: "Wilderness Survival" }
+    ],
+    ref: [
+      { id: "archery", name: "Archery" },
+      { id: "autofire", name: "Autofire", ipMult: 2 },
+      { id: "drive_land_vehicle", name: "Drive Land Vehicle" },
+      { id: "handgun", name: "Handgun" },
+      { id: "heavy_weapons", name: "Heavy Weapons", ipMult: 2 },
+      { id: "pilot_air_vehicle", name: "Pilot Air Vehicle", ipMult: 2 },
+      { id: "pilot_sea_vehicle", name: "Pilot Sea Vehicle" },
+      { id: "riding", name: "Riding" },
+      { id: "shoulder_arms", name: "Shoulder Arms" }
+    ],
+    dex: [
+      { id: "athletics", name: "Athletics" },
+      { id: "brawling", name: "Brawling" },
+      { id: "contortionist", name: "Contortionist" },
+      { id: "dance", name: "Dance" },
+      { id: "evasion", name: "Evasion" },
+      { id: "martial_arts", name: "Martial Arts", ipMult: 2 },
+      { id: "melee_weapon", name: "Melee Weapon" },
+      { id: "stealth", name: "Stealth" }
+    ],
+    tech: [
+      { id: "air_vehicle_tech", name: "Air Vehicle Tech" },
+      { id: "basic_tech", name: "Basic Tech" },
+      { id: "cybertech", name: "Cybertech" },
+      { id: "demolitions", name: "Demolitions", ipMult: 2 },
+      { id: "electronics_security_tech", name: "Electronics/Security Tech", ipMult: 2 },
+      { id: "first_aid", name: "First Aid" },
+      { id: "forgery", name: "Forgery" },
+      { id: "land_vehicle_tech", name: "Land Vehicle Tech" },
+      { id: "paint_draw_sculpt", name: "Paint/Draw/Sculpt" },
+      { id: "paramedic", name: "Paramedic", ipMult: 2 },
+      { id: "photography_film", name: "Photography/Film" },
+      { id: "pick_lock", name: "Pick Lock" },
+      { id: "pick_pocket", name: "Pick Pocket" },
+      { id: "play_instrument", name: "Play Instrument", ipMult: 2 },
+      { id: "sea_vehicle_tech", name: "Sea Vehicle Tech" },
+      { id: "weaponstech", name: "Weaponstech" }
+    ],
+    cool: [
+      { id: "acting", name: "Acting" },
+      { id: "bribery", name: "Bribery" },
+      { id: "interrogation", name: "Interrogation" },
+      { id: "persuasion", name: "Persuasion" },
+      { id: "personal_grooming", name: "Personal Grooming" },
+      { id: "streetwise", name: "Streetwise" },
+      { id: "trading", name: "Trading" },
+      { id: "wardrobe_style", name: "Wardrobe & Style" }
+    ],
+    emp: [
+      { id: "conversation", name: "Conversation" },
+      { id: "human_perception", name: "Human Perception" }
+    ],
+    will: [
+      { id: "concentration", name: "Concentration" },
+      { id: "endurance", name: "Endurance" },
+      { id: "resist_torture_drugs", name: "Resist Torture/Drugs" }
+    ]
+  },
+
+  // ----------------------------------------------------------
+  // WEAPONS — Standard + exotic weapons from core rulebook & DLCs
+  // ----------------------------------------------------------
+  weapons: [
+    { id: "heavy_pistol", name: "Heavy Pistol", type: "Handgun", dmg: "3d6", hands: 1, rof: 2, mag: 12, conceal: "Jacket", cost: 500, desc: "Standard heavy pistol" },
+    { id: "light_pistol", name: "Light Pistol", type: "Handgun", dmg: "2d6", hands: 1, rof: 2, mag: 15, conceal: "Pocket", cost: 250, desc: "Small concealable pistol" },
+    { id: "very_heavy_pistol", name: "Very Heavy Pistol", type: "Handgun", dmg: "4d6", hands: 1, rof: 1, mag: 8, conceal: "Jacket", cost: 750, desc: "Large caliber pistol" },
+    { id: "assault_rifle", name: "Assault Rifle", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 25, conceal: "Long gun", cost: 1000, desc: "Full-auto capable rifle" },
+    { id: "smg", name: "Submachine Gun", type: "Shoulder Arms", dmg: "3d6", hands: 2, rof: 2, mag: 30, conceal: "Long gun", cost: 750, desc: "Automatic weapon" },
+    { id: "shotgun_pump", name: "Shotgun (Pump)", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 6, conceal: "Long gun", cost: 500, desc: "Pump-action shotgun" },
+    { id: "shotgun_auto", name: "Shotgun (Auto)", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 2, mag: 10, conceal: "Long gun", cost: 1000, desc: "Automatic shotgun" },
+    { id: "sniper_rifle", name: "Sniper Rifle", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 6, conceal: "Cannot conceal", cost: 1500, desc: "Long range precision rifle" },
+    { id: "heavy_smg", name: "Heavy SMG", type: "Shoulder Arms", dmg: "4d6", hands: 2, rof: 2, mag: 40, conceal: "Long gun", cost: 1000, desc: "Large caliber SMG" },
+    { id: "heavy_pistol_smart", name: "Smart Heavy Pistol", type: "Handgun", dmg: "3d6", hands: 1, rof: 2, mag: 12, conceal: "Jacket", cost: 2000, desc: "Smart-linked heavy pistol" },
+    { id: "medium_pistol", name: "Medium Pistol", type: "Handgun", dmg: "2d6+3", hands: 1, rof: 2, mag: 14, conceal: "Jacket", cost: 350, desc: "Reliable medium pistol" },
+    { id: "bow", name: "Bow", type: "Archery", dmg: "4d6", hands: 2, rof: 1, mag: 1, conceal: "Long gun", cost: 200, desc: "Compound hunting bow" },
+    { id: "crossbow", name: "Crossbow", type: "Archery", dmg: "4d6", hands: 2, rof: 1, mag: 1, conceal: "Long gun", cost: 300, desc: "Silent ranged weapon" },
+    { id: "grenade_frag", name: "Frag Grenade", type: "Heavy Weapons", dmg: "6d6", hands: 1, rof: 1, mag: null, conceal: "Pocket", cost: 100, desc: "High explosive fragmentation grenade" },
+    { id: "grenade_smoke", name: "Smoke Grenade", type: "Heavy Weapons", dmg: "0", hands: 1, rof: 1, mag: null, conceal: "Pocket", cost: 50, desc: "Creates smoke screen" },
+    { id: "knife", name: "Knife", type: "Melee Weapon", dmg: "1d6", hands: 1, conceal: "Pocket", cost: 50, desc: "Standard combat knife" },
+    { id: "machete", name: "Machete", type: "Melee Weapon", dmg: "2d6", hands: 1, conceal: "Jacket", cost: 100, desc: "Heavy blade" },
+    { id: "katana", name: "Katana", type: "Melee Weapon", dmg: "3d6", hands: 2, conceal: "Long gun", cost: 500, desc: "Masterwork blade" },
+    { id: "lead_pipe", name: "Lead Pipe", type: "Melee Weapon", dmg: "2d6", hands: 1, conceal: "Jacket", cost: 10, desc: "Heavy metal pipe" },
+    { id: "baseball_bat", name: "Baseball Bat", type: "Melee Weapon", dmg: "2d6", hands: 2, conceal: "Long gun", cost: 20, desc: "Standard baseball bat" },
+    { id: "tonfa", name: "Tonfa", type: "Melee Weapon", dmg: "2d6", hands: 1, conceal: "Jacket", cost: 50, desc: "Police-issue tonfa" },
+    { id: "chainsaw", name: "Chainsaw", type: "Melee Weapon", dmg: "4d6", hands: 2, conceal: "Cannot conceal", cost: 200, desc: "Powered saw blade" },
+    { id: "stun_baton", name: "Stun Baton", type: "Melee Weapon", dmg: "1d6+stun", hands: 1, conceal: "Jacket", cost: 150, desc: "Electric stun baton" },
+    { id: "big_dreem", name: "Big Dreem", type: "Autofire", dmg: "3d6", hands: 1, rof: 1, mag: 30, conceal: "No", cost: 10, desc: "Exotic SMG, Autofire only. Continues firing for 2 turns after trigger pulled." },
+    { id: "everest_sportmaster", name: "Everest SportMaster", type: "Shoulder Arms", dmg: "3d6", hands: 2, rof: 1, mag: 25, conceal: "No", cost: 50, desc: "Assault Rifle, single shot only. Only loads Small Game Ammo." },
+    { id: "everest_survivalmaster", name: "Everest SurvivalMaster", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 5, conceal: "Yes (disassembled)", cost: 100, desc: "Exotic Assault Rifle. Can disassemble to fit in stock for concealment." },
+    { id: "sanroo_hello_cutie", name: "Sanroo Hello Cutie 1TruLuv", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 4, conceal: "No", cost: 1000, desc: "Exotic Sniper Rifle with Sniper Scope, Nightvision Scope, and pseudo AI girlfriend." },
+    { id: "molotov_cocktail", name: "Molotov Cocktail", type: "Athletics", dmg: "5d6", hands: 1, rof: 1, mag: null, conceal: "No", cost: 20, desc: "Incendiary grenade. 50% chance to break when you take damage, setting you on fire." },
+    { id: "timeless_ww1_conversion", name: "Timeless WW1 Conversion", type: "Handgun", dmg: "4d6", hands: 1, rof: 1, mag: 5, conceal: "No", cost: 20, desc: "Poor Quality VH Pistol. Requires an Action to chamber next round." },
+    { id: "club_bat_baton", name: "Club / Baseball Bat / Auto Spring Baton", type: "Melee Weapon", dmg: "1d6", hands: 2, conceal: "Yes", cost: 20, desc: "Poor. Crit Fail on ATK roll of 1." },
+    { id: "sword", name: "Sword", type: "Melee Weapon", dmg: "3d6", hands: 2, conceal: "No", cost: 100, desc: "Standard." },
+    { id: "knife_bayonet", name: "Knife / Survival Knife / Bayonet / Switchblade", type: "Melee Weapon", dmg: "1d6", hands: 1, conceal: "Yes", cost: 50, desc: "Standard. Throw. Bayonet can attach to SMG/Assault Rifle." },
+    { id: "axe_melee", name: "Axe", type: "Melee Weapon", dmg: "3d6", hands: 2, conceal: "No", cost: 50, desc: "Standard." },
+    { id: "hatchet_tomahawk", name: "Hatchet / Tomahawk", type: "Melee Weapon", dmg: "1d6", hands: 1, conceal: "Yes", cost: 20, desc: "Poor. Throw. Crit Fail on ATK 1. One Action to reverse." },
+    { id: "nunchaku_tonfa", name: "Nunchaku / Tonfa", type: "Melee Weapon", dmg: "1d6", hands: 2, conceal: "Yes", cost: 50, desc: "Standard. Hidden spring blade +50eb for +1d6 dmg." },
+    { id: "naginata", name: "Naginata", type: "Melee Weapon", dmg: "3d6", hands: 2, conceal: "No", cost: 500, desc: "Excellent. 2M range." },
+    { id: "shuriken", name: "Shuriken", type: "Melee Weapon", dmg: "1d6/2", hands: 1, conceal: "Yes", cost: 50, desc: "Standard. Throw. Poison can be added." },
+    { id: "brass_knuckles", name: "Brass Knuckles / Knuckle Duster", type: "Melee Weapon", dmg: "1d6", hands: 1, conceal: "Yes", cost: 20, desc: "Poor. Add spikes for 2d6 dmg (+50eb). Crit Fail on ATK 1." },
+    { id: "sledgehammer_spiked_bat", name: "Sledgehammer / Spiked Baseball Bat", type: "Melee Weapon", dmg: "4d6/3d6", hands: 2, conceal: "No", cost: 100, desc: "Standard." },
+    { id: "chainsaw_melee", name: "Chainsaw", type: "Melee Weapon", dmg: "4d6+1", hands: 2, conceal: "No", cost: 500, desc: "Standard. AP vs Soft Armor, damages 2 SP/hit." },
+    { id: "utility_sword_machete", name: "Utility Sword / Machete", type: "Melee Weapon", dmg: "2d6", hands: 1, conceal: "No", cost: 50, desc: "Standard. Can be used as agricultural tool." },
+    { id: "entrenching_tool", name: "Entrenching Tool", type: "Melee Weapon", dmg: "2d6", hands: 2, conceal: "No", cost: 50, desc: "Poor. Crit Fail on ATK 1. One Action to reverse." },
+    { id: "excalibur_nightstick", name: "Excalibur Nightstick", type: "Melee Weapon", dmg: "2d6", hands: 1, conceal: "Yes", cost: 100, desc: "Excellent. +1 ATK. Taser (Stun) or Mace (Gas Effect)." },
+    { id: "kendachi_monokatana", name: "Kendachi MonoKatana 3", type: "Melee Weapon", dmg: "4d6+1", hands: "1 or 2", conceal: "No", cost: 5000, desc: "Excellent. +1 ATK. Ignores armor SP<11. Naginata version +200eb, 2M range." },
+    { id: "imi_chainknife", name: "IMI Chainknife", type: "Melee Weapon", dmg: "2d6", hands: 1, conceal: "Yes", cost: 100, desc: "Excellent. +1 ATK." },
+    { id: "kendachi_monoknife", name: "Kendachi Monoknife", type: "Melee Weapon", dmg: "3d6+1", hands: 1, conceal: "Yes", cost: 500, desc: "Excellent. +1 ATK. Ignores armor SP<11." },
+    { id: "kendachi_monowhip", name: "Kendachi Monowhip", type: "Melee Weapon", dmg: "2d6+1", hands: 1, conceal: "Yes", cost: 500, desc: "Excellent. +1 ATK. 1-3M range. Can be used as garrote/cutter/grapple." },
+    { id: "spm1_battleglove", name: "SPM-1 Battleglove", type: "Melee Weapon", dmg: "3d6/2d6", hands: 1, conceal: "No", cost: 1000, desc: "Excellent. +1 ATK. 3d6 crush/2d6 punch. Contains 3 cyberarm option slots." },
+    { id: "spawnblade", name: "SlamDance Spawnblade", type: "Melee Weapon", dmg: "1d6+1", hands: 1, conceal: "Yes", cost: 500, desc: "Excellent. +1 ATK. Thrown. DV20 First Aid to remove or 1d6/2 dmg." },
+    { id: "mystic_nunchaku_blade", name: "Mystic Technologies Nunchaku/Blade", type: "Melee Weapon", dmg: "1d6/2d6", hands: 1, conceal: "Yes", cost: 200, desc: "Standard. 60cm staff splits into nunchaku. 2d6 dmg two-handed." },
+    { id: "arasaka_half_bow", name: "Arasaka Arms Half-Bow", type: "Bow", dmg: "3d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 200, desc: "Standard. Arrows." },
+    { id: "eagletech_tomcat", name: "Eagletech Tomcat Compound Bow", type: "Bow", dmg: "4d6+1", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 300, desc: "Excellent. +1 ATK. Arrows, gyro-stabilized." },
+    { id: "eagletech_tigercat", name: "Eagletech Tigercat Compound Bow", type: "Bow", dmg: "4d6+1", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 600, desc: "Excellent. +1 ATK. Arrows, computerized sight, gyro-stabilized." },
+    { id: "eagletech_arbalest", name: "Eagletech Arbalest Crossbow", type: "Crossbow", dmg: "4d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 500, desc: "Excellent. +1 ATK. Bolt. Cyberarm w/ internal bracing can manually reload (ROF 1)." },
+    { id: "eagletech_handbow", name: "Eagletech Handbow Crossbow", type: "Crossbow", dmg: "2d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 100, desc: "Standard. Bolt. Can be installed in cyberarm w/ autoloader (+200eb)." },
+    { id: "eagletech_stryker", name: "Eagletech Stryker Crossbow", type: "Crossbow", dmg: "4d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 300, desc: "Excellent. +1 ATK. Bolt." },
+    { id: "eagletech_wildcat", name: "Eagletech Wildcat Sport Bow", type: "Bow", dmg: "3d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 150, desc: "Poor. Arrows. Crit Fail on ATK 1. One Action to reverse." },
+    { id: "arasaka_wsa", name: "Arasaka WSA Autopistol", type: "Medium Pistol", dmg: "2d6", hands: 1, rof: 2, mag: 16, conceal: "Yes", cost: 500, desc: "Standard." },
+    { id: "federated_x9", name: "Federated Arms X-9", type: "Medium Pistol", dmg: "2d6", hands: 1, rof: 2, mag: 16, conceal: "Yes", cost: 300, desc: "Standard." },
+    { id: "dai_lung_streetmaster", name: "Dai Lung Streetmaster", type: "Medium Pistol", dmg: "2d6", hands: 1, rof: 2, mag: 16, conceal: "Yes", cost: 100, desc: "Poor." },
+    { id: "budgetarm_c41", name: "BudgetArm C-41", type: "Medium Pistol", dmg: "2d6", hands: 1, rof: 2, mag: 16, conceal: "Yes", cost: 800, desc: "Excellent. Extended Magazine." },
+    { id: "beretta_m97p", name: "Beretta M97P", type: "Medium Pistol", dmg: "2d6", hands: 1, rof: 2, mag: 18, conceal: "Yes", cost: 600, desc: "Excellent. Underbarrel Integral Laser Sight." },
+    { id: "glock_thirty", name: "Glock Thirty Machine Pistol", type: "Medium Pistol", dmg: "2d6", hands: 1, rof: 2, mag: 30, conceal: "Yes", cost: 800, desc: "Excellent. Extended mag. +1 ATK. Smartchip link." },
+    { id: "militech_avenger", name: "Militech Arms Avenger", type: "Medium Pistol", dmg: "2d6", hands: 1, rof: 2, mag: 16, conceal: "Yes", cost: 350, desc: "Excellent. Extended magazine." },
+    { id: "towa_type14", name: "Towa Mfg Type-14 Police Pistol", type: "Medium Pistol", dmg: "2d6", hands: 1, rof: 2, mag: 16, conceal: "Yes", cost: 1100, desc: "Smartchip link. +1 ATK." },
+    { id: "nova_citygun", name: "Nova Model 338 Citygun", type: "Heavy Pistol", dmg: "3d6", hands: 1, rof: 2, mag: 8, conceal: "Yes", cost: 500, desc: "Excellent." },
+    { id: "mustang_mark3", name: "Mustang Arms Mark III", type: "Heavy Pistol", dmg: "3d6", hands: 1, rof: 2, mag: 20, conceal: "Yes", cost: 500, desc: "Standard. Extended magazine." },
+    { id: "dai_lung_magnum", name: "Dai Lung Magnum", type: "Heavy Pistol", dmg: "3d6", hands: 1, rof: 2, mag: 8, conceal: "Yes", cost: 50, desc: "Poor. 60% chance explosion on fumble. 2d6 dmg to arm." },
+    { id: "nova_cityhunter", name: "Nova Model 757 Cityhunter", type: "Heavy Pistol", dmg: "3d6", hands: 1, rof: 2, mag: 16, conceal: "Yes", cost: 500, desc: "Excellent. Extended magazine." },
+    { id: "sternmeyer_p35", name: "Sternmeyer P-35", type: "Heavy Pistol", dmg: "3d6", hands: 1, rof: 2, mag: 8, conceal: "Yes", cost: 500, desc: "Standard." },
+    { id: "budgetarms_auto3", name: "BudgetArms Auto-3", type: "Heavy Pistol", dmg: "3d6", hands: 1, rof: 2, mag: 8, conceal: "Yes", cost: 200, desc: "Poor. 10% chance explosion on fumble. 2d6 dmg to arm." },
+    { id: "ameritech_magnum", name: "Ameritech Magnum", type: "Very Heavy Pistol", dmg: "4d6", hands: 1, rof: 1, mag: 6, conceal: "Yes", cost: 1000, desc: "Excellent. Laser-sighted or Smartgun. +1 ATK." },
+    { id: "federated_super_chief", name: "Federated Arms 454 DA Super Chief", type: "Very Heavy Pistol", dmg: "4d6", hands: 1, rof: 1, mag: 6, conceal: "Yes", cost: 500, desc: "Excellent." },
+    { id: "shotgun_pistol", name: "Shotgun Pistol", type: "Very Heavy Pistol", dmg: "3d6/4d6", hands: 1, rof: 1, mag: 2, conceal: "Yes", cost: 200, desc: "Standard. Shotgun shells / Slugs." },
+    { id: "militech_boomer_buster", name: "Militech .477 Boomer Buster", type: "Very Heavy Pistol", dmg: "5d6", hands: 1, rof: 1, mag: 4, conceal: "Yes", cost: 1000, desc: "Excellent. Folding arm brace. Conceal drops without brace deployed or cyberarm." },
+    { id: "colt_amt_2000", name: "Colt AMT Model 2000", type: "Very Heavy Pistol", dmg: "4d6", hands: 1, rof: 1, mag: 8, conceal: "Yes", cost: 600, desc: "Excellent." },
+    { id: "armalite_44", name: "Armalite-44", type: "Very Heavy Pistol", dmg: "4d6", hands: 1, rof: 1, mag: 8, conceal: "Yes", cost: 400, desc: "Standard." },
+    { id: "royal_enfield_spitfire", name: "Royal Enfield Ordnance Spitfire", type: "Very Heavy Pistol", dmg: "4d6", hands: 1, rof: 1, mag: 12, conceal: "Yes", cost: 800, desc: "Standard. Smartchip link. +1 ATK." },
+    { id: "federated_tech_assault", name: "Federated Arms Tech-Assault", type: "SMG", dmg: "2d6", hands: 2, rof: 1, mag: 30, conceal: "Yes", cost: 100, desc: "Standard. Autofire (3). Suppressive Fire. Integral silencer +100eb." },
+    { id: "uzi_miniauto9", name: "Uzi Miniauto 9", type: "SMG", dmg: "2d6", hands: 2, rof: 1, mag: 30, conceal: "Yes", cost: 500, desc: "Standard. Autofire (3). Suppressive Fire." },
+    { id: "setsuko_arasaka_pms", name: "Setsuko-Arasaka PMS SMG", type: "SMG", dmg: "3d6", hands: 2, rof: 1, mag: 40, conceal: "Yes", cost: 1500, desc: "Excellent. Autofire (3). Suppressive Fire. Smartchip. +1 ATK." },
+    { id: "militech_mini_gat", name: "Militech Mini Gat Machine Carbine", type: "SMG", dmg: "2d6", hands: 2, rof: 1, mag: 40, conceal: "Yes", cost: 1700, desc: "Excellent. +1 ATK. Autofire (3). Suppressive Fire. Smartchip." },
+    { id: "federated_tech_assault3", name: "Federated Arms Tech-Assault III", type: "SMG", dmg: "2d6", hands: 2, rof: 1, mag: 50, conceal: "Yes", cost: 400, desc: "Standard. Autofire (3). Suppressive Fire." },
+    { id: "kalashnikov_ppsh14", name: "Kalashnikov PPsh 14", type: "SMG", dmg: "2d6", hands: 2, rof: 1, mag: 30, conceal: "Yes", cost: 500, desc: "Standard. Autofire (3). Suppressive Fire." },
+    { id: "hkv_mpk9", name: "Heckler & Koch MPK-9", type: "SMG", dmg: "2d6", hands: 2, rof: 1, mag: 30, conceal: "Yes", cost: 500, desc: "Standard. Autofire (3). Suppressive Fire." },
+    { id: "arasaka_minami10", name: "Arasaka WMA Minami 10 SMG", type: "SMG", dmg: "2d6", hands: 1, rof: 1, mag: 40, conceal: "Yes", cost: 500, desc: "Excellent. +1 ATK. Autofire (3). Suppressive Fire." },
+    { id: "mustang_ars5c", name: "Mustang Arms ARS-5C SMG", type: "SMG", dmg: "2d6", hands: 1, rof: 1, mag: 40, conceal: "Yes", cost: 1700, desc: "Standard. Autofire (3). Suppressive Fire. Smartchip. +1 ATK. Detachable scopes, Laser Sight." },
+    { id: "stolbavoy_sts", name: "Stolbavoy STS SMG", type: "SMG", dmg: "2d6", hands: 1, rof: 1, mag: 30, conceal: "Yes", cost: 1200, desc: "Standard. Autofire (3). Suppressive Fire. Smartchip. +1 ATK." },
+    { id: "militech_10_smg", name: "Militech 10 SMG", type: "SMG", dmg: "2d6", hands: 1, rof: 1, mag: 30, conceal: "Yes", cost: 500, desc: "Standard. Autofire (3). Suppressive Fire." },
+    { id: "beretta_pm24s", name: "Beretta PM-24s Advanced SMG", type: "SMG", dmg: "2d6", hands: 1, rof: 1, mag: 50, conceal: "Yes", cost: 1200, desc: "Excellent. +1 ATK. Autofire (3). Suppressive Fire. Smartchip." },
+    { id: "beretta_1010", name: "Beretta 1010 Machine Pistol", type: "SMG", dmg: "2d6", hands: 1, rof: 1, mag: 30, conceal: "Yes", cost: 500, desc: "Excellent. +1 ATK. Autofire (3). Suppressive Fire." },
+    { id: "hkv_mp2013", name: "Heckler & Koch MP-2013 SMG", type: "SMG", dmg: "2d6", hands: 1, rof: 1, mag: 30, conceal: "Yes", cost: 500, desc: "Standard. Autofire (3). Suppressive Fire." },
+    { id: "beretta_pm36", name: "Beretta PM 36 SMG", type: "SMG", dmg: "3d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 800, desc: "Standard. Autofire (3). Suppressive Fire." },
+    { id: "ccmmc_tuzi7", name: "CCMMC Tuzi-7 SMG", type: "SMG", dmg: "3d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 200, desc: "Autofire (3). Suppressive Fire." },
+    { id: "sternmeyer_smg21", name: "Sternmeyer SMG 21", type: "SMG", dmg: "2d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 500, desc: "Standard. Autofire (3). Suppressive Fire." },
+    { id: "chadran_city_reaper", name: "Chadran Arms City Reaper", type: "SMG", dmg: "3d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 1000, desc: "Excellent. Autofire (3). Suppressive Fire. +1 ATK. Shotgun shells." },
+    { id: "ingram_mac14", name: "Ingram MAC 14 SMG", type: "SMG", dmg: "3d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 600, desc: "Standard. Autofire (3). Suppressive Fire." },
+    { id: "hkv_mpk11", name: "Heckler & Koch MPK-11 SMG", type: "SMG", dmg: "3d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 800, desc: "Standard. Autofire (3). Suppressive Fire. Bullpup, accepts grenade launcher mount." },
+    { id: "hkv_mpk20", name: "Heckler & Koch MPK-20 SMG", type: "SMG", dmg: "3d6", hands: 2, rof: 1, mag: 60, conceal: "No", cost: 600, desc: "Standard. Autofire (3). Suppressive Fire. Laser Sight." },
+    { id: "arasaka_rapid_assault_12", name: "Arasaka WCAA Rapid Assault Shot 12", type: "Shotgun", dmg: "5d6", hands: 2, rof: 1, mag: 20, conceal: "No", cost: 800, desc: "Standard. Shotgun Shell." },
+    { id: "militech_bulldog", name: "Militech Bulldog Compact Assault Shotgun", type: "Shotgun", dmg: "5d6", hands: 2, rof: 1, mag: 20, conceal: "No", cost: 1200, desc: "Excellent. Shotgun Shell, AP Slug, HE load, Autofire (3). Suppressive Fire." },
+    { id: "constitution_hurricane", name: "Constitution Arms Hurricane Assault Weapon", type: "Shotgun", dmg: "5d6", hands: 2, rof: 1, mag: 40, conceal: "No", cost: 5000, desc: "Excellent. Shotgun Shell, Slug." },
+    { id: "franchi_spas102", name: "Franchi SPAS-102", type: "Shotgun", dmg: "5d6", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 700, desc: "Standard. Shotgun Shell. Auto or Pump action." },
+    { id: "militech_crusher_ssg", name: "Militech Crusher SSG", type: "Shotgun", dmg: "5d6", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 500, desc: "Standard. Shotgun Shell. Pistol-sized shotgun." },
+    { id: "militech_csh45", name: "Militech CSH-45", type: "Shotgun", dmg: "5d6", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 800, desc: "Standard. Shotgun Shell, Slug." },
+    { id: "militech_m6_shotgun", name: "Militech M6 Close Combat Shotgun", type: "Shotgun", dmg: "5d6", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 500, desc: "Standard. Shotgun Shell." },
+    { id: "mustang_close_control", name: "Mustang Arms Close Control Shotgun", type: "Shotgun", dmg: "5d6", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 500, desc: "Shotgun Shell." },
+    { id: "mossberg_ata10", name: "Mossberg ATA-10", type: "Shotgun", dmg: "5d6", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 500, desc: "Shotgun Shell." },
+    { id: "tsunami_ragnarok", name: "Tsunami Arms Ragnarok CAW", type: "Shotgun", dmg: "5d6+1", hands: 2, rof: 1, mag: 40, conceal: "No", cost: 5000, desc: "Excellent. Shotgun Shell, Slug." },
+    { id: "stovolboy_12mag", name: "Stovolboy 12 MAG Shotgun", type: "Shotgun", dmg: "5d6", hands: 2, rof: 1, mag: 20, conceal: "No", cost: 750, desc: "Standard. Shotgun Shell." },
+    { id: "militech_mil_police_shotgun", name: "Militech Military/Police Shotgun", type: "Shotgun", dmg: "5d6", hands: 2, rof: 1, mag: 10, conceal: "No", cost: 1000, desc: "Standard. Shotgun Shell, Slug." },
+    { id: "militech_m12", name: "Militech M-12 Close Assault Weapon", type: "Shotgun", dmg: "5d6", hands: 2, rof: 1, mag: 20, conceal: "No", cost: 900, desc: "Standard. Shotgun Shell, Slug." },
+    { id: "sawnoff_shotgun", name: "Sawn-off Double Barrel / Pump Shotgun", type: "Shotgun", dmg: "5d6", hands: 2, rof: 1, mag: "2/6", conceal: "Yes", cost: 400, desc: "Standard. Shotgun Shell." },
+    { id: "akr20", name: "AKR-20 Medium Assault Rifle", type: "Assault Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 500, desc: "Standard. Autofire (4). Suppressive Fire." },
+    { id: "chadran_jungle_reaper", name: "Chadran Arms Jungle Reaper", type: "Assault Rifle", dmg: "5d6+1", hands: 2, rof: 1, mag: 60, conceal: "No", cost: 2000, desc: "Excellent. Autofire (4). Suppressive Fire. Underbarrel Grenade Launcher (25mm, 6 shots)." },
+    { id: "federated_light_assault15", name: "Federated Arms Light Assault 15", type: "Assault Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 1200, desc: "Standard. Autofire (4). Suppressive Fire. Smartchip. +1 ATK." },
+    { id: "fn_ral", name: "FN-RAL Heavy Assault Rifle", type: "Assault Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 800, desc: "Standard. Autofire (4). Suppressive Fire." },
+    { id: "colt_m18", name: "Colt M-18 Assault Rifle", type: "Assault Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 35, conceal: "No", cost: 1000, desc: "Excellent. Autofire (4). Suppressive Fire. Optical sight +1 ATK." },
+    { id: "arasaka_waa_bullpup", name: "Arasaka WAA Bullpup Assault Weapon", type: "Assault Rifle", dmg: "5d6+1", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 1200, desc: "Excellent. Autofire (4). Suppressive Fire. Smartchip. +1 ATK." },
+    { id: "ccmmc_jinhua_m9", name: "CCMMC Jinhua M-9", type: "Assault Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 500, desc: "Standard. Autofire (4). Suppressive Fire." },
+    { id: "kalashnikov_a80", name: "Kalashnikov A-80 Heavy Assault Rifle", type: "Assault Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 600, desc: "Standard. Autofire (4). Suppressive Fire." },
+    { id: "militech_mk4", name: "Militech Mk IV Assault Weapon", type: "Assault Rifle", dmg: "6d6", hands: 2, rof: 1, mag: 35, conceal: "No", cost: 1000, desc: "Excellent. Autofire (4). Suppressive Fire. Can mount M-205 Grenade Launcher (40mm)." },
+    { id: "towa_type20", name: "Towa Mfg Type-20 Advanced Infantry Combat Weapon", type: "Assault Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 2000, desc: "Standard. Autofire (4). Suppressive Fire. Smartchip. Mini-Grenade Launcher (25mm, 4 shots)." },
+    { id: "stolbovoy_st5", name: "Stolbovoy St-5 Assault Rifle", type: "Assault Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 1800, desc: "Autofire (4). Suppressive Fire. Smartchip. +1 ATK." },
+    { id: "militech_ronin", name: "Militech Ronin Light Assault Weapon", type: "Assault Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 600, desc: "Excellent. Autofire (4). Suppressive Fire. Can mount M-205 Grenade Launcher (40mm)." },
+    { id: "militech_dragon", name: "Militech Dragon Light Assault Weapon", type: "Assault Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 800, desc: "Autofire (4). Suppressive Fire. Smartchip." },
+    { id: "militech_m31a1", name: "Militech M-31a1 Advanced Infantry Combat Weapon", type: "Assault Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 150, conceal: "No", cost: 1700, desc: "Standard. Autofire (4). Suppressive Fire. Underbarrel Grenade Launcher (25mm, 4 shots)." },
+    { id: "arasaka_wssa", name: "Arasaka WSSA Sniper System", type: "Sniper Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 40, conceal: "No", cost: 2500, desc: "Excellent. 3.5mm FF. Sniping Scope +1 ATK. Smartchip. +1 ATK." },
+    { id: "militech_arbus", name: "Militech Arbus", type: "Sniper Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 10, conceal: "No", cost: 2100, desc: "Excellent. 7mm. Sniping Scope +1 ATK. Smartgun +1 ATK. Extended Magazine." },
+    { id: "stolvoboy_oktober", name: "Stolvoboy Oktober", type: "Sniper Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 1200, desc: "Excellent. 6mm. Smartchip +1 ATK. Sniping Scope +1 ATK. Extended Magazine." },
+    { id: "walther_wa2021", name: "Walther WA-2021", type: "Sniper Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 10, conceal: "No", cost: 2800, desc: "Excellent. 7.62mm. Smartchip +1 ATK. Sniping Scope +1 ATK." },
+    { id: "remington_950", name: "Remington 950", type: "Sniper Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 6, conceal: "No", cost: 1000, desc: "Excellent. .03-06. Sniping Scope +1 ATK." },
+    { id: "barrett_m99", name: "Barrett M-99 Sniper Rifle", type: "Sniper Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 10, conceal: "No", cost: 1800, desc: "Excellent. .50 BMG. Sniping Scope +1 ATK. Smartgun +1 ATK." },
+    { id: "hkv_g38sk", name: "Heckler & Koch G38SK", type: "Sniper Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 10, conceal: "No", cost: 1600, desc: "Excellent. 5.56mm. Sniping Scope +1 ATK. Suppressor. Smartgun +1 ATK." },
+    { id: "constitution_cyclone", name: "Constitution Arms Cyclone SSW", type: "Machinegun", dmg: "5d6", hands: 2, rof: 1, mag: 100, conceal: "No", cost: 1300, desc: "Standard. 7.62mm. Autofire (4). Suppressive Fire." },
+    { id: "militech_renegade", name: "Militech Renegade SAW", type: "Machinegun", dmg: "5d6", hands: 2, rof: 1, mag: 200, conceal: "No", cost: 1100, desc: "Standard. Autofire (4). Suppressive Fire." },
+    { id: "towa_type8_mmg", name: "Towa Mfg Type-8 Medium Machine Gun", type: "Machinegun", dmg: "5d6", hands: 2, rof: 1, mag: 100, conceal: "No", cost: 2500, desc: "Excellent. 7.62mm. Autofire (4). Suppressive Fire." },
+    { id: "sternmeyer_m5a", name: "Sternmeyer M-5A SAW", type: "Machinegun", dmg: "5d6", hands: 2, rof: 1, mag: 200, conceal: "No", cost: 1000, desc: "Standard. 7.62mm. Autofire (4). Suppressive Fire." },
+    { id: "fn_browning_mg6", name: "FN Browning MG-6", type: "Machinegun", dmg: "5d6", hands: 2, rof: 1, mag: 100, conceal: "No", cost: 1800, desc: "Excellent. 5.56mm. Autofire (4). Suppressive Fire." },
+    { id: "armalite_m60e4", name: "Armalite M60-E4", type: "Machinegun", dmg: "5d6", hands: 2, rof: 1, mag: 100, conceal: "No", cost: 1200, desc: "Excellent. 7.62mm. Autofire (4). Suppressive Fire." },
+    { id: "militech_m232", name: "Militech M-232 Squad Assault/Automatic Weapon", type: "Machinegun", dmg: "5d6", hands: 2, rof: 1, mag: 100, conceal: "No", cost: 1100, desc: "Excellent. 5.56mm. Autofire (4). Suppressive Fire." },
+    { id: "m212_gl", name: "M-212 Grenade Launcher", type: "Grenade Launcher", dmg: "varies (40mm)", hands: 2, rof: 2, mag: 8, conceal: "No", cost: 500, desc: "Excellent. Explosive. Can select round, slows ROF to 1." },
+    { id: "hkv_mgl4", name: "Heckler & Koch MGL-4 Grenade Launcher", type: "Grenade Launcher", dmg: "varies (40mm)", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 2300, desc: "Excellent. Explosive." },
+    { id: "towa_type9_gl", name: "Towa Mfg Type-9 Grenade Launcher", type: "Grenade Launcher", dmg: "varies (40mm)", hands: 2, rof: 2, mag: 8, conceal: "No", cost: 800, desc: "Standard. Explosive." },
+    { id: "militech_mini_gl_drum", name: "Militech Mini-Grenade Launcher (Drum)", type: "Grenade Launcher", dmg: "varies (25mm)", hands: 2, rof: 2, mag: 16, conceal: "No", cost: 500, desc: "Standard. Explosive." },
+    { id: "militech_cowboy_u55", name: "Militech Cowboy U-55 Grenade Launcher", type: "Grenade Launcher", dmg: "varies (25mm)", hands: 2, rof: 3, mag: 12, conceal: "No", cost: 900, desc: "Standard. Explosive." },
+    { id: "commercial_gl", name: "Commercial Grenade Launcher", type: "Grenade Launcher", dmg: "varies (40mm)", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 200, desc: "Standard. Explosive. Underbarrel attachable to assault rifle." },
+    { id: "m205_gl", name: "M-205 Grenade Launcher", type: "Grenade Launcher", dmg: "varies (40mm)", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 500, desc: "Excellent. Explosive. Underbarrel attachable." },
+    { id: "mortar_60mm", name: "60mm Light Mortar", type: "Heavy Weapon", dmg: "8d6", hands: 2, rof: 2, mag: 1, conceal: "No", cost: 800, desc: "Excellent. Explosive. 10m x 10m area. 2 crew for ROF 2." },
+    { id: "rheinmetall_emg85", name: "Rheinmetall EMG-85 Railgun", type: "Heavy Weapon", dmg: "10d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 12000, desc: "Standard. Min BOD 11 without linear frame or ACPA. Smartgun link." },
+    { id: "tsunami_type17", name: "Tsunami Arms Type-17 Anti-Armor Rifle", type: "Heavy Weapon", dmg: "8d6 (20mm)", hands: 2, rof: 1, mag: 12, conceal: "No", cost: 2000, desc: "Excellent. Computerized sights +1 ATK. Smartgun +1 ATK. Bipod or vehicle mounted." },
+    { id: "enfield_cockerill", name: "Enfield 25mm Cockerill Assault Cannon", type: "Heavy Weapon", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 1000, desc: "Excellent. Explosive. 10m x 10m area." },
+    { id: "militech_am3", name: "Militech AM-3 Anti-Matter Rifle", type: "Heavy Weapon", dmg: "8d6 (30mm)", hands: 2, rof: 2, mag: 8, conceal: "No", cost: 3000, desc: "Excellent. Rocket boosted. Cyberoptic smartgun +1 ATK. Scope w/ low-light/thermal." },
+    { id: "colt_mauser_m2x", name: "Colt-Mauser M-2x 20mm Cannon", type: "Heavy Weapon", dmg: "8d6", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 2000, desc: "Excellent. Sniping Scope +1 ATK." },
+    { id: "browning_m2hb", name: "M2A5HB Browning .50cal HMG", type: "Machinegun", dmg: "6d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 1000, desc: "Excellent. Autofire (4). Suppressive Fire. Crew Served tripod/Vehicle mounted." },
+    { id: "ccmmc_msh85", name: "CCMMC MSH-85", type: "Rocket Launcher", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 2000, desc: "Poor. Explosive. 10m x 10m area." },
+    { id: "hughes_hlaw", name: "Hughes HLAW", type: "Rocket Launcher", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 700, desc: "Standard. Explosive. 10m x 10m area." },
+    { id: "militech_rpgb", name: "Militech RPG-B", type: "Rocket Launcher", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 1500, desc: "Excellent. Explosive. 10m x 10m area." },
+    { id: "militech_baz12", name: "Militech BAZ-12", type: "Rocket Launcher", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 3000, desc: "Standard. Explosive. 10m x 10m area." },
+    { id: "militech_scorpion16", name: "Militech Scorpion 16 SAM", type: "Rocket Launcher", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 2100, desc: "Excellent. Explosive. 10m x 10m area. Surface to Air." },
+    { id: "royal_enfield_rl111", name: "Royal Enfield Ordnance RL111", type: "Rocket Launcher", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 2000, desc: "Excellent. Explosive. 10m x 10m area." },
+    { id: "militech_hotshot", name: "Militech Hotshot L-ATGM", type: "Rocket Launcher", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 2500, desc: "Excellent. Explosive. 10m x 10m area. Wire-guided light anti-tank missile." },
+    { id: "emp_grenade", name: "EMP Grenade", type: "Heavy Weapons", dmg: "Special", hands: 1, rof: 1, mag: null, conceal: "Yes", cost: 200, desc: "Non-lethal. EMP effect 5 sec. Unshielded electronics/cyberware disabled. 4M radius." },
+    { id: "scatter_grenade", name: "Scatter Grenade", type: "Heavy Weapons", dmg: "Special", hands: 1, rof: 1, mag: null, conceal: "Yes", cost: 60, desc: "Smoke + particles. Blocks normal sight, IR, and thermal. 5M radius." },
+    { id: "ninja_smoke_pellet", name: "Ninja Smoke Pellet", type: "Heavy Weapons", dmg: "Special", hands: 1, rof: 1, mag: null, conceal: "Yes", cost: 25, desc: "Distraction. Target loses next action. Stealth to escape. 1M radius." },
+    { id: "arasaka_nauseator", name: "Arasaka Nauseator Riot-Control Device", type: "Exotic", dmg: "8d6", hands: 2, rof: 1, mag: 10, conceal: "No", cost: 2000, desc: "Conical pattern 15m deep x 25m wide. BOD+25 check or disorientation (−4 all actions 1d6 rds)." },
+    { id: "dynatech_hand_taser", name: "Dynatech Industries Hand Taser", type: "Light Melee Weapon", dmg: "Stun", hands: 1, rof: 1, mag: 12, conceal: "Yes", cost: 50, desc: "Touch bare skin. Stun Save at −2 or unconscious 1d10 min." },
+    { id: "urbantech_lance", name: "UrbanTech Lance Mini-Missile", type: "Rocket Launcher", dmg: "8d6 (HEAT)", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 100, desc: "Single Shot. Use INT instead of REF. 2d6 in 1M blast." },
+    { id: "slamdance_hyper_hammer", name: "SlamDance Hyper Hammer", type: "Very Heavy Melee Weapon", dmg: "9d6", hands: 2, conceal: "No", cost: 2000, desc: "BOD MIN 18. Solid-tungsten sledgehammer. Rocket booster in hammer head." },
+    { id: "militech_electronic_taser", name: "Militech Electronic Taser II", type: "Exotic", dmg: "Stun", hands: 1, rof: 1, mag: 4, conceal: "Yes", cost: 100, desc: "Small flashlight-sized. Wired darts up to 10M." },
+    { id: "arasaka_wxa", name: "Arasaka WXA Computer-Aimed Weapon", type: "Exotic", dmg: "6d6", hands: 2, rof: 1, mag: 500, conceal: "No", cost: 4000, desc: "Belt-fed, computer aimed. Fires 10°-360°, 2m-400m range." },
+    { id: "avante_needlegun", name: "Avante P-1135 Needlegun", type: "Medium Pistol", dmg: "Drugs (needle)", hands: 1, rof: 1, mag: 15, conceal: "Yes", cost: 200, desc: "Underbarrel or standalone." },
+    { id: "borg_12g_pistol", name: "Generic Full Borg 12-Gauge Pistol", type: "Handgun", dmg: "4d6 (12ga)", hands: 1, rof: 1, mag: 9, conceal: "No", cost: 1000, desc: "BOD MIN 12. Shell or Slug." },
+    { id: "borg_127mm_rifle", name: "Generic Full Borg 12.7mm Assault Rifle", type: "Assault Rifle", dmg: "8d6 (12.7mm)", hands: 2, rof: 1, mag: 50, conceal: "No", cost: 2000, desc: "Autofire (4). Suppressive Fire. BOD MIN 12." },
+    { id: "borg_556_smg", name: "Generic Full Borg 5.56mm Caseless SMG", type: "Heavy SMG", dmg: "5d6 (5.56)", hands: 2, rof: 1, mag: 50, conceal: "No", cost: 2000, desc: "Autofire (3). Suppressive Fire. BOD MIN 10." },
+    { id: "arasaka_malorian_50", name: "Arasaka-Malorian Assault .50", type: "Heavy Weapon", dmg: "7d6 (.50)", hands: 2, rof: 1, mag: 25, conceal: "No", cost: 2000, desc: "BOD MIN 11. Smartchipped." },
+    { id: "arasaka_rage_15mm", name: "Arasaka Rage 15mm SMG", type: "Heavy SMG", dmg: "6d6 (15mm)", hands: 2, rof: 1, mag: 20, conceal: "No", cost: 4000, desc: "BOD MIN 15. 7d6 HE 1M radius." },
+    { id: "borg_14mm_big_gov", name: "Generic Full Borg 14mm Magnum Opus Big Government", type: "Handgun", dmg: "6d6 (14mm)", hands: 1, rof: 1, mag: 13, conceal: "Yes", cost: 2000, desc: "BOD MIN 12." },
+    { id: "borg_30mm_autogl", name: "Generic Full Borg 30mm HiVel Caseless Auto-GL", type: "Heavy Weapon", dmg: "Varies (30mm)", hands: 2, rof: 1, mag: 25, conceal: "No", cost: 2000, desc: "Explosive. BOD MIN 12." },
+    { id: "glock_145mm", name: "Glock 14.5mm Assault Rifle", type: "Machinegun", dmg: "8d6 (14.5mm)", hands: 2, rof: 1, mag: 50, conceal: "No", cost: 2500, desc: "Autofire (4). Suppressive Fire. BOD MIN 12." },
+    { id: "magnum_opus_hellbringer", name: "Magnum Opus Hellbringer .666 Magnum Revolver", type: "Handgun", dmg: "7d6 (.666)", hands: 1, rof: 1, mag: 3, conceal: "No", cost: 2000, desc: "BOD MIN 15." },
+    { id: "malorian_3600", name: "Malorian 3600 Super-SMG", type: "Heavy SMG", dmg: "6d6 (14mm)", hands: 2, rof: 1, mag: 20, conceal: "No", cost: 3000, desc: "Autofire (3). Suppressive Fire. BOD MIN 11." },
+    { id: "militech_aar49", name: "Militech AAR-49", type: "Machinegun", dmg: "8d6 (30mm)", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 7000, desc: "Autofire (4). Suppressive Fire. BOD MIN 15." },
+    { id: "texhofforhov_127mm", name: "Texhofforhov 12.7mm Assault Rifle", type: "Machinegun", dmg: "8d6 (12.7mm)", hands: 2, rof: 1, mag: 50, conceal: "No", cost: 2000, desc: "Autofire (4). Suppressive Fire. BOD MIN 11." },
+    { id: "tsunami_helix", name: "Tsunami Arms Helix", type: "Shotgun", dmg: "5d6 (10ga)", hands: 2, rof: 1, mag: 60, conceal: "No", cost: 5000, desc: "BOD MIN 15. #00 Buck or Slug (Flechette)." },
+    { id: "magnum_opus_big_gov_14mm", name: "Magnum Opus Big Government 14mm", type: "Handgun", dmg: "6d6 (14mm)", hands: 1, rof: 1, mag: 13, conceal: "No", cost: 2000, desc: "BOD MIN 12." },
+
+    { id: "captain_cuddlefish", name: "Captain Cuddlefish Ultra Snag-Em", type: "Melee Weapon", dmg: "1d6", hands: 1, rof: 2, conceal: "Yes", cost: 200, desc: "Exotic Light Melee. Range 10m/yds. -6 for Held Item Aimed Shot. Collectible outfits available." },
+    { id: "fisher_kitty", name: "Hello Cutie Fisher Kitty", type: "Handgun", dmg: "2d6", hands: 1, rof: 2, mag: 4, conceal: "Yes", cost: 500, desc: "Exotic. Archery skill. Range 50m. Mini-harpoons. Electrify for 2d6/3d6 dmg." },
+    { id: "gun_gun_friend_friend", name: "Hello Cutie Gun-Gun Friend-Friend", type: "Assault Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 25, conceal: "No", cost: 1000, desc: "Excellent. Autofire (4). Suppressive Fire. Can install a pop-up One-Handed Ranged Weapon." },
+    { id: "hypurr_hammer", name: "Hello Cutie Hypurr-Hammer", type: "Melee Weapon", dmg: "4d6", hands: 2, rof: 1, conceal: "No", cost: 1000, desc: "Very Heavy Melee. Doesn't halve SP. BODY 9+: 5d6 and roll Crit Injury twice." },
+    { id: "janus_hex", name: "Hello Cutie Janus Hex", type: "Handgun", dmg: "1d6", hands: 1, rof: 1, mag: 2, conceal: "Yes", cost: 500, desc: "Excellent VH Pistol. Fires Scent Ball rounds. DV15 Resist or -3 to attacks/vision checks 1 hr." },
+    { id: "modball_gun", name: "Hello Cutie ModBall Gun", type: "Medium Pistol", dmg: "Varies", hands: 1, rof: 2, mag: 5, conceal: "Yes", cost: 500, desc: "Exotic. Fires ModBall ammo (Dazzle, Mega Ouchie, Ouchie, Slippy, Splashie). Mix ammo types." },
+    { id: "my_friend_the_ocelot", name: "Hello Cutie My Friend the Ocelot", type: "Shotgun", dmg: "5d6", hands: 2, rof: 1, mag: 12, conceal: "No", cost: 1500, desc: "Excellent. Slug only. Autofire (4) on SMG table. Biometric pet-to-unlock reload." },
+    { id: "thundercat_bat", name: "Hello Cutie Thundercat Bat", type: "Melee Weapon", dmg: "2d6", hands: 2, rof: 2, conceal: "No", cost: 750, desc: "Excellent Stun Baton. DV15 Resist Torture/Drugs or Damaged Ear Critical." },
+
+    { id: "enviro_launcher", name: "Biotechnica Enviro-launcher", type: "Heavy Weapon", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 500, desc: "Exotic Rocket Launcher. Single-use. Decomposes in 1 hr." },
+    { id: "triple_treat", name: "BudgetArms Triple Treat", type: "Heavy Weapon", dmg: "8d6", hands: 2, rof: 1, mag: 2, conceal: "No", cost: 500, desc: "Poor Exotic Rocket Launcher. Integrated Poor GL Underbarrel. Fires non-Basic ammo." },
+    { id: "flare_gun", name: "Flare Gun", type: "Heavy Weapon", dmg: "6d6", hands: 1, rof: 1, mag: 1, conceal: "No", cost: 100, desc: "Exotic Grenade Launcher. Fires grenade ammo or road flares (visible 3 miles)." },
+    { id: "sdf45", name: "Midnight Arms SDF-45", type: "Heavy Weapon", dmg: "8d6", hands: 2, rof: 1, mag: 4, conceal: "No", cost: 1000, desc: "Exotic Rocket Launcher. Range 400m. Fires 2 AP rockets at once. GM places hits." },
+    { id: "militech_aegis", name: "Militech Aegis", type: "Heavy Weapon", dmg: "4d6", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 1000, desc: "Poor Exotic Shotgun (Heavy Weapons). Shell only. 8 charges (recharge 1hr). Non-lethal." },
+    { id: "militech_archimedes", name: "Militech Archimedes", type: "Heavy Weapon", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 5000, desc: "Excellent Exotic Rocket Launcher. Pilot Air Vehicle skill. Smart Rockets only. Requires Targeting Scope." },
+    { id: "nomad_air_cannon", name: "Nomad Air Cannon", type: "Shoulder Arms", dmg: "Special", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 1000, desc: "Exotic Shotgun. Liquid ammo. Acid: -1 SP. Poison/Biotoxin: 3 vials/shot, Resist Torture/Drugs." },
+    { id: "tearjerker", name: "Pursuit Security TearJerker", type: "Heavy Weapon", dmg: "Special", hands: 2, rof: 1, mag: 3, conceal: "No", cost: 500, desc: "Excellent Exotic Grenade Launcher. Smoke or Teargas ammo only." },
+    { id: "ballistic_harpoon", name: "SlamDance Ballistic Harpoon", type: "Melee Weapon", dmg: "4d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 1000, desc: "Exotic Very Heavy Melee. Can be fired (Heavy Weapons, Bow range). Ignores 1/2 armor." },
+    { id: "m02_heavy_rifle", name: "Sternmeyer M-02 Heavy Rifle", type: "Assault Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 80, conceal: "No", cost: 1000, desc: "Exotic. Heavy Weapons skill. No Autofire/Suppressive Fire. Proprietary AP trounds (500eb/80)." },
+    { id: "towa_pocket_launcher", name: "Towa Pocket Launcher", type: "Heavy Weapon", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "Yes", cost: 500, desc: "Poor Exotic Rocket Launcher. Concealable when unloaded. Collapsible." },
+    { id: "burst_flamethrower", name: "UrbanTech Burst Flamethrower", type: "Heavy Weapon", dmg: "3d6", hands: 2, rof: 1, mag: 4, conceal: "No", cost: 1000, desc: "Exotic Shotgun (Heavy Weapons). Incendiary Shells only. 4 dmg/turn on fire. Burst explosion mode." },
+
+    { id: "thermal_dagger", name: "Centurion Essentials Thermal Dagger", type: "Melee Weapon", dmg: "2d6", hands: 1, rof: 2, conceal: "Yes", cost: 1000, desc: "Excellent Exotic Medium Melee. Sets targets Strongly On Fire." },
+    { id: "nats_long_barreled", name: "Nat's Long-Barreled Pistol", type: "Handgun", dmg: "4d6", hands: 1, rof: 1, mag: 8, conceal: "No", cost: 500, desc: "Excellent VH Pistol. Unique Range Table (up to 400m/yds). 3 Slots." },
+    { id: "etack_rapid_responder", name: "Pursuit Security E-TACK Rapid Responder", type: "Medium Pistol", dmg: "2d6", hands: 1, rof: 2, mag: 18, conceal: "Yes", cost: 500, desc: "Poor M Pistol. Burst mode (3d6, treats ammo as AP). Extended Magazine. Stun Bayonet." },
+
+    { id: "constitutional_multi_ammo", name: "Constitutional Arms Multiple Ammunition Pistol", type: "Handgun", dmg: "4d6", hands: 1, rof: 1, mag: 5, conceal: "No", cost: 500, desc: "Exotic VH Pistol. Load mix of up to 5 different ammo types." },
+    { id: "kendachi_dragon_flamethrower", name: "Kendachi Dragon Flamethrower", type: "Heavy Weapon", dmg: "Special", hands: 1, rof: 1, mag: 2, conceal: "No", cost: 1000, desc: "Exotic Shotgun (Heavy Weapons). Incendiary Shells only. 4 dmg/turn on fire." },
+    { id: "malorian_sub_flechette", name: "Malorian Arms Sub-Flechette Gun", type: "Heavy SMG", dmg: "3d6", hands: 1, rof: 1, mag: 25, conceal: "No", cost: 5000, desc: "Excellent Exotic Heavy SMG. Autofire (4). Smartgun Link. AP ammo ablates 4 SP." },
+    { id: "nomad_pneumatic_bolt", name: "Nomad Pneumatic Bolt Gun", type: "Sniper Rifle", dmg: "4d6", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 500, desc: "Exotic Sniper. Fires Arrows. Loads Non-Basic ammo." },
+    { id: "teen_dreem", name: "Teen Dreem", type: "SMG", dmg: "2d6", hands: 1, rof: 1, mag: 10, conceal: "Yes", cost: 20, desc: "Poor Exotic SMG. Autofire (3) drains clip. Destroys weapon on use." }
+  ],
+
+  // ----------------------------------------------------------
+  // ARMOR
+  // ----------------------------------------------------------
+  armor: [
+    { id: "armor_head_light", name: "Light Armorjack (Head)", slots: "Head", sp: 7, cost: 50, enc: 2 },
+    { id: "armor_head_medium", name: "Medium Armorjack (Head)", slots: "Head", sp: 11, cost: 100, enc: 4 },
+    { id: "armor_head_heavy", name: "Heavy Armorjack (Head)", slots: "Head", sp: 15, cost: 200, enc: 6 },
+    { id: "armor_body_light", name: "Light Armorjack (Body)", slots: "Body", sp: 7, cost: 100, enc: 4 },
+    { id: "armor_body_medium", name: "Medium Armorjack (Body)", slots: "Body", sp: 11, cost: 200, enc: 8 },
+    { id: "armor_body_heavy", name: "Heavy Armorjack (Body)", slots: "Body", sp: 15, cost: 400, enc: 12 },
+    { id: "armor_body_flak", name: "Flak (Body)", slots: "Body", sp: 18, cost: 1000, enc: 16 },
+    { id: "armor_body_metalgear", name: "Metal Gear (Body)", slots: "Body", sp: 20, cost: 5000, enc: 20 },
+    { id: "kevlar_vest", name: "Kevlar Vest", slots: "Body", sp: 7, cost: 50, enc: 2 },
+    { id: "leather_jacket", name: "Leather Jacket", slots: "Body", sp: 4, cost: 20, enc: 1 },
+    { id: "shield_riot", name: "Riot Shield", slots: "Shield", sp: 7, cost: 100, enc: 4 },
+    { id: "shield_ballistic", name: "Ballistic Shield", slots: "Shield", sp: 11, cost: 250, enc: 6 },
+    { id: "scavenged_armor", name: "Scavenged Armor", slots: "Body", sp: 11, cost: 50, enc: 4 },
+    { id: "dirk_combat_jacket", name: "Dirk Combat Jacket", slots: "Body", sp: 11, cost: 500, enc: 4 },
+    { id: "laser_light_jacket", name: "Laser Light Street Jacket", slots: "Body", sp: 11, cost: 500, enc: 4 },
+    { id: "montage_variable", name: "Montage Variable Clothing", slots: "Body", sp: 11, cost: 500, enc: 4 },
+    { id: "corporate_island", name: "Corporate Island Armor", slots: "Body", sp: 11, cost: 500, enc: 4 },
+    { id: "executive_armor", name: "Executive Armor", slots: "Body", sp: 11, cost: 1000, enc: 4 },
+    { id: "mimic_clothing_kit", name: "Mimic Clothing Kit", slots: "Body", sp: 11, cost: 100, enc: 4 },
+    { id: "masetto_airrider", name: "Masetto AirRider", slots: "Body", sp: 7, cost: 100, enc: 2 },
+    { id: "shock_armor", name: "Shock Armor", slots: "Body", sp: 7, cost: 500, enc: 2 },
+    { id: "skidrow_trench", name: "SkidRow Trench", slots: "Body", sp: 13, cost: 100, enc: 6 },
+    { id: "fire_brand_bunker", name: "Fire Brand Bunker Gear", slots: "Body", sp: 15, cost: 1000, enc: 8 },
+    { id: "lotos_netsuit", name: "Lotos Netsuit", slots: "Body", sp: 13, cost: 5000, enc: 6 },
+    { id: "mechaman_helmet", name: "MechaMan Helmet", slots: "Head", sp: 15, cost: 5000, enc: 6 },
+    { id: "light_metalgear", name: "Light Metalgear (Body)", slots: "Body", sp: 16, cost: 1000, enc: 16 },
+    { id: "light_metalgear_head", name: "Light Metalgear (Head)", slots: "Head", sp: 16, cost: 500, enc: 8 },
+    { id: "esporma_suit", name: "Esporma Environment Suit", slots: "Body", sp: 8, cost: 5000, enc: 8 },
+    { id: "esporma_suit_head", name: "Esporma Environment Suit (Head)", slots: "Head", sp: 8, cost: 2500, enc: 4 },
+    { id: "skidrow_packshield", name: "SkidRow PackShield", slots: "Shield", sp: 10, cost: 100, enc: 2 }
+  ],
+
+  // ----------------------------------------------------------
+  // CYBERWARE
+  // ----------------------------------------------------------
+  cyberware: [
+    { id: "cybereye", name: "Cybereye", type: "Fashion", hc: 2, cost: 500, desc: "Single cybernetic eye.", slots: 3, bodyPart: "eye" },
+    { id: "cyberaudio", name: "Cyberaudio Suite", type: "Fashion", hc: 2, cost: 500, desc: "Internal ear comms and audio processing.", slots: 3 },
+    { id: "neural_link", name: "Neural Link", type: "Internal", hc: 3, cost: 1000, desc: "Chip socket interface. Required for most Neuralware.", slots: 3 },
+    { id: "chipware_socket", name: "Chipware Socket", type: "Internal", hc: 2, cost: 500, desc: "Extra skill chip socket.", parentType: "neural_link" },
+    { id: "pain_editor", name: "Pain Editor", type: "Internal", hc: 4, cost: 2000, desc: "Disables pain. +5 to Resist Torture/Drugs.", bonus: { skills: { resist_torture_drugs: 5 } } },
+    { id: "nanosurgeons", name: "Nanosurgeons", type: "Internal", hc: 3, cost: 1500, desc: "Auto-stabilize at 0 HP once per day." },
+    { id: "synth_lungs", name: "Synth Lungs", type: "Internal", hc: 3, cost: 1000, desc: "Filter toxins, breathe smoke." },
+    { id: "gills", name: "Gills", type: "Internal", hc: 2, cost: 500, desc: "Breathe underwater." },
+    { id: "cyberarm", name: "Cyberarm", type: "Fashion", hc: 3, cost: 1000, desc: "Basic cybernetic arm.", slots: 4, bodyPart: "arm" },
+    { id: "cyberleg", name: "Cyberleg", type: "Fashion", hc: 3, cost: 1000, desc: "Basic cybernetic leg.", slots: 3, bodyPart: "leg" },
+    { id: "tactile_boost", name: "Tactile Boost", type: "Fashionware", hc: 2, cost: 500, desc: "Enhanced touch, +1 to pick lock/pick pocket.", bonus: { skills: { pick_lock: 1, pick_pocket: 1 } } },
+    { id: "olfactory_boost", name: "Olfactory Boost", type: "Fashion", hc: 1, cost: 300, desc: "Enhanced smell, +2 to tracking via scent.", bonus: { skills: { tracking: 2 } } },
+    { id: "subdermal_armor", name: "Subdermal Armor", type: "Internal", hc: 4, cost: 2000, desc: "SP 7 to area implanted." },
+    { id: "skin_weave", name: "Skin Weave", type: "Internal", hc: 3, cost: 1500, desc: "SP 4 all over." },
+    { id: "pneumatics", name: "Pneumatics", type: "Internal", hc: 3, cost: 2000, desc: "+2 to BODY for melee damage." },
+    { id: "hydraulic_rams", name: "Hydraulic Rams", type: "Fashionware", hc: 3, cost: 1500, desc: "Cyberleg option, +2 MOVE when jumping.", parentType: "cyberleg" },
+    { id: "big_knucks", name: "Big Knucks", type: "Fashion", hc: 1, cost: 100, desc: "Brass knuckles built into cyberarm.", parentType: "cyberarm" },
+    { id: "popup_weapon", name: "Popup Weapon (Cyberarm)", type: "Fashion", hc: 2, cost: 500, desc: "Hidden weapon in cyberarm.", parentType: "cyberarm" },
+    { id: "implanted_lavatory", name: "Implanted Lavatory", type: "Fashion", hc: 1, cost: 200, desc: "Waste processing implant." },
+    { id: "light_tattoo", name: "Light Tattoo", type: "Fashionware", hc: 0, cost: 200, desc: "LED subdermal tattoos. +2 Wardrobe & Style with 3+ installed." },
+    { id: "agency_record", name: "Agency Record", type: "Fashionware", hc: 1, cost: 500, desc: "Always-on recording of everything you see/hear." },
+    { id: "buddy_link", name: "Buddy Link", type: "Fashion", hc: 1, cost: 200, desc: "Private short-range comm with your crew." },
+    { id: "bc_budget_chipware", name: "Budget Chipware Socket", type: "Neuralware", hc: 7, cost: 100, desc: "A cheap chipware socket.", parentType: "neural_link" },
+    { id: "bc_discount_audio", name: "Discount Cyberaudio Suite", type: "Cyberaudio", hc: 3, cost: 100, desc: "An inferior audio suite at an affordable price.", slots: 3, parentType: "cyberaudio" },
+    { id: "bc_explicit_memory", name: "Explicit Memory Stimulator", type: "Chipware", hc: 3, cost: 100, desc: "+2 to Concentration Checks to remember information.", parentType: "neural_link", bonus: { skills: { concentration: 2 } } },
+    { id: "bc_extra_jointed", name: "Extra-Jointed Cyberlimb Upgrade", type: "Cyberlimb", hc: 3, cost: 500, desc: "Extra points of articulation. +2 Contortionist per limb (max +8 all limbs).", bonus: { skills: { contortionist: 2 } } },
+    { id: "bc_flashbulb", name: "Flashbulb", type: "Cyberarm", hc: 7, cost: 500, desc: "Blind your enemies with your arm.", parentType: "cyberarm" },
+    { id: "bc_hardened_cybereye", name: "Hardened Cybereye Casing", type: "Cybereye", hc: 3, cost: 500, desc: "Protect your Cybereye against EMP effects.", parentType: "cybereye" },
+    { id: "bc_health_monitor", name: "Heuristic Health Monitor", type: "Fashionware", hc: 0, cost: 500, desc: "You're fit and now you can show the world." },
+    { id: "bc_integrated_cyberdeck", name: "Integrated Cyberdeck Upgrade", type: "Cyberarm", hc: 7, cost: 500, desc: "An extra option slot for your arm-installed Cyberdeck.", parentType: "cyberarm" },
+    { id: "bc_modular_finger_hand", name: "Modular Finger Cyberhand", type: "Cyberarm", hc: 3, cost: 100, desc: "A hand for modular Cyberfingers.", parentType: "cyberarm", slots: 5 },
+    { id: "bc_neo_soviet_arm", name: "Neo-Soviet Cyberarm", type: "Cyberarm", hc: 7, cost: 100, desc: "Neo-Soviet charm for your Cyberarm.", bodyPart: "arm", slots: 4, parentType: "cyberarm" },
+    { id: "bc_popup_net", name: "Popup Net Launcher", type: "Cyberarm", hc: 7, cost: 500, desc: "Shoot nets from your arm.", parentType: "cyberarm" },
+    { id: "bc_popup_shotgun", name: "Popup Shotgun", type: "Cyberarm", hc: 7, cost: 1000, desc: "A shotgun in your arm.", parentType: "cyberarm" },
+    { id: "bc_racerbracer", name: "RacerBracer", type: "Internal Body", hc: 7, cost: 500, desc: "Immunity to Whiplash Critical Injury." },
+    { id: "bc_reflex_coprocessor", name: "Reflex Co-Processor", type: "Neuralware", hc: 14, cost: 500, desc: "Dodge bullets without REF 8.", parentType: "neural_link" },
+    { id: "bc_reinforced_limb", name: "Reinforced Cyberlimb Upgrade", type: "Cyberlimb", hc: 3, cost: 1000, desc: "Say goodbye to breaking this limb." },
+    { id: "bc_sponsored_cybereye", name: "Sponsored Cybereye", type: "Cybereye", hc: 7, cost: 50, desc: "A cheap Cybereye with Chyron and pop-up ads.", bodyPart: "eye", slots: 3, parentType: "cybereye" },
+    { id: "bc_trauma_nanomatrix", name: "Trauma Response Nanomatrix", type: "Internal Body", hc: 7, cost: 1000, desc: "Restore all lost Skinweave or Subdermal Armor SP once/day." },
+    { id: "bc_standard_cyberfinger", name: "Standard Cyberfinger", type: "Cyberfinger", hc: 0, cost: 20, desc: "A Cyberfinger with no special features. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "bc_lockpick_cyberfinger", name: "Lockpick Cyberfinger", type: "Cyberfinger", hc: 2, cost: 100, desc: "Adjustable lockpick and tensioning tool. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "bc_microphone_cyberfinger", name: "Microphone Cyberfinger", type: "Cyberfinger", hc: 2, cost: 100, desc: "Microphone linked to Agent or recording device. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "bc_lighter_cyberfinger", name: "Lighter Cyberfinger", type: "Cyberfinger", hc: 3, cost: 100, desc: "Lighter concealed in the tip. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "bc_laser_pointer_cyberfinger", name: "Laser Pointer Cyberfinger", type: "Cyberfinger", hc: 3, cost: 100, desc: "Laser pointer. 4+ can force DV13 Resist Torture/Drugs. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "bc_wirecutter_cyberfinger", name: "Wirecutter/Scissor Cyberfingers", type: "Cyberfinger", hc: 3, cost: 100, desc: "Retractable blades, also a Poor Quality Light Melee Weapon. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "bc_homing_tracer_cyberfinger", name: "Homing Tracer Cyberfinger", type: "Cyberfinger", hc: 3, cost: 500, desc: "Points toward linked tracer within 1 mile. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "bc_mini_air_cyberfinger", name: "Mini Air Supply Cyberfinger", type: "Cyberfinger", hc: 2, cost: 500, desc: "10 min air supply, 1 hr to refill. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "bc_one_shot_cyberfinger", name: "One Shot Special Cyberfinger", type: "Cyberfinger", hc: 7, cost: 100, desc: "Single-shot Exotic Heavy Pistol concealed in finger. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "bc_spray_paint_cyberfinger", name: "Spray Paint Cyberfinger", type: "Cyberfinger", hc: 3, cost: 100, desc: "Spray can concealed within the Cyberfinger. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "bc_squirt_cyberfinger", name: "Squirt Cyberfinger", type: "Cyberfinger", hc: 3, cost: 100, desc: "Dispenses liquids like sanitizer or perfume. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "chemskin", name: "Chemskin", type: "Fashionware", hc: 1, cost: 500, desc: "Change skin color. +2 Personal Grooming if also have Techhair." },
+    { id: "techhair", name: "Techhair", type: "Fashionware", hc: 1, cost: 500, desc: "Programmable hair. +2 Personal Grooming if also have Chemskin." },
+    { id: "kerenzikov", name: "Kerenzikov", type: "Neuralware", hc: 7, cost: 1000, desc: "Boosted reflexes. +2 to Initiative.", parentType: "neural_link" },
+    { id: "sandevistan", name: "Sandevistan", type: "Neuralware", hc: 7, cost: 1000, desc: "Activate for +3 to Initiative for 1 min (Action, 1hr cooldown).", parentType: "neural_link" },
+    { id: "image_enhance", name: "Image Enhance", type: "Cybereye Option", hc: 1, cost: 500, desc: "Enhanced vision processing.", parentType: "cybereye", bonus: { skills: { perception: 2, lip_reading: 2, conceal_reveal_object: 2 } } },
+    { id: "targeting_scope", name: "Targeting Scope", type: "Cybereye Option", hc: 1, cost: 500, desc: "+1 to Aimed Shot checks. Requires paired Cybereyes.", parentType: "cybereye" },
+    { id: "teleoptics", name: "TeleOptics", type: "Cybereye Option", hc: 1, cost: 500, desc: "+1 to checks vs targets 51m/yds+.", parentType: "cybereye" },
+    { id: "low_light_cybereye", name: "Low Light/IR/UV Cybereye", type: "Cybereye Option", hc: 1, cost: 500, desc: "Negate darkness/smoke/fog penalties. Requires Cybereye.", parentType: "cybereye" },
+    { id: "amplified_hearing", name: "Amplified Hearing", type: "Cyberaudio Option", hc: 1, cost: 500, desc: "Enhanced hearing. Requires Cyberaudio.", parentType: "cyberaudio", bonus: { skills: { perception: 2 } } },
+    { id: "voice_stress_analyzer", name: "Voice Stress Analyzer", type: "Cyberaudio Option", hc: 1, cost: 500, desc: "Detect lies. Requires Cyberaudio.", parentType: "cyberaudio", bonus: { skills: { human_perception: 2, interrogation: 2 } } },
+    { id: "audiovox", name: "AudioVox", type: "Cyberaudio Option", hc: 1, cost: 500, desc: "Voice modulator. Requires Cyberaudio.", parentType: "cyberaudio", bonus: { skills: { acting: 2, play_instrument: 2 } } },
+    { id: "enhanced_antibodies", name: "Enhanced Antibodies", type: "Internal Body", hc: 3, cost: 1500, desc: "Heal 2x BODY HP per day when resting." },
+    { id: "grafted_muscle_bone_lace", name: "Grafted Muscle and Bone Lace", type: "Internal Body", hc: 7, cost: 5000, desc: "+2 BODY (max 10).", bonus: { stats: { body: 2 } } },
+    { id: "toxin_binders", name: "Toxin Binders", type: "Internal Body", hc: 3, cost: 1500, desc: "Filters bloodborne toxins.", bonus: { skills: { resist_torture_drugs: 2 } } },
+    { id: "nasal_filters", name: "Nasal Filters", type: "Internal Body", hc: 2, cost: 500, desc: "Immune to inhaled toxins and gases." },
+    { id: "radar_sonar_implant", name: "Radar/Sonar Implant", type: "Internal Body", hc: 3, cost: 2000, desc: "Detect moving objects within 50m/yds (not through cover)." },
+    { id: "medscanner", name: "Medscanner", type: "Cyberarm Option", hc: 1, cost: 500, desc: "Medical diagnostic scanner in cyberarm.", parentType: "cyberarm", bonus: { skills: { first_aid: 2, paramedic: 2 } } },
+    { id: "techscanner_cyberarm", name: "Techscanner", type: "Cyberarm Option", hc: 1, cost: 500, desc: "Technical diagnostic scanner in cyberarm.", parentType: "cyberarm", bonus: { skills: { basic_tech: 2, cybertech: 2, land_vehicle_tech: 2, sea_vehicle_tech: 2, air_vehicle_tech: 2, electronics_security_tech: 2, weaponstech: 2 } } },
+    { id: "superchrome_covering", name: "Superchrome Covering", type: "Cyberarm Option", hc: 1, cost: 500, desc: "Mirror-chrome finish. +2 Wardrobe & Style.", parentType: "cyberarm" },
+    { id: "skate_foot", name: "Skate Foot", type: "Cyberleg Option", hc: 1, cost: 500, desc: "+6m/yds movement when using Run Action.", parentType: "cyberleg" },
+    { id: "quick_change_mount", name: "Quick Change Mount", type: "Cyberarm", hc: 7, cost: 100, desc: "Remove/install a Cyberarm as an Action." },
+    { id: "rippers", name: "Rippers", type: "Cyberarm Option", hc: 3, cost: 500, desc: "Retractable carbo-glass claws. Medium Melee Weapon.", parentType: "cyberarm" },
+    { id: "wolvers", name: "Wolvers", type: "Cyberarm Option", hc: 3, cost: 500, desc: "Large forearm blades. Heavy Melee Weapon.", parentType: "cyberarm" },
+    { id: "scratchers", name: "Scratchers", type: "Cyberarm Option", hc: 1, cost: 100, desc: "Retractable carbo-glass fingernails. Light Melee Weapon.", parentType: "cyberarm" },
+    { id: "bodyweight_autoinjector", name: "Bodyweight AutoInjector", type: "Internal Body", hc: 3, cost: 100, desc: "Load one dose of Street Drug. Inject as Action. With Biomonitor, auto-inject on Initiative/Critical Injury/Wound State." },
+    { id: "pursuitech_gas_jet", name: "Pursuit Security Inc. Gas Jet", type: "Cyberarm Option", hc: 7, cost: 500, desc: "Aerosol gas launcher (3 doses). Acts as 1H Exotic Shotgun. Applies loaded substance. Requires Cyberarm, 2 Option Slots.", parentType: "cyberarm" },
+    { id: "appetite_controller", name: "Appetite Controller", type: "Internal Body", hc: 7, cost: 500, desc: "Manage hunger via Biomonitor. Ignore HL from long-term environmental stress. Starvation still fatal after 7 days. Requires Biomonitor." },
+    { id: "cyberpillow", name: "Cyberpillow", type: "Cyberarm Option", hc: 0, cost: 100, desc: "Pop-out pillow for napping. Requires Cyberarm.", parentType: "cyberarm" },
+    { id: "external_vidscreen", name: "External Vidscreen", type: "External Body", hc: 7, cost: 100, desc: "Subcutaneous flexible screen. Turns body part into display for linked Agent or Memory Chip." },
+    { id: "holo_projector_palm", name: "Holo Projector Palm", type: "Cyberarm Option", hc: 2, cost: 100, desc: "Hologram projector in palm. Can be installed in a meat arm.", parentType: "cyberarm" },
+    { id: "kill_display", name: "Kill Display", type: "Fashionware", hc: 0, cost: 100, desc: "Subdermal 'KILLS: #' display. Self-reported via Agent. Counts as Light Tattoo." },
+    { id: "leads_turn_on_show_off_nails", name: "Lead's Turn-On-Show-Off Nails", type: "Fashionware", hc: 0, cost: 100, desc: "Programmable lighted fingernails. Counts as Light Tattoo. Works on meat or cyberware hands." },
+    { id: "mood_eye", name: "Mood Eye", type: "Fashionware", hc: 0, cost: 100, desc: "Eye color changes with mood (red=anger, blue=sadness, etc.). Requires Neural Link.", parentType: "neural_link" },
+    { id: "neutongue", name: "NeuTongue", type: "Internal Body", hc: 7, cost: 100, desc: "Cybernetic tongue. Add virtual seasoning to food via linked Agent." },
+    { id: "perfectfit_cyberfoot", name: "PerfectFit Cyberfoot", type: "Cyberleg Option", hc: 2, cost: 100, desc: "Adjustable foot size/shape. Eliminates penalty from ill-fitting footwear. Can be installed in a meat leg.", parentType: "cyberleg" },
+    { id: "talon_feet", name: "Talon Feet", type: "Cyberleg Option", hc: 3, cost: 500, desc: "Retractable foot talons. Light Melee Weapon (1d6). Requires Cyberlegs.", parentType: "cyberleg" },
+    { id: "jump_boosters", name: "Jump Boosters", type: "Cyberleg Option", hc: 3, cost: 500, desc: "Hydraulic leg boosters. +3d6 dmg vs cover with leg attacks. Requires Cyberlegs.", parentType: "cyberleg" },
+    { id: "personalpak_kibblewarmer", name: "PersonalPak KibbleWarmer", type: "Cyberarm Option", hc: 3, cost: 100, desc: "Rotisserie oven in forearm. Warms PersonalPak Kibble cylinders. Requires Cyberarm.", parentType: "cyberarm" },
+    { id: "pursuitech_personal_shredder", name: "Pursuit Security Inc. Personal Shredder", type: "Cyberarm Option", hc: 3, cost: 100, desc: "Cross-cut shredder in cyberarm with internal reservoir. Requires Cyberarm.", parentType: "cyberarm" },
+    { id: "sponsored_covering", name: "Sponsored Covering", type: "Cyberlimb Option", hc: 0, cost: 50, desc: "Illuminated ad on cyberlimb. Pays 20eb/month. Does not take an Option Slot. Requires Cyberarm or Cyberleg." },
+
+    { id: "cyberscanner_integrated", name: "Cyberscanner, Integrated", type: "Cyberarm Option", hc: 7, cost: 500, desc: "Cyberscanner installed in a Cyberarm. Requires 2 Option Slots.", parentType: "cyberarm" },
+    { id: "chainripp", name: "ChainRipp", type: "Cyberarm Option", hc: 14, cost: 500, desc: "Retractable chainsaw in wrist. Can be revved into Excellent Quality Very Heavy Melee Weapon. Takes 4 Option Slots.", parentType: "cyberarm" },
+    { id: "gang_jazzler", name: "Cybermatrix Gang Jazzler", type: "Cyberarm Option", hc: 7, cost: 500, desc: "Electrode needle in arm. On successful Choke, force DV13 Resist Torture/Drugs or Unconscious 1 min.", parentType: "cyberarm" },
+    { id: "bug_eye", name: "Cyclops International Bug Eye", type: "Borgware", hc: 14, cost: 500, desc: "Oversized Cybereye. Contains 5 slots for Cybereye Options.", slots: 5, parentType: "cybereye" },
+    { id: "deathtrance", name: "DeathTrance", type: "Neuralware", hc: 3, cost: 500, desc: "Slow vitals to appear dead. DV17-21 to detect. -4 to all Actions while active.", parentType: "neural_link" },
+    { id: "monovision", name: "Kiroshi MonoVision", type: "Borgware", hc: 14, cost: 500, desc: "Single wide-angle cyberoptic visor. Contains 3 slots. Options count as paired.", slots: 3, parentType: "cybereye" },
+    { id: "optishield", name: "Kiroshi OptiShield", type: "External Body", hc: 7, cost: 500, desc: "Retractable Anti-Dazzle mirrorshades built into brow. Immune to flashblindness." },
+    { id: "watch_man", name: "Psiberstuff Watch-Man", type: "Cyberarm Option", hc: 3, cost: 100, desc: "Agent built into cyberarm with flip-up screen.", parentType: "cyberarm" },
+    { id: "poser_chip", name: "Poser Chip", type: "Chipware", hc: 14, cost: 500, desc: "+4 to Acting to impersonate persona. +5 if roleplayed. Famous persona: 500eb. Private: 1000eb.", parentType: "neural_link" },
+    { id: "arc_thrower", name: "Radline Blitzkrieg Arc-Thrower Cyberarm", type: "Cyberarm", hc: 14, cost: 1000, desc: "0 Option slots. No hand. Exotic Shotgun (Heavy Weapons), 4d6 Shell fire, 32 charges. Cannot Crit or ablate armor.", bodyPart: "arm" },
+    { id: "microwaldo", name: "Raven Microcybernetics MicroWaldo", type: "Cyberarm Option", hc: 7, cost: 1000, desc: "+1 to Surgery Skill. Neuralware and Cyberarm Option.", parentType: "cyberarm" },
+    { id: "fleshweave", name: "Sycust Fleshweave", type: "External Body", hc: 7, cost: 1000, desc: "Skinweave. Body and Head SP7. Self-repairs to full after 10 min without strenuous activity." },
+    { id: "romanova_cyberlegs", name: "Wyzard Technologies Romanova Cyberlegs", type: "Cyberleg", hc: 14, cost: 1000, desc: "Paired Cyberlegs. 3 Option Slots each. Pre-installed Talon Feet.", bodyPart: "leg", slots: 3, parentType: "cyberleg" },
+    { id: "faceplate_mount", name: "Quick Change Faceplate Mount", type: "Internal Body", hc: 14, cost: 1000, desc: "Replace meat face with mounting. Comes with 1 personalized Faceplate. Additional: 100eb." },
+    { id: "quick_digits", name: "Rocklin Augmentics Quick Digits", type: "Cyberarm Option", hc: 3, cost: 250, desc: "Cyberhand. Two+ grants +1 to Conceal/Reveal, Contortionist, First Aid, Forgery, Paramedic, Pick Lock, Pick Pocket.", parentType: "cyberarm" },
+    { id: "skydrivers", name: "Rocklin Augmentics Skydrivers", type: "Cyberleg", hc: 14, cost: 1000, desc: "Paired Cyberlegs. 2 Option Slots each. Pre-installed Jump Boosters. +3d6 dmg vs cover with leg attacks.", bodyPart: "leg", slots: 2, parentType: "cyberleg" },
+    { id: "cyberspine", name: "Sycust Cyberspine", type: "Internal Body", hc: 7, cost: 1000, desc: "Requires 3 Option Slots. Immune to Spinal Injury. Hardened. +1 Contortionist. Can house Cybersnake." },
+    { id: "cyberconductor_integrated", name: "Zetatech CyberConductor, Integrated", type: "Borgware", hc: 14, cost: 1000, desc: "FBC only. All cyberdecks connected. Switch between them with no HP damage. Requires 3 Option Slots." },
+    { id: "hello_cutie_mono_paw", name: "Hello Cutie Mono-Paw", type: "Cyberarm Option", hc: 7, cost: 500, desc: "Retractable cat claws. Excellent Quality Medium Melee, 1d6, ignores armor SP<11. Cannot hold items while active.", parentType: "cyberarm" },
+    { id: "sparkle_ize", name: "Hello Cutie Sparkle-ize", type: "Cybereye Option", hc: 3, cost: 250, desc: "Big-eyes look. Flashlight built in. Paired: DV15 Resist or Damaged Eye for 1 min. Requires 2 Option Slots.", parentType: "cybereye" },
+    { id: "dynalar_xtradex_glove", name: "Dynalar Xtra-Dex Smart Glove", type: "Cyberarm Option", hc: 0, cost: 1000, desc: "2 Option Slots. Counts as Modular Finger Cyberhand (up to 5 Cyberfingers). Requires Interface Plugs.", parentType: "cyberarm" }
+  ],
+
+  // ----------------------------------------------------------
+  // GEAR — All purchasable items (drugs, ammo, tools, etc.)
+  // ----------------------------------------------------------
+  gear: [
+    { id: "berserker", name: "Berserker", cat: "Street Drug", cost: 100, desc: "Lasts 10 min. Ignore Critical Injury bonus dmg; halve wound state & facedown penalties. SE DV17." },
+    { id: "prime_time", name: "Prime Time", cat: "Street Drug", cost: 50, desc: "Lasts 4 hrs. +2 COOL/WILL (no extra HP). 4d6 Humanity Loss (returned after). SE DV17." },
+    { id: "sixgun", name: "Sixgun", cat: "Street Drug", cost: 100, desc: "Lasts 4 hrs. +2 Speed while jacked in; safe jack out; spend 1 HL for +1 NET action. SE DV17." },
+    { id: "timewarp", name: "Timewarp", cat: "Street Drug", cost: 100, desc: "Lasts 1 min. +3 Initiative. SE DV17." },
+    { id: "sedative", name: "Sedative", cat: "Pharmaceutical", cost: 100, desc: "+2 to Treatment checks on willing target. Unwilling: DV15 Resist or unconscious ~1 min." },
+    { id: "veritas", name: "Veritas", cat: "Pharmaceutical", cost: 100, desc: "DV17 Resist or suggestive state 10 min, −5 to Acting/Conversation/Deduction/etc." },
+    { id: "delaying_compound", name: "Delaying Compound", cat: "Additive", cost: 50, desc: "Delay poison/biotoxin effects by 1 min or 1 hr." },
+    { id: "distilling_compound", name: "Distilling Compound", cat: "Additive", cost: 100, desc: "Increase Resist Torture/Drugs DV of poison/biotoxin by 2." },
+    { id: "osmosis_compound", name: "Osmosis Compound", cat: "Additive", cost: 50, desc: "Turn poison/biotoxin into contact-based hazard on a surface." },
+    { id: "suzumebachi_drone", name: "Suzumebachi Assassin Drone", cat: "Drone", cost: 5000, desc: "Flying insectoid drone. 6 MOVE, 7SP, 10HP. Observation Camera (LL/IR/UV), Dartgun w/ 8 Biotoxin Arrows, Airhypo." },
+    { id: "bcp_bullet_to_slug", name: "Bullet to Slug Adapter Casings", cost: 100, wt: 0.5, cat: "Weapons", desc: "Converts bullet Ammunition into Shotgun Slugs. Reusable. 10 casings per box.", ammo: 10 },
+    { id: "bcp_junk_ammo", name: "Junk Ammunition", cost: 10, wt: 0.5, cat: "Weapons", desc: "Reduces damage by 1d6 (min 1d6) vs SP 1+ targets. Reduces Autofire Rating by 1 (min 3). 50 rounds. Arrows, Bullets, Slugs.", ammo: 50 },
+    { id: "bcp_small_game_ammo", name: "Small Game Ammunition", cost: 10, wt: 0.5, cat: "Weapons", desc: "Reduces damage by 2d6 (min 1d6). Reduces Autofire Rating by 1 (min 3). 100 rounds. Bullets only.", ammo: 100 },
+    { id: "ammo_basic", name: "Basic Ammunition", cost: 10, cat: "Weapons", desc: "Standard ammunition. No special features. All ammo types except Grenades and Rockets. 10 units.", ammo: 10 },
+    { id: "ammo_ap", name: "Armor-Piercing Ammunition", cost: 100, cat: "Weapons", desc: "Ablates armor by 2 instead of 1. All ammo types except Shotgun Shells. 10 units.", ammo: 10 },
+    { id: "ammo_expansive", name: "Expansive Ammunition", cost: 100, cat: "Weapons", desc: "Arrows, Bullets, Slugs. Foreign Object Critical Injury causes a second Critical Injury roll.", ammo: 10 },
+    { id: "ammo_incendiary", name: "Incendiary Ammunition", cost: 100, cat: "Weapons", desc: "Ignites target (2 HP/turn). Arrows, Bullets, Grenades, Shotgun Shells, Slugs.", ammo: 10 },
+    { id: "ammo_rubber", name: "Rubber Ammunition", cost: 10, cat: "Weapons", desc: "Less-lethal. Cannot cause Critical Injury or ablate armor. Leaves target at min 1 HP. Arrows, Bullets, Slugs.", ammo: 10 },
+    { id: "ammo_smart", name: "Smart Ammunition", cost: 500, cat: "Weapons", desc: "Requires Targeting Scope. Miss by ≤4: reroll with +10. Arrows, Bullets, Rockets, Slugs.", ammo: 10 },
+    { id: "ammo_poison", name: "Poison Ammunition", cost: 100, cat: "Weapons", desc: "Arrows and Grenades only. Deals 2d6 direct HP damage (DV13 Resist Torture/Drugs). No initial damage.", ammo: 1 },
+    { id: "ammo_biotoxin", name: "Biotoxin Ammunition", cost: 500, cat: "Weapons", desc: "Arrows and Grenades only. Deals 3d6 direct HP damage (DV15 Resist Torture/Drugs). No initial damage.", ammo: 1 },
+    { id: "ammo_flashbang", name: "Flashbang Ammunition", cost: 100, cat: "Weapons", desc: "Grenades only. Damaged Eye and Damaged Ear Critical Injuries for 1 min (DV15 Resist Torture/Drugs).", ammo: 1 },
+    { id: "ammo_sleep", name: "Sleep Ammunition", cost: 500, cat: "Weapons", desc: "Arrows and Grenades only. Target becomes Prone and Unconscious for 1 min (DV13 Resist Torture/Drugs).", ammo: 1 },
+    { id: "ammo_smoke", name: "Smoke Ammunition", cost: 50, cat: "Weapons", desc: "Grenades only. Obscures 10m x 10m area for 1 min. -4 to perception tasks through smoke.", ammo: 1 },
+    { id: "ammo_teargas", name: "Teargas Ammunition", cost: 50, cat: "Weapons", desc: "Grenades only. Damaged Eye Critical Injury for 1 min (DV13 Resist Torture/Drugs).", ammo: 1 },
+    { id: "ammo_emp", name: "EMP Ammunition", cost: 500, cat: "Weapons", desc: "Grenades only. Disables 2 pieces of cyberware/electronics for 1 min (DV15 Cybertech).", ammo: 1 },
+    { id: "bcp_piranha_smash", name: "Piranha Smash", cost: 10, wt: 0.5, cat: "Medical" },
+    { id: "bcp_solo_pillow", name: "Solo of Fortune Bodypillow", cost: 100, wt: 2, cat: "Fashion" },
+    { id: "bc_chipvault", name: "ChipVault by SecSystems", cost: 100, wt: 0.5, cat: "Electronics" },
+    { id: "bc_drinkmaster", name: "Drink Master 3000", cost: 1000, wt: 5, cat: "Tools" },
+    { id: "bc_airwell", name: "Everest AirWell 50", cost: 100, wt: 2, cat: "Survival" },
+    { id: "bc_one_touch_habitat", name: "Everest One Touch Habitat", cost: 100, wt: 5, cat: "Survival" },
+    { id: "bc_digital_gladiator", name: "Digital Gladiator App", cost: 20, wt: 0, cat: "Electronics" },
+    { id: "bc_4tify", name: "4Tify App", cost: 100, wt: 0, cat: "Electronics" },
+    { id: "bc_ncpd_db", name: "NCPD Crime Database", cost: 500, wt: 0, cat: "Electronics" },
+    { id: "bc_medscan", name: "Trauma Team MedScan", cost: 20, wt: 0, cat: "Medical" },
+    { id: "bc_city_db", name: "Ziggurat City Database", cost: 100, wt: 0, cat: "Electronics" },
+    { id: "agent", name: "Agent (Smartphone)", cost: 100, wt: 0.5, cat: "Electronics" },
+    { id: "computer", name: "Computer", cost: 500, wt: 3, cat: "Electronics" },
+    { id: "radio_scanner", name: "Radio Scanner", cost: 200, wt: 2, cat: "Electronics" },
+    { id: "video_camera", name: "Video Camera", cost: 200, wt: 1, cat: "Electronics" },
+    { id: "tape_recorder", name: "Tape Recorder", cost: 100, wt: 0.5, cat: "Electronics" },
+    { id: "flashlight", name: "Flashlight", cost: 20, wt: 1, cat: "Tools" },
+    { id: "rope", name: "Rope (50ft)", cost: 50, wt: 5, cat: "Tools" },
+    { id: "duct_tape", name: "Duct Tape", cost: 10, wt: 1, cat: "Tools" },
+    { id: "lock_mech", name: "Lock (Mechanical)", cost: 50, wt: 1, cat: "Tools" },
+    { id: "lock_elec", name: "Lock (Electronic)", cost: 150, wt: 2, cat: "Tools" },
+    { id: "lockpick_set", name: "Lockpick Set", cost: 100, wt: 1, cat: "Tools" },
+    { id: "tech_scanner", name: "Tech Scanner", cost: 500, wt: 2, cat: "Tools" },
+    { id: "tool_set", name: "Tool Set", cost: 100, wt: 5, cat: "Tools" },
+    { id: "first_aid_kit", name: "First Aid Kit", cost: 100, wt: 2, cat: "Medical" },
+    { id: "trauma_kit", name: "Trauma Kit", cost: 500, wt: 5, cat: "Medical" },
+    { id: "anti_dote", name: "Anti-Dote", cost: 200, wt: 0.5, cat: "Medical" },
+    { id: "medscanner", name: "Medscanner", cost: 500, wt: 1, cat: "Medical" },
+    { id: "tent", name: "Tent", cost: 100, wt: 5, cat: "Survival" },
+    { id: "sleeping_bag", name: "Sleeping Bag", cost: 50, wt: 3, cat: "Survival" },
+    { id: "grapple_gun", name: "Grapple Gun", cost: 500, wt: 3, cat: "Tools" },
+    { id: "night_goggles", name: "Night Goggles", cost: 200, wt: 1, cat: "Electronics" },
+    { id: "binoculars", name: "Binoculars", cost: 100, wt: 1, cat: "Electronics" },
+    { id: "camera", name: "Camera", cost: 200, wt: 1, cat: "Electronics" },
+    { id: "grenade_incendiary", name: "Incendiary Grenade", cost: 100, wt: 1, cat: "Weapons" },
+    { id: "flare", name: "Flare", cost: 20, wt: 0.5, cat: "Tools" },
+    { id: "smoke_canister", name: "Smoke Canister", cost: 50, wt: 1, cat: "Tools" },
+    { id: "poison", name: "Poison (D6 dmg)", cost: 200, wt: 0.5, cat: "Tools" },
+    { id: "chrm_rave_grenade", name: "Hello Cutie Chromatic Rave Grenade", cat: "Weapons", cost: 50, desc: "Creates light/sound show (DV13 Conc or -2). After 2 Rounds, explodes as Smoke Grenade." },
+    { id: "husafell_underjack", name: "Húsafell Hydraulic Underjack", cat: "Gear", cost: 1000, desc: "Hydraulic undershirt. +2 BODY (max 10). Does not increase HP or Death Save. Does not stack with other BODY-increasing effects." },
+    { id: "smart_ears", name: "Smart Ears", cat: "Electronics", cost: 1000, desc: "Wearable ears. Built-in Radio Scanner/Music Player. 2 Option Slots for Cyberaudio Options." },
+    { id: "zetatech_cyberconductor", name: "Zetatech CyberConductor", cat: "Electronics", cost: 1000, desc: "Install up to 3 Cyberdecks. Switch between them while Jacked In. Taking 3 HP dmg on switch." },
+    { id: "cybercam_ex1", name: "Cybercam EX-1", cat: "Electronics", cost: 1000, desc: "Head-mounted camera for livecasting. +1 believability to Media's Role Ability." },
+    { id: "cyberscanner", name: "Cyberscanner", cat: "Electronics", cost: 1000, desc: "Scan target within 2m/yds. Readout of all installed cyberware. Takes 1 min." },
+    { id: "cyberdude_smart_glove", name: "CyberDude Smart Glove", cat: "Gear", cost: 750, desc: "Fingerless glove with Subdermal Grip and 2 Option Slots for Cyberarm/Cyberlimb options." },
+    { id: "hd_bulletproof_shield", name: "High-Density Bulletproof Shield", cat: "Gear", cost: 200, desc: "A shield with 15 HP. Cannot be installed in Pop-Up Shield." },
+    { id: "stun_bayonet", name: "Stun Bayonet", cat: "Weapons", cost: 100, desc: "Weapon Attachment. Allows firearm to be used as a Stun Baton." },
+    { id: "dpi_smartsticks", name: "DPI Smartsticks", cat: "Gear", cost: 500, desc: "Electronic drum sticks. +1 to Play Instrument (Drums) Checks." },
+    { id: "green_light_sniffer", name: "Hammered Industries Green Light Go Sniffer", cat: "Tools", cost: 100, desc: "Analyzes a chemical substance's purity. Green = pure, Red = impure." },
+    { id: "ion_cuffs", name: "Ion Cuffs", cat: "Tools", cost: 500, desc: "Handcuffs that disable non-hardened cyberware options in bound Cyberlimbs. BODY 13+ breaks them." },
+    { id: "master_mechanic_toolkit", name: "Master Mechanic's Tool Kit", cat: "Tools", cost: 20000, desc: "+4 to all Tech Skill Checks for Maker Specialties. Counts as Thick Steel Cover." },
+    { id: "minimag_speakers", name: "MiniMag Speakers by Telectronics", cat: "Electronics", cost: 50, desc: "1-inch magnetic speakers. Wireless to Agent within 100m/yds. Various colors." },
+    { id: "optitech_magviewer", name: "Optitech MagViewer", cat: "Electronics", cost: 500, desc: "Binoculars. See detail up to 800m/yds. +1 to Complementary Skill Check for ranged attacks 51m+." },
+    { id: "zonda_metrocar", name: "Zonda Metrocar", cat: "Gear", cost: 1000, desc: "Compact Groundcar. Nomad Access 1. SDP 25. Combat Speed 10 MOVE. Narrative Speed 30 MPH. 2 seats." }
+  ],
+
+  // ----------------------------------------------------------
+  // FASHION
+  // ----------------------------------------------------------
+  fashion: [
+    { id: "generic_rack", name: "Generic (Rack)", cost: 10, desc: "Cheap, mass-produced clothing" },
+    { id: "generic_urban", name: "Generic (Urban)", cost: 50, desc: "Everyday street wear" },
+    { id: "generic_flash", name: "Generic (Flash)", cost: 100, desc: "Trendy, bold clothing" },
+    { id: "businesswear", name: "Businesswear", cost: 500, desc: "Professional attire" },
+    { id: "leisurewear", name: "Leisurewear", cost: 200, desc: "Comfortable high-end casual" },
+    { id: "bodysuit", name: "Bodysuit", cost: 300, desc: "Full body suit" },
+    { id: "armor_jacket", name: "Armor Jacket", cost: 100, desc: "Jacket with light armor panels" },
+    { id: "raincoat", name: "Raincoat", cost: 80, desc: "Waterproof coat" },
+    { id: "night_city_leathers", name: "Night City Leathers", cost: 200, desc: "Classic leather jacket and pants" }
+  ],
+
+  // ----------------------------------------------------------
+  // LIFEPATH — Random generation tables
+  // ----------------------------------------------------------
+  lifepath: {
+    backgrounds: [
+      "Corporate - You grew up in the corporate world.",
+      "Nomad - You lived in a Nomad pack, always moving.",
+      "Street - The streets raised you from a young age.",
+      "Combat Zone - You grew up in the worst part of the city.",
+      "Government - Your family was part of the bureaucracy.",
+      "Media - You were raised around news and entertainment.",
+      "Fixer - Your family worked the black market.",
+      "Gang - You were raised in a gang environment.",
+      "Commune - You lived in a self-sufficient commune.",
+      "Military - Your family was career military."
+    ],
+    motivations: [
+      "Money - It's always about the eddies.",
+      "Reputation - You need to be known.",
+      "Revenge - Someone wronged you badly.",
+      "Knowledge - You seek the truth.",
+      "Power - Control is everything.",
+      "Freedom - No one tells you what to do.",
+      "Justice - The system needs fixing.",
+      "Family - Your crew is everything.",
+      "Survival - Just making it to tomorrow.",
+      "Fame - They will remember your name."
+    ],
+    hairstyles: [
+      "Mohawk", "Bald", "Long", "Pixie cut", "Dreadlocks", 
+      "Braided", "Pompadour", "Shaggy", "Buzzed", "Afro"
+    ],
+    clothing_styles: [
+      "Leathers", "Neon flash", "Military surplus", "Formal wear",
+      "Street punk", "Bohemian", "Corporate chic", "Nomad practical",
+      "Rocker glam", "Gothic"
+    ],
+    life_events: [
+      "Nearly died from a bad deal.",
+      "Saved someone important's life.",
+      "Betrayed by someone you trusted.",
+      "Found something you shouldn't have.",
+      "Made a powerful enemy.",
+      "Lost everything and started over.",
+      "Gained a loyal friend.",
+      "Learned a dark secret.",
+      "Won big and lost bigger.",
+      "Had your first taste of real violence."
+    ]
+  }
+};
+// ============================================================
+// CALCULATION HELPERS
+// ============================================================
+function calcHitsMax(body) {
+  return body * 5 + 10;
+}
+
+function calcSeriouslyWounded(hitsMax) {
+  return Math.floor(hitsMax / 2);
+}
+
+function calcDeathSave(hitsMax) {
+  return -Math.floor(hitsMax / 2);
+}
+
+function calcHumanityMax(emp) {
+  return emp * 10;
+}
+
+function calcCurrentHumanity(humanityMax, cyberwareHC) {
+  return Math.max(0, humanityMax - cyberwareHC);
+}
+
+function calcEmpFromHumanity(currentHumanity) {
+  return Math.floor(currentHumanity / 10);
+}
+
+function calcStatBonus(statValue) {
+  if (statValue <= 0) return 0;
+  return statValue;
+}
+
+function getEffectiveStat(statId) {
+  var base = state.stats[statId] || 2;
+  return base + calcCyberStatBonus(statId);
+}
+
+function calcSkillTotal(statValue, ranks, itemBonus, specialBonus) {
+  var statBonus = calcStatBonus(statValue);
+  return statBonus + ranks + (itemBonus || 0) + (specialBonus || 0);
+}
+
+function calcBmr(move) {
+  return move * 5;
+}
+
+function calcRunBmr(bmr) {
+  return bmr * 3;
+}
+
+function calcEvasionSkillRank(dex, ranks, evasionBase) {
+  var rank = evasionBase || 0;
+  if (rank === 0 && ranks > 0) rank = 1;
+  return calcSkillTotal(dex, rank, 0, 0);
+}
+
+function totalCyberwareHC(cyberwareList) {
+  var total = 0;
+  for (var i = 0; i < cyberwareList.length; i++) {
+    total += cyberwareList[i].hc || 0;
+    if (cyberwareList[i].options) {
+      for (var s = 0; s < cyberwareList[i].options.length; s++) {
+        var opt = cyberwareList[i].options[s];
+        if (opt) total += opt.hc || 0;
+      }
+    }
+  }
+  return total;
+}
+
+function calcEncumbrance(gearItems, weapons, armor) {
+  var totalWt = 0;
+  for (var i = 0; i < gearItems.length; i++) {
+    totalWt += gearItems[i].wt || 0;
+  }
+  for (var i = 0; i < weapons.length; i++) {
+    totalWt += 2;
+  }
+  for (var i = 0; i < armor.length; i++) {
+    totalWt += armor[i].enc || 0;
+  }
+  return totalWt;
+}
+
+function calcInitiative(ref, combatAwarenessRank) {
+  return ref + combatAwarenessRank;
+}
+
+function calcSkillCyberBonus(skillId) {
+  var total = 0;
+  for (var i = 0; i < state.cyberware.length; i++) {
+    var cw = state.cyberware[i];
+    if (cw.bonus && cw.bonus.skills && cw.bonus.skills[skillId]) {
+      total += cw.bonus.skills[skillId];
+    }
+    if (cw.options) {
+      for (var s = 0; s < cw.options.length; s++) {
+        var opt = cw.options[s];
+        if (opt && opt.bonus && opt.bonus.skills && opt.bonus.skills[skillId]) {
+          total += opt.bonus.skills[skillId];
+        }
+      }
+    }
+  }
+  return total;
+}
+
+function calcCyberStatBonus(statId) {
+  var total = 0;
+  for (var i = 0; i < state.cyberware.length; i++) {
+    var cw = state.cyberware[i];
+    if (cw.bonus && cw.bonus.stats && cw.bonus.stats[statId]) {
+      total += cw.bonus.stats[statId];
+    }
+    if (cw.options) {
+      for (var s = 0; s < cw.options.length; s++) {
+        var opt = cw.options[s];
+        if (opt && opt.bonus && opt.bonus.stats && opt.bonus.stats[statId]) {
+          total += opt.bonus.stats[statId];
+        }
+      }
+    }
+  }
+  return total;
+}
+
+function formatCyberBonus(bonus) {
+  if (!bonus) return "";
+  var parts = [];
+  if (bonus.skills) {
+    for (var id in bonus.skills) {
+      parts.push("+" + bonus.skills[id] + " " + skillNameById(id));
+    }
+  }
+  if (bonus.stats) {
+    for (var id in bonus.stats) {
+      parts.push("+" + bonus.stats[id] + " " + id.toUpperCase());
+    }
+  }
+  return parts.join(", ");
+}
+
+function skillNameById(id) {
+  for (var cat in DATA.skills) {
+    var list = DATA.skills[cat];
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].id === id) return list[i].name;
+    }
+  }
+  return id;
+}
+// ============================================================
+// STATE — Runtime character state object
+// ============================================================
+var STAT_POINTS_TOTAL = 62;
+var STAT_MAX = 8;
+var STAT_MIN = 2;
+
+var state = {
+  stats: {},
+  skillRanks: {},
+  skillItem: {},
+  weapons: [],
+  armor: [],
+  cyberware: [],
+  gear: [],
+  ammo: {},
+  currentTab: "tab-character"
+};
+
+function initState() {
+  for (var i = 0; i < DATA.stats.length; i++) {
+    var s = DATA.stats[i];
+    state.stats[s.id] = 6;
+  }
+}
+
+function getStatPointsRemaining() {
+  var used = 0;
+  for (var i = 0; i < DATA.stats.length; i++) {
+    used += state.stats[DATA.stats[i].id];
+  }
+  return STAT_POINTS_TOTAL - used;
+}
+
+function updateSecondaryRoleOptions() {
+  var sel = document.getElementById("role_select");
+  var sel2 = document.getElementById("role_secondary_select");
+  var currentVal = sel2.value;
+  var html = '<option value="">-- None --</option>';
+  for (var i = 0; i < DATA.roles.length; i++) {
+    if (DATA.roles[i].id !== sel.value) {
+      html += '<option value="' + DATA.roles[i].id + '">' + DATA.roles[i].name + '</option>';
+    }
+  }
+  sel2.innerHTML = html;
+  sel2.value = currentVal;
+}
+
+function initRoleSelect() {
+  var sel = document.getElementById("role_select");
+  var sel2 = document.getElementById("role_secondary_select");
+  var html = '<option value="">-- Select Role --</option>';
+  for (var i = 0; i < DATA.roles.length; i++) {
+    html += '<option value="' + DATA.roles[i].id + '">' + DATA.roles[i].name + '</option>';
+  }
+  sel.innerHTML = html;
+  sel2.innerHTML = '<option value="">-- None --</option>' + html;
+  sel.onchange = function() {
+    updateSecondaryRoleOptions();
+    updateRoleInfo();
+  };
+  sel2.onchange = function() { updateRoleInfo(); };
+  document.getElementById("multiclass_enabled").onchange = function() {
+    document.getElementById("multiclass_fields").style.display = this.checked ? "grid" : "none";
+    updateRoleInfo();
+  };
+  document.getElementById("role_secondary_rank").oninput = function() { updateRoleInfo(); };
+  setUpRoleRankCost();
+}
+
+function setUpRoleRankCost() {
+  var roleRankEl = document.getElementById("role_ability_rank");
+  var roleRank2El = document.getElementById("role_secondary_rank");
+  roleRankEl.dataset.oldVal = roleRankEl.value;
+  roleRank2El.dataset.oldVal = roleRank2El.value;
+  roleRankEl.oninput = function() {
+    var oldVal = parseInt(this.dataset.oldVal) || 0;
+    var newVal = parseInt(this.value) || 0;
+    if (newVal === oldVal) { updateRoleInfo(); return; }
+    var cost = ipCostBetween(oldVal, newVal, 60);
+    if (cost > 0 && !payIpCost(cost)) {
+      alert("Not enough Improvement Points! Need " + cost + " IP.");
+      this.value = oldVal;
+      return;
+    }
+    if (cost < 0) payIpCost(cost);
+    this.dataset.oldVal = newVal;
+    updateRoleInfo();
+  };
+  roleRank2El.oninput = function() {
+    var oldVal = parseInt(this.dataset.oldVal) || 0;
+    var newVal = parseInt(this.value) || 0;
+    if (newVal === oldVal) { updateRoleInfo(); return; }
+    var cost = ipCostBetween(oldVal, newVal, 60);
+    if (cost > 0 && !payIpCost(cost)) {
+      alert("Not enough Improvement Points! Need " + cost + " IP.");
+      this.value = oldVal;
+      return;
+    }
+    if (cost < 0) payIpCost(cost);
+    this.dataset.oldVal = newVal;
+    updateRoleInfo();
+  };
+}
+
+function updateRoleInfo() {
+  var roleId = document.getElementById("role_select").value;
+  var info = document.getElementById("role_info");
+  if (!roleId) { info.innerHTML = ""; return; }
+  var role = null, role2 = null;
+  for (var i = 0; i < DATA.roles.length; i++) {
+    if (DATA.roles[i].id === roleId) role = DATA.roles[i];
+  }
+  var mcEnabled = document.getElementById("multiclass_enabled").checked;
+  var role2Id = mcEnabled ? document.getElementById("role_secondary_select").value : "";
+  if (role2Id) {
+    for (var i = 0; i < DATA.roles.length; i++) {
+      if (DATA.roles[i].id === role2Id) role2 = DATA.roles[i];
+    }
+  }
+  var html = "";
+  var abilityRank = parseInt(document.getElementById("role_ability_rank").value) || 4;
+  var rd = (role && role.rankDesc && role.rankDesc[abilityRank]) ? role.rankDesc[abilityRank] : "";
+  html += '<div class="role-ability">Primary: ' + role.ability + ' (Rank ' + abilityRank + ')</div>' +
+    '<div style="margin-top:2px;font-size:0.82rem">' + role.desc + '</div>' +
+    '<div style="margin-top:1px;font-size:0.78rem;opacity:0.85">' + rd + '</div>';
+  if (role2) {
+    var rank2 = parseInt(document.getElementById("role_secondary_rank").value) || 1;
+    var rd2 = (role2.rankDesc && role2.rankDesc[rank2]) ? role2.rankDesc[rank2] : "";
+    html += '<div class="role-ability" style="margin-top:0.5rem;border-top:1px dashed var(--border);padding-top:0.4rem">Secondary: ' + role2.ability + ' (Rank ' + rank2 + ')</div>' +
+      '<div style="margin-top:2px;font-size:0.82rem">' + role2.desc + '</div>' +
+      '<div style="margin-top:1px;font-size:0.78rem;opacity:0.85">' + rd2 + '</div>';
+  }
+  info.innerHTML = html;
+}
+
+// ============================================================
+// RENDER — All DOM rendering functions
+// ============================================================
+function renderStats() {
+  var container = document.getElementById("stats_container");
+  container.innerHTML = "";
+  for (var i = 0; i < DATA.stats.length; i++) {
+    var s = DATA.stats[i];
+    var baseVal = state.stats[s.id] || 2;
+    var cyberBonus = calcCyberStatBonus(s.id);
+    var effVal = baseVal + cyberBonus;
+    var bonus = calcStatBonus(effVal);
+    var row = document.createElement("div");
+    row.className = "stat-row";
+    var cyberStr = cyberBonus > 0 ? ' <span class="cyber-stat-bonus">(+' + cyberBonus + ' chrome)</span>' : '';
+    row.innerHTML = '<span class="stat-name" title="' + s.desc + '">' + s.name + '</span>' +
+      '<button class="stat-dec" data-stat="' + s.id + '">-</button>' +
+      '<input type="number" class="stat-input" data-stat="' + s.id + '" value="' + baseVal + '" min="' + STAT_MIN + '" max="' + STAT_MAX + '">' +
+      '<button class="stat-inc" data-stat="' + s.id + '">+</button>' +
+      '<span class="stat-bonus">(' + (bonus >= 0 ? "+" : "") + bonus + ')</span>' + cyberStr;
+    container.appendChild(row);
+  }
+  updateStatPointsBar();
+  attachStatEvents();
+}
+
+function attachStatEvents() {
+  var incs = document.querySelectorAll(".stat-inc");
+  var decs = document.querySelectorAll(".stat-dec");
+  var inputs = document.querySelectorAll(".stat-input");
+  for (var i = 0; i < incs.length; i++) {
+    incs[i].onclick = function() { statChange(this.dataset.stat, 1); };
+  }
+  for (var i = 0; i < decs.length; i++) {
+    decs[i].onclick = function() { statChange(this.dataset.stat, -1); };
+  }
+  for (var i = 0; i < inputs.length; i++) {
+    inputs[i].onchange = function() {
+      var id = this.dataset.stat;
+      var v = parseInt(this.value) || STAT_MIN;
+      if (v < STAT_MIN) v = STAT_MIN;
+      if (v > STAT_MAX) v = STAT_MAX;
+      state.stats[id] = v;
+      renderStats();
+      updateAllDerived();
+    };
+  }
+}
+
+function statChange(id, delta) {
+  var cur = state.stats[id] || 2;
+  var newVal = cur + delta;
+  if (newVal < STAT_MIN) return;
+  if (newVal > STAT_MAX) return;
+  if (delta > 0 && getStatPointsRemaining() <= 0) return;
+  state.stats[id] = newVal;
+  renderStats();
+  updateAllDerived();
+}
+
+function updateStatPointsBar() {
+  var rem = getStatPointsRemaining();
+  document.getElementById("stat_points_remaining").textContent = rem;
+  var bar = document.getElementById("stat_points_bar");
+  bar.style.opacity = rem < 0 ? "0.6" : "1";
+}
+
+function renderSkills() {
+  var tbody = document.getElementById("skills_body");
+  var search = (document.getElementById("skillSearch").value || "").toLowerCase();
+  tbody.innerHTML = "";
+  var statKeys = Object.keys(DATA.skills);
+  for (var si = 0; si < statKeys.length; si++) {
+    var statId = statKeys[si];
+    var skillList = DATA.skills[statId];
+    for (var j = 0; j < skillList.length; j++) {
+      var skill = skillList[j];
+      var name = skill.name;
+      if (search && name.toLowerCase().indexOf(search) === -1) continue;
+      var ranks = state.skillRanks[skill.id] || 0;
+      var item = state.skillItem[skill.id] || 0;
+      var statVal = getEffectiveStat(statId);
+      var cyber = calcSkillCyberBonus(skill.id);
+      var total = calcSkillTotal(statVal, ranks, item, cyber);
+      var tr = document.createElement("tr");
+      tr.innerHTML = '<td>' + name + '</td>' +
+        '<td>' + statId.toUpperCase() + '</td>' +
+        '<td>' + calcStatBonus(statVal) + '</td>' +
+        '<td><input type="number" class="skill-rank" data-skill="' + skill.id + '" value="' + ranks + '" min="0" max="10" style="width:50px"></td>' +
+        '<td><input type="number" class="skill-item" data-skill="' + skill.id + '" value="' + item + '" style="width:50px"></td>' +
+        '<td>' + (cyber > 0 ? '+' + cyber : '0') + '</td>' +
+        '<td><strong>' + (total >= 0 ? "+" : "") + total + '</strong></td>';
+      tbody.appendChild(tr);
+    }
+  }
+  attachSkillEvents();
+}
+
+function getSkillIpBase(skillId) {
+  for (var k in DATA.skills) {
+    for (var i = 0; i < DATA.skills[k].length; i++) {
+      if (DATA.skills[k][i].id === skillId) {
+        var m = DATA.skills[k][i].ipMult || 1;
+        return m * 20;
+      }
+    }
+  }
+  return 20;
+}
+
+function ipCostBetween(oldRank, newRank, baseCost) {
+  return baseCost * (newRank * (newRank + 1) / 2 - oldRank * (oldRank + 1) / 2);
+}
+
+function payIpCost(cost) {
+  var ipEl = document.getElementById("char_ip");
+  var cur = parseInt(ipEl.value) || 0;
+  if (cur - cost < 0) return false;
+  ipEl.value = cur - cost;
+  return true;
+}
+
+function attachSkillEvents() {
+  var ranks = document.querySelectorAll(".skill-rank");
+  var items = document.querySelectorAll(".skill-item");
+  for (var i = 0; i < ranks.length; i++) {
+    var input = ranks[i];
+    input.dataset.oldVal = input.value;
+    input.onchange = function() {
+      var id = this.dataset.skill;
+      var oldVal = parseInt(this.dataset.oldVal) || 0;
+      var newVal = parseInt(this.value) || 0;
+      if (newVal === oldVal) return;
+      var base = getSkillIpBase(id);
+      var cost = ipCostBetween(oldVal, newVal, base);
+      if (cost > 0 && !payIpCost(cost)) {
+        alert("Not enough Improvement Points! Need " + cost + " IP.");
+        this.value = oldVal;
+        return;
+      }
+      if (cost < 0) payIpCost(cost);
+      state.skillRanks[id] = newVal;
+      this.dataset.oldVal = newVal;
+      renderSkills();
+    };
+  }
+  for (var i = 0; i < items.length; i++) {
+    items[i].onchange = function() {
+      var id = this.dataset.skill;
+      state.skillItem[id] = parseInt(this.value) || 0;
+      renderSkills();
+    };
+  }
+}
+
+function renderHealth() {
+  var body = state.stats.body || 2;
+  var hpMax = calcHitsMax(body);
+  document.getElementById("hp_max").value = hpMax;
+  document.getElementById("hp_seriously").value = calcSeriouslyWounded(hpMax);
+  document.getElementById("hp_death").value = calcDeathSave(hpMax);
+  var cur = document.getElementById("hp_current");
+  if (!cur.value || parseInt(cur.value) === 0) cur.value = hpMax;
+}
+
+function renderHumanity() {
+  var emp = state.stats.emp || 2;
+  var humMax = calcHumanityMax(emp);
+  var hcTotal = totalCyberwareHC(state.cyberware);
+  var humCur = calcCurrentHumanity(humMax, hcTotal);
+  var empFromHum = calcEmpFromHumanity(humCur);
+  document.getElementById("hum_max").value = humMax;
+  document.getElementById("hum_hc_total").value = hcTotal;
+  document.getElementById("hum_current").value = humCur;
+  document.getElementById("hum_emp").value = empFromHum;
+}
+
+function renderWeapons() {
+  var tbody = document.getElementById("weapons_body");
+  tbody.innerHTML = "";
+  for (var i = 0; i < state.weapons.length; i++) {
+    var w = state.weapons[i];
+    var tr = document.createElement("tr");
+    tr.innerHTML = '<td>' + w.name + '</td><td>' + w.dmg + '</td><td>' + (w.rof || "-") + '</td><td>' + (w.mag || "-") + '</td><td>' + (w.type || "") + '</td><td><input type="number" class="weapon-rank" data-idx="' + i + '" value="' + (w.rank || 0) + '" min="0" max="20" style="width:45px"></td><td><button class="btn-action weapon-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
+    tbody.appendChild(tr);
+  }
+  attachWeaponEvents();
+}
+
+function attachWeaponEvents() {
+  var removes = document.querySelectorAll(".weapon-remove");
+  var ranks = document.querySelectorAll(".weapon-rank");
+  for (var i = 0; i < removes.length; i++) {
+    removes[i].onclick = function() {
+      var idx = parseInt(this.dataset.idx);
+      var el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) + (state.weapons[idx].cost || 0);
+      state.weapons.splice(idx, 1);
+      renderWeapons();
+    };
+  }
+  for (var i = 0; i < ranks.length; i++) {
+    ranks[i].onchange = function() {
+      var idx = parseInt(this.dataset.idx);
+      state.weapons[idx].rank = parseInt(this.value) || 0;
+    };
+  }
+}
+
+function renderArmor() {
+  var tbody = document.getElementById("armor_body");
+  tbody.innerHTML = "";
+  var bodySP = 0;
+  var headSP = 0;
+  for (var i = 0; i < state.armor.length; i++) {
+    var a = state.armor[i];
+    var tr = document.createElement("tr");
+    tr.innerHTML = '<td>' + a.name + '</td><td>' + a.sp + '</td><td>' + a.slots + '</td><td>' + a.enc + '</td><td><button class="btn-action armor-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
+    tbody.appendChild(tr);
+    if (a.slots === "Body") bodySP = Math.max(bodySP, a.sp);
+    if (a.slots === "Head") headSP = Math.max(headSP, a.sp);
+    if (a.slots === "Shield") bodySP = Math.max(bodySP, a.sp);
+  }
+  document.getElementById("armor_total_sp_body").textContent = bodySP;
+  document.getElementById("armor_total_sp_head").textContent = headSP;
+  var removes = document.querySelectorAll(".armor-remove");
+  for (var i = 0; i < removes.length; i++) {
+    removes[i].onclick = function() {
+      var idx = parseInt(this.dataset.idx);
+      var el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) + (state.armor[idx].cost || 0);
+      state.armor.splice(idx, 1);
+      renderArmor();
+      renderHumanity();
+    };
+  }
+}
+
+function renderCyberware() {
+  var tbody = document.getElementById("cyberware_body");
+  tbody.innerHTML = "";
+  for (var i = 0; i < state.cyberware.length; i++) {
+    var c = state.cyberware[i];
+    if (c.slots) {
+      renderCyberwareRow(tbody, c, i, true);
+      for (var s = 0; s < c.slots; s++) {
+        renderCyberwareSlot(tbody, c, i, s);
+      }
+    } else {
+      renderCyberwareRow(tbody, c, i, false);
+    }
+  }
+  attachCyberwareEvents();
+}
+
+function renderCyberwareRow(tbody, c, idx) {
+  var tr = document.createElement("tr");
+  var bonusHtml = formatCyberBonus(c.bonus);
+  tr.innerHTML = '<td>' + c.name + '</td><td>' + c.type + '</td><td>' + (c.hc || 0) + '</td><td>' + (c.cost || 0) + 'eb</td><td><small>' + bonusHtml + '</small></td><td><small>' + (c.desc || '') + '</small></td><td><button class="btn-action cyberware-remove" data-idx="' + idx + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
+  tbody.appendChild(tr);
+}
+
+function renderCyberwareSlot(tbody, parent, parentIdx, slotIdx) {
+  var option = (parent.options && parent.options[slotIdx]) || null;
+  var available = getOptionsForParent(parent.id);
+  if (available.length === 0) {
+    var parentDataItem = getDataItemById(parent.id);
+    if (parentDataItem && parentDataItem.parentType) {
+      available = getOptionsForParent(parentDataItem.parentType);
+    }
+  }
+  var tr = document.createElement("tr");
+  tr.style.background = "rgba(128,128,128,0.05)";
+  tr.style.fontSize = "0.85rem";
+  if (!option) tr.className = "cyber-slot-empty";
+  var selectHtml = '<select class="cyber-slot-select" data-parent="' + parentIdx + '" data-slot="' + slotIdx + '" style="width:100%;font-size:0.8rem">';
+  selectHtml += '<option value="">-- Empty --</option>';
+  for (var oi = 0; oi < available.length; oi++) {
+    var opt = available[oi];
+    var sel = (option && option.id === opt.id) ? ' selected' : '';
+    selectHtml += '<option value="' + opt.id + '"' + sel + '>' + opt.name + ' (' + opt.cost + 'eb, ' + (opt.hc || 0) + 'HC)' + '</option>';
+  }
+  selectHtml += '</select>';
+  tr.innerHTML = '<td style="padding-left:1.5rem;border-top:none" colspan="6">Slot ' + (slotIdx + 1) + ': ' + selectHtml + '</td><td style="border-top:none"></td>';
+  tbody.appendChild(tr);
+}
+
+function getOptionsForParent(parentId) {
+  var result = [];
+  for (var i = 0; i < DATA.cyberware.length; i++) {
+    if (DATA.cyberware[i].parentType === parentId) {
+      result.push(DATA.cyberware[i]);
+    }
+  }
+  return result;
+}
+
+function attachCyberwareEvents() {
+  var removes = document.querySelectorAll(".cyberware-remove");
+  for (var i = 0; i < removes.length; i++) {
+    removes[i].onclick = function() {
+      var idx = parseInt(this.dataset.idx);
+      var el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) + (state.cyberware[idx].cost || 0);
+      state.cyberware.splice(idx, 1);
+      renderCyberware();
+      renderHumanity();
+      renderStats();
+      renderSkills();
+    };
+  }
+  var selects = document.querySelectorAll(".cyber-slot-select");
+  for (var i = 0; i < selects.length; i++) {
+    selects[i].onclick = function(e) { e.stopPropagation(); };
+    selects[i].onchange = function() {
+      var parentIdx = parseInt(this.dataset.parent);
+      var slotIdx = parseInt(this.dataset.slot);
+      var optionId = this.value;
+      var parent = state.cyberware[parentIdx];
+      if (!parent) return;
+      if (!parent.options) parent.options = [];
+      var oldOption = parent.options[slotIdx] || null;
+      var oldCost = oldOption ? (oldOption.cost || 0) : 0;
+      if (optionId) {
+        var item = getDataItemById(optionId);
+        if (item) {
+          parent.options[slotIdx] = { id: item.id, name: item.name, hc: item.hc || 0, cost: item.cost || 0, desc: item.desc || '', bonus: item.bonus || null, parentType: item.parentType };
+        }
+      } else {
+        parent.options[slotIdx] = null;
+      }
+      var newOption = parent.options[slotIdx] || null;
+      var newCost = newOption ? (newOption.cost || 0) : 0;
+      var diff = newCost - oldCost;
+      if (diff !== 0) {
+        var el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) - diff;
+      }
+      renderCyberware();
+      renderHumanity();
+      renderStats();
+      renderSkills();
+    };
+  }
+}
+
+function getDataItemById(id) {
+  for (var i = 0; i < DATA.cyberware.length; i++) {
+    if (DATA.cyberware[i].id === id) return DATA.cyberware[i];
+  }
+  return null;
+}
+
+function renderGear() {
+  var tbody = document.getElementById("gear_body");
+  tbody.innerHTML = "";
+  for (var i = 0; i < state.gear.length; i++) {
+    var g = state.gear[i];
+    var tr = document.createElement("tr");
+    tr.innerHTML = '<td>' + g.name + '</td><td>' + (g.cat || "-") + '</td><td>' + g.cost + 'eb</td><td><input type="number" class="gear-qty" data-idx="' + i + '" value="' + (g.qty || 1) + '" min="1" style="width:45px"></td><td><small>' + (g.desc || "") + '</small></td><td><button class="btn-action gear-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
+    tbody.appendChild(tr);
+  }
+  var removes = document.querySelectorAll(".gear-remove");
+  var qtys = document.querySelectorAll(".gear-qty");
+  for (var i = 0; i < removes.length; i++) {
+    removes[i].onclick = function() {
+      var idx = parseInt(this.dataset.idx);
+      var g = state.gear[idx];
+      var el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) + (g.cost || 0) * (g.qty || 1);
+      if (g.ammo && state.ammo[g.id]) {
+        state.ammo[g.id].total -= g.ammo * (g.qty || 1);
+        if (state.ammo[g.id].total <= 0) delete state.ammo[g.id];
+      }
+      state.gear.splice(idx, 1);
+      renderGear();
+      renderAmmoTracker();
+    };
+  }
+  for (var i = 0; i < qtys.length; i++) {
+    qtys[i].onchange = function() {
+      var idx = parseInt(this.dataset.idx);
+      var g = state.gear[idx];
+      var oldQty = g.qty || 1;
+      var newQty = parseInt(this.value) || 1;
+      var el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) - (newQty - oldQty) * (g.cost || 0);
+      if (g.ammo && state.ammo[g.id]) {
+        state.ammo[g.id].total += g.ammo * (newQty - oldQty);
+        if (state.ammo[g.id].total <= 0) delete state.ammo[g.id];
+      }
+      g.qty = newQty;
+      renderAmmoTracker();
+    };
+  }
+}
+
+function renderAmmoTracker() {
+  var tbody = document.getElementById("ammo_body");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+  var ammoIds = Object.keys(state.ammo);
+  for (var i = 0; i < ammoIds.length; i++) {
+    var id = ammoIds[i];
+    var entry = state.ammo[id];
+    if (!entry || entry.total <= 0) continue;
+    var tr = document.createElement("tr");
+    tr.innerHTML = '<td>' + entry.name + '</td><td>' + entry.perBundle + '</td><td><strong>' + entry.total + '</strong></td><td><input type="number" class="ammo-use-qty" data-ammo="' + id + '" value="1" min="1" max="' + entry.total + '" style="width:55px"> <button class="btn-action ammo-use-btn" data-ammo="' + id + '" style="font-size:0.75rem;padding:0.2rem 0.5rem">Use</button></td>';
+    tbody.appendChild(tr);
+  }
+  if (tbody.children.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;opacity:0.5">No ammunition purchased. Add ammo from the Gear tab.</td></tr>';
+  }
+  attachAmmoEvents();
+}
+
+function attachAmmoEvents() {
+  var btns = document.querySelectorAll(".ammo-use-btn");
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].onclick = function() {
+      var ammoId = this.dataset.ammo;
+      var input = document.querySelector('.ammo-use-qty[data-ammo="' + ammoId + '"]');
+      var qty = parseInt(input.value) || 1;
+      if (!state.ammo[ammoId]) return;
+      if (qty > state.ammo[ammoId].total) qty = state.ammo[ammoId].total;
+      if (qty <= 0) return;
+      state.ammo[ammoId].total -= qty;
+      if (state.ammo[ammoId].total <= 0) {
+        delete state.ammo[ammoId];
+        for (var j = 0; j < state.gear.length; j++) {
+          if (state.gear[j].id === ammoId) {
+            state.gear.splice(j, 1);
+            break;
+          }
+        }
+        renderGear();
+      }
+      renderAmmoTracker();
+    };
+  }
+}
+
+function initLifepath() {
+  var fields = ["lp_background", "lp_motivation", "lp_hairstyle", "lp_clothing", "lp_event"];
+  var dataKeys = ["backgrounds", "motivations", "hairstyles", "clothing_styles", "life_events"];
+  for (var f = 0; f < fields.length; f++) {
+    var sel = document.getElementById(fields[f]);
+    sel.innerHTML = '<option value="">-- Random --</option>';
+    var items = DATA.lifepath[dataKeys[f]];
+    for (var i = 0; i < items.length; i++) {
+      var opt = document.createElement("option");
+      opt.value = items[i];
+      opt.textContent = items[i];
+      sel.appendChild(opt);
+    }
+  }
+  document.getElementById("lp_random_btn").onclick = randomLifepath;
+}
+
+function randomLifepath() {
+  var fields = ["lp_background", "lp_motivation", "lp_hairstyle", "lp_clothing", "lp_event"];
+  var dataKeys = ["backgrounds", "motivations", "hairstyles", "clothing_styles", "life_events"];
+  for (var f = 0; f < fields.length; f++) {
+    var sel = document.getElementById(fields[f]);
+    var items = DATA.lifepath[dataKeys[f]];
+    var idx = Math.floor(Math.random() * items.length);
+    sel.value = items[idx];
+  }
+}
+
+// ============================================================
+// ADD BUTTONS & ITEM SELECTOR
+// ============================================================
+function initAddButtons() {
+  document.getElementById("add_weapon_btn").onclick = function() {
+    showItemSelector("weapon", DATA.weapons, function(item) {
+      state.weapons.push({ id: item.id, name: item.name, dmg: item.dmg, rof: item.rof, mag: item.mag, type: item.type, rank: 0, cost: item.cost || 0 });
+      var el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) - (item.cost || 0);
+      renderWeapons();
+    }, "type");
+  };
+  document.getElementById("add_armor_btn").onclick = function() {
+    showItemSelector("armor", DATA.armor, function(item) {
+      state.armor.push({ id: item.id, name: item.name, sp: item.sp, slots: item.slots, enc: item.enc, cost: item.cost || 0 });
+      var el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) - (item.cost || 0);
+      renderArmor();
+      renderHumanity();
+    });
+  };
+  document.getElementById("add_cyberware_btn").onclick = function() {
+    var standalone = DATA.cyberware.filter(function(c) { return !c.parentType || c.slots; });
+    showItemSelector("cyberware", standalone, function(item) {
+      var bodyPart = item.bodyPart;
+      if (bodyPart) {
+        var limits = { eye: 2, arm: 2, leg: 2 };
+        var max = limits[bodyPart] || 99;
+        var count = 0;
+        for (var i = 0; i < state.cyberware.length; i++) {
+          var dataItem = getDataItemById(state.cyberware[i].id);
+          if (dataItem && dataItem.bodyPart === bodyPart) count++;
+        }
+        var addCount = (item.id === "romanova_cyberlegs" || item.id === "skydrivers") ? 2 : 1;
+        if (count + addCount > max) {
+          alert("Maximum " + max + " " + bodyPart + "(s) allowed. Remove one first.");
+          return;
+        }
+      }
+      var entry = { id: item.id, name: item.name, type: item.type, hc: item.hc, cost: item.cost, desc: item.desc || '', bonus: item.bonus || null };
+      if (item.slots) { entry.slots = item.slots; entry.options = []; }
+      var pairedPrefill = { "romanova_cyberlegs": "talon_feet", "skydrivers": "jump_boosters" };
+      var prefillId = pairedPrefill[item.id];
+      if (prefillId) {
+        var prefillData = getDataItemById(prefillId);
+        var leftLeg = { id: item.id, name: item.name + " (Left)", type: item.type, hc: item.hc, cost: 0, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
+        if (prefillData) {
+          leftLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
+        }
+        state.cyberware.push(leftLeg);
+        var rightLeg = { id: item.id, name: item.name + " (Right)", type: item.type, hc: item.hc, cost: 0, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
+        if (prefillData) {
+          rightLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
+        }
+        state.cyberware.push(rightLeg);
+      } else {
+        state.cyberware.push(entry);
+      }
+      var el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) - (item.cost || 0);
+      renderCyberware();
+      renderHumanity();
+      renderStats();
+      renderSkills();
+    }, "type");
+  };
+  document.getElementById("add_gear_btn").onclick = function() {
+    var allGear = DATA.gear.concat(DATA.fashion.map(function(f) { return { id: f.id, name: f.name, cost: f.cost, cat: "Fashion" }; }));
+    showItemSelector("gear", allGear, function(item) {
+      state.gear.push({ id: item.id, name: item.name, cost: item.cost, cat: item.cat || "Gear", desc: item.desc || "", qty: 1, ammo: item.ammo });
+      var el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) - (item.cost || 0);
+      if (item.ammo) {
+        state.ammo[item.id] = state.ammo[item.id] || { id: item.id, name: item.name, perBundle: item.ammo, total: 0 };
+        state.ammo[item.id].total += item.ammo;
+      }
+      renderGear();
+      renderAmmoTracker();
+    }, "cat");
+  };
+}
+
+function showItemSelector(type, items, callback, groupBy) {
+  var overlay = document.createElement("div");
+  overlay.className = "modal-overlay active";
+  overlay.style.display = "flex";
+  var box = document.createElement("div");
+  box.className = "modal-box";
+  box.style.maxWidth = "600px";
+  var title = type.charAt(0).toUpperCase() + type.slice(1);
+  box.innerHTML = '<h2>Select ' + title + '</h2><div style="max-height:400px;overflow-y:auto;margin:1rem 0">';
+  var list = document.createElement("div");
+  list.style.display = "flex";
+  list.style.flexDirection = "column";
+  list.style.gap = "4px";
+  var customBtn = document.createElement("button");
+  customBtn.className = "btn-action";
+  customBtn.style.textAlign = "left";
+  customBtn.style.justifyContent = "flex-start";
+  customBtn.style.width = "100%";
+  customBtn.style.background = "var(--accent)";
+  customBtn.style.color = "#fff";
+  customBtn.style.fontWeight = "700";
+  customBtn.textContent = "\u270E Custom " + title;
+  customBtn.onclick = function() {
+    var name = prompt("Enter " + title + " name:");
+    if (!name) return;
+    if (type === "weapon") {
+      var dmg = prompt("Damage dice (e.g. 3d6):") || "1d6";
+      var wType = prompt("Weapon skill (Handgun, Shoulder Arms, Melee, etc.):") || "Handgun";
+      var cost = parseInt(prompt("Cost in eb:") || "0");
+      document.body.removeChild(overlay);
+      callback({ id: "custom_" + Date.now(), name: name, dmg: dmg, type: wType, rof: 1, mag: null, conceal: "Varies", cost: cost, rank: 0 });
+    } else if (type === "armor") {
+      var sp = parseInt(prompt("SP value:") || "0");
+      var slots = prompt("Slots (Body, Head, Shield):") || "Body";
+      var enc = parseInt(prompt("Encumbrance:") || "0");
+      var cost = parseInt(prompt("Cost in eb:") || "0");
+      document.body.removeChild(overlay);
+      callback({ id: "custom_" + Date.now(), name: name, sp: sp, slots: slots, enc: enc, cost: cost });
+    } else if (type === "cyberware") {
+      var cType = prompt("Type (Fashion, Internal, Neuralware, etc.):") || "Fashion";
+      var hc = parseInt(prompt("Humanity Cost:") || "0");
+      var cost = parseInt(prompt("Cost in eb:") || "0");
+      var desc = prompt("Description:") || "";
+      document.body.removeChild(overlay);
+      callback({ id: "custom_" + Date.now(), name: name, type: cType, hc: hc, cost: cost, desc: desc, bonus: null });
+    } else {
+      var cost = parseInt(prompt("Cost in eb:") || "0");
+      var cat = prompt("Category (Gear, Fashion, Electronics, Medical, etc.):") || "Gear";
+      var desc = prompt("Description (optional):") || "";
+      document.body.removeChild(overlay);
+      callback({ id: "custom_" + Date.now(), name: name, cost: cost, cat: cat, desc: desc, qty: 1 });
+    }
+  };
+  list.appendChild(customBtn);
+  if (groupBy) {
+    items = items.slice().sort(function(a, b) {
+      var ga = (a[groupBy] || "Other").toUpperCase();
+      var gb = (b[groupBy] || "Other").toUpperCase();
+      if (ga < gb) return -1;
+      if (ga > gb) return 1;
+      return 0;
+    });
+  }
+  var lastGroup = null;
+  for (var i = 0; i < items.length; i++) {
+    var group = groupBy ? (items[i][groupBy] || "Other") : null;
+    if (group !== null && group !== lastGroup) {
+      var header = document.createElement("div");
+      header.textContent = group;
+      header.style.fontWeight = "700";
+      header.style.padding = "0.5rem 0.25rem 0.25rem";
+      header.style.color = "var(--accent)";
+      header.style.fontSize = "0.85rem";
+      header.style.textTransform = "uppercase";
+      header.style.borderBottom = "1px solid var(--border)";
+      list.appendChild(header);
+      lastGroup = group;
+    }
+    var btn = document.createElement("button");
+    btn.className = "btn-action";
+    btn.style.textAlign = "left";
+    btn.style.justifyContent = "flex-start";
+    btn.style.width = "100%";
+    btn.style.background = "var(--stat-row-bg)";
+    btn.style.color = "var(--text)";
+    var label = items[i].name;
+    if (items[i].cost) label += " (" + items[i].cost + "eb)";
+    if (items[i].hc !== undefined) label += " [HC: " + items[i].hc + "]";
+    if (items[i].dmg) label += " [" + items[i].dmg + "]";
+    btn.textContent = label;
+    (function(item) {
+      btn.onclick = function() {
+        document.body.removeChild(overlay);
+        callback(item);
+      };
+    })(items[i]);
+    list.appendChild(btn);
+  }
+  box.appendChild(list);
+  var closeBtn = document.createElement("button");
+  closeBtn.className = "btn-action";
+  closeBtn.textContent = "Cancel";
+  closeBtn.style.marginTop = "0.5rem";
+  closeBtn.onclick = function() { document.body.removeChild(overlay); };
+  box.appendChild(closeBtn);
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+}
+
+function updateAllDerived() {
+  renderHealth();
+  renderHumanity();
+  renderSkills();
+  updateRoleInfo();
+}
+
+function getCharacterData() {
+  var data = {
+    handle: document.getElementById("char_handle").value,
+    name: document.getElementById("char_name").value,
+    role: document.getElementById("role_select").value,
+    roleAbilityRank: parseInt(document.getElementById("role_ability_rank").value) || 4,
+    age: parseInt(document.getElementById("char_age").value) || 22,
+    ip: parseInt(document.getElementById("char_ip").value) || 0,
+    multiclassEnabled: document.getElementById("multiclass_enabled").checked,
+    secondaryRole: document.getElementById("role_secondary_select").value,
+    secondaryRoleRank: parseInt(document.getElementById("role_secondary_rank").value) || 1,
+    stats: JSON.parse(JSON.stringify(state.stats)),
+    skillRanks: JSON.parse(JSON.stringify(state.skillRanks)),
+    skillItem: JSON.parse(JSON.stringify(state.skillItem)),
+    weapons: JSON.parse(JSON.stringify(state.weapons)),
+    armor: JSON.parse(JSON.stringify(state.armor)),
+    cyberware: JSON.parse(JSON.stringify(state.cyberware)),
+    gear: JSON.parse(JSON.stringify(state.gear)),
+    ammo: JSON.parse(JSON.stringify(state.ammo)),
+    hpCurrent: parseInt(document.getElementById("hp_current").value) || 0,
+    currency: parseInt(document.getElementById("currency_eb").value) || 0,
+    lifepath: {
+      background: document.getElementById("lp_background").value,
+      motivation: document.getElementById("lp_motivation").value,
+      hairstyle: document.getElementById("lp_hairstyle").value,
+      clothing: document.getElementById("lp_clothing").value,
+      event: document.getElementById("lp_event").value,
+      notes: document.getElementById("lp_notes").value
+    }
+  };
+  return data;
+}
+
+function loadCharacterData(data) {
+  document.getElementById("char_handle").value = data.handle || "";
+  document.getElementById("char_name").value = data.name || "";
+  document.getElementById("role_select").value = data.role || "";
+  document.getElementById("role_ability_rank").value = data.roleAbilityRank || 4;
+  document.getElementById("char_age").value = data.age || 22;
+  document.getElementById("char_ip").value = data.ip || 0;
+  document.getElementById("multiclass_enabled").checked = !!data.multiclassEnabled;
+  updateSecondaryRoleOptions();
+  document.getElementById("role_secondary_select").value = data.secondaryRole || "";
+  document.getElementById("role_secondary_rank").value = data.secondaryRoleRank || 1;
+  document.getElementById("multiclass_fields").style.display = data.multiclassEnabled ? "grid" : "none";
+  document.getElementById("role_ability_rank").dataset.oldVal = document.getElementById("role_ability_rank").value;
+  document.getElementById("role_secondary_rank").dataset.oldVal = document.getElementById("role_secondary_rank").value;
+  if (data.stats) {
+    for (var id in data.stats) {
+      if (state.stats[id] !== undefined) state.stats[id] = data.stats[id];
+    }
+  }
+  state.skillRanks = data.skillRanks || {};
+  state.skillItem = data.skillItem || {};
+  state.weapons = data.weapons || [];
+  state.armor = data.armor || [];
+  state.cyberware = data.cyberware || [];
+  state.gear = data.gear || [];
+  state.ammo = data.ammo || {};
+  document.getElementById("hp_current").value = data.hpCurrent || 0;
+  document.getElementById("currency_eb").value = data.currency || 0;
+  if (data.lifepath) {
+    document.getElementById("lp_background").value = data.lifepath.background || "";
+    document.getElementById("lp_motivation").value = data.lifepath.motivation || "";
+    document.getElementById("lp_hairstyle").value = data.lifepath.hairstyle || "";
+    document.getElementById("lp_clothing").value = data.lifepath.clothing || "";
+    document.getElementById("lp_event").value = data.lifepath.event || "";
+    document.getElementById("lp_notes").value = data.lifepath.notes || "";
+  }
+  renderStats();
+  renderSkills();
+  renderWeapons();
+  renderArmor();
+  renderCyberware();
+  renderGear();
+  renderAmmoTracker();
+  updateAllDerived();
+  updateStatPointsBar();
+}
+
+function resetCharacter() {
+  initState();
+  document.getElementById("char_handle").value = "";
+  document.getElementById("char_name").value = "";
+  document.getElementById("role_select").value = "";
+  document.getElementById("role_ability_rank").value = "4";
+  document.getElementById("role_ability_rank").dataset.oldVal = "4";
+  document.getElementById("char_age").value = "22";
+  document.getElementById("char_ip").value = "0";
+  document.getElementById("multiclass_enabled").checked = false;
+  document.getElementById("role_secondary_select").value = "";
+  document.getElementById("role_secondary_rank").value = "1";
+  document.getElementById("role_secondary_rank").dataset.oldVal = "1";
+  document.getElementById("multiclass_fields").style.display = "none";
+  document.getElementById("hp_current").value = "0";
+  document.getElementById("currency_eb").value = "0";
+  document.getElementById("lp_background").value = "";
+  document.getElementById("lp_motivation").value = "";
+  document.getElementById("lp_hairstyle").value = "";
+  document.getElementById("lp_clothing").value = "";
+  document.getElementById("lp_event").value = "";
+  document.getElementById("lp_notes").value = "";
+  state.skillRanks = {};
+  state.skillItem = {};
+  state.weapons = [];
+  state.armor = [];
+  state.cyberware = [];
+  state.gear = [];
+  state.ammo = {};
+  renderStats();
+  renderSkills();
+  renderWeapons();
+  renderArmor();
+  renderCyberware();
+  renderGear();
+  renderAmmoTracker();
+  updateAllDerived();
+  updateStatPointsBar();
+}
+
+function generateRandomCharacter() {
+  resetCharacter();
+  var roleIdx = Math.floor(Math.random() * DATA.roles.length);
+  var role = DATA.roles[roleIdx];
+  document.getElementById("role_select").value = role.id;
+  updateSecondaryRoleOptions();
+  document.getElementById("role_ability_rank").value = "4";
+  var prefixes = ["Blitz","Cipher","Dash","Echo","Flux","Ghost","Havoc","Jinx","Karma","Locke","Morph","Nyx","Onyx","Pixel","Quake","Reef","Shade","Trigger","Vex","Whisper","Zero","Ace","Byte","Creed","Dust","Ember","Fuse","Grim","Hex","Ice"];
+  var suffixes = ["dog","cat","wolf","fox","hawk","rat","viper","shark","raven","panther","tiger","bear","owl","eagle","hound","jackal","coyote","lynx","striker","runner"];
+  document.getElementById("char_handle").value = prefixes[Math.floor(Math.random()*prefixes.length)]+" "+suffixes[Math.floor(Math.random()*suffixes.length)];
+  document.getElementById("char_age").value = String(18+Math.floor(Math.random()*20));
+  var pts = STAT_POINTS_TOTAL;
+  var st = {};
+  for (var i=0;i<DATA.stats.length;i++) st[DATA.stats[i].id]=STAT_MIN;
+  pts -= STAT_MIN*DATA.stats.length;
+  while (pts>0) { var si=Math.floor(Math.random()*DATA.stats.length); var sid=DATA.stats[si].id; if (st[sid]<STAT_MAX) { st[sid]++; pts--; } }
+  for (var i=0;i<DATA.stats.length;i++) state.stats[DATA.stats[i].id]=st[DATA.stats[i].id];
+  var allSks=[];
+  for (var cat in DATA.skills) allSks=allSks.concat(DATA.skills[cat]);
+  state.skillRanks={};
+  var sp=38;
+  while (sp>0) { var sk=allSks[Math.floor(Math.random()*allSks.length)]; if (!state.skillRanks[sk.id]) state.skillRanks[sk.id]=0; if (state.skillRanks[sk.id]<6) { state.skillRanks[sk.id]++; sp--; } }
+  var lpF=["lp_background","lp_motivation","lp_hairstyle","lp_clothing","lp_event"];
+  var lpK=["backgrounds","motivations","hairstyles","clothing_styles","life_events"];
+  for (var f=0;f<lpF.length;f++) document.getElementById(lpF[f]).value=DATA.lifepath[lpK[f]][Math.floor(Math.random()*DATA.lifepath[lpK[f]].length)];
+  var w=DATA.weapons[Math.floor(Math.random()*DATA.weapons.length)];
+  state.weapons.push({id:w.id,name:w.name,dmg:w.dmg,rof:w.rof||1,mag:w.mag,type:w.type,rank:0});
+  var ap=[DATA.armor[7],DATA.armor[8],DATA.armor[9],DATA.armor[2],DATA.armor[1]];
+  var a=ap[Math.floor(Math.random()*ap.length)];
+  state.armor.push({id:a.id,name:a.name,sp:a.sp,slots:a.slots,enc:a.enc});
+  var gIds=["agent","flashlight","rope","duct_tape","first_aid_kit"];
+  for (var g=0;g<gIds.length;g++) { var gi=DATA.gear.find(function(x){return x.id===gIds[g];}); if (gi) state.gear.push({id:gi.id,name:gi.name,cost:gi.cost,cat:gi.cat||"Gear",qty:1}); }
+  document.getElementById("hp_current").value=calcHitsMax(state.stats.body||2);
+  renderStats();renderSkills();renderWeapons();renderArmor();renderCyberware();renderGear();renderAmmoTracker();
+  updateAllDerived();updateStatPointsBar();updateRoleInfo();
+}
+// ============================================================
+// PERSISTENCE — Save/load/delete/export/import
+// ============================================================
+function saveCharacter(name) {
+  var data = getCharacterData();
+  data._saveName = name;
+  data._savedAt = new Date().toISOString();
+  var key = "cpr_char_" + name;
+  localStorage.setItem(key, JSON.stringify(data));
+  return true;
+}
+
+function loadCharacter(name) {
+  var key = "cpr_char_" + name;
+  var raw = localStorage.getItem(key);
+  if (!raw) return null;
+  try { return JSON.parse(raw); } catch(e) { return null; }
+}
+
+function deleteCharacter(name) {
+  var key = "cpr_char_" + name;
+  localStorage.removeItem(key);
+}
+
+function listCharacters() {
+  var chars = [];
+  for (var i = 0; i < localStorage.length; i++) {
+    var key = localStorage.key(i);
+    if (key.indexOf("cpr_char_") === 0) {
+      chars.push(key.substring(9));
+    }
+  }
+  chars.sort();
+  return chars;
+}
+
+function buildCharList() {
+  var list = document.getElementById("charList");
+  list.innerHTML = "";
+  var chars = listCharacters();
+  if (chars.length === 0) {
+    list.innerHTML = '<div style="padding:0.5rem;opacity:0.6">No saved characters</div>';
+    return;
+  }
+  for (var i = 0; i < chars.length; i++) {
+    (function(name) {
+      var div = document.createElement("div");
+      div.className = "char-list-item";
+      div.textContent = name;
+      div.onclick = function() {
+        document.getElementById("charSaveName").value = name;
+      };
+      list.appendChild(div);
+    })(chars[i]);
+  }
+}
+function exportCharacter() {
+  if (!confirm('Export character as JSON file?')) return;
+  var data = getCharacterData();
+  var handle = data.handle || data.name || "character";
+  var name = handle.replace(/[^a-zA-Z0-9_-]/g, "_") + "_cpr.json";
+  var blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function importCharacter(file) {
+  if (!confirm('Import character from "' + file.name + '"? Current data will be lost.')) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      if (!data.stats) {
+        alert("Invalid character data: missing stats");
+        return;
+      }
+      loadCharacterData(data);
+      alert("Character imported successfully!");
+    } catch(err) {
+      alert("Failed to import character: " + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function printCharacter() {
+  document.body.classList.add("printing");
+  window.print();
+  setTimeout(function() { document.body.classList.remove("printing"); }, 100);
+}
+// ============================================================
+// INIT — Bootstrap and event binding
+// ============================================================
+function init() {
+  initState();
+  initRoleSelect();
+  renderStats();
+  renderSkills();
+  renderHealth();
+  renderHumanity();
+  renderWeapons();
+  renderArmor();
+  renderCyberware();
+  renderGear();
+  renderAmmoTracker();
+  initLifepath();
+  initAddButtons();
+  initTabs();
+  initWelcome();
+  initCharManager();
+  initTheme();
+  initExportImport();
+  initNewChar();
+  initPrint();
+  initSkillSearch();
+  setDefaultValues();
+}
+
+function initTabs() {
+  var buttons = document.querySelectorAll(".tab-btn");
+  for (var i = 0; i < buttons.length; i++) {
+    (function(btn) {
+      btn.onclick = function() {
+        var tabId = this.dataset.tab;
+        var allPanels = document.querySelectorAll(".tab-panel");
+        for (var j = 0; j < allPanels.length; j++) {
+          allPanels[j].classList.remove("active");
+        }
+        var allBtns = document.querySelectorAll(".tab-btn");
+        for (var j = 0; j < allBtns.length; j++) {
+          allBtns[j].classList.remove("active");
+        }
+        document.getElementById(tabId).classList.add("active");
+        this.classList.add("active");
+        state.currentTab = tabId;
+      };
+    })(buttons[i]);
+  }
+}
+
+function initWelcome() {
+  var overlay = document.getElementById("welcomeOverlay");
+  var startBtn = document.getElementById("welcomeStartBtn");
+  function dismissWelcome() {
+    overlay.style.display = "none";
+    overlay.classList.add("hidden");
+  }
+  function onTap(e) {
+    if (e.target === overlay || startBtn.contains(e.target)) {
+      dismissWelcome();
+      e.preventDefault();
+    }
+  }
+  overlay.addEventListener("click", onTap);
+  overlay.addEventListener("touchend", onTap, { passive: false });
+  startBtn.addEventListener("click", dismissWelcome);
+  startBtn.addEventListener("touchend", function(e) { e.preventDefault(); dismissWelcome(); }, { passive: false });
+}
+
+function initCharManager() {
+  var modal = document.getElementById("characterModal");
+  var openBtn = document.getElementById("charactersBtn");
+  var closeBtn = document.getElementById("charCloseBtn");
+  var saveBtn = document.getElementById("charSaveBtn");
+  var loadBtn = document.getElementById("charLoadBtn");
+  var delBtn = document.getElementById("charDeleteBtn");
+  var newBtn = document.getElementById("charNewBtn");
+  var nameInput = document.getElementById("charSaveName");
+
+  openBtn.onclick = function() {
+    buildCharList();
+    modal.classList.add("active");
+    modal.style.display = "flex";
+  };
+  closeBtn.onclick = function() {
+    modal.classList.remove("active");
+    modal.style.display = "none";
+  };
+  window.onclick = function(e) {
+    if (e.target === modal) {
+      modal.classList.remove("active");
+      modal.style.display = "none";
+    }
+  };
+  saveBtn.onclick = function() {
+    var name = nameInput.value.trim();
+    if (!name) { alert("Enter a name to save."); return; }
+    var exists = listCharacters().indexOf(name) !== -1;
+    if (exists && !confirm('Overwrite existing character "' + name + '"?')) return;
+    saveCharacter(name);
+    buildCharList();
+    alert("Character saved as \"" + name + "\"");
+  };
+  loadBtn.onclick = function() {
+    var name = nameInput.value.trim();
+    if (!name) { alert("Select or enter a character name to load."); return; }
+    var data = loadCharacter(name);
+    if (!data) { alert("Character \"" + name + "\" not found."); return; }
+    if (!confirm('Load "' + name + '"? Current character data will be lost.')) return;
+    loadCharacterData(data);
+    modal.classList.remove("active");
+    modal.style.display = "none";
+    alert("Character \"" + name + "\" loaded!");
+  };
+  delBtn.onclick = function() {
+    var name = nameInput.value.trim();
+    if (!name) { alert("Select a character to delete."); return; }
+    if (!confirm("Delete \"" + name + "\"? This cannot be undone.")) return;
+    deleteCharacter(name);
+    buildCharList();
+    nameInput.value = "";
+    alert("Character deleted.");
+  };
+  newBtn.onclick = function() {
+    if (!confirm("Create a new character? Current data will be lost.")) return;
+    resetCharacter();
+    modal.classList.remove("active");
+    modal.style.display = "none";
+    document.getElementById("char_handle").focus();
+  };
+}
+
+function initTheme() {
+  var toggle = document.getElementById("themeToggle");
+  var theme = document.getElementById("theme");
+  var current = localStorage.getItem("cpr_theme") || "light";
+  theme.href = "css/theme-" + current + ".css";
+  toggle.onclick = function() {
+    var cur = theme.href.indexOf("theme-light") !== -1 ? "light" : "dark";
+    var next = cur === "light" ? "dark" : "light";
+    theme.href = "css/theme-" + next + ".css";
+    localStorage.setItem("cpr_theme", next);
+  };
+}
+
+function initExportImport() {
+  document.getElementById("exportBtn").onclick = exportCharacter;
+  document.getElementById("importBtn").onclick = function() {
+    document.getElementById("importFile").click();
+  };
+  document.getElementById("importFile").onchange = function(e) {
+    if (e.target.files.length > 0) {
+      importCharacter(e.target.files[0]);
+    }
+    this.value = "";
+  };
+}
+
+function initNewChar() {
+  document.getElementById("randomBtn").onclick = function() {
+    if (!confirm("Generate a random character? Current data will be lost.")) return;
+    generateRandomCharacter();
+  };
+  document.getElementById("newCharBtn").onclick = function() {
+    if (!confirm("Create a new character? Current data will be lost.")) return;
+    resetCharacter();
+    document.getElementById("char_handle").focus();
+  };
+}
+
+function initPrint() {
+  document.getElementById("printBtn").onclick = printCharacter;
+}
+
+function initSkillSearch() {
+  document.getElementById("skillSearch").oninput = function() {
+    renderSkills();
+  };
+}
+
+function setDefaultValues() {
+  var hp = document.getElementById("hp_current");
+  if (!hp.value || parseInt(hp.value) === 0) {
+    var body = state.stats.body || 2;
+    hp.value = calcHitsMax(body);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", init);
+</script></body>
 </html>

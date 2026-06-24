@@ -1,3 +1,5 @@
+// CALCULATION HELPERS
+// ============================================================
 function calcHitsMax(body) {
   return body * 5 + 10;
 }
@@ -146,3 +148,9 @@ function skillNameById(id) {
   }
   return id;
 }
+// ============================================================
+// STATE — Runtime character state object
+// ============================================================
+var STAT_POINTS_TOTAL = 62;
+var STAT_MAX = 8;
+var STAT_MIN = 2;

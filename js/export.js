@@ -1,3 +1,23 @@
+function buildCharList() {
+  var list = document.getElementById("charList");
+  list.innerHTML = "";
+  var chars = listCharacters();
+  if (chars.length === 0) {
+    list.innerHTML = '<div style="padding:0.5rem;opacity:0.6">No saved characters</div>';
+    return;
+  }
+  for (var i = 0; i < chars.length; i++) {
+    (function(name) {
+      var div = document.createElement("div");
+      div.className = "char-list-item";
+      div.textContent = name;
+      div.onclick = function() {
+        document.getElementById("charSaveName").value = name;
+      };
+      list.appendChild(div);
+    })(chars[i]);
+  }
+}
 function exportCharacter() {
   if (!confirm('Export character as JSON file?')) return;
   var data = getCharacterData();

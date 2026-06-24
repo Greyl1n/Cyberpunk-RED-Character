@@ -1,6 +1,3 @@
-var STAT_POINTS_TOTAL = 62;
-var STAT_MAX = 8;
-var STAT_MIN = 2;
 
 var state = {
   stats: {},
@@ -10,6 +7,7 @@ var state = {
   armor: [],
   cyberware: [],
   gear: [],
+  ammo: {},
   currentTab: "tab-character"
 };
 
@@ -130,6 +128,9 @@ function updateRoleInfo() {
   info.innerHTML = html;
 }
 
+// ============================================================
+// RENDER — All DOM rendering functions
+// ============================================================
 function renderStats() {
   var container = document.getElementById("stats_container");
   container.innerHTML = "";
@@ -322,6 +323,8 @@ function attachWeaponEvents() {
   for (var i = 0; i < removes.length; i++) {
     removes[i].onclick = function() {
       var idx = parseInt(this.dataset.idx);
+      var el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) + (state.weapons[idx].cost || 0);
       state.weapons.splice(idx, 1);
       renderWeapons();
     };
@@ -354,6 +357,8 @@ function renderArmor() {
   for (var i = 0; i < removes.length; i++) {
     removes[i].onclick = function() {
       var idx = parseInt(this.dataset.idx);
+      var el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) + (state.armor[idx].cost || 0);
       state.armor.splice(idx, 1);
       renderArmor();
       renderHumanity();
@@ -388,6 +393,12 @@ function renderCyberwareRow(tbody, c, idx) {
 function renderCyberwareSlot(tbody, parent, parentIdx, slotIdx) {
   var option = (parent.options && parent.options[slotIdx]) || null;
   var available = getOptionsForParent(parent.id);
+  if (available.length === 0) {
+    var parentDataItem = getDataItemById(parent.id);
+    if (parentDataItem && parentDataItem.parentType) {
+      available = getOptionsForParent(parentDataItem.parentType);
+    }
+  }
   var tr = document.createElement("tr");
   tr.style.background = "rgba(128,128,128,0.05)";
   tr.style.fontSize = "0.85rem";
@@ -419,6 +430,8 @@ function attachCyberwareEvents() {
   for (var i = 0; i < removes.length; i++) {
     removes[i].onclick = function() {
       var idx = parseInt(this.dataset.idx);
+      var el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) + (state.cyberware[idx].cost || 0);
       state.cyberware.splice(idx, 1);
       renderCyberware();
       renderHumanity();
@@ -436,6 +449,8 @@ function attachCyberwareEvents() {
       var parent = state.cyberware[parentIdx];
       if (!parent) return;
       if (!parent.options) parent.options = [];
+      var oldOption = parent.options[slotIdx] || null;
+      var oldCost = oldOption ? (oldOption.cost || 0) : 0;
       if (optionId) {
         var item = getDataItemById(optionId);
         if (item) {
@@ -443,6 +458,13 @@ function attachCyberwareEvents() {
         }
       } else {
         parent.options[slotIdx] = null;
+      }
+      var newOption = parent.options[slotIdx] || null;
+      var newCost = newOption ? (newOption.cost || 0) : 0;
+      var diff = newCost - oldCost;
+      if (diff !== 0) {
+        var el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) - diff;
       }
       renderCyberware();
       renderHumanity();
@@ -465,7 +487,7 @@ function renderGear() {
   for (var i = 0; i < state.gear.length; i++) {
     var g = state.gear[i];
     var tr = document.createElement("tr");
-    tr.innerHTML = '<td>' + g.name + '</td><td>' + (g.cat || "-") + '</td><td>' + g.cost + 'eb</td><td><input type="number" class="gear-qty" data-idx="' + i + '" value="' + (g.qty || 1) + '" min="1" style="width:45px"></td><td><button class="btn-action gear-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
+    tr.innerHTML = '<td>' + g.name + '</td><td>' + (g.cat || "-") + '</td><td>' + g.cost + 'eb</td><td><input type="number" class="gear-qty" data-idx="' + i + '" value="' + (g.qty || 1) + '" min="1" style="width:45px"></td><td><small>' + (g.desc || "") + '</small></td><td><button class="btn-action gear-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
     tbody.appendChild(tr);
   }
   var removes = document.querySelectorAll(".gear-remove");
@@ -473,14 +495,77 @@ function renderGear() {
   for (var i = 0; i < removes.length; i++) {
     removes[i].onclick = function() {
       var idx = parseInt(this.dataset.idx);
+      var g = state.gear[idx];
+      var el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) + (g.cost || 0) * (g.qty || 1);
+      if (g.ammo && state.ammo[g.id]) {
+        state.ammo[g.id].total -= g.ammo * (g.qty || 1);
+        if (state.ammo[g.id].total <= 0) delete state.ammo[g.id];
+      }
       state.gear.splice(idx, 1);
       renderGear();
+      renderAmmoTracker();
     };
   }
   for (var i = 0; i < qtys.length; i++) {
     qtys[i].onchange = function() {
       var idx = parseInt(this.dataset.idx);
-      state.gear[idx].qty = parseInt(this.value) || 1;
+      var g = state.gear[idx];
+      var oldQty = g.qty || 1;
+      var newQty = parseInt(this.value) || 1;
+      var el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) - (newQty - oldQty) * (g.cost || 0);
+      if (g.ammo && state.ammo[g.id]) {
+        state.ammo[g.id].total += g.ammo * (newQty - oldQty);
+        if (state.ammo[g.id].total <= 0) delete state.ammo[g.id];
+      }
+      g.qty = newQty;
+      renderAmmoTracker();
+    };
+  }
+}
+
+function renderAmmoTracker() {
+  var tbody = document.getElementById("ammo_body");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+  var ammoIds = Object.keys(state.ammo);
+  for (var i = 0; i < ammoIds.length; i++) {
+    var id = ammoIds[i];
+    var entry = state.ammo[id];
+    if (!entry || entry.total <= 0) continue;
+    var tr = document.createElement("tr");
+    tr.innerHTML = '<td>' + entry.name + '</td><td>' + entry.perBundle + '</td><td><strong>' + entry.total + '</strong></td><td><input type="number" class="ammo-use-qty" data-ammo="' + id + '" value="1" min="1" max="' + entry.total + '" style="width:55px"> <button class="btn-action ammo-use-btn" data-ammo="' + id + '" style="font-size:0.75rem;padding:0.2rem 0.5rem">Use</button></td>';
+    tbody.appendChild(tr);
+  }
+  if (tbody.children.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;opacity:0.5">No ammunition purchased. Add ammo from the Gear tab.</td></tr>';
+  }
+  attachAmmoEvents();
+}
+
+function attachAmmoEvents() {
+  var btns = document.querySelectorAll(".ammo-use-btn");
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].onclick = function() {
+      var ammoId = this.dataset.ammo;
+      var input = document.querySelector('.ammo-use-qty[data-ammo="' + ammoId + '"]');
+      var qty = parseInt(input.value) || 1;
+      if (!state.ammo[ammoId]) return;
+      if (qty > state.ammo[ammoId].total) qty = state.ammo[ammoId].total;
+      if (qty <= 0) return;
+      state.ammo[ammoId].total -= qty;
+      if (state.ammo[ammoId].total <= 0) {
+        delete state.ammo[ammoId];
+        for (var j = 0; j < state.gear.length; j++) {
+          if (state.gear[j].id === ammoId) {
+            state.gear.splice(j, 1);
+            break;
+          }
+        }
+        renderGear();
+      }
+      renderAmmoTracker();
     };
   }
 }
@@ -513,22 +598,30 @@ function randomLifepath() {
   }
 }
 
+// ============================================================
+// ADD BUTTONS & ITEM SELECTOR
+// ============================================================
 function initAddButtons() {
   document.getElementById("add_weapon_btn").onclick = function() {
     showItemSelector("weapon", DATA.weapons, function(item) {
-      state.weapons.push({ id: item.id, name: item.name, dmg: item.dmg, rof: item.rof, mag: item.mag, type: item.type, rank: 0 });
+      state.weapons.push({ id: item.id, name: item.name, dmg: item.dmg, rof: item.rof, mag: item.mag, type: item.type, rank: 0, cost: item.cost || 0 });
+      var el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) - (item.cost || 0);
       renderWeapons();
     }, "type");
   };
   document.getElementById("add_armor_btn").onclick = function() {
     showItemSelector("armor", DATA.armor, function(item) {
-      state.armor.push({ id: item.id, name: item.name, sp: item.sp, slots: item.slots, enc: item.enc });
+      state.armor.push({ id: item.id, name: item.name, sp: item.sp, slots: item.slots, enc: item.enc, cost: item.cost || 0 });
+      var el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) - (item.cost || 0);
       renderArmor();
       renderHumanity();
     });
   };
   document.getElementById("add_cyberware_btn").onclick = function() {
-    showItemSelector("cyberware", DATA.cyberware, function(item) {
+    var standalone = DATA.cyberware.filter(function(c) { return !c.parentType || c.slots; });
+    showItemSelector("cyberware", standalone, function(item) {
       var bodyPart = item.bodyPart;
       if (bodyPart) {
         var limits = { eye: 2, arm: 2, leg: 2 };
@@ -538,14 +631,33 @@ function initAddButtons() {
           var dataItem = getDataItemById(state.cyberware[i].id);
           if (dataItem && dataItem.bodyPart === bodyPart) count++;
         }
-        if (count >= max) {
+        var addCount = (item.id === "romanova_cyberlegs" || item.id === "skydrivers") ? 2 : 1;
+        if (count + addCount > max) {
           alert("Maximum " + max + " " + bodyPart + "(s) allowed. Remove one first.");
           return;
         }
       }
       var entry = { id: item.id, name: item.name, type: item.type, hc: item.hc, cost: item.cost, desc: item.desc || '', bonus: item.bonus || null };
       if (item.slots) { entry.slots = item.slots; entry.options = []; }
-      state.cyberware.push(entry);
+      var pairedPrefill = { "romanova_cyberlegs": "talon_feet", "skydrivers": "jump_boosters" };
+      var prefillId = pairedPrefill[item.id];
+      if (prefillId) {
+        var prefillData = getDataItemById(prefillId);
+        var leftLeg = { id: item.id, name: item.name + " (Left)", type: item.type, hc: item.hc, cost: 0, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
+        if (prefillData) {
+          leftLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
+        }
+        state.cyberware.push(leftLeg);
+        var rightLeg = { id: item.id, name: item.name + " (Right)", type: item.type, hc: item.hc, cost: 0, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
+        if (prefillData) {
+          rightLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
+        }
+        state.cyberware.push(rightLeg);
+      } else {
+        state.cyberware.push(entry);
+      }
+      var el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) - (item.cost || 0);
       renderCyberware();
       renderHumanity();
       renderStats();
@@ -555,8 +667,15 @@ function initAddButtons() {
   document.getElementById("add_gear_btn").onclick = function() {
     var allGear = DATA.gear.concat(DATA.fashion.map(function(f) { return { id: f.id, name: f.name, cost: f.cost, cat: "Fashion" }; }));
     showItemSelector("gear", allGear, function(item) {
-      state.gear.push({ id: item.id, name: item.name, cost: item.cost, cat: item.cat || "Gear", qty: 1 });
+      state.gear.push({ id: item.id, name: item.name, cost: item.cost, cat: item.cat || "Gear", desc: item.desc || "", qty: 1, ammo: item.ammo });
+      var el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) - (item.cost || 0);
+      if (item.ammo) {
+        state.ammo[item.id] = state.ammo[item.id] || { id: item.id, name: item.name, perBundle: item.ammo, total: 0 };
+        state.ammo[item.id].total += item.ammo;
+      }
       renderGear();
+      renderAmmoTracker();
     }, "cat");
   };
 }
@@ -609,8 +728,9 @@ function showItemSelector(type, items, callback, groupBy) {
     } else {
       var cost = parseInt(prompt("Cost in eb:") || "0");
       var cat = prompt("Category (Gear, Fashion, Electronics, Medical, etc.):") || "Gear";
+      var desc = prompt("Description (optional):") || "";
       document.body.removeChild(overlay);
-      callback({ id: "custom_" + Date.now(), name: name, cost: cost, cat: cat, qty: 1 });
+      callback({ id: "custom_" + Date.now(), name: name, cost: cost, cat: cat, desc: desc, qty: 1 });
     }
   };
   list.appendChild(customBtn);
@@ -694,6 +814,7 @@ function getCharacterData() {
     armor: JSON.parse(JSON.stringify(state.armor)),
     cyberware: JSON.parse(JSON.stringify(state.cyberware)),
     gear: JSON.parse(JSON.stringify(state.gear)),
+    ammo: JSON.parse(JSON.stringify(state.ammo)),
     hpCurrent: parseInt(document.getElementById("hp_current").value) || 0,
     currency: parseInt(document.getElementById("currency_eb").value) || 0,
     lifepath: {
@@ -733,6 +854,7 @@ function loadCharacterData(data) {
   state.armor = data.armor || [];
   state.cyberware = data.cyberware || [];
   state.gear = data.gear || [];
+  state.ammo = data.ammo || {};
   document.getElementById("hp_current").value = data.hpCurrent || 0;
   document.getElementById("currency_eb").value = data.currency || 0;
   if (data.lifepath) {
@@ -749,6 +871,7 @@ function loadCharacterData(data) {
   renderArmor();
   renderCyberware();
   renderGear();
+  renderAmmoTracker();
   updateAllDerived();
   updateStatPointsBar();
 }
@@ -781,12 +904,14 @@ function resetCharacter() {
   state.armor = [];
   state.cyberware = [];
   state.gear = [];
+  state.ammo = {};
   renderStats();
   renderSkills();
   renderWeapons();
   renderArmor();
   renderCyberware();
   renderGear();
+  renderAmmoTracker();
   updateAllDerived();
   updateStatPointsBar();
 }
@@ -824,6 +949,7 @@ function generateRandomCharacter() {
   var gIds=["agent","flashlight","rope","duct_tape","first_aid_kit"];
   for (var g=0;g<gIds.length;g++) { var gi=DATA.gear.find(function(x){return x.id===gIds[g];}); if (gi) state.gear.push({id:gi.id,name:gi.name,cost:gi.cost,cat:gi.cat||"Gear",qty:1}); }
   document.getElementById("hp_current").value=calcHitsMax(state.stats.body||2);
-  renderStats();renderSkills();renderWeapons();renderArmor();renderCyberware();renderGear();
+  renderStats();renderSkills();renderWeapons();renderArmor();renderCyberware();renderGear();renderAmmoTracker();
   updateAllDerived();updateStatPointsBar();updateRoleInfo();
 }
+// ============================================================
