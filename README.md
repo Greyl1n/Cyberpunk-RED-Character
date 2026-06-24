@@ -8,7 +8,7 @@ A standalone, browser-based character manager for **Cyberpunk RED** by R. Talsor
 - **10 Roles** — All core roles with rank-by-rank ability descriptions (1–10)
 - **Multiclassing** — Add a secondary role once your primary reaches Rank 4
 - **86 Skills** — Grouped by linked stat, with search, rank input, and item bonuses
-- **Weapons** — 120+ weapons across all categories (melee, handguns, SMGs, shotguns, assault rifles, snipers, machineguns, heavy weapons, grenade launchers, rocket launchers, exotic, bows, borg weapons)
+- **Weapons** — 140+ weapons across all categories (melee, handguns, SMGs, shotguns, assault rifles, snipers, machineguns, heavy weapons, grenade launchers, rocket launchers, exotic, bows, borg weapons)
 - **Armor, Cyberware, Gear** — Add/remove management with data from core rulebook and DLCs
 - **Custom Items** — Add your own entries to any item category
 - **Lifepath Generator** — Randomise or manually select background, motivation, style, and life events
@@ -37,7 +37,14 @@ A standalone, browser-based character manager for **Cyberpunk RED** by R. Talsor
 - Black Chrome+ v1.0
 - Hornet's Pharmacy — Street drugs, pharmaceuticals, additives, drone, and cyberware (R. Talsorian DLC)
 - Must Have Cyberware Deals — 12 cyberware items (R. Talsorian DLC)
-- Weapons List Update for CPRED — Fan-compiled weapons compendium (melee, bows, pistols, SMGs, shotguns, assault rifles, sniper rifles, machineguns, grenade launchers, heavy weapons, rocket launchers, exotic & borg weapons)
+- Weapons List Update for CPRED — Fan-compiled weapons compendium (100+ weapons)
+- Toggle's Temple — Gun range armory with themed weapon variants (R. Talsorian DLC)
+- Woodchipper's Garage — Exotic heavy weapons and unique boomsticks (R. Talsorian DLC)
+- 12 Days of Cutiemas — Hello Cutie branded weapons, cyberware, gear (R. Talsorian DLC)
+- 12 Days of Cybermas — Cyberware collection (ChainRipp, MonoVision, Fleshweave, etc.)
+- 12 Days of REDmas — Mixed weapons, cyberware, armor, and gear
+- 12 Days of Gearmas — Utility gear, tools, scanners, and the Zonda Metrocar
+- 12 Days of Gunmas — Classic 2020-era exotic firearms
 
 This is a fan-made tool for personal table use. All game text and mechanics are property of R. Talsorian Games.
 

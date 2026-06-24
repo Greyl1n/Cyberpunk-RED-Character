@@ -424,7 +424,39 @@ var DATA = {
     { id: "militech_aar49", name: "Militech AAR-49", type: "Machinegun", dmg: "8d6 (30mm)", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 7000, desc: "Autofire (4). Suppressive Fire. BOD MIN 15." },
     { id: "texhofforhov_127mm", name: "Texhofforhov 12.7mm Assault Rifle", type: "Machinegun", dmg: "8d6 (12.7mm)", hands: 2, rof: 1, mag: 50, conceal: "No", cost: 2000, desc: "Autofire (4). Suppressive Fire. BOD MIN 11." },
     { id: "tsunami_helix", name: "Tsunami Arms Helix", type: "Shotgun", dmg: "5d6 (10ga)", hands: 2, rof: 1, mag: 60, conceal: "No", cost: 5000, desc: "BOD MIN 15. #00 Buck or Slug (Flechette)." },
-    { id: "magnum_opus_big_gov_14mm", name: "Magnum Opus Big Government 14mm", type: "Handgun", dmg: "6d6 (14mm)", hands: 1, rof: 1, mag: 13, conceal: "No", cost: 2000, desc: "BOD MIN 12." }
+    { id: "magnum_opus_big_gov_14mm", name: "Magnum Opus Big Government 14mm", type: "Handgun", dmg: "6d6 (14mm)", hands: 1, rof: 1, mag: 13, conceal: "No", cost: 2000, desc: "BOD MIN 12." },
+
+    { id: "captain_cuddlefish", name: "Captain Cuddlefish Ultra Snag-Em", type: "Melee Weapon", dmg: "1d6", hands: 1, rof: 2, conceal: "Yes", cost: 200, desc: "Exotic Light Melee. Range 10m/yds. -6 for Held Item Aimed Shot. Collectible outfits available." },
+    { id: "fisher_kitty", name: "Hello Cutie Fisher Kitty", type: "Handgun", dmg: "2d6", hands: 1, rof: 2, mag: 4, conceal: "Yes", cost: 500, desc: "Exotic. Archery skill. Range 50m. Mini-harpoons. Electrify for 2d6/3d6 dmg." },
+    { id: "gun_gun_friend_friend", name: "Hello Cutie Gun-Gun Friend-Friend", type: "Assault Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 25, conceal: "No", cost: 1000, desc: "Excellent. Autofire (4). Suppressive Fire. Can install a pop-up One-Handed Ranged Weapon." },
+    { id: "hypurr_hammer", name: "Hello Cutie Hypurr-Hammer", type: "Melee Weapon", dmg: "4d6", hands: 2, rof: 1, conceal: "No", cost: 1000, desc: "Very Heavy Melee. Doesn't halve SP. BODY 9+: 5d6 and roll Crit Injury twice." },
+    { id: "janus_hex", name: "Hello Cutie Janus Hex", type: "Handgun", dmg: "1d6", hands: 1, rof: 1, mag: 2, conceal: "Yes", cost: 500, desc: "Excellent VH Pistol. Fires Scent Ball rounds. DV15 Resist or -3 to attacks/vision checks 1 hr." },
+    { id: "modball_gun", name: "Hello Cutie ModBall Gun", type: "Medium Pistol", dmg: "Varies", hands: 1, rof: 2, mag: 5, conceal: "Yes", cost: 500, desc: "Exotic. Fires ModBall ammo (Dazzle, Mega Ouchie, Ouchie, Slippy, Splashie). Mix ammo types." },
+    { id: "my_friend_the_ocelot", name: "Hello Cutie My Friend the Ocelot", type: "Shotgun", dmg: "5d6", hands: 2, rof: 1, mag: 12, conceal: "No", cost: 1500, desc: "Excellent. Slug only. Autofire (4) on SMG table. Biometric pet-to-unlock reload." },
+    { id: "thundercat_bat", name: "Hello Cutie Thundercat Bat", type: "Melee Weapon", dmg: "2d6", hands: 2, rof: 2, conceal: "No", cost: 750, desc: "Excellent Stun Baton. DV15 Resist Torture/Drugs or Damaged Ear Critical." },
+
+    { id: "enviro_launcher", name: "Biotechnica Enviro-launcher", type: "Heavy Weapon", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 500, desc: "Exotic Rocket Launcher. Single-use. Decomposes in 1 hr." },
+    { id: "triple_treat", name: "BudgetArms Triple Treat", type: "Heavy Weapon", dmg: "8d6", hands: 2, rof: 1, mag: 2, conceal: "No", cost: 500, desc: "Poor Exotic Rocket Launcher. Integrated Poor GL Underbarrel. Fires non-Basic ammo." },
+    { id: "flare_gun", name: "Flare Gun", type: "Heavy Weapon", dmg: "6d6", hands: 1, rof: 1, mag: 1, conceal: "No", cost: 100, desc: "Exotic Grenade Launcher. Fires grenade ammo or road flares (visible 3 miles)." },
+    { id: "sdf45", name: "Midnight Arms SDF-45", type: "Heavy Weapon", dmg: "8d6", hands: 2, rof: 1, mag: 4, conceal: "No", cost: 1000, desc: "Exotic Rocket Launcher. Range 400m. Fires 2 AP rockets at once. GM places hits." },
+    { id: "militech_aegis", name: "Militech Aegis", type: "Heavy Weapon", dmg: "4d6", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 1000, desc: "Poor Exotic Shotgun (Heavy Weapons). Shell only. 8 charges (recharge 1hr). Non-lethal." },
+    { id: "militech_archimedes", name: "Militech Archimedes", type: "Heavy Weapon", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 5000, desc: "Excellent Exotic Rocket Launcher. Pilot Air Vehicle skill. Smart Rockets only. Requires Targeting Scope." },
+    { id: "nomad_air_cannon", name: "Nomad Air Cannon", type: "Shoulder Arms", dmg: "Special", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 1000, desc: "Exotic Shotgun. Liquid ammo. Acid: -1 SP. Poison/Biotoxin: 3 vials/shot, Resist Torture/Drugs." },
+    { id: "tearjerker", name: "Pursuit Security TearJerker", type: "Heavy Weapon", dmg: "Special", hands: 2, rof: 1, mag: 3, conceal: "No", cost: 500, desc: "Excellent Exotic Grenade Launcher. Smoke or Teargas ammo only." },
+    { id: "ballistic_harpoon", name: "SlamDance Ballistic Harpoon", type: "Melee Weapon", dmg: "4d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 1000, desc: "Exotic Very Heavy Melee. Can be fired (Heavy Weapons, Bow range). Ignores 1/2 armor." },
+    { id: "m02_heavy_rifle", name: "Sternmeyer M-02 Heavy Rifle", type: "Assault Rifle", dmg: "5d6", hands: 2, rof: 1, mag: 80, conceal: "No", cost: 1000, desc: "Exotic. Heavy Weapons skill. No Autofire/Suppressive Fire. Proprietary AP trounds (500eb/80)." },
+    { id: "towa_pocket_launcher", name: "Towa Pocket Launcher", type: "Heavy Weapon", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "Yes", cost: 500, desc: "Poor Exotic Rocket Launcher. Concealable when unloaded. Collapsible." },
+    { id: "burst_flamethrower", name: "UrbanTech Burst Flamethrower", type: "Heavy Weapon", dmg: "3d6", hands: 2, rof: 1, mag: 4, conceal: "No", cost: 1000, desc: "Exotic Shotgun (Heavy Weapons). Incendiary Shells only. 4 dmg/turn on fire. Burst explosion mode." },
+
+    { id: "thermal_dagger", name: "Centurion Essentials Thermal Dagger", type: "Melee Weapon", dmg: "2d6", hands: 1, rof: 2, conceal: "Yes", cost: 1000, desc: "Excellent Exotic Medium Melee. Sets targets Strongly On Fire." },
+    { id: "nats_long_barreled", name: "Nat's Long-Barreled Pistol", type: "Handgun", dmg: "4d6", hands: 1, rof: 1, mag: 8, conceal: "No", cost: 500, desc: "Excellent VH Pistol. Unique Range Table (up to 400m/yds). 3 Slots." },
+    { id: "etack_rapid_responder", name: "Pursuit Security E-TACK Rapid Responder", type: "Medium Pistol", dmg: "2d6", hands: 1, rof: 2, mag: 18, conceal: "Yes", cost: 500, desc: "Poor M Pistol. Burst mode (3d6, treats ammo as AP). Extended Magazine. Stun Bayonet." },
+
+    { id: "constitutional_multi_ammo", name: "Constitutional Arms Multiple Ammunition Pistol", type: "Handgun", dmg: "4d6", hands: 1, rof: 1, mag: 5, conceal: "No", cost: 500, desc: "Exotic VH Pistol. Load mix of up to 5 different ammo types." },
+    { id: "kendachi_dragon_flamethrower", name: "Kendachi Dragon Flamethrower", type: "Heavy Weapon", dmg: "Special", hands: 1, rof: 1, mag: 2, conceal: "No", cost: 1000, desc: "Exotic Shotgun (Heavy Weapons). Incendiary Shells only. 4 dmg/turn on fire." },
+    { id: "malorian_sub_flechette", name: "Malorian Arms Sub-Flechette Gun", type: "Heavy SMG", dmg: "3d6", hands: 1, rof: 1, mag: 25, conceal: "No", cost: 5000, desc: "Excellent Exotic Heavy SMG. Autofire (4). Smartgun Link. AP ammo ablates 4 SP." },
+    { id: "nomad_pneumatic_bolt", name: "Nomad Pneumatic Bolt Gun", type: "Sniper Rifle", dmg: "4d6", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 500, desc: "Exotic Sniper. Fires Arrows. Loads Non-Basic ammo." },
+    { id: "teen_dreem", name: "Teen Dreem", type: "SMG", dmg: "2d6", hands: 1, rof: 1, mag: 10, conceal: "Yes", cost: 20, desc: "Poor Exotic SMG. Autofire (3) drains clip. Destroys weapon on use." }
   ],
 
   armor: [
@@ -452,7 +484,12 @@ var DATA = {
     { id: "skidrow_trench", name: "SkidRow Trench", slots: "Body", sp: 13, cost: 100, enc: 6 },
     { id: "fire_brand_bunker", name: "Fire Brand Bunker Gear", slots: "Body", sp: 15, cost: 1000, enc: 8 },
     { id: "lotos_netsuit", name: "Lotos Netsuit", slots: "Body", sp: 13, cost: 5000, enc: 6 },
-    { id: "mechaman_helmet", name: "MechaMan Helmet", slots: "Head", sp: 15, cost: 5000, enc: 6 }
+    { id: "mechaman_helmet", name: "MechaMan Helmet", slots: "Head", sp: 15, cost: 5000, enc: 6 },
+    { id: "light_metalgear", name: "Light Metalgear (Body)", slots: "Body", sp: 16, cost: 1000, enc: 16 },
+    { id: "light_metalgear_head", name: "Light Metalgear (Head)", slots: "Head", sp: 16, cost: 500, enc: 8 },
+    { id: "esporma_suit", name: "Esporma Environment Suit", slots: "Body", sp: 8, cost: 5000, enc: 8 },
+    { id: "esporma_suit_head", name: "Esporma Environment Suit (Head)", slots: "Head", sp: 8, cost: 2500, enc: 4 },
+    { id: "skidrow_packshield", name: "SkidRow PackShield", slots: "Shield", sp: 10, cost: 100, enc: 2 }
   ],
 
   cyberware: [
@@ -543,7 +580,29 @@ var DATA = {
     { id: "perfectfit_cyberfoot", name: "PerfectFit Cyberfoot", type: "Cyberleg Option", hc: 2, cost: 100, desc: "Adjustable foot size/shape. Eliminates penalty from ill-fitting footwear. Can be installed in a meat leg.", parentType: "cyberleg" },
     { id: "personalpak_kibblewarmer", name: "PersonalPak KibbleWarmer", type: "Cyberarm Option", hc: 3, cost: 100, desc: "Rotisserie oven in forearm. Warms PersonalPak Kibble cylinders. Requires Cyberarm.", parentType: "cyberarm" },
     { id: "pursuitech_personal_shredder", name: "Pursuit Security Inc. Personal Shredder", type: "Cyberarm Option", hc: 3, cost: 100, desc: "Cross-cut shredder in cyberarm with internal reservoir. Requires Cyberarm.", parentType: "cyberarm" },
-    { id: "sponsored_covering", name: "Sponsored Covering", type: "Cyberlimb Option", hc: 0, cost: 50, desc: "Illuminated ad on cyberlimb. Pays 20eb/month. Does not take an Option Slot. Requires Cyberarm or Cyberleg." }
+    { id: "sponsored_covering", name: "Sponsored Covering", type: "Cyberlimb Option", hc: 0, cost: 50, desc: "Illuminated ad on cyberlimb. Pays 20eb/month. Does not take an Option Slot. Requires Cyberarm or Cyberleg." },
+
+    { id: "cyberscanner_integrated", name: "Cyberscanner, Integrated", type: "Cyberarm Option", hc: 7, cost: 500, desc: "Cyberscanner installed in a Cyberarm. Requires 2 Option Slots.", parentType: "cyberarm" },
+    { id: "chainripp", name: "ChainRipp", type: "Cyberarm Option", hc: 14, cost: 500, desc: "Retractable chainsaw in wrist. Can be revved into Excellent Quality Very Heavy Melee Weapon. Takes 4 Option Slots.", parentType: "cyberarm" },
+    { id: "gang_jazzler", name: "Cybermatrix Gang Jazzler", type: "Cyberarm Option", hc: 7, cost: 500, desc: "Electrode needle in arm. On successful Choke, force DV13 Resist Torture/Drugs or Unconscious 1 min.", parentType: "cyberarm" },
+    { id: "bug_eye", name: "Cyclops International Bug Eye", type: "Borgware", hc: 14, cost: 500, desc: "Oversized Cybereye. Contains 5 slots for Cybereye Options." },
+    { id: "deathtrance", name: "DeathTrance", type: "Neuralware", hc: 3, cost: 500, desc: "Slow vitals to appear dead. DV17-21 to detect. -4 to all Actions while active.", parentType: "neural_link" },
+    { id: "monovision", name: "Kiroshi MonoVision", type: "Borgware", hc: 14, cost: 500, desc: "Single wide-angle cyberoptic visor. Contains 3 slots. Options count as paired." },
+    { id: "optishield", name: "Kiroshi OptiShield", type: "External Body", hc: 7, cost: 500, desc: "Retractable Anti-Dazzle mirrorshades built into brow. Immune to flashblindness." },
+    { id: "watch_man", name: "Psiberstuff Watch-Man", type: "Cyberarm Option", hc: 3, cost: 100, desc: "Agent built into cyberarm with flip-up screen.", parentType: "cyberarm" },
+    { id: "poser_chip", name: "Poser Chip", type: "Chipware", hc: 14, cost: 500, desc: "+4 to Acting to impersonate persona. +5 if roleplayed. Famous persona: 500eb. Private: 1000eb.", parentType: "neural_link" },
+    { id: "arc_thrower", name: "Radline Blitzkrieg Arc-Thrower Cyberarm", type: "Cyberarm", hc: 14, cost: 1000, desc: "0 Option slots. No hand. Exotic Shotgun (Heavy Weapons), 4d6 Shell fire, 32 charges. Cannot Crit or ablate armor.", bodyPart: "arm" },
+    { id: "microwaldo", name: "Raven Microcybernetics MicroWaldo", type: "Cyberarm Option", hc: 7, cost: 1000, desc: "+1 to Surgery Skill. Neuralware and Cyberarm Option.", parentType: "cyberarm" },
+    { id: "fleshweave", name: "Sycust Fleshweave", type: "External Body", hc: 7, cost: 1000, desc: "Skinweave. Body and Head SP7. Self-repairs to full after 10 min without strenuous activity." },
+    { id: "romanova_cyberlegs", name: "Wyzard Technologies Romanova Cyberlegs", type: "Cyberleg", hc: 14, cost: 1000, desc: "Paired Cyberlegs. 3 Option Slots each. Pre-installed Talon Feet.", bodyPart: "leg" },
+    { id: "faceplate_mount", name: "Quick Change Faceplate Mount", type: "Internal Body", hc: 14, cost: 1000, desc: "Replace meat face with mounting. Comes with 1 personalized Faceplate. Additional: 100eb." },
+    { id: "quick_digits", name: "Rocklin Augmentics Quick Digits", type: "Cyberarm Option", hc: 3, cost: 250, desc: "Cyberhand. Two+ grants +1 to Conceal/Reveal, Contortionist, First Aid, Forgery, Paramedic, Pick Lock, Pick Pocket.", parentType: "cyberarm" },
+    { id: "skydrivers", name: "Rocklin Augmentics Skydrivers", type: "Cyberleg", hc: 14, cost: 1000, desc: "Paired Cyberlegs. 2 Option Slots each. Pre-installed Jump Boosters. +3d6 dmg vs cover with leg attacks.", bodyPart: "leg" },
+    { id: "cyberspine", name: "Sycust Cyberspine", type: "Internal Body", hc: 7, cost: 1000, desc: "Requires 3 Option Slots. Immune to Spinal Injury. Hardened. +1 Contortionist. Can house Cybersnake." },
+    { id: "cyberconductor_integrated", name: "Zetatech CyberConductor, Integrated", type: "Borgware", hc: 14, cost: 1000, desc: "FBC only. All cyberdecks connected. Switch between them with no HP damage. Requires 3 Option Slots." },
+    { id: "hello_cutie_mono_paw", name: "Hello Cutie Mono-Paw", type: "Cyberarm Option", hc: 7, cost: 500, desc: "Retractable cat claws. Excellent Quality Medium Melee, 1d6, ignores armor SP<11. Cannot hold items while active.", parentType: "cyberarm" },
+    { id: "sparkle_ize", name: "Hello Cutie Sparkle-ize", type: "Cybereye Option", hc: 3, cost: 250, desc: "Big-eyes look. Flashlight built in. Paired: DV15 Resist or Damaged Eye for 1 min. Requires 2 Option Slots.", parentType: "cybereye" },
+    { id: "dynalar_xtradex_glove", name: "Dynalar Xtra-Dex Smart Glove", type: "Cyberarm Option", hc: 0, cost: 1000, desc: "2 Option Slots. Counts as Modular Finger Cyberhand (up to 5 Cyberfingers). Requires Interface Plugs.", parentType: "cyberarm" }
   ],
 
   gear: [
@@ -597,7 +656,23 @@ var DATA = {
     { id: "grenade_incendiary", name: "Incendiary Grenade", cost: 100, wt: 1, cat: "Weapons" },
     { id: "flare", name: "Flare", cost: 20, wt: 0.5, cat: "Tools" },
     { id: "smoke_canister", name: "Smoke Canister", cost: 50, wt: 1, cat: "Tools" },
-    { id: "poison", name: "Poison (D6 dmg)", cost: 200, wt: 0.5, cat: "Tools" }
+    { id: "poison", name: "Poison (D6 dmg)", cost: 200, wt: 0.5, cat: "Tools" },
+    { id: "chrm_rave_grenade", name: "Hello Cutie Chromatic Rave Grenade", cat: "Weapons", cost: 50, desc: "Creates light/sound show (DV13 Conc or -2). After 2 Rounds, explodes as Smoke Grenade." },
+    { id: "husafell_underjack", name: "Húsafell Hydraulic Underjack", cat: "Gear", cost: 1000, desc: "Hydraulic undershirt. +2 BODY (max 10). Does not increase HP or Death Save. Does not stack with other BODY-increasing effects." },
+    { id: "smart_ears", name: "Smart Ears", cat: "Electronics", cost: 1000, desc: "Wearable ears. Built-in Radio Scanner/Music Player. 2 Option Slots for Cyberaudio Options." },
+    { id: "zetatech_cyberconductor", name: "Zetatech CyberConductor", cat: "Electronics", cost: 1000, desc: "Install up to 3 Cyberdecks. Switch between them while Jacked In. Taking 3 HP dmg on switch." },
+    { id: "cybercam_ex1", name: "Cybercam EX-1", cat: "Electronics", cost: 1000, desc: "Head-mounted camera for livecasting. +1 believability to Media's Role Ability." },
+    { id: "cyberscanner", name: "Cyberscanner", cat: "Electronics", cost: 1000, desc: "Scan target within 2m/yds. Readout of all installed cyberware. Takes 1 min." },
+    { id: "cyberdude_smart_glove", name: "CyberDude Smart Glove", cat: "Gear", cost: 750, desc: "Fingerless glove with Subdermal Grip and 2 Option Slots for Cyberarm/Cyberlimb options." },
+    { id: "hd_bulletproof_shield", name: "High-Density Bulletproof Shield", cat: "Gear", cost: 200, desc: "A shield with 15 HP. Cannot be installed in Pop-Up Shield." },
+    { id: "stun_bayonet", name: "Stun Bayonet", cat: "Weapons", cost: 100, desc: "Weapon Attachment. Allows firearm to be used as a Stun Baton." },
+    { id: "dpi_smartsticks", name: "DPI Smartsticks", cat: "Gear", cost: 500, desc: "Electronic drum sticks. +1 to Play Instrument (Drums) Checks." },
+    { id: "green_light_sniffer", name: "Hammered Industries Green Light Go Sniffer", cat: "Tools", cost: 100, desc: "Analyzes a chemical substance's purity. Green = pure, Red = impure." },
+    { id: "ion_cuffs", name: "Ion Cuffs", cat: "Tools", cost: 500, desc: "Handcuffs that disable non-hardened cyberware options in bound Cyberlimbs. BODY 13+ breaks them." },
+    { id: "master_mechanic_toolkit", name: "Master Mechanic's Tool Kit", cat: "Tools", cost: 20000, desc: "+4 to all Tech Skill Checks for Maker Specialties. Counts as Thick Steel Cover." },
+    { id: "minimag_speakers", name: "MiniMag Speakers by Telectronics", cat: "Electronics", cost: 50, desc: "1-inch magnetic speakers. Wireless to Agent within 100m/yds. Various colors." },
+    { id: "optitech_magviewer", name: "Optitech MagViewer", cat: "Electronics", cost: 500, desc: "Binoculars. See detail up to 800m/yds. +1 to Complementary Skill Check for ranged attacks 51m+." },
+    { id: "zonda_metrocar", name: "Zonda Metrocar", cat: "Gear", cost: 1000, desc: "Compact Groundcar. Nomad Access 1. SDP 25. Combat Speed 10 MOVE. Narrative Speed 30 MPH. 2 seats." }
   ],
 
   fashion: [
