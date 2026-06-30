@@ -28,6 +28,7 @@
   --welcome-bg: #fff;
   --welcome-overlay-bg: rgba(0,0,0,0.7);
   --focus-ring: #d4412b;
+  --skill-search-border: var(--border);
 }
 body { background: var(--bg); color: var(--text); }
 header { background: var(--header-bg); color: var(--header-text); }

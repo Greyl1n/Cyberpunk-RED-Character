@@ -1,34 +1,38 @@
 // PERSISTENCE — Save/load/delete/export/import
 // ============================================================
-function saveCharacter(name) {
-  var data = getCharacterData();
+const saveCharacter = (name) => {
+  const data = getCharacterData();
   data._saveName = name;
   data._savedAt = new Date().toISOString();
-  var key = "cpr_char_" + name;
+  const key = `cpr_char_${name}`;
   localStorage.setItem(key, JSON.stringify(data));
   return true;
-}
+};
 
-function loadCharacter(name) {
-  var key = "cpr_char_" + name;
-  var raw = localStorage.getItem(key);
+const loadCharacter = (name) => {
+  const key = `cpr_char_${name}`;
+  const raw = localStorage.getItem(key);
   if (!raw) return null;
-  try { return JSON.parse(raw); } catch(e) { return null; }
-}
+  try {
+    return JSON.parse(raw);
+  } catch (e) {
+    return null;
+  }
+};
 
-function deleteCharacter(name) {
-  var key = "cpr_char_" + name;
+const deleteCharacter = (name) => {
+  const key = `cpr_char_${name}`;
   localStorage.removeItem(key);
-}
+};
 
-function listCharacters() {
-  var chars = [];
-  for (var i = 0; i < localStorage.length; i++) {
-    var key = localStorage.key(i);
+const listCharacters = () => {
+  const chars = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
     if (key.indexOf("cpr_char_") === 0) {
       chars.push(key.substring(9));
     }
   }
   chars.sort();
   return chars;
-}
+};
