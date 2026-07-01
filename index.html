@@ -176,7 +176,8 @@ input[type="number"] { width: 100%; }
   body.printing #tab-character > .section-card:nth-child(4) { order: 3; }
   body.printing #tab-gear > .grid-split:nth-child(1) { order: 4; }
   body.printing #tab-gear > .grid-split:nth-child(2) { order: 5; }
-  body.printing #tab-character > .section-card:nth-child(3) { order: 6; page-break-before: always; }
+  body.printing #tab-cyberdeck > .section-card { order: 6; }
+  body.printing #tab-character > .section-card:nth-child(3) { order: 7; page-break-before: always; }
   body.printing .scrollable-table { max-height: none; overflow: visible; }
   body.printing .table-responsive { overflow: visible; }
   body.printing .main-content { max-width: 100%; }
@@ -323,7 +324,7 @@ select option { color: #000; background: #fff; }
 <body>
 <input type="checkbox" id="dismissWelcome" style="display:none">
 <header>
-<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v2.0</span></div></div>
+<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v2.1</span></div></div>
 <div class="header-actions">
 <button id="charactersBtn" class="btn-action">&#128194; Characters</button>
 <button id="importBtn" class="btn-action">&#128229; Import</button>
@@ -408,9 +409,16 @@ select option { color: #000; background: #fff; }
 
 <div class="section-card">
 <h2 class="section-title">Skills</h2>
-<div class="skills-header">
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1rem;">
 <input id="skillSearch" class="skill-search" type="text" placeholder="Search skills...">
-<span style="font-size:0.85rem;opacity:0.7">Skill = Stat Bonus + Ranks</span>
+<div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+  <label style="font-size:0.85rem; display:flex; align-items:center; gap:0.5rem; cursor:pointer; background:var(--bg-card); padding:0.2rem 0.5rem; border-radius:4px; border:1px solid var(--border);">
+    <input type="checkbox" id="toggle_creation_mode" onchange="toggleCreationMode(this.checked)">
+    Creation Mode
+  </label>
+  <span id="creation_points_display" style="display:none; font-size:0.85rem; font-weight:bold; color:var(--accent); background:var(--bg-card); padding:0.2rem 0.5rem; border-radius:4px; border:1px solid var(--border);">Starting Points: <span id="creation_points_val">86</span> / 86</span>
+  <span style="font-size:0.85rem;opacity:0.7">Skill = Stat Bonus + Ranks</span>
+</div>
 </div>
 <div class="table-responsive scrollable-table mt-1">
 <table class="premium-table">
@@ -547,7 +555,7 @@ select option { color: #000; background: #fff; }
 <div class="section-card">
 <h2 class="section-title">About Cyberpunk RED Generator</h2>
 <p style="margin-bottom:0.8rem;line-height:1.7">A fully self-contained, highly-optimised interactive character manager for <strong>Cyberpunk RED</strong> by R. Talsorian Games. Create, customise, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. No server, no build tools, no internet — just open the file.</p>
-<p style="margin-bottom:0.8rem;line-height:1.7">The <strong>v2.0 Update</strong> brings a modern ES6 architecture, extreme performance optimisations with batched DOM rendering, and a fully audited weapon database with canonically accurate skill mappings.</p>
+<p style="margin-bottom:0.8rem;line-height:1.7">The <strong>v2.1 Update</strong> brings character creation mode, cyberdeck fixing, and extensive cyberware database patches over the previous ES6 architecture upgrade.</p>
 <h3 style="margin:1rem 0 0.4rem">Features</h3>
 <ul style="line-height:1.8;padding-left:1.2rem">
 <li>10 Stats with point-buy system (62 points, min 2 / max 8)</li>
@@ -780,13 +788,13 @@ var DATA = {
       { id: "criminology", name: "Criminology" },
       { id: "cryptography", name: "Cryptography" },
       { id: "deduction", name: "Deduction" },
-      { id: "education", name: "Education" },
+      { id: "education", name: "Education", basic: true },
       { id: "gamble", name: "Gamble" },
-      { id: "language", name: "Language" },
+      { id: "language", name: "Language", basic: true },
       { id: "library_search", name: "Library Search" },
       { id: "lip_reading", name: "Lip Reading" },
-      { id: "local_expert", name: "Local Expert" },
-      { id: "perception", name: "Perception" },
+      { id: "local_expert", name: "Local Expert", basic: true },
+      { id: "perception", name: "Perception", basic: true },
       { id: "science", name: "Science" },
       { id: "tactics", name: "Tactics" },
       { id: "tracking", name: "Tracking" },
@@ -804,14 +812,14 @@ var DATA = {
       { id: "shoulder_arms", name: "Shoulder Arms" }
     ],
     dex: [
-      { id: "athletics", name: "Athletics" },
-      { id: "brawling", name: "Brawling" },
+      { id: "athletics", name: "Athletics", basic: true },
+      { id: "brawling", name: "Brawling", basic: true },
       { id: "contortionist", name: "Contortionist" },
       { id: "dance", name: "Dance" },
-      { id: "evasion", name: "Evasion" },
+      { id: "evasion", name: "Evasion", basic: true },
       { id: "martial_arts", name: "Martial Arts", ipMult: 2 },
       { id: "melee_weapon", name: "Melee Weapon" },
-      { id: "stealth", name: "Stealth" }
+      { id: "stealth", name: "Stealth", basic: true }
     ],
     tech: [
       { id: "air_vehicle_tech", name: "Air Vehicle Tech" },
@@ -819,7 +827,7 @@ var DATA = {
       { id: "cybertech", name: "Cybertech" },
       { id: "demolitions", name: "Demolitions", ipMult: 2 },
       { id: "electronics_security_tech", name: "Electronics/Security Tech", ipMult: 2 },
-      { id: "first_aid", name: "First Aid" },
+      { id: "first_aid", name: "First Aid", basic: true },
       { id: "forgery", name: "Forgery" },
       { id: "land_vehicle_tech", name: "Land Vehicle Tech" },
       { id: "paint_draw_sculpt", name: "Paint/Draw/Sculpt" },
@@ -835,18 +843,18 @@ var DATA = {
       { id: "acting", name: "Acting" },
       { id: "bribery", name: "Bribery" },
       { id: "interrogation", name: "Interrogation" },
-      { id: "persuasion", name: "Persuasion" },
+      { id: "persuasion", name: "Persuasion", basic: true },
       { id: "personal_grooming", name: "Personal Grooming" },
       { id: "streetwise", name: "Streetwise" },
       { id: "trading", name: "Trading" },
       { id: "wardrobe_style", name: "Wardrobe & Style" }
     ],
     emp: [
-      { id: "conversation", name: "Conversation" },
-      { id: "human_perception", name: "Human Perception" }
+      { id: "conversation", name: "Conversation", basic: true },
+      { id: "human_perception", name: "Human Perception", basic: true }
     ],
     will: [
-      { id: "concentration", name: "Concentration" },
+      { id: "concentration", name: "Concentration", basic: true },
       { id: "endurance", name: "Endurance" },
       { id: "resist_torture_drugs", name: "Resist Torture/Drugs" }
     ]
@@ -1116,28 +1124,32 @@ var DATA = {
   // CYBERWARE
   // ----------------------------------------------------------
   cyberware: [
-    { id: "cybereye", name: "Cybereye", type: "Fashion", hc: 2, cost: 500, desc: "Single cybernetic eye.", slots: 3, bodyPart: "eye" },
-    { id: "cyberaudio", name: "Cyberaudio Suite", type: "Fashion", hc: 2, cost: 500, desc: "Internal ear comms and audio processing.", slots: 3 },
-    { id: "neural_link", name: "Neural Link", type: "Internal", hc: 3, cost: 1000, desc: "Chip socket interface. Required for most Neuralware.", slots: 3 },
-    { id: "chipware_socket", name: "Chipware Socket", type: "Internal", hc: 2, cost: 500, desc: "Extra skill chip socket.", parentType: "neural_link" },
+    { id: "cybereye", name: "Cybereye", type: "Cybereye", hc: 2, cost: 500, desc: "Single cybernetic eye.", slots: 3, bodyPart: "eye" },
+    { id: "cyberaudio", name: "Cyberaudio Suite", type: "Cyberaudio", hc: 2, cost: 500, desc: "Internal ear comms and audio processing.", slots: 3 },
+    { id: "neural_link", name: "Neural Link", type: "Internal", hc: 7, cost: 500, desc: "Chip socket interface. Required for most Neuralware.", slots: 5 },
+        { id: "chipware_socket", name: "Chipware Socket", type: "Internal", hc: 7, cost: 500, desc: "Extra skill chip socket.", parentType: "neural_link" },
+    { id: "interface_plugs", name: "Interface Plugs", type: "Neuralware", hc: 7, cost: 500, desc: "Allows user to interface with cyberdecks, smartguns, vehicles.", parentType: "neural_link" },
+    { id: "braindance_recorder", name: "Braindance Recorder", type: "Neuralware", hc: 7, cost: 500, desc: "Record your experiences to braindance format.", parentType: "neural_link" },
+    { id: "chemical_analyzer", name: "Chemical Analyzer", type: "Neuralware", hc: 7, cost: 500, desc: "Analyze chemicals by touching or ingesting.", parentType: "neural_link" },
+    { id: "machine_tech_link", name: "Machine/Tech Link", type: "Neuralware", hc: 7, cost: 500, desc: "Interface directly with machines/tech for control.", parentType: "neural_link" },
     { id: "pain_editor", name: "Pain Editor", type: "Internal", hc: 4, cost: 2000, desc: "Disables pain. User ignores penalties due to being Seriously Wounded." },
     { id: "nanosurgeons", name: "Nanosurgeons", type: "Internal", hc: 3, cost: 1500, desc: "Auto-stabilize at 0 HP once per day." },
     { id: "synth_lungs", name: "Synth Lungs", type: "Internal", hc: 3, cost: 1000, desc: "Filter toxins, breathe smoke." },
     { id: "gills", name: "Gills", type: "Internal", hc: 2, cost: 500, desc: "Breathe underwater." },
-    { id: "cyberarm", name: "Cyberarm", type: "Fashion", hc: 3, cost: 1000, desc: "Basic cybernetic arm.", slots: 4, bodyPart: "arm" },
-    { id: "cyberleg", name: "Cyberleg", type: "Fashion", hc: 3, cost: 1000, desc: "Basic cybernetic leg.", slots: 3, bodyPart: "leg" },
-    { id: "tactile_boost", name: "Tactile Boost", type: "Fashionware", hc: 2, cost: 500, desc: "Enhanced touch, +1 to pick lock/pick pocket.", bonus: { skills: { pick_lock: 1, pick_pocket: 1 } } },
-    { id: "olfactory_boost", name: "Olfactory Boost", type: "Fashion", hc: 1, cost: 300, desc: "Enhanced smell, +2 to tracking via scent.", bonus: { skills: { tracking: 2 } } },
+    { id: "cyberarm", name: "Cyberarm", type: "Cyberarm", hc: 3, cost: 1000, desc: "Basic cybernetic arm.", slots: 4, bodyPart: "arm" },
+    { id: "cyberleg", name: "Cyberleg", type: "Cyberleg", hc: 3, cost: 1000, desc: "Basic cybernetic leg.", slots: 3, bodyPart: "leg" },
+    { id: "tactile_boost", name: "Tactile Boost", type: "Neuralware", hc: 7, cost: 100, desc: "Enhanced touch, +1 to pick lock/pick pocket.", parentType: "neural_link", bonus: { skills: { pick_lock: 1, pick_pocket: 1 } } },
+    { id: "olfactory_boost", name: "Olfactory Boost", type: "Neuralware", hc: 7, cost: 100, desc: "Enhanced smell, +2 to tracking via scent.", parentType: "neural_link", bonus: { skills: { tracking: 2 } } },
     { id: "subdermal_armor", name: "Subdermal Armor", type: "Internal", hc: 4, cost: 2000, desc: "SP 7 to area implanted." },
     { id: "skin_weave", name: "Skin Weave", type: "Internal", hc: 3, cost: 1500, desc: "SP 4 all over." },
     { id: "pneumatics", name: "Pneumatics", type: "Internal", hc: 3, cost: 2000, desc: "+2 to BODY for melee damage." },
-    { id: "hydraulic_rams", name: "Hydraulic Rams", type: "Fashionware", hc: 3, cost: 1500, desc: "Cyberleg option, +2 MOVE when jumping.", parentType: "cyberleg" },
-    { id: "big_knucks", name: "Big Knucks", type: "Fashion", hc: 1, cost: 100, desc: "Brass knuckles built into cyberarm.", parentType: "cyberarm" },
-    { id: "popup_weapon", name: "Popup Weapon (Cyberarm)", type: "Fashion", hc: 2, cost: 500, desc: "Hidden weapon in cyberarm.", parentType: "cyberarm" },
-    { id: "implanted_lavatory", name: "Implanted Lavatory", type: "Fashion", hc: 1, cost: 200, desc: "Waste processing implant." },
+    { id: "hydraulic_rams", name: "Hydraulic Rams", type: "Cyberleg Option", hc: 3, cost: 1500, desc: "Cyberleg option, +2 MOVE when jumping.", parentType: "cyberleg" },
+    { id: "big_knucks", name: "Big Knucks", type: "Cyberarm Option", hc: 1, cost: 100, desc: "Brass knuckles built into cyberarm.", parentType: "cyberarm" },
+    { id: "popup_weapon", name: "Popup Weapon (Cyberarm)", type: "Cyberarm Option", hc: 2, cost: 500, desc: "Hidden weapon in cyberarm.", parentType: "cyberarm" },
+    { id: "implanted_lavatory", name: "Implanted Lavatory", type: "Internal Body", hc: 1, cost: 200, desc: "Waste processing implant." },
     { id: "light_tattoo", name: "Light Tattoo", type: "Fashionware", hc: 0, cost: 200, desc: "LED subdermal tattoos. +2 Wardrobe & Style with 3+ installed." },
     { id: "agency_record", name: "Agency Record", type: "Fashionware", hc: 1, cost: 500, desc: "Always-on recording of everything you see/hear." },
-    { id: "buddy_link", name: "Buddy Link", type: "Fashion", hc: 1, cost: 200, desc: "Private short-range comm with your crew." },
+    { id: "buddy_link", name: "Buddy Link", type: "Internal Body", hc: 1, cost: 200, desc: "Private short-range comm with your crew." },
     { id: "bc_budget_chipware", name: "Budget Chipware Socket", type: "Neuralware", hc: 7, cost: 100, desc: "A cheap chipware socket.", parentType: "neural_link" },
     { id: "bc_discount_audio", name: "Discount Cyberaudio Suite", type: "Cyberaudio", hc: 3, cost: 100, desc: "An inferior audio suite at an affordable price.", slots: 3, parentType: "cyberaudio" },
     { id: "bc_explicit_memory", name: "Explicit Memory Stimulator", type: "Chipware", hc: 3, cost: 100, desc: "+2 to Concentration Checks to remember information.", parentType: "neural_link", bonus: { skills: { concentration: 2 } } },
@@ -1231,7 +1243,7 @@ var DATA = {
   ],
 
   // ----------------------------------------------------------
-  // GEAR — All purchasable items (drugs, ammo, tools, etc.)
+  // GEAR - All purchasable items
   // ----------------------------------------------------------
   gear: [
     { id: "berserker", name: "Berserker", cat: "Street Drug", cost: 100, desc: "Lasts 10 min. Ignore Critical Injury bonus dmg; halve wound state & facedown penalties. SE DV17." },
@@ -1845,9 +1857,6 @@ function updateRoleInfo() {
 // ============================================================
 // RENDER — All DOM rendering functions
 // ============================================================
-// ============================================================
-// RENDER UI
-// ============================================================
 function renderStats() {
   let container = document.getElementById("stats_container");
   container.innerHTML = "";
@@ -1965,6 +1974,58 @@ function payIpCost(cost) {
   return true;
 }
 
+function calcCreationPointsUsed() {
+  let spent = 0;
+  for (const group in DATA.skills) {
+    for (const skill of DATA.skills[group]) {
+      let rank = state.skillRanks[skill.id] || 0;
+      let costPerRank = skill.ipMult || 1;
+      
+      if (skill.id === "language") {
+        rank = Math.max(0, rank - 4);
+      }
+      
+      spent += rank * costPerRank;
+    }
+  }
+  return spent;
+}
+
+function updateCreationPoints() {
+  const el = document.getElementById("creation_points_val");
+  if (el) {
+    let used = calcCreationPointsUsed();
+    el.textContent = 86 - used;
+  }
+}
+
+function toggleCreationMode(enabled) {
+  state.creationMode = enabled;
+  const disp = document.getElementById("creation_points_display");
+  if (disp) disp.style.display = enabled ? "inline-block" : "none";
+  
+  if (enabled) {
+    for (const group in DATA.skills) {
+      for (const skill of DATA.skills[group]) {
+        if (skill.basic) {
+          if ((state.skillRanks[skill.id] || 0) < 2) {
+            state.skillRanks[skill.id] = 2;
+          }
+        }
+        if (skill.id === "language") {
+          if ((state.skillRanks[skill.id] || 0) < 4) {
+            state.skillRanks[skill.id] = 4;
+          }
+        }
+      }
+    }
+    updateCreationPoints();
+    renderSkills();
+  } else {
+    renderSkills();
+  }
+}
+
 function attachSkillEvents() {
   let ranks = document.querySelectorAll(".skill-rank");
   let items = document.querySelectorAll(".skill-item");
@@ -1976,6 +2037,41 @@ function attachSkillEvents() {
       let oldVal = parseInt(this.dataset.oldVal) || 0;
       let newVal = parseInt(this.value) || 0;
       if (newVal === oldVal) return;
+      
+      if (state.creationMode) {
+        let idxItem = DATA._index.skillById[id];
+        let isBasic = idxItem && idxItem.skill && idxItem.skill.basic;
+        
+        if (newVal > 6) {
+          alert("Skills cannot exceed Rank 6 during character creation.");
+          this.value = oldVal;
+          return;
+        }
+        if (isBasic && newVal < 2) {
+          alert("Basic skills must be at least Rank 2.");
+          this.value = oldVal;
+          return;
+        }
+        if (id === "language" && newVal < 4) {
+          alert("Language skill gets 4 free ranks and cannot be below 4.");
+          this.value = oldVal;
+          return;
+        }
+        
+        state.skillRanks[id] = newVal;
+        if (calcCreationPointsUsed() > 86) {
+          alert("Not enough Starting Points! (Max 86)");
+          state.skillRanks[id] = oldVal;
+          this.value = oldVal;
+          return;
+        }
+        
+        this.dataset.oldVal = newVal;
+        updateCreationPoints();
+        renderSkills();
+        return;
+      }
+      
       let base = getSkillIpBase(id);
       let cost = ipCostBetween(oldVal, newVal, base);
       if (cost > 0 && !payIpCost(cost)) {
@@ -2063,11 +2159,7 @@ function renderArmor() {
   for (let i = 0; i < state.armor.length; i++) {
     let a = state.armor[i];
     let tr = document.createElement("tr");
-    let dataItem = DATA.armor.find(function(x) { return x.id === a.id; });
-    let desc = a.desc || (dataItem ? dataItem.desc : "");
-    let nameHtml = '<strong>' + a.name + '</strong>';
-    if (desc) nameHtml += '<br><span style="font-size:0.75rem;opacity:0.8">' + desc + '</span>';
-    tr.innerHTML = '<td>' + nameHtml + '</td><td>' + a.sp + '</td><td>' + a.slots + '</td><td>' + a.enc + '</td><td><button class="btn-action armor-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
+    tr.innerHTML = '<td>' + a.name + '</td><td>' + a.sp + '</td><td>' + a.slots + '</td><td>' + a.enc + '</td><td><button class="btn-action armor-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
     frag.appendChild(tr);
     if (a.slots === "Body") bodySP = Math.max(bodySP, a.sp);
     if (a.slots === "Head") headSP = Math.max(headSP, a.sp);
@@ -2204,12 +2296,7 @@ function renderGear() {
   for (let i = 0; i < state.gear.length; i++) {
     let g = state.gear[i];
     let tr = document.createElement("tr");
-    
-    let dataItem = DATA.gear.find(function(x) { return x.id === g.id; });
-    if (!dataItem) dataItem = DATA.fashion.find(function(x) { return x.id === g.id; });
-    let desc = g.desc || (dataItem ? dataItem.desc : "");
-    
-    tr.innerHTML = '<td>' + g.name + '</td><td>' + (g.cat || "-") + '</td><td>' + g.cost + 'eb</td><td><input type="number" class="gear-qty" data-idx="' + i + '" value="' + (g.qty || 1) + '" min="1" style="width:45px"></td><td><small>' + desc + '</small></td><td><button class="btn-action gear-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
+    tr.innerHTML = '<td>' + g.name + '</td><td>' + (g.cat || "-") + '</td><td>' + g.cost + 'eb</td><td><input type="number" class="gear-qty" data-idx="' + i + '" value="' + (g.qty || 1) + '" min="1" style="width:45px"></td><td><small>' + (g.desc || "") + '</small></td><td><button class="btn-action gear-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
     frag.appendChild(tr);
   }
   tbody.appendChild(frag);
@@ -2227,7 +2314,6 @@ function renderGear() {
       }
       state.gear.splice(idx, 1);
       renderGear();
-  renderCyberdeck();
       renderAmmoTracker();
     };
   }
@@ -2326,7 +2412,7 @@ function randomLifepath() {
 
 // ============================================================
 // ADD BUTTONS & ITEM SELECTOR
-
+// ============================================================
 function initAddButtons() {
   document.getElementById("add_weapon_btn").onclick = function() {
     showItemSelector("weapon", DATA.weapons, function(item) {
@@ -2338,7 +2424,7 @@ function initAddButtons() {
   };
   document.getElementById("add_armor_btn").onclick = function() {
     showItemSelector("armor", DATA.armor, function(item) {
-      state.armor.push({ id: item.id, name: item.name, sp: item.sp, slots: item.slots, enc: item.enc, cost: item.cost || 0, desc: item.desc || "" });
+      state.armor.push({ id: item.id, name: item.name, sp: item.sp, slots: item.slots, enc: item.enc, cost: item.cost || 0 });
       let el = document.getElementById("currency_eb");
       el.value = (parseInt(el.value) || 0) - (item.cost || 0);
       renderArmor();
@@ -2391,7 +2477,7 @@ function initAddButtons() {
     }, "type");
   };
   document.getElementById("add_gear_btn").onclick = function() {
-    let allGear = DATA.gear.concat(DATA.fashion.map(function(f) { return { id: f.id, name: f.name, cost: f.cost, cat: "Fashion", desc: f.desc }; }));
+    let allGear = DATA.gear.concat(DATA.fashion.map(function(f) { return { id: f.id, name: f.name, cost: f.cost, cat: "Fashion" }; }));
     showItemSelector("gear", allGear, function(item) {
       state.gear.push({ id: item.id, name: item.name, cost: item.cost, cat: item.cat || "Gear", desc: item.desc || "", qty: 1, ammo: item.ammo });
       let el = document.getElementById("currency_eb");
@@ -2442,9 +2528,8 @@ function showItemSelector(type, items, callback, groupBy) {
       let slots = prompt("Slots (Body, Head, Shield):") || "Body";
       let enc = parseInt(prompt("Encumbrance:") || "0");
       let cost = parseInt(prompt("Cost in eb:") || "0");
-      let desc = prompt("Description (optional):") || "";
       document.body.removeChild(overlay);
-      callback({ id: "custom_" + Date.now(), name: name, sp: sp, slots: slots, enc: enc, cost: cost, desc: desc });
+      callback({ id: "custom_" + Date.now(), name: name, sp: sp, slots: slots, enc: enc, cost: cost });
     } else if (type === "cyberware") {
       let cType = prompt("Type (Fashion, Internal, Neuralware, etc.):") || "Fashion";
       let hc = parseInt(prompt("Humanity Cost:") || "0");
@@ -2541,8 +2626,6 @@ function getCharacterData() {
     armor: JSON.parse(JSON.stringify(state.armor)),
     cyberware: JSON.parse(JSON.stringify(state.cyberware)),
     gear: JSON.parse(JSON.stringify(state.gear)),
-    cyberdeck: state.cyberdeck ? JSON.parse(JSON.stringify(state.cyberdeck)) : null,
-    programs: JSON.parse(JSON.stringify(state.programs || [])),
     ammo: JSON.parse(JSON.stringify(state.ammo)),
     hpCurrent: parseInt(document.getElementById("hp_current").value) || 0,
     currency: parseInt(document.getElementById("currency_eb").value) || 0,
@@ -2559,6 +2642,8 @@ function getCharacterData() {
 }
 
 function loadCharacterData(data) {
+  let cb = document.getElementById("toggle_creation_mode");
+  if (cb) { cb.checked = false; toggleCreationMode(false); }
   document.getElementById("char_handle").value = data.handle || "";
   document.getElementById("char_name").value = data.name || "";
   document.getElementById("role_select").value = data.role || "";
@@ -2583,8 +2668,6 @@ function loadCharacterData(data) {
   state.armor = data.armor || [];
   state.cyberware = data.cyberware || [];
   state.gear = data.gear || [];
-  state.cyberdeck = data.cyberdeck || null;
-  state.programs = data.programs || [];
   state.ammo = data.ammo || {};
   document.getElementById("hp_current").value = data.hpCurrent || 0;
   document.getElementById("currency_eb").value = data.currency || 0;
@@ -2608,6 +2691,8 @@ function loadCharacterData(data) {
 }
 
 function resetCharacter() {
+  let cb = document.getElementById("toggle_creation_mode");
+  if (cb) { cb.checked = false; toggleCreationMode(false); }
   initState();
   document.getElementById("char_handle").value = "";
   document.getElementById("char_name").value = "";
@@ -2635,8 +2720,6 @@ function resetCharacter() {
   state.armor = [];
   state.cyberware = [];
   state.gear = [];
-  state.cyberdeck = null;
-  state.programs = [];
   state.ammo = {};
   renderStats();
   renderSkills();
@@ -2690,6 +2773,22 @@ function generateRandomCharacter() {
 // ============================================================
 // CYBERDECK & PROGRAMS
 // ============================================================
+
+function deductCurrency(amount) {
+  let el = document.getElementById("currency_eb");
+  let current = parseInt(el.value) || 0;
+  if (current < amount) {
+    alert("Not enough eurobucks!");
+    return false;
+  }
+  el.value = current - amount;
+  return true;
+}
+
+function refundCurrency(amount) {
+  let el = document.getElementById("currency_eb");
+  el.value = (parseInt(el.value) || 0) + amount;
+}
 
 function initCyberdeck() {
   const selDeck = document.getElementById('sel_cyberdeck');
@@ -2851,32 +2950,8 @@ function removeCyberdeck() {
   
   state.cyberdeck = null;
   state.programs = [];
-  
-  const selDeck = document.getElementById('sel_cyberdeck');
-  if (selDeck) selDeck.value = '';
-
   renderCyberdeck();
 }
-
-
-function deductCurrency(amount) {
-  const el = document.getElementById('currency_eb');
-  const current = parseInt(el.value) || 0;
-  if (current < amount) {
-    alert('Not enough eurobucks (eb)!');
-    return false;
-  }
-  el.value = current - amount;
-  return true;
-}
-
-function refundCurrency(amount) {
-  const el = document.getElementById('currency_eb');
-  el.value = (parseInt(el.value) || 0) + amount;
-}
-
-// ============================================================
-// INIT — Bootstrap and event binding
 
 // ============================================================
 // INIT — Bootstrap and event binding

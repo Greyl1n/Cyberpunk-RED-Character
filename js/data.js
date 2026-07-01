@@ -178,13 +178,13 @@ var DATA = {
       { id: "criminology", name: "Criminology" },
       { id: "cryptography", name: "Cryptography" },
       { id: "deduction", name: "Deduction" },
-      { id: "education", name: "Education" },
+      { id: "education", name: "Education", basic: true },
       { id: "gamble", name: "Gamble" },
-      { id: "language", name: "Language" },
+      { id: "language", name: "Language", basic: true },
       { id: "library_search", name: "Library Search" },
       { id: "lip_reading", name: "Lip Reading" },
-      { id: "local_expert", name: "Local Expert" },
-      { id: "perception", name: "Perception" },
+      { id: "local_expert", name: "Local Expert", basic: true },
+      { id: "perception", name: "Perception", basic: true },
       { id: "science", name: "Science" },
       { id: "tactics", name: "Tactics" },
       { id: "tracking", name: "Tracking" },
@@ -202,14 +202,14 @@ var DATA = {
       { id: "shoulder_arms", name: "Shoulder Arms" }
     ],
     dex: [
-      { id: "athletics", name: "Athletics" },
-      { id: "brawling", name: "Brawling" },
+      { id: "athletics", name: "Athletics", basic: true },
+      { id: "brawling", name: "Brawling", basic: true },
       { id: "contortionist", name: "Contortionist" },
       { id: "dance", name: "Dance" },
-      { id: "evasion", name: "Evasion" },
+      { id: "evasion", name: "Evasion", basic: true },
       { id: "martial_arts", name: "Martial Arts", ipMult: 2 },
       { id: "melee_weapon", name: "Melee Weapon" },
-      { id: "stealth", name: "Stealth" }
+      { id: "stealth", name: "Stealth", basic: true }
     ],
     tech: [
       { id: "air_vehicle_tech", name: "Air Vehicle Tech" },
@@ -217,7 +217,7 @@ var DATA = {
       { id: "cybertech", name: "Cybertech" },
       { id: "demolitions", name: "Demolitions", ipMult: 2 },
       { id: "electronics_security_tech", name: "Electronics/Security Tech", ipMult: 2 },
-      { id: "first_aid", name: "First Aid" },
+      { id: "first_aid", name: "First Aid", basic: true },
       { id: "forgery", name: "Forgery" },
       { id: "land_vehicle_tech", name: "Land Vehicle Tech" },
       { id: "paint_draw_sculpt", name: "Paint/Draw/Sculpt" },
@@ -233,18 +233,18 @@ var DATA = {
       { id: "acting", name: "Acting" },
       { id: "bribery", name: "Bribery" },
       { id: "interrogation", name: "Interrogation" },
-      { id: "persuasion", name: "Persuasion" },
+      { id: "persuasion", name: "Persuasion", basic: true },
       { id: "personal_grooming", name: "Personal Grooming" },
       { id: "streetwise", name: "Streetwise" },
       { id: "trading", name: "Trading" },
       { id: "wardrobe_style", name: "Wardrobe & Style" }
     ],
     emp: [
-      { id: "conversation", name: "Conversation" },
-      { id: "human_perception", name: "Human Perception" }
+      { id: "conversation", name: "Conversation", basic: true },
+      { id: "human_perception", name: "Human Perception", basic: true }
     ],
     will: [
-      { id: "concentration", name: "Concentration" },
+      { id: "concentration", name: "Concentration", basic: true },
       { id: "endurance", name: "Endurance" },
       { id: "resist_torture_drugs", name: "Resist Torture/Drugs" }
     ]
@@ -514,28 +514,32 @@ var DATA = {
   // CYBERWARE
   // ----------------------------------------------------------
   cyberware: [
-    { id: "cybereye", name: "Cybereye", type: "Fashion", hc: 2, cost: 500, desc: "Single cybernetic eye.", slots: 3, bodyPart: "eye" },
-    { id: "cyberaudio", name: "Cyberaudio Suite", type: "Fashion", hc: 2, cost: 500, desc: "Internal ear comms and audio processing.", slots: 3 },
-    { id: "neural_link", name: "Neural Link", type: "Internal", hc: 3, cost: 1000, desc: "Chip socket interface. Required for most Neuralware.", slots: 3 },
-    { id: "chipware_socket", name: "Chipware Socket", type: "Internal", hc: 2, cost: 500, desc: "Extra skill chip socket.", parentType: "neural_link" },
+    { id: "cybereye", name: "Cybereye", type: "Cybereye", hc: 2, cost: 500, desc: "Single cybernetic eye.", slots: 3, bodyPart: "eye" },
+    { id: "cyberaudio", name: "Cyberaudio Suite", type: "Cyberaudio", hc: 2, cost: 500, desc: "Internal ear comms and audio processing.", slots: 3 },
+    { id: "neural_link", name: "Neural Link", type: "Internal", hc: 7, cost: 500, desc: "Chip socket interface. Required for most Neuralware.", slots: 5 },
+        { id: "chipware_socket", name: "Chipware Socket", type: "Internal", hc: 7, cost: 500, desc: "Extra skill chip socket.", parentType: "neural_link" },
+    { id: "interface_plugs", name: "Interface Plugs", type: "Neuralware", hc: 7, cost: 500, desc: "Allows user to interface with cyberdecks, smartguns, vehicles.", parentType: "neural_link" },
+    { id: "braindance_recorder", name: "Braindance Recorder", type: "Neuralware", hc: 7, cost: 500, desc: "Record your experiences to braindance format.", parentType: "neural_link" },
+    { id: "chemical_analyzer", name: "Chemical Analyzer", type: "Neuralware", hc: 7, cost: 500, desc: "Analyze chemicals by touching or ingesting.", parentType: "neural_link" },
+    { id: "machine_tech_link", name: "Machine/Tech Link", type: "Neuralware", hc: 7, cost: 500, desc: "Interface directly with machines/tech for control.", parentType: "neural_link" },
     { id: "pain_editor", name: "Pain Editor", type: "Internal", hc: 4, cost: 2000, desc: "Disables pain. User ignores penalties due to being Seriously Wounded." },
     { id: "nanosurgeons", name: "Nanosurgeons", type: "Internal", hc: 3, cost: 1500, desc: "Auto-stabilize at 0 HP once per day." },
     { id: "synth_lungs", name: "Synth Lungs", type: "Internal", hc: 3, cost: 1000, desc: "Filter toxins, breathe smoke." },
     { id: "gills", name: "Gills", type: "Internal", hc: 2, cost: 500, desc: "Breathe underwater." },
-    { id: "cyberarm", name: "Cyberarm", type: "Fashion", hc: 3, cost: 1000, desc: "Basic cybernetic arm.", slots: 4, bodyPart: "arm" },
-    { id: "cyberleg", name: "Cyberleg", type: "Fashion", hc: 3, cost: 1000, desc: "Basic cybernetic leg.", slots: 3, bodyPart: "leg" },
-    { id: "tactile_boost", name: "Tactile Boost", type: "Fashionware", hc: 2, cost: 500, desc: "Enhanced touch, +1 to pick lock/pick pocket.", bonus: { skills: { pick_lock: 1, pick_pocket: 1 } } },
-    { id: "olfactory_boost", name: "Olfactory Boost", type: "Fashion", hc: 1, cost: 300, desc: "Enhanced smell, +2 to tracking via scent.", bonus: { skills: { tracking: 2 } } },
+    { id: "cyberarm", name: "Cyberarm", type: "Cyberarm", hc: 3, cost: 1000, desc: "Basic cybernetic arm.", slots: 4, bodyPart: "arm" },
+    { id: "cyberleg", name: "Cyberleg", type: "Cyberleg", hc: 3, cost: 1000, desc: "Basic cybernetic leg.", slots: 3, bodyPart: "leg" },
+    { id: "tactile_boost", name: "Tactile Boost", type: "Neuralware", hc: 7, cost: 100, desc: "Enhanced touch, +1 to pick lock/pick pocket.", parentType: "neural_link", bonus: { skills: { pick_lock: 1, pick_pocket: 1 } } },
+    { id: "olfactory_boost", name: "Olfactory Boost", type: "Neuralware", hc: 7, cost: 100, desc: "Enhanced smell, +2 to tracking via scent.", parentType: "neural_link", bonus: { skills: { tracking: 2 } } },
     { id: "subdermal_armor", name: "Subdermal Armor", type: "Internal", hc: 4, cost: 2000, desc: "SP 7 to area implanted." },
     { id: "skin_weave", name: "Skin Weave", type: "Internal", hc: 3, cost: 1500, desc: "SP 4 all over." },
     { id: "pneumatics", name: "Pneumatics", type: "Internal", hc: 3, cost: 2000, desc: "+2 to BODY for melee damage." },
-    { id: "hydraulic_rams", name: "Hydraulic Rams", type: "Fashionware", hc: 3, cost: 1500, desc: "Cyberleg option, +2 MOVE when jumping.", parentType: "cyberleg" },
-    { id: "big_knucks", name: "Big Knucks", type: "Fashion", hc: 1, cost: 100, desc: "Brass knuckles built into cyberarm.", parentType: "cyberarm" },
-    { id: "popup_weapon", name: "Popup Weapon (Cyberarm)", type: "Fashion", hc: 2, cost: 500, desc: "Hidden weapon in cyberarm.", parentType: "cyberarm" },
-    { id: "implanted_lavatory", name: "Implanted Lavatory", type: "Fashion", hc: 1, cost: 200, desc: "Waste processing implant." },
+    { id: "hydraulic_rams", name: "Hydraulic Rams", type: "Cyberleg Option", hc: 3, cost: 1500, desc: "Cyberleg option, +2 MOVE when jumping.", parentType: "cyberleg" },
+    { id: "big_knucks", name: "Big Knucks", type: "Cyberarm Option", hc: 1, cost: 100, desc: "Brass knuckles built into cyberarm.", parentType: "cyberarm" },
+    { id: "popup_weapon", name: "Popup Weapon (Cyberarm)", type: "Cyberarm Option", hc: 2, cost: 500, desc: "Hidden weapon in cyberarm.", parentType: "cyberarm" },
+    { id: "implanted_lavatory", name: "Implanted Lavatory", type: "Internal Body", hc: 1, cost: 200, desc: "Waste processing implant." },
     { id: "light_tattoo", name: "Light Tattoo", type: "Fashionware", hc: 0, cost: 200, desc: "LED subdermal tattoos. +2 Wardrobe & Style with 3+ installed." },
     { id: "agency_record", name: "Agency Record", type: "Fashionware", hc: 1, cost: 500, desc: "Always-on recording of everything you see/hear." },
-    { id: "buddy_link", name: "Buddy Link", type: "Fashion", hc: 1, cost: 200, desc: "Private short-range comm with your crew." },
+    { id: "buddy_link", name: "Buddy Link", type: "Internal Body", hc: 1, cost: 200, desc: "Private short-range comm with your crew." },
     { id: "bc_budget_chipware", name: "Budget Chipware Socket", type: "Neuralware", hc: 7, cost: 100, desc: "A cheap chipware socket.", parentType: "neural_link" },
     { id: "bc_discount_audio", name: "Discount Cyberaudio Suite", type: "Cyberaudio", hc: 3, cost: 100, desc: "An inferior audio suite at an affordable price.", slots: 3, parentType: "cyberaudio" },
     { id: "bc_explicit_memory", name: "Explicit Memory Stimulator", type: "Chipware", hc: 3, cost: 100, desc: "+2 to Concentration Checks to remember information.", parentType: "neural_link", bonus: { skills: { concentration: 2 } } },
@@ -629,7 +633,7 @@ var DATA = {
   ],
 
   // ----------------------------------------------------------
-  // GEAR — All purchasable items (drugs, ammo, tools, etc.)
+  // GEAR - All purchasable items
   // ----------------------------------------------------------
   gear: [
     { id: "berserker", name: "Berserker", cat: "Street Drug", cost: 100, desc: "Lasts 10 min. Ignore Critical Injury bonus dmg; halve wound state & facedown penalties. SE DV17." },

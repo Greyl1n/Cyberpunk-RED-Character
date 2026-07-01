@@ -19,7 +19,7 @@
 <body>
 <input type="checkbox" id="dismissWelcome" style="display:none">
 <header>
-<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v2.0</span></div></div>
+<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v2.1</span></div></div>
 <div class="header-actions">
 <button id="charactersBtn" class="btn-action">&#128194; Characters</button>
 <button id="importBtn" class="btn-action">&#128229; Import</button>
@@ -104,9 +104,16 @@
 
 <div class="section-card">
 <h2 class="section-title">Skills</h2>
-<div class="skills-header">
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1rem;">
 <input id="skillSearch" class="skill-search" type="text" placeholder="Search skills...">
-<span style="font-size:0.85rem;opacity:0.7">Skill = Stat Bonus + Ranks</span>
+<div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+  <label style="font-size:0.85rem; display:flex; align-items:center; gap:0.5rem; cursor:pointer; background:var(--bg-card); padding:0.2rem 0.5rem; border-radius:4px; border:1px solid var(--border);">
+    <input type="checkbox" id="toggle_creation_mode" onchange="toggleCreationMode(this.checked)">
+    Creation Mode
+  </label>
+  <span id="creation_points_display" style="display:none; font-size:0.85rem; font-weight:bold; color:var(--accent); background:var(--bg-card); padding:0.2rem 0.5rem; border-radius:4px; border:1px solid var(--border);">Starting Points: <span id="creation_points_val">86</span> / 86</span>
+  <span style="font-size:0.85rem;opacity:0.7">Skill = Stat Bonus + Ranks</span>
+</div>
 </div>
 <div class="table-responsive scrollable-table mt-1">
 <table class="premium-table">
@@ -243,7 +250,7 @@
 <div class="section-card">
 <h2 class="section-title">About Cyberpunk RED Generator</h2>
 <p style="margin-bottom:0.8rem;line-height:1.7">A fully self-contained, highly-optimised interactive character manager for <strong>Cyberpunk RED</strong> by R. Talsorian Games. Create, customise, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. No server, no build tools, no internet — just open the file.</p>
-<p style="margin-bottom:0.8rem;line-height:1.7">The <strong>v2.0 Update</strong> brings a modern ES6 architecture, extreme performance optimisations with batched DOM rendering, and a fully audited weapon database with canonically accurate skill mappings.</p>
+<p style="margin-bottom:0.8rem;line-height:1.7">The <strong>v2.1 Update</strong> brings character creation mode, cyberdeck fixing, and extensive cyberware database patches over the previous ES6 architecture upgrade.</p>
 <h3 style="margin:1rem 0 0.4rem">Features</h3>
 <ul style="line-height:1.8;padding-left:1.2rem">
 <li>10 Stats with point-buy system (62 points, min 2 / max 8)</li>

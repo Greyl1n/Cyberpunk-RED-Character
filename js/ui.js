@@ -131,9 +131,6 @@ function updateRoleInfo() {
 // ============================================================
 // RENDER — All DOM rendering functions
 // ============================================================
-// ============================================================
-// RENDER UI
-// ============================================================
 function renderStats() {
   let container = document.getElementById("stats_container");
   container.innerHTML = "";
@@ -251,6 +248,58 @@ function payIpCost(cost) {
   return true;
 }
 
+function calcCreationPointsUsed() {
+  let spent = 0;
+  for (const group in DATA.skills) {
+    for (const skill of DATA.skills[group]) {
+      let rank = state.skillRanks[skill.id] || 0;
+      let costPerRank = skill.ipMult || 1;
+      
+      if (skill.id === "language") {
+        rank = Math.max(0, rank - 4);
+      }
+      
+      spent += rank * costPerRank;
+    }
+  }
+  return spent;
+}
+
+function updateCreationPoints() {
+  const el = document.getElementById("creation_points_val");
+  if (el) {
+    let used = calcCreationPointsUsed();
+    el.textContent = 86 - used;
+  }
+}
+
+function toggleCreationMode(enabled) {
+  state.creationMode = enabled;
+  const disp = document.getElementById("creation_points_display");
+  if (disp) disp.style.display = enabled ? "inline-block" : "none";
+  
+  if (enabled) {
+    for (const group in DATA.skills) {
+      for (const skill of DATA.skills[group]) {
+        if (skill.basic) {
+          if ((state.skillRanks[skill.id] || 0) < 2) {
+            state.skillRanks[skill.id] = 2;
+          }
+        }
+        if (skill.id === "language") {
+          if ((state.skillRanks[skill.id] || 0) < 4) {
+            state.skillRanks[skill.id] = 4;
+          }
+        }
+      }
+    }
+    updateCreationPoints();
+    renderSkills();
+  } else {
+    renderSkills();
+  }
+}
+
 function attachSkillEvents() {
   let ranks = document.querySelectorAll(".skill-rank");
   let items = document.querySelectorAll(".skill-item");
@@ -262,6 +311,41 @@ function attachSkillEvents() {
       let oldVal = parseInt(this.dataset.oldVal) || 0;
       let newVal = parseInt(this.value) || 0;
       if (newVal === oldVal) return;
+      
+      if (state.creationMode) {
+        let idxItem = DATA._index.skillById[id];
+        let isBasic = idxItem && idxItem.skill && idxItem.skill.basic;
+        
+        if (newVal > 6) {
+          alert("Skills cannot exceed Rank 6 during character creation.");
+          this.value = oldVal;
+          return;
+        }
+        if (isBasic && newVal < 2) {
+          alert("Basic skills must be at least Rank 2.");
+          this.value = oldVal;
+          return;
+        }
+        if (id === "language" && newVal < 4) {
+          alert("Language skill gets 4 free ranks and cannot be below 4.");
+          this.value = oldVal;
+          return;
+        }
+        
+        state.skillRanks[id] = newVal;
+        if (calcCreationPointsUsed() > 86) {
+          alert("Not enough Starting Points! (Max 86)");
+          state.skillRanks[id] = oldVal;
+          this.value = oldVal;
+          return;
+        }
+        
+        this.dataset.oldVal = newVal;
+        updateCreationPoints();
+        renderSkills();
+        return;
+      }
+      
       let base = getSkillIpBase(id);
       let cost = ipCostBetween(oldVal, newVal, base);
       if (cost > 0 && !payIpCost(cost)) {
@@ -349,11 +433,7 @@ function renderArmor() {
   for (let i = 0; i < state.armor.length; i++) {
     let a = state.armor[i];
     let tr = document.createElement("tr");
-    let dataItem = DATA.armor.find(function(x) { return x.id === a.id; });
-    let desc = a.desc || (dataItem ? dataItem.desc : "");
-    let nameHtml = '<strong>' + a.name + '</strong>';
-    if (desc) nameHtml += '<br><span style="font-size:0.75rem;opacity:0.8">' + desc + '</span>';
-    tr.innerHTML = '<td>' + nameHtml + '</td><td>' + a.sp + '</td><td>' + a.slots + '</td><td>' + a.enc + '</td><td><button class="btn-action armor-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
+    tr.innerHTML = '<td>' + a.name + '</td><td>' + a.sp + '</td><td>' + a.slots + '</td><td>' + a.enc + '</td><td><button class="btn-action armor-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
     frag.appendChild(tr);
     if (a.slots === "Body") bodySP = Math.max(bodySP, a.sp);
     if (a.slots === "Head") headSP = Math.max(headSP, a.sp);
@@ -490,12 +570,7 @@ function renderGear() {
   for (let i = 0; i < state.gear.length; i++) {
     let g = state.gear[i];
     let tr = document.createElement("tr");
-    
-    let dataItem = DATA.gear.find(function(x) { return x.id === g.id; });
-    if (!dataItem) dataItem = DATA.fashion.find(function(x) { return x.id === g.id; });
-    let desc = g.desc || (dataItem ? dataItem.desc : "");
-    
-    tr.innerHTML = '<td>' + g.name + '</td><td>' + (g.cat || "-") + '</td><td>' + g.cost + 'eb</td><td><input type="number" class="gear-qty" data-idx="' + i + '" value="' + (g.qty || 1) + '" min="1" style="width:45px"></td><td><small>' + desc + '</small></td><td><button class="btn-action gear-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
+    tr.innerHTML = '<td>' + g.name + '</td><td>' + (g.cat || "-") + '</td><td>' + g.cost + 'eb</td><td><input type="number" class="gear-qty" data-idx="' + i + '" value="' + (g.qty || 1) + '" min="1" style="width:45px"></td><td><small>' + (g.desc || "") + '</small></td><td><button class="btn-action gear-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
     frag.appendChild(tr);
   }
   tbody.appendChild(frag);
@@ -513,7 +588,6 @@ function renderGear() {
       }
       state.gear.splice(idx, 1);
       renderGear();
-  renderCyberdeck();
       renderAmmoTracker();
     };
   }
@@ -612,7 +686,7 @@ function randomLifepath() {
 
 // ============================================================
 // ADD BUTTONS & ITEM SELECTOR
-
+// ============================================================
 function initAddButtons() {
   document.getElementById("add_weapon_btn").onclick = function() {
     showItemSelector("weapon", DATA.weapons, function(item) {
@@ -624,7 +698,7 @@ function initAddButtons() {
   };
   document.getElementById("add_armor_btn").onclick = function() {
     showItemSelector("armor", DATA.armor, function(item) {
-      state.armor.push({ id: item.id, name: item.name, sp: item.sp, slots: item.slots, enc: item.enc, cost: item.cost || 0, desc: item.desc || "" });
+      state.armor.push({ id: item.id, name: item.name, sp: item.sp, slots: item.slots, enc: item.enc, cost: item.cost || 0 });
       let el = document.getElementById("currency_eb");
       el.value = (parseInt(el.value) || 0) - (item.cost || 0);
       renderArmor();
@@ -677,7 +751,7 @@ function initAddButtons() {
     }, "type");
   };
   document.getElementById("add_gear_btn").onclick = function() {
-    let allGear = DATA.gear.concat(DATA.fashion.map(function(f) { return { id: f.id, name: f.name, cost: f.cost, cat: "Fashion", desc: f.desc }; }));
+    let allGear = DATA.gear.concat(DATA.fashion.map(function(f) { return { id: f.id, name: f.name, cost: f.cost, cat: "Fashion" }; }));
     showItemSelector("gear", allGear, function(item) {
       state.gear.push({ id: item.id, name: item.name, cost: item.cost, cat: item.cat || "Gear", desc: item.desc || "", qty: 1, ammo: item.ammo });
       let el = document.getElementById("currency_eb");
@@ -728,9 +802,8 @@ function showItemSelector(type, items, callback, groupBy) {
       let slots = prompt("Slots (Body, Head, Shield):") || "Body";
       let enc = parseInt(prompt("Encumbrance:") || "0");
       let cost = parseInt(prompt("Cost in eb:") || "0");
-      let desc = prompt("Description (optional):") || "";
       document.body.removeChild(overlay);
-      callback({ id: "custom_" + Date.now(), name: name, sp: sp, slots: slots, enc: enc, cost: cost, desc: desc });
+      callback({ id: "custom_" + Date.now(), name: name, sp: sp, slots: slots, enc: enc, cost: cost });
     } else if (type === "cyberware") {
       let cType = prompt("Type (Fashion, Internal, Neuralware, etc.):") || "Fashion";
       let hc = parseInt(prompt("Humanity Cost:") || "0");
@@ -827,8 +900,6 @@ function getCharacterData() {
     armor: JSON.parse(JSON.stringify(state.armor)),
     cyberware: JSON.parse(JSON.stringify(state.cyberware)),
     gear: JSON.parse(JSON.stringify(state.gear)),
-    cyberdeck: state.cyberdeck ? JSON.parse(JSON.stringify(state.cyberdeck)) : null,
-    programs: JSON.parse(JSON.stringify(state.programs || [])),
     ammo: JSON.parse(JSON.stringify(state.ammo)),
     hpCurrent: parseInt(document.getElementById("hp_current").value) || 0,
     currency: parseInt(document.getElementById("currency_eb").value) || 0,
@@ -845,6 +916,8 @@ function getCharacterData() {
 }
 
 function loadCharacterData(data) {
+  let cb = document.getElementById("toggle_creation_mode");
+  if (cb) { cb.checked = false; toggleCreationMode(false); }
   document.getElementById("char_handle").value = data.handle || "";
   document.getElementById("char_name").value = data.name || "";
   document.getElementById("role_select").value = data.role || "";
@@ -869,8 +942,6 @@ function loadCharacterData(data) {
   state.armor = data.armor || [];
   state.cyberware = data.cyberware || [];
   state.gear = data.gear || [];
-  state.cyberdeck = data.cyberdeck || null;
-  state.programs = data.programs || [];
   state.ammo = data.ammo || {};
   document.getElementById("hp_current").value = data.hpCurrent || 0;
   document.getElementById("currency_eb").value = data.currency || 0;
@@ -894,6 +965,8 @@ function loadCharacterData(data) {
 }
 
 function resetCharacter() {
+  let cb = document.getElementById("toggle_creation_mode");
+  if (cb) { cb.checked = false; toggleCreationMode(false); }
   initState();
   document.getElementById("char_handle").value = "";
   document.getElementById("char_name").value = "";
@@ -921,8 +994,6 @@ function resetCharacter() {
   state.armor = [];
   state.cyberware = [];
   state.gear = [];
-  state.cyberdeck = null;
-  state.programs = [];
   state.ammo = {};
   renderStats();
   renderSkills();
@@ -976,6 +1047,22 @@ function generateRandomCharacter() {
 // ============================================================
 // CYBERDECK & PROGRAMS
 // ============================================================
+
+function deductCurrency(amount) {
+  let el = document.getElementById("currency_eb");
+  let current = parseInt(el.value) || 0;
+  if (current < amount) {
+    alert("Not enough eurobucks!");
+    return false;
+  }
+  el.value = current - amount;
+  return true;
+}
+
+function refundCurrency(amount) {
+  let el = document.getElementById("currency_eb");
+  el.value = (parseInt(el.value) || 0) + amount;
+}
 
 function initCyberdeck() {
   const selDeck = document.getElementById('sel_cyberdeck');
@@ -1137,29 +1224,5 @@ function removeCyberdeck() {
   
   state.cyberdeck = null;
   state.programs = [];
-  
-  const selDeck = document.getElementById('sel_cyberdeck');
-  if (selDeck) selDeck.value = '';
-
   renderCyberdeck();
 }
-
-
-function deductCurrency(amount) {
-  const el = document.getElementById('currency_eb');
-  const current = parseInt(el.value) || 0;
-  if (current < amount) {
-    alert('Not enough eurobucks (eb)!');
-    return false;
-  }
-  el.value = current - amount;
-  return true;
-}
-
-function refundCurrency(amount) {
-  const el = document.getElementById('currency_eb');
-  el.value = (parseInt(el.value) || 0) + amount;
-}
-
-// ============================================================
-// INIT — Bootstrap and event binding

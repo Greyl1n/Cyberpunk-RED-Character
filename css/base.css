@@ -162,7 +162,8 @@ input[type="number"] { width: 100%; }
   body.printing #tab-character > .section-card:nth-child(4) { order: 3; }
   body.printing #tab-gear > .grid-split:nth-child(1) { order: 4; }
   body.printing #tab-gear > .grid-split:nth-child(2) { order: 5; }
-  body.printing #tab-character > .section-card:nth-child(3) { order: 6; page-break-before: always; }
+  body.printing #tab-cyberdeck > .section-card { order: 6; }
+  body.printing #tab-character > .section-card:nth-child(3) { order: 7; page-break-before: always; }
   body.printing .scrollable-table { max-height: none; overflow: visible; }
   body.printing .table-responsive { overflow: visible; }
   body.printing .main-content { max-width: 100%; }
