@@ -19,7 +19,7 @@
 <body>
 <input type="checkbox" id="dismissWelcome" style="display:none">
 <header>
-<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v2.1</span></div></div>
+<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v2.2</span></div></div>
 <div class="header-actions">
 <button id="charactersBtn" class="btn-action">&#128194; Characters</button>
 <button id="importBtn" class="btn-action">&#128229; Import</button>
@@ -37,6 +37,7 @@
 <button class="tab-btn active" data-tab="tab-character">&#128196; Character</button>
 <button class="tab-btn" data-tab="tab-gear">&#127890; Gear</button>
 <button class="tab-btn" data-tab="tab-cyberdeck">&#128187; Cyberdeck</button>
+<button class="tab-btn" data-tab="tab-notes">&#128221; Notes</button>
 <button class="tab-btn" data-tab="tab-about">&#8505; About</button>
 </nav>
 
@@ -178,7 +179,11 @@
 <tbody id="gear_body"></tbody>
 </table>
 </div>
-<div class="mt-1"><label>Currency (eb) <input id="currency_eb" type="number" value="0" style="width:120px"></label></div>
+<div class="mt-1">
+  <label>Total Currency (eb) <input id="currency_eb" type="number" value="0" style="width:100px; font-weight:bold;" readonly></label>
+  <label style="margin-left:1rem">Modify eb: <input id="modify_eb" type="number" style="width:80px" placeholder="0"></label>
+  <button id="btn_modify_eb" class="btn-action" style="padding:0.2rem 0.5rem; margin-left: 0.5rem;">Add</button>
+</div>
 <div class="mt-1">
 <h3 style="font-size:0.85rem;margin:0.5rem 0 0.3rem">Ammunition Tracker</h3>
 <div class="table-responsive">
@@ -246,11 +251,17 @@
 </section>
 
 <!-- ===== TAB: ABOUT ===== -->
+<section id="tab-notes" class="tab-panel">
+<div class="section-card">
+<h2 class="section-title">Notes</h2>
+<textarea id="char_notes" style="width:100%; height:400px; padding:0.5rem; background: var(--input-bg); color: var(--text); border: 1px solid var(--border);" placeholder="Free text notes..."></textarea>
+</div>
+</section>
 <section id="tab-about" class="tab-panel">
 <div class="section-card">
 <h2 class="section-title">About Cyberpunk RED Generator</h2>
 <p style="margin-bottom:0.8rem;line-height:1.7">A fully self-contained, highly-optimised interactive character manager for <strong>Cyberpunk RED</strong> by R. Talsorian Games. Create, customise, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. No server, no build tools, no internet — just open the file.</p>
-<p style="margin-bottom:0.8rem;line-height:1.7">The <strong>v2.1 Update</strong> brings character creation mode, cyberdeck fixing, and extensive cyberware database patches over the previous ES6 architecture upgrade.</p>
+<p style="margin-bottom:0.8rem;line-height:1.7">The <strong>v2.2 Update</strong> brings character creation mode, cyberdeck fixing, and extensive cyberware database patches over the previous ES6 architecture upgrade.</p>
 <h3 style="margin:1rem 0 0.4rem">Features</h3>
 <ul style="line-height:1.8;padding-left:1.2rem">
 <li>10 Stats with point-buy system (62 points, min 2 / max 8)</li>
@@ -276,6 +287,14 @@ Cyberpunk RED Core Rulebook v1.24 &bull; Black Chrome v1.0 &bull; Black Chrome+ 
 Hornet's Pharmacy &bull; Must Have Cyberware Deals &bull; Weapons List Update for CPRED<br>
 Toggle's Temple &bull; Woodchipper's Garage &bull; 12 Days of Cutiemas<br>
 12 Days of Cybermas &bull; 12 Days of REDmas &bull; 12 Days of Gearmas &bull; 12 Days of Gunmas
+</p>
+<h3 style="margin:1rem 0 0.4rem">Source Abbreviations</h3>
+<p style="line-height:1.8">
+<strong>[CRB]</strong> Core Rulebook &bull; 
+<strong>[BC]</strong> Black Chrome &bull; 
+<strong>[DGD]</strong> Danger Gal Dossier &bull; 
+<strong>[TotR]</strong> Tales of the RED &bull; 
+<strong>[IR]</strong> Interface Red
 </p>
 <h3 style="margin:1rem 0 0.4rem">Credits</h3>
 <p style="line-height:1.8"><strong>Development</strong> — Built with vanilla HTML, CSS, and JavaScript (no frameworks).<br>

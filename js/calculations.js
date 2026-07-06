@@ -7,11 +7,11 @@ const STAT_MIN = 2;
 
 // CALCULATION HELPERS
 // ============================================================
-const calcHitsMax = (body) => body * 5 + 10;
+const calcHitsMax = (body, will) => 10 + 5 * Math.ceil((body + will) / 2);
 
 const calcSeriouslyWounded = (hitsMax) => Math.floor(hitsMax / 2);
 
-const calcDeathSave = (hitsMax) => -Math.floor(hitsMax / 2);
+const calcDeathSave = (body) => body;
 
 const calcHumanityMax = (emp) => emp * 10;
 
@@ -22,7 +22,13 @@ const calcEmpFromHumanity = (currentHumanity) => Math.floor(currentHumanity / 10
 const calcStatBonus = (statValue) => (statValue <= 0 ? 0 : statValue);
 
 const getEffectiveStat = (statId) => {
-  const base = state.stats[statId] || 2;
+  let base = state.stats[statId] || 2;
+  if (statId === "emp") {
+    const humMax = calcHumanityMax(base);
+    const hcTotal = totalCyberwareHC(state.cyberware);
+    const humCur = calcCurrentHumanity(humMax, hcTotal);
+    base = calcEmpFromHumanity(humCur);
+  }
   return base + calcCyberStatBonus(statId);
 };
 

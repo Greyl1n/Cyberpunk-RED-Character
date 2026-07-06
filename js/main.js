@@ -24,6 +24,7 @@ const init = () => {
   initNewChar();
   initPrint();
   initSkillSearch();
+  initCurrency();
   setDefaultValues();
 };
 
@@ -179,6 +180,27 @@ const initSkillSearch = () => {
       renderSkills();
     }, 150);
   });
+};
+
+const initCurrency = () => {
+  const btn = document.getElementById("btn_modify_eb");
+  const modInput = document.getElementById("modify_eb");
+  const totalInput = document.getElementById("currency_eb");
+  
+  if (btn && modInput && totalInput) {
+    btn.addEventListener("click", () => {
+      let modVal = parseInt(modInput.value) || 0;
+      let totalVal = parseInt(totalInput.value) || 0;
+      totalInput.value = totalVal + modVal;
+      modInput.value = "";
+    });
+    modInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        btn.click();
+      }
+    });
+  }
 };
 
 const setDefaultValues = () => {

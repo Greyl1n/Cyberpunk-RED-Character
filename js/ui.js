@@ -370,10 +370,11 @@ function attachSkillEvents() {
 
 function renderHealth() {
   let body = state.stats.body || 2;
-  let hpMax = calcHitsMax(body);
+  let will = state.stats.will || 2;
+  let hpMax = calcHitsMax(body, will);
   document.getElementById("hp_max").value = hpMax;
   document.getElementById("hp_seriously").value = calcSeriouslyWounded(hpMax);
-  document.getElementById("hp_death").value = calcDeathSave(hpMax);
+  document.getElementById("hp_death").value = calcDeathSave(body);
   let cur = document.getElementById("hp_current");
   if (!cur.value || parseInt(cur.value) === 0) cur.value = hpMax;
 }
@@ -397,7 +398,14 @@ function renderWeapons() {
   for (let i = 0; i < state.weapons.length; i++) {
     let w = state.weapons[i];
     let tr = document.createElement("tr");
-    tr.innerHTML = '<td>' + w.name + '</td><td>' + w.dmg + '</td><td>' + (w.rof || "-") + '</td><td>' + (w.mag || "-") + '</td><td>' + (w.type || "") + '</td><td><input type="number" class="weapon-rank" data-idx="' + i + '" value="' + (w.rank || 0) + '" min="0" max="20" style="width:45px"></td><td><button class="btn-action weapon-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
+    let isGrenade = /grenade|molotov|smoke_pellet/.test(w.id);
+    let actionBtns;
+    if (isGrenade) {
+      actionBtns = '<button class="btn-action weapon-sell" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">Sell</button> <button class="btn-action weapon-use" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">Use</button>';
+    } else {
+      actionBtns = '<button class="btn-action weapon-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button>';
+    }
+    tr.innerHTML = '<td>' + w.name + '</td><td>' + w.dmg + '</td><td>' + (w.rof || "-") + '</td><td>' + (w.mag || "-") + '</td><td>' + (w.type || "") + '</td><td><input type="number" class="weapon-rank" data-idx="' + i + '" value="' + (w.rank || 0) + '" min="0" max="20" style="width:45px"></td><td>' + actionBtns + '</td>';
     frag.appendChild(tr);
   }
   tbody.appendChild(frag);
@@ -410,8 +418,34 @@ function attachWeaponEvents() {
   for (let i = 0; i < removes.length; i++) {
     removes[i].onclick = function() {
       let idx = parseInt(this.dataset.idx);
+      let w = state.weapons[idx];
+      let sellInput = prompt("Sell price in eb (0 = discard):", w.cost || 0);
+      if (sellInput === null) return;
+      let sellPrice = parseInt(sellInput) || 0;
       let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) + (state.weapons[idx].cost || 0);
+      el.value = (parseInt(el.value) || 0) + sellPrice;
+      state.weapons.splice(idx, 1);
+      renderWeapons();
+    };
+  }
+  let sells = document.querySelectorAll(".weapon-sell");
+  for (let i = 0; i < sells.length; i++) {
+    sells[i].onclick = function() {
+      let idx = parseInt(this.dataset.idx);
+      let w = state.weapons[idx];
+      let sellInput = prompt("Sell price in eb:", w.cost || 0);
+      if (sellInput === null) return;
+      let sellPrice = parseInt(sellInput) || 0;
+      let el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) + sellPrice;
+      state.weapons.splice(idx, 1);
+      renderWeapons();
+    };
+  }
+  let uses = document.querySelectorAll(".weapon-use");
+  for (let i = 0; i < uses.length; i++) {
+    uses[i].onclick = function() {
+      let idx = parseInt(this.dataset.idx);
       state.weapons.splice(idx, 1);
       renderWeapons();
     };
@@ -446,8 +480,11 @@ function renderArmor() {
   for (let i = 0; i < removes.length; i++) {
     removes[i].onclick = function() {
       let idx = parseInt(this.dataset.idx);
+      let sellInput = prompt("Sell price in eb (0 = discard):", state.armor[idx].cost || 0);
+      if (sellInput === null) return;
+      let sellPrice = parseInt(sellInput) || 0;
       let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) + (state.armor[idx].cost || 0);
+      el.value = (parseInt(el.value) || 0) + sellPrice;
       state.armor.splice(idx, 1);
       renderArmor();
       renderHumanity();
@@ -515,8 +552,11 @@ function attachCyberwareEvents() {
   for (let i = 0; i < removes.length; i++) {
     removes[i].onclick = function() {
       let idx = parseInt(this.dataset.idx);
+      let sellInput = prompt("Sell price in eb (0 = discard):", state.cyberware[idx].cost || 0);
+      if (sellInput === null) return;
+      let sellPrice = parseInt(sellInput) || 0;
       let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) + (state.cyberware[idx].cost || 0);
+      el.value = (parseInt(el.value) || 0) + sellPrice;
       state.cyberware.splice(idx, 1);
       renderCyberware();
       renderHumanity();
@@ -539,9 +579,18 @@ function attachCyberwareEvents() {
       if (optionId) {
         let item = getDataItemById(optionId);
         if (item) {
-          parent.options[slotIdx] = { id: item.id, name: item.name, hc: item.hc || 0, cost: item.cost || 0, desc: item.desc || '', bonus: item.bonus || null, parentType: item.parentType };
+          let costInput = prompt("Cost in eb (0 = looted):", item.cost || 0);
+          if (costInput === null) { this.value = oldOption ? oldOption.id : ''; return; }
+          let actualCost = parseInt(costInput) || 0;
+          parent.options[slotIdx] = { id: item.id, name: item.name, hc: item.hc || 0, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, parentType: item.parentType };
         }
       } else {
+        let sellInput = prompt("Sell price in eb (0 = discard):", oldCost);
+        if (sellInput === null) { this.value = oldOption ? oldOption.id : ''; return; }
+        let sellPrice = parseInt(sellInput) || 0;
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) + sellPrice;
+        oldCost = 0;
         parent.options[slotIdx] = null;
       }
       let newOption = parent.options[slotIdx] || null;
@@ -567,10 +616,18 @@ function renderGear() {
   let tbody = document.getElementById("gear_body");
   tbody.innerHTML = "";
   let frag = document.createDocumentFragment();
+  let consumableCats = ["Street Drug", "Pharmaceutical", "Additive", "Medical"];
   for (let i = 0; i < state.gear.length; i++) {
     let g = state.gear[i];
     let tr = document.createElement("tr");
-    tr.innerHTML = '<td>' + g.name + '</td><td>' + (g.cat || "-") + '</td><td>' + g.cost + 'eb</td><td><input type="number" class="gear-qty" data-idx="' + i + '" value="' + (g.qty || 1) + '" min="1" style="width:45px"></td><td><small>' + (g.desc || "") + '</small></td><td><button class="btn-action gear-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
+    let isConsumable = consumableCats.indexOf(g.cat) !== -1 || g.ammo;
+    let actionBtns;
+    if (isConsumable) {
+      actionBtns = '<button class="btn-action gear-sell" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">Sell</button> <button class="btn-action gear-use" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">Use</button>';
+    } else {
+      actionBtns = '<button class="btn-action gear-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button>';
+    }
+    tr.innerHTML = '<td>' + g.name + '</td><td>' + (g.cat || "-") + '</td><td>' + g.cost + 'eb</td><td><input type="number" class="gear-qty" data-idx="' + i + '" value="' + (g.qty || 1) + '" min="1" style="width:45px"></td><td><small>' + (g.desc || "") + '</small></td><td>' + actionBtns + '</td>';
     frag.appendChild(tr);
   }
   tbody.appendChild(frag);
@@ -580,8 +637,46 @@ function renderGear() {
     removes[i].onclick = function() {
       let idx = parseInt(this.dataset.idx);
       let g = state.gear[idx];
+      let totalCost = (g.cost || 0) * (g.qty || 1);
+      let sellInput = prompt("Sell price in eb (0 = discard):", totalCost);
+      if (sellInput === null) return;
+      let sellPrice = parseInt(sellInput) || 0;
       let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) + (g.cost || 0) * (g.qty || 1);
+      el.value = (parseInt(el.value) || 0) + sellPrice;
+      if (g.ammo && state.ammo[g.id]) {
+        state.ammo[g.id].total -= g.ammo * (g.qty || 1);
+        if (state.ammo[g.id].total <= 0) delete state.ammo[g.id];
+      }
+      state.gear.splice(idx, 1);
+      renderGear();
+      renderAmmoTracker();
+    };
+  }
+  let gearSells = document.querySelectorAll(".gear-sell");
+  for (let i = 0; i < gearSells.length; i++) {
+    gearSells[i].onclick = function() {
+      let idx = parseInt(this.dataset.idx);
+      let g = state.gear[idx];
+      let totalCost = (g.cost || 0) * (g.qty || 1);
+      let sellInput = prompt("Sell price in eb:", totalCost);
+      if (sellInput === null) return;
+      let sellPrice = parseInt(sellInput) || 0;
+      let el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) + sellPrice;
+      if (g.ammo && state.ammo[g.id]) {
+        state.ammo[g.id].total -= g.ammo * (g.qty || 1);
+        if (state.ammo[g.id].total <= 0) delete state.ammo[g.id];
+      }
+      state.gear.splice(idx, 1);
+      renderGear();
+      renderAmmoTracker();
+    };
+  }
+  let gearUses = document.querySelectorAll(".gear-use");
+  for (let i = 0; i < gearUses.length; i++) {
+    gearUses[i].onclick = function() {
+      let idx = parseInt(this.dataset.idx);
+      let g = state.gear[idx];
       if (g.ammo && state.ammo[g.id]) {
         state.ammo[g.id].total -= g.ammo * (g.qty || 1);
         if (state.ammo[g.id].total <= 0) delete state.ammo[g.id];
@@ -690,17 +785,23 @@ function randomLifepath() {
 function initAddButtons() {
   document.getElementById("add_weapon_btn").onclick = function() {
     showItemSelector("weapon", DATA.weapons, function(item) {
-      state.weapons.push({ id: item.id, name: item.name, dmg: item.dmg, rof: item.rof, mag: item.mag, type: item.type, rank: 0, cost: item.cost || 0 });
+      let costInput = prompt("Cost in eb (0 = looted):", item.cost || 0);
+      if (costInput === null) return;
+      let actualCost = parseInt(costInput) || 0;
+      state.weapons.push({ id: item.id, name: item.name, dmg: item.dmg, rof: item.rof, mag: item.mag, type: item.type, rank: 0, cost: actualCost });
       let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) - (item.cost || 0);
+      el.value = (parseInt(el.value) || 0) - actualCost;
       renderWeapons();
     }, "type");
   };
   document.getElementById("add_armor_btn").onclick = function() {
     showItemSelector("armor", DATA.armor, function(item) {
-      state.armor.push({ id: item.id, name: item.name, sp: item.sp, slots: item.slots, enc: item.enc, cost: item.cost || 0 });
+      let costInput = prompt("Cost in eb (0 = looted):", item.cost || 0);
+      if (costInput === null) return;
+      let actualCost = parseInt(costInput) || 0;
+      state.armor.push({ id: item.id, name: item.name, sp: item.sp, slots: item.slots, enc: item.enc, cost: actualCost });
       let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) - (item.cost || 0);
+      el.value = (parseInt(el.value) || 0) - actualCost;
       renderArmor();
       renderHumanity();
     });
@@ -723,13 +824,16 @@ function initAddButtons() {
           return;
         }
       }
-      let entry = { id: item.id, name: item.name, type: item.type, hc: item.hc, cost: item.cost, desc: item.desc || '', bonus: item.bonus || null };
+      let costInput = prompt("Cost in eb (0 = looted):", item.cost || 0);
+      if (costInput === null) return;
+      let actualCost = parseInt(costInput) || 0;
+      let entry = { id: item.id, name: item.name, type: item.type, hc: item.hc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null };
       if (item.slots) { entry.slots = item.slots; entry.options = []; }
       let pairedPrefill = { "romanova_cyberlegs": "talon_feet", "skydrivers": "jump_boosters" };
       let prefillId = pairedPrefill[item.id];
       if (prefillId) {
         let prefillData = getDataItemById(prefillId);
-        let leftLeg = { id: item.id, name: item.name + " (Left)", type: item.type, hc: item.hc, cost: item.cost, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
+        let leftLeg = { id: item.id, name: item.name + " (Left)", type: item.type, hc: item.hc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
         if (prefillData) {
           leftLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
         }
@@ -743,7 +847,7 @@ function initAddButtons() {
         state.cyberware.push(entry);
       }
       let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) - (item.cost || 0);
+      el.value = (parseInt(el.value) || 0) - actualCost;
       renderCyberware();
       renderHumanity();
       renderStats();
@@ -753,9 +857,12 @@ function initAddButtons() {
   document.getElementById("add_gear_btn").onclick = function() {
     let allGear = DATA.gear.concat(DATA.fashion.map(function(f) { return { id: f.id, name: f.name, cost: f.cost, cat: "Fashion" }; }));
     showItemSelector("gear", allGear, function(item) {
-      state.gear.push({ id: item.id, name: item.name, cost: item.cost, cat: item.cat || "Gear", desc: item.desc || "", qty: 1, ammo: item.ammo });
+      let costInput = prompt("Cost in eb (0 = looted):", item.cost || 0);
+      if (costInput === null) return;
+      let actualCost = parseInt(costInput) || 0;
+      state.gear.push({ id: item.id, name: item.name, cost: actualCost, cat: item.cat || "Gear", desc: item.desc || "", qty: 1, ammo: item.ammo });
       let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) - (item.cost || 0);
+      el.value = (parseInt(el.value) || 0) - actualCost;
       if (item.ammo) {
         state.ammo[item.id] = state.ammo[item.id] || { id: item.id, name: item.name, perBundle: item.ammo, total: 0 };
         state.ammo[item.id].total += item.ammo;
@@ -840,7 +947,7 @@ function showItemSelector(type, items, callback, groupBy) {
       header.style.color = "let(--accent)";
       header.style.fontSize = "0.85rem";
       header.style.textTransform = "uppercase";
-      header.style.borderBottom = "1px solid let(--border)";
+      header.style.borderBottom = "1px solid var(--border)";
       list.appendChild(header);
       lastGroup = group;
     }
@@ -849,8 +956,8 @@ function showItemSelector(type, items, callback, groupBy) {
     btn.style.textAlign = "left";
     btn.style.justifyContent = "flex-start";
     btn.style.width = "100%";
-    btn.style.background = "let(--stat-row-bg)";
-    btn.style.color = "let(--text)";
+    btn.style.background = "var(--stat-row-bg)";
+    btn.style.color = "var(--text)";
     let label = items[i].name;
     if (items[i].cost) label += " (" + items[i].cost + "eb)";
     if (items[i].hc !== undefined) label += " [HC: " + items[i].hc + "]";
@@ -858,7 +965,7 @@ function showItemSelector(type, items, callback, groupBy) {
     btn.textContent = label;
     (function(item) {
       btn.onclick = function() {
-        document.body.removeChild(overlay);
+        closeModal();
         callback(item);
       };
     })(items[i]);
@@ -869,7 +976,17 @@ function showItemSelector(type, items, callback, groupBy) {
   closeBtn.className = "btn-action";
   closeBtn.textContent = "Cancel";
   closeBtn.style.marginTop = "0.5rem";
-  closeBtn.onclick = function() { document.body.removeChild(overlay); };
+  function closeModal() {
+    if (overlay.parentNode) {
+      document.body.removeChild(overlay);
+      document.removeEventListener("keydown", escHandler);
+    }
+  }
+  closeBtn.onclick = closeModal;
+  overlay.onclick = function(e) { if (e.target === overlay) closeModal(); };
+  var escHandler = function(e) { if (e.key === "Escape") closeModal(); };
+  document.addEventListener("keydown", escHandler);
+  
   box.appendChild(closeBtn);
   overlay.appendChild(box);
   document.body.appendChild(overlay);
@@ -886,6 +1003,7 @@ function getCharacterData() {
   let data = {
     handle: document.getElementById("char_handle").value,
     name: document.getElementById("char_name").value,
+    char_notes: document.getElementById("char_notes") ? document.getElementById("char_notes").value : "",
     role: document.getElementById("role_select").value,
     roleAbilityRank: parseInt(document.getElementById("role_ability_rank").value) || 4,
     age: parseInt(document.getElementById("char_age").value) || 22,
@@ -920,6 +1038,7 @@ function loadCharacterData(data) {
   if (cb) { cb.checked = false; toggleCreationMode(false); }
   document.getElementById("char_handle").value = data.handle || "";
   document.getElementById("char_name").value = data.name || "";
+  if (document.getElementById("char_notes")) document.getElementById("char_notes").value = data.char_notes || "";
   document.getElementById("role_select").value = data.role || "";
   document.getElementById("role_ability_rank").value = data.roleAbilityRank || 4;
   document.getElementById("char_age").value = data.age || 22;
