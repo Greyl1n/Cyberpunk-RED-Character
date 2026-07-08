@@ -12,14 +12,15 @@
 /* Inline styles have been removed. All rules are now in base.css and themes. */
 </style>
 <link href="css/base.css" rel="stylesheet">
-<link id="theme" href="css/theme-light.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link id="theme" href="css/theme-dark.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <!-- ===== BODY / HEADER ===== -->
 <body>
+<div class="scanline-overlay"></div>
 <input type="checkbox" id="dismissWelcome" style="display:none">
 <header>
-<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v2.2</span></div></div>
+<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v3.1</span></div></div>
 <div class="header-actions">
 <button id="charactersBtn" class="btn-action">&#128194; Characters</button>
 <button id="importBtn" class="btn-action">&#128229; Import</button>
@@ -28,17 +29,16 @@
 <button id="printBtn" class="btn-action">&#128424; Print</button>
 <button id="randomBtn" class="btn-action">&#127922; Random</button>
 <button id="newCharBtn" class="btn-action">&#10024; New</button>
-<button id="themeToggle" class="btn-theme">&#127763; Theme</button>
 </div>
 </header>
 
 <!-- ===== TAB NAVIGATION ===== -->
 <nav id="tabs" class="tabs-nav">
-<button class="tab-btn active" data-tab="tab-character">&#128196; Character</button>
-<button class="tab-btn" data-tab="tab-gear">&#127890; Gear</button>
-<button class="tab-btn" data-tab="tab-cyberdeck">&#128187; Cyberdeck</button>
-<button class="tab-btn" data-tab="tab-notes">&#128221; Notes</button>
-<button class="tab-btn" data-tab="tab-about">&#8505; About</button>
+<button class="tab-btn active" data-tab="tab-character"><img src="src/icons/character.jpg" class="tab-icon"> Character</button>
+<button class="tab-btn" data-tab="tab-gear"><img src="src/icons/gear.jpg" class="tab-icon"> Gear</button>
+<button class="tab-btn" data-tab="tab-cyberdeck"><img src="src/icons/cyberdeck.jpg" class="tab-icon"> Cyberdeck</button>
+<button class="tab-btn" data-tab="tab-notes"><img src="src/icons/notes.jpg" class="tab-icon"> Notes</button>
+<button class="tab-btn" data-tab="tab-about"><img src="src/icons/about.jpg" class="tab-icon"> About</button>
 </nav>
 
 <!-- ===== WELCOME / SPLASH OVERLAY ===== -->
@@ -47,8 +47,8 @@
 <h1 class="welcome-title">&#9881; Cyberpunk RED Generator</h1>
 <p class="welcome-subtitle">Interactive Character Manager for Cyberpunk RED</p>
 <div class="welcome-tabs">
-<div class="welcome-tab"><strong>&#128196; Character</strong> — Stats, role, skills, health, humanity, and lifepath generation</div>
-<div class="welcome-tab"><strong>&#127890; Gear</strong> — Weapons, armor, cyberware, fashion, equipment, currency tracking, and ammunition consumption</div>
+<div class="welcome-tab"><strong><img src="src/icons/character.jpg" class="tab-icon" style="box-shadow:none; border-color:transparent"> Character</strong> — Stats, role, skills, health, humanity, and lifepath generation</div>
+<div class="welcome-tab"><strong><img src="src/icons/gear.jpg" class="tab-icon" style="box-shadow:none; border-color:transparent"> Gear</strong> — Weapons, armor, cyberware, fashion, equipment, currency tracking, and ammunition consumption</div>
 </div>
 <label for="dismissWelcome" id="welcomeStartBtn" class="btn-welcome" onclick="document.getElementById('welcomeOverlay').style.display='none';document.getElementById('welcomeOverlay').classList.add('hidden')">&#9654; Get Started</label>
 </div>
@@ -261,7 +261,7 @@
 <div class="section-card">
 <h2 class="section-title">About Cyberpunk RED Generator</h2>
 <p style="margin-bottom:0.8rem;line-height:1.7">A fully self-contained, highly-optimised interactive character manager for <strong>Cyberpunk RED</strong> by R. Talsorian Games. Create, customise, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. No server, no build tools, no internet — just open the file.</p>
-<p style="margin-bottom:0.8rem;line-height:1.7">The <strong>v2.2 Update</strong> brings character creation mode, cyberdeck fixing, and extensive cyberware database patches over the previous ES6 architecture upgrade.</p>
+<p style="margin-bottom:0.8rem;line-height:1.7">The <strong>v3.1 Update</strong> improves the UI with optimized layout scaling for mobile devices, introduces randomized Humanity Cost (HC) rolls for Cyberware, and refines the print layout.</p>
 <h3 style="margin:1rem 0 0.4rem">Features</h3>
 <ul style="line-height:1.8;padding-left:1.2rem">
 <li>10 Stats with point-buy system (62 points, min 2 / max 8)</li>
@@ -277,7 +277,10 @@
 <li>Character save/load/delete (localStorage), JSON export/import</li>
 <li>Combined print layout optimised for physical character sheets</li>
 <li>Random character generator — one-click complete, playable character</li>
-<li>Dark/light theme toggle with native CSS variables</li>
+<li>Netrunner dark theme with native CSS variables</li>
+<li>Random Humanity Cost (HC) rolls and custom inputs for Cyberware</li>
+<li>Optimised mobile styling with seamless skill adjustments</li>
+<li>Polished print-friendly layout with customisable background dimming</li>
 <li>Mobile-responsive layout with touch-optimised controls</li>
 <li>Single-file or Modular modes — zero external dependencies, works offline</li>
 </ul>

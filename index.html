@@ -13,13 +13,13 @@
 </style>
 <style id="base-css">
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 14px; line-height: 1.5; overflow-x: hidden; -webkit-tap-highlight-color: rgba(212,65,43,0.2); touch-action: manipulation; }
+body { font-family: 'Rajdhani', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 15px; line-height: 1.5; overflow-x: hidden; -webkit-tap-highlight-color: rgba(212,65,43,0.2); touch-action: manipulation; }
 header { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.5rem; flex-wrap: wrap; gap: 0.5rem; }
 .header-logo { display: flex; align-items: center; gap: 0.6rem; font-size: 0.9rem; }
 .header-logo h1 { font-size: 1.2rem; font-weight: 700; letter-spacing: 0.03em; }
 .sub-brand { font-size: 0.8rem; opacity: 0.7; display: block; }
 .header-actions { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; }
-.btn-action, .btn-save, .btn-theme, .btn-welcome { padding: 0.4rem 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: transform 0.15s, box-shadow 0.15s; }
+.btn-action, .btn-save, .btn-theme, .btn-welcome { padding: 0.4rem 0.8rem; border: none; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: all 0.2s; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
 .btn-action:hover, .btn-save:hover, .btn-theme:hover { transform: translateY(-1px); }
 .btn-save { font-weight: 600; }
 .tabs-nav { display: flex; gap: 0; padding: 0 1.5rem; overflow-x: auto; -webkit-overflow-scrolling: touch; touch-action: pan-x; }
@@ -136,22 +136,35 @@ input[type="number"] { width: 100%; }
   .section-card { padding: 0.5rem; }
   .premium-table { font-size: 0.65rem; }
   .premium-table th, .premium-table td { padding: 0.2rem 0.2rem; }
-  .premium-table th:nth-child(n+4):not(:last-child),
-  .premium-table td:nth-child(n+4):not(:last-child) { display: none; }
-  #weapons_body td:nth-child(5),
-  #weapons_body th:nth-child(5) { display: none; }
-  #cyberware_body td:nth-child(5),
-  #cyberware_body th:nth-child(5) { display: none; }
-  #skills_body td:nth-child(2),
-  #skills_body th:nth-child(2) { display: none; }
-  #skills_body td:nth-child(3),
-  #skills_body th:nth-child(3) { display: none; }
   .stat-row button { width: 36px; height: 36px; font-size: 1rem; }
   .modal-box { width: 100%; border-radius: 8px; }
   .flex-row { flex-direction: column; align-items: stretch; }
 }
 
 @media print {
+  :root, body.printing {
+    --bg: #ffffff;
+    --bg-card: #ffffff;
+    --text: #000000;
+    --text-secondary: #000000;
+    --border: #666666;
+    --primary: #000000;
+    --accent: #000000;
+    --accent-light: #ffffff;
+    --tab-bg: #ffffff;
+    --input-bg: #ffffff;
+    --stat-row-bg: #ffffff;
+    --stat-row-alt: #ffffff;
+    --table-stripe: #ffffff;
+    --header-bg: #ffffff;
+    --header-text: #000000;
+    --panel-gold-bg: #ffffff;
+    --panel-gold-border: #000000;
+  }
+  body.printing { background: #ffffff !important; color: #000000 !important; }
+  body.printing * { text-shadow: none !important; box-shadow: none !important; }
+  body.printing .scanline-overlay { display: none !important; }
+  
   body.printing .tabs-nav,
   body.printing .header-actions,
   body.printing .modal-overlay,
@@ -177,7 +190,8 @@ input[type="number"] { width: 100%; }
   body.printing #tab-gear > .grid-split:nth-child(1) { order: 4; }
   body.printing #tab-gear > .grid-split:nth-child(2) { order: 5; }
   body.printing #tab-cyberdeck > .section-card { order: 6; }
-  body.printing #tab-character > .section-card:nth-child(3) { order: 7; page-break-before: always; }
+  body.printing #tab-notes > .section-card { order: 7; page-break-before: always; }
+  body.printing #tab-character > .section-card:nth-child(3) { order: 8; page-break-before: always; }
   body.printing .scrollable-table { max-height: none; overflow: visible; }
   body.printing .table-responsive { overflow: visible; }
   body.printing .main-content { max-width: 100%; }
@@ -252,79 +266,126 @@ input[type="number"] { width: 100%; }
 
 .hidden { display: none !important; }
 
+/* CYBERPUNK ADDITIONS */
+.scanline-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  background-size: 100% 4px, 3px 100%;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+.tab-icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  margin-right: 6px;
+  border-radius: 2px;
+  border: 1px solid var(--primary);
+  box-shadow: 0 0 5px var(--primary);
+  object-fit: cover;
+  transition: all 0.2s;
+}
+.tab-btn:hover .tab-icon {
+  box-shadow: 0 0 10px var(--primary);
+  transform: scale(1.1);
+}
+
 </style>
 <style id="theme">
 :root {
-  --bg: #f5f2ed;
-  --bg-card: #ffffff;
-  --text: #1a1a1a;
-  --text-secondary: #666;
-  --border: #ddd;
-  --primary: #d4412b;
-  --primary-hover: #b93621;
-  --accent: #e88d2a;
-  --accent-light: #fef3e7;
-  --tab-bg: #e8e4de;
-  --tab-active: #ffffff;
-  --tab-hover: #ddd8d0;
-  --btn-bg: #333;
-  --btn-text: #fff;
-  --btn-hover: #555;
-  --btn-save-bg: #2b8a3e;
-  --btn-save-hover: #237032;
-  --header-bg: #1a1a1a;
-  --header-text: #f0ece4;
-  --panel-gold-bg: #fef3e7;
-  --panel-gold-border: #e88d2a;
-  --input-bg: #fff;
-  --stat-row-bg: #faf8f5;
-  --stat-row-alt: #f0ece4;
-  --table-stripe: #faf8f5;
-  --modal-bg: #fff;
-  --welcome-bg: #fff;
-  --welcome-overlay-bg: rgba(0,0,0,0.7);
-  --focus-ring: #d4412b;
+  --bg: #030305;
+  --bg-card: #0b0b12;
+  --text: #e0f2fe;
+  --text-secondary: #0ea5e9;
+  --border: #0284c7;
+  --primary: #00f3ff;
+  --primary-hover: #00d2ff;
+  --accent: #ff003c;
+  --accent-light: rgba(255, 0, 60, 0.15);
+  --tab-bg: #06101e;
+  --tab-active: #0b1a30;
+  --tab-hover: #0d2240;
+  --btn-bg: rgba(0, 243, 255, 0.1);
+  --btn-text: #00f3ff;
+  --btn-hover: rgba(0, 243, 255, 0.25);
+  --btn-save-bg: #facc15;
+  --btn-save-hover: #eab308;
+  --header-bg: #000000;
+  --header-text: #00f3ff;
+  --panel-gold-bg: rgba(250, 204, 21, 0.1);
+  --panel-gold-border: #facc15;
+  --input-bg: rgba(2, 132, 199, 0.05);
+  --stat-row-bg: rgba(6, 16, 30, 0.8);
+  --stat-row-alt: rgba(11, 26, 48, 0.8);
+  --table-stripe: rgba(6, 16, 30, 0.5);
+  --modal-bg: #080811;
+  --welcome-bg: #050508;
+  --welcome-overlay-bg: rgba(0,0,0,0.9);
+  --focus-ring: #00f3ff;
+  --welcome-card-bg: #0b0b12;
   --skill-search-border: var(--border);
+  --glow-primary: 0 0 8px rgba(0, 243, 255, 0.6), 0 0 16px rgba(0, 243, 255, 0.4);
+  --glow-accent: 0 0 8px rgba(255, 0, 60, 0.6), 0 0 16px rgba(255, 0, 60, 0.4);
 }
-body { background: var(--bg); color: var(--text); }
-header { background: var(--header-bg); color: var(--header-text); }
-.btn-action { background: var(--btn-bg); color: var(--btn-text); }
-.btn-action:hover { background: var(--btn-hover); }
-.btn-save { background: var(--btn-save-bg); color: #fff; }
-.btn-save:hover { background: var(--btn-save-hover); }
-.btn-theme { background: transparent; color: var(--header-text); border: 1px solid rgba(255,255,255,0.2); }
-.tab-btn { background: var(--tab-bg); color: var(--text-secondary); border-right: 1px solid var(--border); }
-.tab-btn:hover { background: var(--tab-hover); color: var(--text); }
-.tab-btn.active { background: var(--tab-active); color: var(--primary); font-weight: 600; }
-.section-card { background: var(--bg-card); border: 1px solid var(--border); }
-.section-title { border-bottom-color: var(--primary); color: var(--primary); }
-input, select { background: var(--input-bg); color: var(--text); border-color: var(--border); }
-input:focus, select:focus { outline: none; border-color: var(--focus-ring); box-shadow: 0 0 0 2px rgba(212,65,43,0.15); }
-.premium-table th { background: var(--tab-bg); }
+body { 
+  background-color: var(--bg);
+  background-image: linear-gradient(rgba(3, 3, 5, 0.85), rgba(3, 3, 5, 0.85)), url('src/bg/bg_netrunner_blue.png'); 
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  color: var(--text); 
+}
+header { background: var(--header-bg); color: var(--header-text); border-bottom: 2px solid var(--primary); box-shadow: 0 0 10px rgba(0,243,255,0.2); }
+.btn-action { background: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--primary); text-shadow: 0 0 5px var(--primary); }
+.btn-action:hover { background: var(--btn-hover); box-shadow: var(--glow-primary); }
+.btn-save { background: var(--btn-save-bg); color: #000; border: 1px solid #fff; text-shadow: none; font-weight: 800; }
+.btn-save:hover { background: var(--btn-save-hover); box-shadow: 0 0 10px var(--btn-save-bg); }
+.btn-theme { background: transparent; color: var(--accent); border: 1px solid var(--accent); text-shadow: 0 0 5px var(--accent); }
+.btn-theme:hover { box-shadow: var(--glow-accent); background: rgba(255,0,60,0.1); }
+.tab-btn { background: var(--tab-bg); color: var(--text-secondary); border: 1px solid var(--border); border-bottom: none; }
+.tab-btn:hover { background: var(--tab-hover); color: var(--primary); }
+.tab-btn.active { background: var(--tab-active); color: var(--primary); font-weight: 700; text-shadow: 0 0 5px var(--primary); border-top: 2px solid var(--primary); }
+.section-card { background: var(--bg-card); border: 1px solid var(--border); position: relative; box-shadow: inset 0 0 20px rgba(0, 243, 255, 0.05); }
+.section-card::before { content: ''; position: absolute; top: -1px; left: -1px; width: 10px; height: 10px; border-top: 2px solid var(--primary); border-left: 2px solid var(--primary); }
+.section-card::after { content: ''; position: absolute; bottom: -1px; right: -1px; width: 10px; height: 10px; border-bottom: 2px solid var(--primary); border-right: 2px solid var(--primary); }
+.section-title { border-bottom-color: var(--primary); color: var(--primary); text-transform: uppercase; letter-spacing: 0.1em; text-shadow: 0 0 5px var(--primary); font-family: 'Orbitron', sans-serif; }
+input, select { background: var(--input-bg); color: var(--primary); border: 1px solid var(--border); border-radius: 0; font-family: 'Share Tech Mono', monospace; font-size: 1rem; }
+input:focus, select:focus { outline: none; border-color: var(--focus-ring); box-shadow: inset 0 0 5px rgba(0,243,255,0.5), 0 0 5px rgba(0,243,255,0.5); }
+.premium-table th { background: var(--tab-bg); color: var(--primary); font-family: 'Orbitron', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid var(--primary); }
 .premium-table td, .premium-table th { border-color: var(--border); }
 .premium-table tbody tr:nth-child(even) { background: var(--table-stripe); }
-.panel-gold { background: var(--panel-gold-bg); border: 1px solid var(--panel-gold-border); }
-.modal-box { background: var(--modal-bg); border: 1px solid var(--border); }
-.char-list-item { background: var(--stat-row-bg); }
-.char-list-item:hover { background: var(--stat-row-alt); }
-.stat-row { background: var(--stat-row-bg); }
-.stat-row button { background: var(--tab-bg); color: var(--text); }
-.stat-row button:hover { background: var(--tab-hover); }
-.stat-points-bar { background: var(--accent-light); }
-.welcome-overlay { background: var(--welcome-overlay-bg); }
-.welcome-card { background: var(--welcome-card-bg, #fff); }
-.btn-welcome { background: var(--primary); color: #fff; }
-.btn-welcome:hover { background: var(--primary-hover); }
-select option { color: #000; background: #fff; }
+.premium-table tbody tr:hover { background: rgba(0, 243, 255, 0.05); }
+.panel-gold { background: var(--panel-gold-bg); border: 1px solid var(--panel-gold-border); box-shadow: 0 0 10px rgba(250, 204, 21, 0.2); }
+.modal-box { background: var(--modal-bg); border: 1px solid var(--primary); box-shadow: var(--glow-primary); }
+.char-list-item { background: var(--stat-row-bg); border-left: 3px solid transparent; }
+.char-list-item:hover { background: var(--stat-row-alt); border-left: 3px solid var(--primary); }
+.stat-row { background: var(--stat-row-bg); border-left: 2px solid var(--border); }
+.stat-row button { background: var(--tab-bg); color: var(--primary); border: 1px solid var(--border); }
+.stat-row button:hover { background: var(--primary); color: #000; box-shadow: var(--glow-primary); }
+.stat-points-bar { background: var(--accent-light); border: 1px solid var(--accent); color: var(--accent); text-shadow: 0 0 5px var(--accent); }
+.welcome-overlay { background: var(--welcome-overlay-bg); backdrop-filter: blur(5px); }
+.welcome-card { background: var(--welcome-card-bg); border: 1px solid var(--primary); box-shadow: var(--glow-primary); }
+.welcome-title { font-family: 'Orbitron', sans-serif; color: var(--primary); text-transform: uppercase; text-shadow: 0 0 10px var(--primary); letter-spacing: 0.1em; }
+.welcome-subtitle { color: var(--text-secondary); }
+.btn-welcome { background: var(--primary); color: #000; font-family: 'Orbitron', sans-serif; text-transform: uppercase; font-weight: 900; letter-spacing: 0.1em; transition: all 0.2s; }
+.btn-welcome:hover { background: var(--primary-hover); box-shadow: 0 0 15px var(--primary); transform: scale(1.02); }
+select option { color: var(--primary); background: #000; }
 
 </style>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <!-- ===== BODY / HEADER ===== -->
 <body>
+<div class="scanline-overlay"></div>
 <input type="checkbox" id="dismissWelcome" style="display:none">
 <header>
-<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v2.2</span></div></div>
+<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v3.1</span></div></div>
 <div class="header-actions">
 <button id="charactersBtn" class="btn-action">&#128194; Characters</button>
 <button id="importBtn" class="btn-action">&#128229; Import</button>
@@ -333,17 +394,16 @@ select option { color: #000; background: #fff; }
 <button id="printBtn" class="btn-action">&#128424; Print</button>
 <button id="randomBtn" class="btn-action">&#127922; Random</button>
 <button id="newCharBtn" class="btn-action">&#10024; New</button>
-<button id="themeToggle" class="btn-theme">&#127763; Theme</button>
 </div>
 </header>
 
 <!-- ===== TAB NAVIGATION ===== -->
 <nav id="tabs" class="tabs-nav">
-<button class="tab-btn active" data-tab="tab-character">&#128196; Character</button>
-<button class="tab-btn" data-tab="tab-gear">&#127890; Gear</button>
-<button class="tab-btn" data-tab="tab-cyberdeck">&#128187; Cyberdeck</button>
-<button class="tab-btn" data-tab="tab-notes">&#128221; Notes</button>
-<button class="tab-btn" data-tab="tab-about">&#8505; About</button>
+<button class="tab-btn active" data-tab="tab-character"><img src="src/icons/character.jpg" class="tab-icon"> Character</button>
+<button class="tab-btn" data-tab="tab-gear"><img src="src/icons/gear.jpg" class="tab-icon"> Gear</button>
+<button class="tab-btn" data-tab="tab-cyberdeck"><img src="src/icons/cyberdeck.jpg" class="tab-icon"> Cyberdeck</button>
+<button class="tab-btn" data-tab="tab-notes"><img src="src/icons/notes.jpg" class="tab-icon"> Notes</button>
+<button class="tab-btn" data-tab="tab-about"><img src="src/icons/about.jpg" class="tab-icon"> About</button>
 </nav>
 
 <!-- ===== WELCOME / SPLASH OVERLAY ===== -->
@@ -352,8 +412,8 @@ select option { color: #000; background: #fff; }
 <h1 class="welcome-title">&#9881; Cyberpunk RED Generator</h1>
 <p class="welcome-subtitle">Interactive Character Manager for Cyberpunk RED</p>
 <div class="welcome-tabs">
-<div class="welcome-tab"><strong>&#128196; Character</strong> — Stats, role, skills, health, humanity, and lifepath generation</div>
-<div class="welcome-tab"><strong>&#127890; Gear</strong> — Weapons, armor, cyberware, fashion, equipment, currency tracking, and ammunition consumption</div>
+<div class="welcome-tab"><strong><img src="src/icons/character.jpg" class="tab-icon" style="box-shadow:none; border-color:transparent"> Character</strong> — Stats, role, skills, health, humanity, and lifepath generation</div>
+<div class="welcome-tab"><strong><img src="src/icons/gear.jpg" class="tab-icon" style="box-shadow:none; border-color:transparent"> Gear</strong> — Weapons, armor, cyberware, fashion, equipment, currency tracking, and ammunition consumption</div>
 </div>
 <label for="dismissWelcome" id="welcomeStartBtn" class="btn-welcome" onclick="document.getElementById('welcomeOverlay').style.display='none';document.getElementById('welcomeOverlay').classList.add('hidden')">&#9654; Get Started</label>
 </div>
@@ -566,7 +626,7 @@ select option { color: #000; background: #fff; }
 <div class="section-card">
 <h2 class="section-title">About Cyberpunk RED Generator</h2>
 <p style="margin-bottom:0.8rem;line-height:1.7">A fully self-contained, highly-optimised interactive character manager for <strong>Cyberpunk RED</strong> by R. Talsorian Games. Create, customise, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. No server, no build tools, no internet — just open the file.</p>
-<p style="margin-bottom:0.8rem;line-height:1.7">The <strong>v2.2 Update</strong> brings character creation mode, cyberdeck fixing, and extensive cyberware database patches over the previous ES6 architecture upgrade.</p>
+<p style="margin-bottom:0.8rem;line-height:1.7">The <strong>v3.1 Update</strong> improves the UI with optimized layout scaling for mobile devices, introduces randomized Humanity Cost (HC) rolls for Cyberware, and refines the print layout.</p>
 <h3 style="margin:1rem 0 0.4rem">Features</h3>
 <ul style="line-height:1.8;padding-left:1.2rem">
 <li>10 Stats with point-buy system (62 points, min 2 / max 8)</li>
@@ -582,7 +642,10 @@ select option { color: #000; background: #fff; }
 <li>Character save/load/delete (localStorage), JSON export/import</li>
 <li>Combined print layout optimised for physical character sheets</li>
 <li>Random character generator — one-click complete, playable character</li>
-<li>Dark/light theme toggle with native CSS variables</li>
+<li>Netrunner dark theme with native CSS variables</li>
+<li>Random Humanity Cost (HC) rolls and custom inputs for Cyberware</li>
+<li>Optimised mobile styling with seamless skill adjustments</li>
+<li>Polished print-friendly layout with customisable background dimming</li>
 <li>Mobile-responsive layout with touch-optimised controls</li>
 <li>Single-file or Modular modes — zero external dependencies, works offline</li>
 </ul>
@@ -1151,7 +1214,7 @@ var DATA = {
     { id: "braindance_recorder", name: "Braindance Recorder", type: "Neuralware", hc: 7, cost: 500, desc: "[CRB] Record your experiences to braindance format.", parentType: "neural_link" },
     { id: "chemical_analyzer", name: "Chemical Analyzer", type: "Neuralware", hc: 7, cost: 500, desc: "[CRB] Analyze chemicals by touching or ingesting.", parentType: "neural_link" },
     { id: "machine_tech_link", name: "Machine/Tech Link", type: "Neuralware", hc: 7, cost: 500, desc: "[CRB] Interface directly with machines/tech for control.", parentType: "neural_link" },
-    { id: "pain_editor", name: "Pain Editor", type: "Internal", hc: 4, cost: 2000, desc: "[CRB] Disables pain. User ignores penalties due to being Seriously Wounded." },
+    { id: "pain_editor", name: "Pain Editor", type: "Internal", hc: 14, cost: 2000, desc: "[CRB] Disables pain. User ignores penalties due to being Seriously Wounded." },
     { id: "nanosurgeons", name: "Nanosurgeons", type: "Internal", hc: 3, cost: 1500, desc: "[CRB] Auto-stabilize at 0 HP once per day." },
     { id: "synth_lungs", name: "Synth Lungs", type: "Internal", hc: 3, cost: 1000, desc: "[CRB] Filter toxins, breathe smoke." },
     { id: "gills", name: "Gills", type: "Internal", hc: 2, cost: 500, desc: "[CRB] Breathe underwater." },
@@ -1159,7 +1222,7 @@ var DATA = {
     { id: "cyberleg", name: "Cyberleg", type: "Cyberleg", hc: 3, cost: 1000, desc: "[CRB] Basic cybernetic leg.", slots: 3, bodyPart: "leg" },
     { id: "tactile_boost", name: "Tactile Boost", type: "Neuralware", hc: 7, cost: 100, desc: "[CRB] Enhanced touch, +1 to pick lock/pick pocket.", parentType: "neural_link", bonus: { skills: { pick_lock: 1, pick_pocket: 1 } } },
     { id: "olfactory_boost", name: "Olfactory Boost", type: "Neuralware", hc: 7, cost: 100, desc: "[CRB] Enhanced smell, +2 to tracking via scent.", parentType: "neural_link", bonus: { skills: { tracking: 2 } } },
-    { id: "subdermal_armor", name: "Subdermal Armor", type: "Internal", hc: 4, cost: 2000, desc: "[CRB] SP 7 to area implanted." },
+    { id: "subdermal_armor", name: "Subdermal Armor", type: "Internal", hc: 14, cost: 2000, desc: "[CRB] SP 7 to area implanted." },
     { id: "skin_weave", name: "Skin Weave", type: "Internal", hc: 3, cost: 1500, desc: "[CRB] SP 4 all over." },
     { id: "pneumatics", name: "Pneumatics", type: "Internal", hc: 3, cost: 2000, desc: "[CRB] +2 to BODY for melee damage." },
     { id: "hydraulic_rams", name: "Hydraulic Rams", type: "Cyberleg Option", hc: 3, cost: 1500, desc: "[CRB] Cyberleg option, +2 MOVE when jumping.", parentType: "cyberleg" },
@@ -1749,7 +1812,6 @@ const printCharacter = () => {
     document.body.classList.remove("printing");
   }, 100);
 };
-
 let state = {
   stats: {},
   skillRanks: {},
@@ -1944,6 +2006,11 @@ function updateStatPointsBar() {
   document.getElementById("stat_points_remaining").textContent = rem;
   let bar = document.getElementById("stat_points_bar");
   bar.style.opacity = rem < 0 ? "0.6" : "1";
+  if (rem === 0) {
+    bar.style.display = "none";
+  } else {
+    bar.style.display = "";
+  }
 }
 
 function renderSkills() {
@@ -2051,6 +2118,28 @@ function toggleCreationMode(enabled) {
   }
 }
 
+function updateSkillRow(id) {
+  let idxItem = DATA._index.skillById[id];
+  if (!idxItem) return;
+  let statId = idxItem.stat;
+  let ranks = state.skillRanks[id] || 0;
+  let item = state.skillItem[id] || 0;
+  let statVal = getEffectiveStat(statId);
+  let cyber = calcSkillCyberBonus(id);
+  let total = calcSkillTotal(statVal, ranks, item, cyber);
+  
+  let input = document.querySelector('.skill-rank[data-skill="' + id + '"]');
+  if (input) {
+    let tr = input.closest('tr');
+    if (tr) {
+      let tds = tr.querySelectorAll('td');
+      if (tds.length >= 7) {
+        tds[6].innerHTML = '<strong>' + (total >= 0 ? "+" : "") + total + '</strong>';
+      }
+    }
+  }
+}
+
 function attachSkillEvents() {
   let ranks = document.querySelectorAll(".skill-rank");
   let items = document.querySelectorAll(".skill-item");
@@ -2093,7 +2182,7 @@ function attachSkillEvents() {
         
         this.dataset.oldVal = newVal;
         updateCreationPoints();
-        renderSkills();
+        updateSkillRow(id);
         return;
       }
       
@@ -2107,14 +2196,14 @@ function attachSkillEvents() {
       if (cost < 0) payIpCost(cost);
       state.skillRanks[id] = newVal;
       this.dataset.oldVal = newVal;
-      renderSkills();
+      updateSkillRow(id);
     };
   }
   for (let i = 0; i < items.length; i++) {
     items[i].onchange = function() {
       let id = this.dataset.skill;
       state.skillItem[id] = parseInt(this.value) || 0;
-      renderSkills();
+      updateSkillRow(id);
     };
   }
 }
@@ -2333,7 +2422,19 @@ function attachCyberwareEvents() {
           let costInput = prompt("Cost in eb (0 = looted):", item.cost || 0);
           if (costInput === null) { this.value = oldOption ? oldOption.id : ''; return; }
           let actualCost = parseInt(costInput) || 0;
-          parent.options[slotIdx] = { id: item.id, name: item.name, hc: item.hc || 0, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, parentType: item.parentType };
+          let actualHc = item.hc || 0;
+          if (actualHc > 0) {
+            let hcInput = prompt("Humanity Cost for " + item.name + "\n(Enter value, or 'r' to roll randomly)", actualHc);
+            if (hcInput !== null) {
+              if (hcInput.toLowerCase().trim() === 'r') {
+                actualHc = rollCyberwareHC(item.hc);
+                alert("Rolled Humanity Cost: " + actualHc);
+              } else {
+                actualHc = parseInt(hcInput) || 0;
+              }
+            }
+          }
+          parent.options[slotIdx] = { id: item.id, name: item.name, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, parentType: item.parentType };
         }
       } else {
         let sellInput = prompt("Sell price in eb (0 = discard):", oldCost);
@@ -2357,6 +2458,17 @@ function attachCyberwareEvents() {
       renderSkills();
     };
   }
+}
+
+function rollCyberwareHC(avgHc) {
+  if (!avgHc) return 0;
+  function r() { return Math.floor(Math.random() * 6) + 1; }
+  if (avgHc === 14 || avgHc === 4) return r() + r() + r() + r();
+  if (avgHc === 7) return r() + r();
+  if (avgHc === 3) return r();
+  if (avgHc === 2) return Math.ceil(r() / 2);
+  if (avgHc === 1) return 1;
+  return avgHc;
 }
 
 function getDataItemById(id) {
@@ -2578,18 +2690,30 @@ function initAddButtons() {
       let costInput = prompt("Cost in eb (0 = looted):", item.cost || 0);
       if (costInput === null) return;
       let actualCost = parseInt(costInput) || 0;
-      let entry = { id: item.id, name: item.name, type: item.type, hc: item.hc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null };
+      let actualHc = item.hc || 0;
+      if (actualHc > 0) {
+        let hcInput = prompt("Humanity Cost for " + item.name + "\n(Enter value, or 'r' to roll randomly)", actualHc);
+        if (hcInput !== null) {
+          if (hcInput.toLowerCase().trim() === 'r') {
+            actualHc = rollCyberwareHC(item.hc);
+            alert("Rolled Humanity Cost: " + actualHc);
+          } else {
+            actualHc = parseInt(hcInput) || 0;
+          }
+        }
+      }
+      let entry = { id: item.id, name: item.name, type: item.type, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null };
       if (item.slots) { entry.slots = item.slots; entry.options = []; }
       let pairedPrefill = { "romanova_cyberlegs": "talon_feet", "skydrivers": "jump_boosters" };
       let prefillId = pairedPrefill[item.id];
       if (prefillId) {
         let prefillData = getDataItemById(prefillId);
-        let leftLeg = { id: item.id, name: item.name + " (Left)", type: item.type, hc: item.hc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
+        let leftLeg = { id: item.id, name: item.name + " (Left)", type: item.type, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
         if (prefillData) {
           leftLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
         }
         state.cyberware.push(leftLeg);
-        let rightLeg = { id: item.id, name: item.name + " (Right)", type: item.type, hc: item.hc, cost: 0, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
+        let rightLeg = { id: item.id, name: item.name + " (Right)", type: item.type, hc: actualHc, cost: 0, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
         if (prefillData) {
           rightLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
         }
@@ -3118,7 +3242,6 @@ const init = () => {
   initTabs();
   initWelcome();
   initCharManager();
-  initTheme();
   initExportImport();
   initNewChar();
   initPrint();
@@ -3226,269 +3349,6 @@ const initCharManager = () => {
     modal.classList.remove("active");
     modal.style.display = "none";
     document.getElementById("char_handle").focus();
-  });
-};
-
-const initTheme = () => {
-  const toggle = document.getElementById("themeToggle");
-  const theme = document.getElementById("theme");
-  const current = localStorage.getItem("cpr_theme") || "light";
-  if (current === "dark") theme.innerHTML = `:root {
-  --bg: #141414;
-  --bg-card: #1e1e1e;
-  --text: #e0dcd4;
-  --text-secondary: #999;
-  --border: #333;
-  --primary: #ff6040;
-  --primary-hover: #e04a2f;
-  --accent: #f0a030;
-  --accent-light: #2a2010;
-  --tab-bg: #222;
-  --tab-active: #1e1e1e;
-  --tab-hover: #2a2a2a;
-  --btn-bg: #444;
-  --btn-text: #eee;
-  --btn-hover: #666;
-  --btn-save-bg: #2d8a3e;
-  --btn-save-hover: #237032;
-  --header-bg: #0a0a0a;
-  --header-text: #e0dcd4;
-  --panel-gold-bg: #2a2010;
-  --panel-gold-border: #f0a030;
-  --input-bg: #2a2a2a;
-  --stat-row-bg: #222;
-  --stat-row-alt: #2a2a2a;
-  --table-stripe: #222;
-  --modal-bg: #1e1e1e;
-  --welcome-bg: #1e1e1e;
-  --welcome-overlay-bg: rgba(0,0,0,0.85);
-  --focus-ring: #ff6040;
-  --welcome-card-bg: #1e1e1e;
-  --skill-search-border: var(--border);
-}
-body { background: var(--bg); color: var(--text); }
-header { background: var(--header-bg); color: var(--header-text); }
-.btn-action { background: var(--btn-bg); color: var(--btn-text); }
-.btn-action:hover { background: var(--btn-hover); }
-.btn-save { background: var(--btn-save-bg); color: #fff; }
-.btn-save:hover { background: var(--btn-save-hover); }
-.btn-theme { background: transparent; color: var(--header-text); border: 1px solid rgba(255,255,255,0.15); }
-.tab-btn { background: var(--tab-bg); color: var(--text-secondary); border-right: 1px solid var(--border); }
-.tab-btn:hover { background: var(--tab-hover); color: var(--text); }
-.tab-btn.active { background: var(--tab-active); color: var(--primary); font-weight: 600; }
-.section-card { background: var(--bg-card); border: 1px solid var(--border); }
-.section-title { border-bottom-color: var(--primary); color: var(--primary); }
-input, select { background: var(--input-bg); color: var(--text); border-color: var(--border); }
-input:focus, select:focus { outline: none; border-color: var(--focus-ring); box-shadow: 0 0 0 2px rgba(255,96,64,0.15); }
-.premium-table th { background: var(--tab-bg); }
-.premium-table td, .premium-table th { border-color: var(--border); }
-.premium-table tbody tr:nth-child(even) { background: var(--table-stripe); }
-.panel-gold { background: var(--panel-gold-bg); border: 1px solid var(--panel-gold-border); }
-.modal-box { background: var(--modal-bg); border: 1px solid var(--border); }
-.char-list-item { background: var(--stat-row-bg); }
-.char-list-item:hover { background: var(--stat-row-alt); }
-.stat-row { background: var(--stat-row-bg); }
-.stat-row button { background: var(--tab-bg); color: var(--text); }
-.stat-row button:hover { background: var(--tab-hover); }
-.stat-points-bar { background: var(--accent-light); }
-.welcome-overlay { background: var(--welcome-overlay-bg); }
-.welcome-card { background: var(--welcome-card-bg, #1e1e1e); }
-.btn-welcome { background: var(--primary); color: #fff; }
-.btn-welcome:hover { background: var(--primary-hover); }
-select option { color: #000; background: #fff; }
-`; else theme.innerHTML = `:root {
-  --bg: #f5f2ed;
-  --bg-card: #ffffff;
-  --text: #1a1a1a;
-  --text-secondary: #666;
-  --border: #ddd;
-  --primary: #d4412b;
-  --primary-hover: #b93621;
-  --accent: #e88d2a;
-  --accent-light: #fef3e7;
-  --tab-bg: #e8e4de;
-  --tab-active: #ffffff;
-  --tab-hover: #ddd8d0;
-  --btn-bg: #333;
-  --btn-text: #fff;
-  --btn-hover: #555;
-  --btn-save-bg: #2b8a3e;
-  --btn-save-hover: #237032;
-  --header-bg: #1a1a1a;
-  --header-text: #f0ece4;
-  --panel-gold-bg: #fef3e7;
-  --panel-gold-border: #e88d2a;
-  --input-bg: #fff;
-  --stat-row-bg: #faf8f5;
-  --stat-row-alt: #f0ece4;
-  --table-stripe: #faf8f5;
-  --modal-bg: #fff;
-  --welcome-bg: #fff;
-  --welcome-overlay-bg: rgba(0,0,0,0.7);
-  --focus-ring: #d4412b;
-  --skill-search-border: var(--border);
-}
-body { background: var(--bg); color: var(--text); }
-header { background: var(--header-bg); color: var(--header-text); }
-.btn-action { background: var(--btn-bg); color: var(--btn-text); }
-.btn-action:hover { background: var(--btn-hover); }
-.btn-save { background: var(--btn-save-bg); color: #fff; }
-.btn-save:hover { background: var(--btn-save-hover); }
-.btn-theme { background: transparent; color: var(--header-text); border: 1px solid rgba(255,255,255,0.2); }
-.tab-btn { background: var(--tab-bg); color: var(--text-secondary); border-right: 1px solid var(--border); }
-.tab-btn:hover { background: var(--tab-hover); color: var(--text); }
-.tab-btn.active { background: var(--tab-active); color: var(--primary); font-weight: 600; }
-.section-card { background: var(--bg-card); border: 1px solid var(--border); }
-.section-title { border-bottom-color: var(--primary); color: var(--primary); }
-input, select { background: var(--input-bg); color: var(--text); border-color: var(--border); }
-input:focus, select:focus { outline: none; border-color: var(--focus-ring); box-shadow: 0 0 0 2px rgba(212,65,43,0.15); }
-.premium-table th { background: var(--tab-bg); }
-.premium-table td, .premium-table th { border-color: var(--border); }
-.premium-table tbody tr:nth-child(even) { background: var(--table-stripe); }
-.panel-gold { background: var(--panel-gold-bg); border: 1px solid var(--panel-gold-border); }
-.modal-box { background: var(--modal-bg); border: 1px solid var(--border); }
-.char-list-item { background: var(--stat-row-bg); }
-.char-list-item:hover { background: var(--stat-row-alt); }
-.stat-row { background: var(--stat-row-bg); }
-.stat-row button { background: var(--tab-bg); color: var(--text); }
-.stat-row button:hover { background: var(--tab-hover); }
-.stat-points-bar { background: var(--accent-light); }
-.welcome-overlay { background: var(--welcome-overlay-bg); }
-.welcome-card { background: var(--welcome-card-bg, #fff); }
-.btn-welcome { background: var(--primary); color: #fff; }
-.btn-welcome:hover { background: var(--primary-hover); }
-select option { color: #000; background: #fff; }
-`;
-  toggle.addEventListener("click", () => {
-    const cur = localStorage.getItem("cpr_theme") || "light";
-    const next = cur === "light" ? "dark" : "light";
-    if (next === "dark") theme.innerHTML = `:root {
-  --bg: #141414;
-  --bg-card: #1e1e1e;
-  --text: #e0dcd4;
-  --text-secondary: #999;
-  --border: #333;
-  --primary: #ff6040;
-  --primary-hover: #e04a2f;
-  --accent: #f0a030;
-  --accent-light: #2a2010;
-  --tab-bg: #222;
-  --tab-active: #1e1e1e;
-  --tab-hover: #2a2a2a;
-  --btn-bg: #444;
-  --btn-text: #eee;
-  --btn-hover: #666;
-  --btn-save-bg: #2d8a3e;
-  --btn-save-hover: #237032;
-  --header-bg: #0a0a0a;
-  --header-text: #e0dcd4;
-  --panel-gold-bg: #2a2010;
-  --panel-gold-border: #f0a030;
-  --input-bg: #2a2a2a;
-  --stat-row-bg: #222;
-  --stat-row-alt: #2a2a2a;
-  --table-stripe: #222;
-  --modal-bg: #1e1e1e;
-  --welcome-bg: #1e1e1e;
-  --welcome-overlay-bg: rgba(0,0,0,0.85);
-  --focus-ring: #ff6040;
-  --welcome-card-bg: #1e1e1e;
-  --skill-search-border: var(--border);
-}
-body { background: var(--bg); color: var(--text); }
-header { background: var(--header-bg); color: var(--header-text); }
-.btn-action { background: var(--btn-bg); color: var(--btn-text); }
-.btn-action:hover { background: var(--btn-hover); }
-.btn-save { background: var(--btn-save-bg); color: #fff; }
-.btn-save:hover { background: var(--btn-save-hover); }
-.btn-theme { background: transparent; color: var(--header-text); border: 1px solid rgba(255,255,255,0.15); }
-.tab-btn { background: var(--tab-bg); color: var(--text-secondary); border-right: 1px solid var(--border); }
-.tab-btn:hover { background: var(--tab-hover); color: var(--text); }
-.tab-btn.active { background: var(--tab-active); color: var(--primary); font-weight: 600; }
-.section-card { background: var(--bg-card); border: 1px solid var(--border); }
-.section-title { border-bottom-color: var(--primary); color: var(--primary); }
-input, select { background: var(--input-bg); color: var(--text); border-color: var(--border); }
-input:focus, select:focus { outline: none; border-color: var(--focus-ring); box-shadow: 0 0 0 2px rgba(255,96,64,0.15); }
-.premium-table th { background: var(--tab-bg); }
-.premium-table td, .premium-table th { border-color: var(--border); }
-.premium-table tbody tr:nth-child(even) { background: var(--table-stripe); }
-.panel-gold { background: var(--panel-gold-bg); border: 1px solid var(--panel-gold-border); }
-.modal-box { background: var(--modal-bg); border: 1px solid var(--border); }
-.char-list-item { background: var(--stat-row-bg); }
-.char-list-item:hover { background: var(--stat-row-alt); }
-.stat-row { background: var(--stat-row-bg); }
-.stat-row button { background: var(--tab-bg); color: var(--text); }
-.stat-row button:hover { background: var(--tab-hover); }
-.stat-points-bar { background: var(--accent-light); }
-.welcome-overlay { background: var(--welcome-overlay-bg); }
-.welcome-card { background: var(--welcome-card-bg, #1e1e1e); }
-.btn-welcome { background: var(--primary); color: #fff; }
-.btn-welcome:hover { background: var(--primary-hover); }
-select option { color: #000; background: #fff; }
-`; else theme.innerHTML = `:root {
-  --bg: #f5f2ed;
-  --bg-card: #ffffff;
-  --text: #1a1a1a;
-  --text-secondary: #666;
-  --border: #ddd;
-  --primary: #d4412b;
-  --primary-hover: #b93621;
-  --accent: #e88d2a;
-  --accent-light: #fef3e7;
-  --tab-bg: #e8e4de;
-  --tab-active: #ffffff;
-  --tab-hover: #ddd8d0;
-  --btn-bg: #333;
-  --btn-text: #fff;
-  --btn-hover: #555;
-  --btn-save-bg: #2b8a3e;
-  --btn-save-hover: #237032;
-  --header-bg: #1a1a1a;
-  --header-text: #f0ece4;
-  --panel-gold-bg: #fef3e7;
-  --panel-gold-border: #e88d2a;
-  --input-bg: #fff;
-  --stat-row-bg: #faf8f5;
-  --stat-row-alt: #f0ece4;
-  --table-stripe: #faf8f5;
-  --modal-bg: #fff;
-  --welcome-bg: #fff;
-  --welcome-overlay-bg: rgba(0,0,0,0.7);
-  --focus-ring: #d4412b;
-  --skill-search-border: var(--border);
-}
-body { background: var(--bg); color: var(--text); }
-header { background: var(--header-bg); color: var(--header-text); }
-.btn-action { background: var(--btn-bg); color: var(--btn-text); }
-.btn-action:hover { background: var(--btn-hover); }
-.btn-save { background: var(--btn-save-bg); color: #fff; }
-.btn-save:hover { background: var(--btn-save-hover); }
-.btn-theme { background: transparent; color: var(--header-text); border: 1px solid rgba(255,255,255,0.2); }
-.tab-btn { background: var(--tab-bg); color: var(--text-secondary); border-right: 1px solid var(--border); }
-.tab-btn:hover { background: var(--tab-hover); color: var(--text); }
-.tab-btn.active { background: var(--tab-active); color: var(--primary); font-weight: 600; }
-.section-card { background: var(--bg-card); border: 1px solid var(--border); }
-.section-title { border-bottom-color: var(--primary); color: var(--primary); }
-input, select { background: var(--input-bg); color: var(--text); border-color: var(--border); }
-input:focus, select:focus { outline: none; border-color: var(--focus-ring); box-shadow: 0 0 0 2px rgba(212,65,43,0.15); }
-.premium-table th { background: var(--tab-bg); }
-.premium-table td, .premium-table th { border-color: var(--border); }
-.premium-table tbody tr:nth-child(even) { background: var(--table-stripe); }
-.panel-gold { background: var(--panel-gold-bg); border: 1px solid var(--panel-gold-border); }
-.modal-box { background: var(--modal-bg); border: 1px solid var(--border); }
-.char-list-item { background: var(--stat-row-bg); }
-.char-list-item:hover { background: var(--stat-row-alt); }
-.stat-row { background: var(--stat-row-bg); }
-.stat-row button { background: var(--tab-bg); color: var(--text); }
-.stat-row button:hover { background: var(--tab-hover); }
-.stat-points-bar { background: var(--accent-light); }
-.welcome-overlay { background: var(--welcome-overlay-bg); }
-.welcome-card { background: var(--welcome-card-bg, #fff); }
-.btn-welcome { background: var(--primary); color: #fff; }
-.btn-welcome:hover { background: var(--primary-hover); }
-select option { color: #000; background: #fff; }
-`;
-    localStorage.setItem("cpr_theme", next);
   });
 };
 

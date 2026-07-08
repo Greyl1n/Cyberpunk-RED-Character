@@ -1,20 +1,16 @@
-# Cyberpunk RED Character Generator v2.2
+# Cyberpunk RED Character Generator v3.1
 
-A fully self-contained, highly-optimized interactive character manager for **Cyberpunk RED** by R. Talsorian Games. Create, customize, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. No server, no build tools, no internet required — just open the `index.html` file in your browser.
+A fully self-contained, highly-optimized interactive character manager for **Cyberpunk RED** by R. Talsorian Games. Create, customize, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. No server, no external build tools during runtime, no internet required — just open the compiled `index.html` file in your browser.
 
-## What's New in v2.2
-- **Rule Accuracy & Stat Calculations**: 
-  - Fixed Maximum Hit Points (HP) calculations to strictly use the official `10 + 5 * CEILING((BODY + WILL) / 2)` formula.
-  - Fixed Base Death Save to equal the character's `BODY` stat properly.
-  - Empathy-linked skills now correctly dynamically scale based on your **Current Empathy** (factoring in Humanity loss from installed cyberware) rather than your maximum base EMP.
-- **Source Material Tagging**: 
-  - All items, weapons, cyberware, fashion, and gear across the entire database now properly show which source material they are from in their descriptions.
-  - Provided a clear source abbreviation key directly in the app:
-    - **[CRB]** Core Rulebook
-    - **[BC]** Black Chrome
-    - **[DGD]** Danger Gal Dossier
-    - **[TotR]** Tales of the RED
-    - **[IR]** Interface Red
+## What's New in v3.1
+- **Random Humanity Cost (HC) Rolls**: Implemented support for random d6 Humanity Cost rolls when installing cyberware based on standard Cyberpunk RED rules.
+- **Mobile Optimizations**: Seamless skill adjustments and localized DOM rendering to improve focus retention and performance on mobile browsers.
+- **Improved Print Layout**: Adjusted the print-friendly layout to display notes before skills and optimized it for physical character sheets with black and white readability.
+- **Stats UI Refinements**: The "points remaining" red bar gracefully vanishes when stats are fully allocated for a cleaner look on ready character sheets.
+
+## What's New in v3.0
+- **Neon Cyberpunk Aesthetic**: A complete visual overhaul introducing a dark theme with vibrant neon highlights, glowing focus rings, and custom monospaced fonts for a truly immersive Cyberpunk feel.
+- **Background Dimming**: Fixed background image support with custom dimming layers to ensure high contrast and readability of the text.
 
 ## Key Features
 *   **Zero Dependencies**: The `index.html` file works fully offline.
@@ -22,6 +18,7 @@ A fully self-contained, highly-optimized interactive character manager for **Cyb
 *   **Automated Derived Stats**: HP, Humanity, EMP, and Death Saves update automatically as stats change or cyberware is installed.
 *   **86 Canonical Skills**: Pre-calculated bases (STAT + Rank), including basic skill categorization.
 *   **Full Gear & Cyberware System**: Tracking Eurobucks, slot requirements (for limbs and neural links), and armor SP.
+*   **Ammunition Consumption**: Track remaining rounds directly on your sheet.
 *   **Lifepath Generator**: Completely randomized 1-click Lifepath tables straight from the core rules.
 *   **LocalStorage Support**: Save and manage an infinite number of characters locally.
 *   **JSON Export/Import**: Easily backup and transfer character JSON files.

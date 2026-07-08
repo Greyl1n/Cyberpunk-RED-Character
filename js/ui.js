@@ -1,4 +1,3 @@
-
 let state = {
   stats: {},
   skillRanks: {},
@@ -193,6 +192,11 @@ function updateStatPointsBar() {
   document.getElementById("stat_points_remaining").textContent = rem;
   let bar = document.getElementById("stat_points_bar");
   bar.style.opacity = rem < 0 ? "0.6" : "1";
+  if (rem === 0) {
+    bar.style.display = "none";
+  } else {
+    bar.style.display = "";
+  }
 }
 
 function renderSkills() {
@@ -300,6 +304,28 @@ function toggleCreationMode(enabled) {
   }
 }
 
+function updateSkillRow(id) {
+  let idxItem = DATA._index.skillById[id];
+  if (!idxItem) return;
+  let statId = idxItem.stat;
+  let ranks = state.skillRanks[id] || 0;
+  let item = state.skillItem[id] || 0;
+  let statVal = getEffectiveStat(statId);
+  let cyber = calcSkillCyberBonus(id);
+  let total = calcSkillTotal(statVal, ranks, item, cyber);
+  
+  let input = document.querySelector('.skill-rank[data-skill="' + id + '"]');
+  if (input) {
+    let tr = input.closest('tr');
+    if (tr) {
+      let tds = tr.querySelectorAll('td');
+      if (tds.length >= 7) {
+        tds[6].innerHTML = '<strong>' + (total >= 0 ? "+" : "") + total + '</strong>';
+      }
+    }
+  }
+}
+
 function attachSkillEvents() {
   let ranks = document.querySelectorAll(".skill-rank");
   let items = document.querySelectorAll(".skill-item");
@@ -342,7 +368,7 @@ function attachSkillEvents() {
         
         this.dataset.oldVal = newVal;
         updateCreationPoints();
-        renderSkills();
+        updateSkillRow(id);
         return;
       }
       
@@ -356,14 +382,14 @@ function attachSkillEvents() {
       if (cost < 0) payIpCost(cost);
       state.skillRanks[id] = newVal;
       this.dataset.oldVal = newVal;
-      renderSkills();
+      updateSkillRow(id);
     };
   }
   for (let i = 0; i < items.length; i++) {
     items[i].onchange = function() {
       let id = this.dataset.skill;
       state.skillItem[id] = parseInt(this.value) || 0;
-      renderSkills();
+      updateSkillRow(id);
     };
   }
 }
@@ -582,7 +608,19 @@ function attachCyberwareEvents() {
           let costInput = prompt("Cost in eb (0 = looted):", item.cost || 0);
           if (costInput === null) { this.value = oldOption ? oldOption.id : ''; return; }
           let actualCost = parseInt(costInput) || 0;
-          parent.options[slotIdx] = { id: item.id, name: item.name, hc: item.hc || 0, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, parentType: item.parentType };
+          let actualHc = item.hc || 0;
+          if (actualHc > 0) {
+            let hcInput = prompt("Humanity Cost for " + item.name + "\n(Enter value, or 'r' to roll randomly)", actualHc);
+            if (hcInput !== null) {
+              if (hcInput.toLowerCase().trim() === 'r') {
+                actualHc = rollCyberwareHC(item.hc);
+                alert("Rolled Humanity Cost: " + actualHc);
+              } else {
+                actualHc = parseInt(hcInput) || 0;
+              }
+            }
+          }
+          parent.options[slotIdx] = { id: item.id, name: item.name, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, parentType: item.parentType };
         }
       } else {
         let sellInput = prompt("Sell price in eb (0 = discard):", oldCost);
@@ -606,6 +644,17 @@ function attachCyberwareEvents() {
       renderSkills();
     };
   }
+}
+
+function rollCyberwareHC(avgHc) {
+  if (!avgHc) return 0;
+  function r() { return Math.floor(Math.random() * 6) + 1; }
+  if (avgHc === 14 || avgHc === 4) return r() + r() + r() + r();
+  if (avgHc === 7) return r() + r();
+  if (avgHc === 3) return r();
+  if (avgHc === 2) return Math.ceil(r() / 2);
+  if (avgHc === 1) return 1;
+  return avgHc;
 }
 
 function getDataItemById(id) {
@@ -827,18 +876,30 @@ function initAddButtons() {
       let costInput = prompt("Cost in eb (0 = looted):", item.cost || 0);
       if (costInput === null) return;
       let actualCost = parseInt(costInput) || 0;
-      let entry = { id: item.id, name: item.name, type: item.type, hc: item.hc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null };
+      let actualHc = item.hc || 0;
+      if (actualHc > 0) {
+        let hcInput = prompt("Humanity Cost for " + item.name + "\n(Enter value, or 'r' to roll randomly)", actualHc);
+        if (hcInput !== null) {
+          if (hcInput.toLowerCase().trim() === 'r') {
+            actualHc = rollCyberwareHC(item.hc);
+            alert("Rolled Humanity Cost: " + actualHc);
+          } else {
+            actualHc = parseInt(hcInput) || 0;
+          }
+        }
+      }
+      let entry = { id: item.id, name: item.name, type: item.type, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null };
       if (item.slots) { entry.slots = item.slots; entry.options = []; }
       let pairedPrefill = { "romanova_cyberlegs": "talon_feet", "skydrivers": "jump_boosters" };
       let prefillId = pairedPrefill[item.id];
       if (prefillId) {
         let prefillData = getDataItemById(prefillId);
-        let leftLeg = { id: item.id, name: item.name + " (Left)", type: item.type, hc: item.hc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
+        let leftLeg = { id: item.id, name: item.name + " (Left)", type: item.type, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
         if (prefillData) {
           leftLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
         }
         state.cyberware.push(leftLeg);
-        let rightLeg = { id: item.id, name: item.name + " (Right)", type: item.type, hc: item.hc, cost: 0, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
+        let rightLeg = { id: item.id, name: item.name + " (Right)", type: item.type, hc: actualHc, cost: 0, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
         if (prefillData) {
           rightLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
         }
