@@ -19,6 +19,7 @@ const init = () => {
   initTabs();
   initWelcome();
   initCharManager();
+  initTheme();
   initExportImport();
   initNewChar();
   initPrint();
@@ -126,6 +127,19 @@ const initCharManager = () => {
     modal.classList.remove("active");
     modal.style.display = "none";
     document.getElementById("char_handle").focus();
+  });
+};
+
+const initTheme = () => {
+  const toggle = document.getElementById("themeToggle");
+  const theme = document.getElementById("theme");
+  const current = localStorage.getItem("cpr_theme") || "light";
+  theme.href = `css/theme-${current}.css`;
+  toggle.addEventListener("click", () => {
+    const cur = theme.href.includes("theme-light") ? "light" : "dark";
+    const next = cur === "light" ? "dark" : "light";
+    theme.href = `css/theme-${next}.css`;
+    localStorage.setItem("cpr_theme", next);
   });
 };
 
