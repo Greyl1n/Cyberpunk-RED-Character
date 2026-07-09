@@ -7,6 +7,8 @@ let state = {
   cyberware: [],
   gear: [],
   ammo: {},
+  roleSubRanks: {},
+  lifepath: { friends: [], enemies: [], lovers: [] },
   currentTab: "tab-character"
 };
 
@@ -96,6 +98,63 @@ function setUpRoleRankCost() {
   };
 }
 
+function renderRoleSubSkills(role, rank) {
+  if (!role.subSkills) return "";
+  let totalPts = rank * role.subSkillsPointsPerRank;
+  let usedPts = 0;
+  for (let s of role.subSkills) {
+    let skId = role.id + "_" + s.id;
+    usedPts += state.roleSubRanks[skId] || 0;
+  }
+  let remaining = totalPts - usedPts;
+  
+  let html = '<div style="margin-top:0.5rem; font-size:0.85rem; border: 1px solid var(--border); padding: 5px; border-radius: 4px; background: rgba(0,0,0,0.3);">';
+  html += '<div style="margin-bottom: 5px; font-weight: bold; color: var(--accent);">Sub-Skills (Points Remaining: <span style="color:' + (remaining === 0 ? 'var(--text)' : 'var(--error)') + '">' + remaining + '</span>)</div>';
+  
+  for (let s of role.subSkills) {
+    let skId = role.id + "_" + s.id;
+    let r = state.roleSubRanks[skId] || 0;
+    html += '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 3px;">';
+    html += '<div><span style="font-weight:bold; color:var(--text)" title="' + s.desc + '">' + s.name + '</span><br><span style="font-size:0.75rem; opacity:0.8;">' + s.desc + '</span></div>';
+    html += '<div style="white-space: nowrap; margin-left: 10px;">';
+    html += '<button class="role-sub-dec btn" style="padding: 2px 6px;" data-sub="' + skId + '">-</button> ';
+    html += '<span style="display: inline-block; width: 1.5rem; text-align: center; font-family:var(--font-mono); font-weight:bold;">' + r + '</span> ';
+    html += '<button class="role-sub-inc btn" style="padding: 2px 6px;" data-sub="' + skId + '" data-rem="' + remaining + '">+</button>';
+    html += '</div></div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function attachRoleSubSkillEvents() {
+  let info = document.getElementById("role_info");
+  let decBtns = info.querySelectorAll(".role-sub-dec");
+  let incBtns = info.querySelectorAll(".role-sub-inc");
+  
+  for (let i = 0; i < decBtns.length; i++) {
+    decBtns[i].addEventListener("click", function(e) {
+      e.preventDefault();
+      let sub = this.getAttribute("data-sub");
+      if (state.roleSubRanks[sub] && state.roleSubRanks[sub] > 0) {
+        state.roleSubRanks[sub]--;
+        updateRoleInfo();
+      }
+    });
+  }
+  
+  for (let i = 0; i < incBtns.length; i++) {
+    incBtns[i].addEventListener("click", function(e) {
+      e.preventDefault();
+      let sub = this.getAttribute("data-sub");
+      let rem = parseInt(this.getAttribute("data-rem"));
+      if (rem > 0) {
+        state.roleSubRanks[sub] = (state.roleSubRanks[sub] || 0) + 1;
+        updateRoleInfo();
+      }
+    });
+  }
+}
+
 function updateRoleInfo() {
   let roleId = document.getElementById("role_select").value;
   let info = document.getElementById("role_info");
@@ -117,14 +176,22 @@ function updateRoleInfo() {
   html += '<div class="role-ability">Primary: ' + role.ability + ' (Rank ' + abilityRank + ')</div>' +
     '<div style="margin-top:2px;font-size:0.82rem">' + role.desc + '</div>' +
     '<div style="margin-top:1px;font-size:0.78rem;opacity:0.85">' + rd + '</div>';
+  if (role && role.subSkills) {
+    html += renderRoleSubSkills(role, abilityRank);
+  }
+  
   if (role2) {
     let rank2 = parseInt(document.getElementById("role_secondary_rank").value) || 1;
     let rd2 = (role2.rankDesc && role2.rankDesc[rank2]) ? role2.rankDesc[rank2] : "";
-    html += '<div class="role-ability" style="margin-top:0.5rem;border-top:1px dashed let(--border);padding-top:0.4rem">Secondary: ' + role2.ability + ' (Rank ' + rank2 + ')</div>' +
+    html += '<div class="role-ability" style="margin-top:0.5rem;border-top:1px dashed var(--border);padding-top:0.4rem">Secondary: ' + role2.ability + ' (Rank ' + rank2 + ')</div>' +
       '<div style="margin-top:2px;font-size:0.82rem">' + role2.desc + '</div>' +
       '<div style="margin-top:1px;font-size:0.78rem;opacity:0.85">' + rd2 + '</div>';
+    if (role2.subSkills) {
+      html += renderRoleSubSkills(role2, rank2);
+    }
   }
   info.innerHTML = html;
+  attachRoleSubSkillEvents();
 }
 
 // ============================================================
@@ -886,32 +953,150 @@ function attachAmmoEvents() {
   }
 }
 
+const LP_FIELDS = [
+  "culturalOrigins", "personality", "clothingStyle", "hairstyle", 
+  "affectation", "valueMost", "feelAboutPeople", "valuedPerson", 
+  "valuedPossession", "familyBackground", "childhoodEnvironment", 
+  "familyCrisis", "lifeGoals"
+];
+
 function initLifepath() {
-  let fields = ["lp_background", "lp_motivation", "lp_hairstyle", "lp_clothing", "lp_event"];
-  let dataKeys = ["backgrounds", "motivations", "hairstyles", "clothing_styles", "life_events"];
-  for (let f = 0; f < fields.length; f++) {
-    let sel = document.getElementById(fields[f]);
-    sel.innerHTML = '<option value="">-- Random --</option>';
-    let items = DATA.lifepath[dataKeys[f]];
-    for (let i = 0; i < items.length; i++) {
+  for (let i = 0; i < LP_FIELDS.length; i++) {
+    let key = LP_FIELDS[i];
+    let sel = document.getElementById("lp_" + key);
+    if (!sel) continue;
+    sel.innerHTML = '<option value="">-- Choose --</option>';
+    let items = DATA.lifepath[key];
+    for (let j = 0; j < items.length; j++) {
       let opt = document.createElement("option");
-      opt.value = items[i];
-      opt.textContent = items[i];
+      opt.value = items[j];
+      opt.textContent = items[j];
       sel.appendChild(opt);
     }
   }
   document.getElementById("lp_random_btn").onclick = randomLifepath;
+  
+  document.getElementById("add_lp_friend_btn").onclick = function() {
+    state.lifepath.friends.push("");
+    renderLifepathLists();
+  };
+  document.getElementById("add_lp_enemy_btn").onclick = function() {
+    state.lifepath.enemies.push({ who: "", cause: "", force: "", revenge: "" });
+    renderLifepathLists();
+  };
+  document.getElementById("add_lp_lover_btn").onclick = function() {
+    state.lifepath.lovers.push("");
+    renderLifepathLists();
+  };
+  
+  renderLifepathLists();
+}
+
+function renderLifepathLists() {
+  // Friends
+  let fc = document.getElementById("lp_friends_container");
+  if(fc) {
+    let fhtml = "";
+    for(let i=0; i<state.lifepath.friends.length; i++) {
+       fhtml += `<div style="display:flex; gap:0.5rem">
+          <select class="lp-friend-sel" data-idx="${i}" style="flex:1">
+             <option value="">-- Relationship --</option>
+             ${DATA.lifepath.friendRelationships.map(x => `<option value="${x}" ${state.lifepath.friends[i]===x?'selected':''}>${x}</option>`).join('')}
+          </select>
+          <button class="btn-action" onclick="removeLifepathItem('friends', ${i})">X</button>
+       </div>`;
+    }
+    fc.innerHTML = fhtml;
+    let fsels = fc.querySelectorAll('.lp-friend-sel');
+    fsels.forEach(s => s.onchange = function() { state.lifepath.friends[this.dataset.idx] = this.value; });
+  }
+
+  // Enemies
+  let ec = document.getElementById("lp_enemies_container");
+  if(ec) {
+    let ehtml = "";
+    for(let i=0; i<state.lifepath.enemies.length; i++) {
+       let e = state.lifepath.enemies[i];
+       ehtml += `<div style="display:flex; flex-direction:column; gap:0.2rem; border-left:2px solid var(--accent); padding-left:0.5rem; margin-bottom:0.5rem">
+          <div style="display:flex; justify-content:space-between">
+             <select class="lp-enemy-sel" data-idx="${i}" data-key="who" style="width:calc(100% - 30px)">
+               <option value="">-- Who --</option>
+               ${DATA.lifepath.enemyTypes.map(x => `<option value="${x}" ${e.who===x?'selected':''}>${x}</option>`).join('')}
+             </select>
+             <button class="btn-action" onclick="removeLifepathItem('enemies', ${i})">X</button>
+          </div>
+          <select class="lp-enemy-sel" data-idx="${i}" data-key="cause"><option value="">-- Cause --</option>${DATA.lifepath.enemyCauses.map(x => `<option value="${x}" ${e.cause===x?'selected':''}>${x}</option>`).join('')}</select>
+          <select class="lp-enemy-sel" data-idx="${i}" data-key="force"><option value="">-- Forces --</option>${DATA.lifepath.enemyForces.map(x => `<option value="${x}" ${e.force===x?'selected':''}>${x}</option>`).join('')}</select>
+          <select class="lp-enemy-sel" data-idx="${i}" data-key="revenge"><option value="">-- Revenge --</option>${DATA.lifepath.enemyRevenge.map(x => `<option value="${x}" ${e.revenge===x?'selected':''}>${x}</option>`).join('')}</select>
+       </div>`;
+    }
+    ec.innerHTML = ehtml;
+    let esels = ec.querySelectorAll('.lp-enemy-sel');
+    esels.forEach(s => s.onchange = function() { state.lifepath.enemies[this.dataset.idx][this.dataset.key] = this.value; });
+  }
+
+  // Lovers
+  let lc = document.getElementById("lp_lovers_container");
+  if(lc) {
+    let lhtml = "";
+    for(let i=0; i<state.lifepath.lovers.length; i++) {
+       lhtml += `<div style="display:flex; gap:0.5rem">
+          <select class="lp-lover-sel" data-idx="${i}" style="flex:1">
+             <option value="">-- What Happened --</option>
+             ${DATA.lifepath.loveTragedies.map(x => `<option value="${x}" ${state.lifepath.lovers[i]===x?'selected':''}>${x}</option>`).join('')}
+          </select>
+          <button class="btn-action" onclick="removeLifepathItem('lovers', ${i})">X</button>
+       </div>`;
+    }
+    lc.innerHTML = lhtml;
+    let lsels = lc.querySelectorAll('.lp-lover-sel');
+    lsels.forEach(s => s.onchange = function() { state.lifepath.lovers[this.dataset.idx] = this.value; });
+  }
+}
+
+function removeLifepathItem(type, idx) {
+  state.lifepath[type].splice(idx, 1);
+  renderLifepathLists();
 }
 
 function randomLifepath() {
-  let fields = ["lp_background", "lp_motivation", "lp_hairstyle", "lp_clothing", "lp_event"];
-  let dataKeys = ["backgrounds", "motivations", "hairstyles", "clothing_styles", "life_events"];
-  for (let f = 0; f < fields.length; f++) {
-    let sel = document.getElementById(fields[f]);
-    let items = DATA.lifepath[dataKeys[f]];
-    let idx = Math.floor(Math.random() * items.length);
-    sel.value = items[idx];
+  for (let i = 0; i < LP_FIELDS.length; i++) {
+    let key = LP_FIELDS[i];
+    let sel = document.getElementById("lp_" + key);
+    if (!sel) continue;
+    let items = DATA.lifepath[key];
+    sel.value = items[Math.floor(Math.random() * items.length)];
   }
+  
+  // Friends
+  let numFriends = Math.max(0, Math.floor(Math.random()*10)+1 - 7);
+  state.lifepath.friends = [];
+  for(let i=0; i<numFriends; i++) {
+    let items = DATA.lifepath.friendRelationships;
+    state.lifepath.friends.push(items[Math.floor(Math.random() * items.length)]);
+  }
+  
+  // Enemies
+  let numEnemies = Math.max(0, Math.floor(Math.random()*10)+1 - 7);
+  state.lifepath.enemies = [];
+  for(let i=0; i<numEnemies; i++) {
+    state.lifepath.enemies.push({
+       who: DATA.lifepath.enemyTypes[Math.floor(Math.random() * DATA.lifepath.enemyTypes.length)],
+       cause: DATA.lifepath.enemyCauses[Math.floor(Math.random() * DATA.lifepath.enemyCauses.length)],
+       force: DATA.lifepath.enemyForces[Math.floor(Math.random() * DATA.lifepath.enemyForces.length)],
+       revenge: DATA.lifepath.enemyRevenge[Math.floor(Math.random() * DATA.lifepath.enemyRevenge.length)]
+    });
+  }
+
+  // Lovers
+  let numLovers = Math.max(0, Math.floor(Math.random()*10)+1 - 7);
+  state.lifepath.lovers = [];
+  for(let i=0; i<numLovers; i++) {
+    let items = DATA.lifepath.loveTragedies;
+    state.lifepath.lovers.push(items[Math.floor(Math.random() * items.length)]);
+  }
+  
+  renderLifepathLists();
 }
 
 // ============================================================
@@ -1203,15 +1388,18 @@ function getCharacterData() {
     cyberware: JSON.parse(JSON.stringify(state.cyberware)),
     gear: JSON.parse(JSON.stringify(state.gear)),
     ammo: JSON.parse(JSON.stringify(state.ammo)),
+    roleSubRanks: JSON.parse(JSON.stringify(state.roleSubRanks)),
     hpCurrent: parseInt(document.getElementById("hp_current").value) || 0,
     currency: parseInt(document.getElementById("currency_eb").value) || 0,
     lifepath: {
-      background: document.getElementById("lp_background").value,
-      motivation: document.getElementById("lp_motivation").value,
-      hairstyle: document.getElementById("lp_hairstyle").value,
-      clothing: document.getElementById("lp_clothing").value,
-      event: document.getElementById("lp_event").value,
-      notes: document.getElementById("lp_notes").value
+      ...LP_FIELDS.reduce((acc, key) => {
+        let el = document.getElementById("lp_" + key);
+        if (el) acc[key] = el.value;
+        return acc;
+      }, {}),
+      friends: JSON.parse(JSON.stringify(state.lifepath.friends || [])),
+      enemies: JSON.parse(JSON.stringify(state.lifepath.enemies || [])),
+      lovers: JSON.parse(JSON.stringify(state.lifepath.lovers || []))
     }
   };
   return data;
@@ -1246,16 +1434,29 @@ function loadCharacterData(data) {
   state.cyberware = data.cyberware || [];
   state.gear = data.gear || [];
   state.ammo = data.ammo || {};
+  state.roleSubRanks = data.roleSubRanks || {};
   document.getElementById("hp_current").value = data.hpCurrent || 0;
   document.getElementById("currency_eb").value = data.currency || 0;
+  
   if (data.lifepath) {
-    document.getElementById("lp_background").value = data.lifepath.background || "";
-    document.getElementById("lp_motivation").value = data.lifepath.motivation || "";
-    document.getElementById("lp_hairstyle").value = data.lifepath.hairstyle || "";
-    document.getElementById("lp_clothing").value = data.lifepath.clothing || "";
-    document.getElementById("lp_event").value = data.lifepath.event || "";
-    document.getElementById("lp_notes").value = data.lifepath.notes || "";
+    for (let i = 0; i < LP_FIELDS.length; i++) {
+      let key = LP_FIELDS[i];
+      let el = document.getElementById("lp_" + key);
+      if (el) el.value = data.lifepath[key] || "";
+    }
+    state.lifepath.friends = data.lifepath.friends || [];
+    state.lifepath.enemies = data.lifepath.enemies || [];
+    state.lifepath.lovers = data.lifepath.lovers || [];
+  } else {
+    for (let i = 0; i < LP_FIELDS.length; i++) {
+      let el = document.getElementById("lp_" + LP_FIELDS[i]);
+      if (el) el.value = "";
+    }
+    state.lifepath.friends = [];
+    state.lifepath.enemies = [];
+    state.lifepath.lovers = [];
   }
+  renderLifepathLists();
   renderStats();
   renderSkills();
   renderWeapons();
@@ -1283,12 +1484,12 @@ function resetCharacter() {
   document.getElementById("multiclass_fields").style.display = "none";
   document.getElementById("hp_current").value = "0";
   document.getElementById("currency_eb").value = "0";
-  document.getElementById("lp_background").value = "";
-  document.getElementById("lp_motivation").value = "";
-  document.getElementById("lp_hairstyle").value = "";
-  document.getElementById("lp_clothing").value = "";
-  document.getElementById("lp_event").value = "";
-  document.getElementById("lp_notes").value = "";
+  for (let i = 0; i < LP_FIELDS.length; i++) {
+    let el = document.getElementById("lp_" + LP_FIELDS[i]);
+    if (el) el.value = "";
+  }
+  state.lifepath = { friends: [], enemies: [], lovers: [] };
+  renderLifepathLists();
   state.skillRanks = {};
   state.skillItem = {};
     state.subSkillNames = {};

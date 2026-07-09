@@ -20,7 +20,7 @@
 <div class="scanline-overlay"></div>
 <input type="checkbox" id="dismissWelcome" style="display:none">
 <header>
-<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v3.2</span></div></div>
+<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v3.3</span></div></div>
 <div class="header-actions">
 <button id="charactersBtn" class="btn-action">&#128194; Characters</button>
 <button id="importBtn" class="btn-action">&#128229; Import</button>
@@ -127,14 +127,37 @@
 <div class="section-card">
 <h2 class="section-title">Lifepath</h2>
 <div class="grid-3">
-<label>Background <select id="lp_background"></select></label>
-<label>Motivation <select id="lp_motivation"></select></label>
+<label>Cultural Origin <select id="lp_culturalOrigins"></select></label>
+<label>Personality <select id="lp_personality"></select></label>
+<label>Clothing Style <select id="lp_clothingStyle"></select></label>
 <label>Hairstyle <select id="lp_hairstyle"></select></label>
-<label>Clothing Style <select id="lp_clothing"></select></label>
-<label>Life Event <select id="lp_event"></select></label>
-<label>Style Notes <input id="lp_notes" type="text" placeholder="Additional notes"></label>
+<label>Affectation <select id="lp_affectation"></select></label>
+<label>Value Most <select id="lp_valueMost"></select></label>
+<label>Feel About People <select id="lp_feelAboutPeople"></select></label>
+<label>Valued Person <select id="lp_valuedPerson"></select></label>
+<label>Valued Possession <select id="lp_valuedPossession"></select></label>
+<label>Family Background <select id="lp_familyBackground"></select></label>
+<label>Childhood Environment <select id="lp_childhoodEnvironment"></select></label>
+<label>Family Crisis <select id="lp_familyCrisis"></select></label>
+<label>Life Goals <select id="lp_lifeGoals"></select></label>
 </div>
-<button id="lp_random_btn" class="btn-action mt-1">&#127922; Random Lifepath</button>
+
+<div class="grid-split mt-1">
+  <div class="section-card" style="padding:1rem; border:1px solid var(--border); background:var(--bg)">
+    <div class="flex-header" style="display:flex; justify-content:space-between; align-items:center"><h3 style="font-size:1.1rem; margin:0">Friends</h3><button id="add_lp_friend_btn" class="btn-action">+ Add Friend</button></div>
+    <div id="lp_friends_container" class="mt-1" style="display:flex; flex-direction:column; gap:0.5rem"></div>
+  </div>
+  <div class="section-card" style="padding:1rem; border:1px solid var(--border); background:var(--bg)">
+    <div class="flex-header" style="display:flex; justify-content:space-between; align-items:center"><h3 style="font-size:1.1rem; margin:0">Enemies</h3><button id="add_lp_enemy_btn" class="btn-action">+ Add Enemy</button></div>
+    <div id="lp_enemies_container" class="mt-1" style="display:flex; flex-direction:column; gap:0.5rem"></div>
+  </div>
+</div>
+<div class="section-card mt-1" style="padding:1rem; border:1px solid var(--border); background:var(--bg)">
+  <div class="flex-header" style="display:flex; justify-content:space-between; align-items:center"><h3 style="font-size:1.1rem; margin:0">Tragic Love Affairs</h3><button id="add_lp_lover_btn" class="btn-action">+ Add Affair</button></div>
+  <div id="lp_lovers_container" class="mt-1" style="display:flex; flex-direction:column; gap:0.5rem"></div>
+</div>
+
+<button id="lp_random_btn" class="btn-action mt-1" style="width:100%; padding:0.5rem; font-size:1.1rem">&#127922; Randomise Entire Lifepath</button>
 </div>
 </section>
 
@@ -261,6 +284,7 @@
 <div class="section-card">
 <h2 class="section-title">About Cyberpunk RED Generator</h2>
 <p style="margin-bottom:0.8rem;line-height:1.7">A fully self-contained, highly-optimised interactive character manager for <strong>Cyberpunk RED</strong> by R. Talsorian Games. Create, customise, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. No server, no build tools, no internet — just open the file.</p>
+        <p style="margin-bottom:0.8rem;line-height:1.7">The <strong>v3.3 Update</strong> completely overhauls the Lifepath tab with standard static dropdowns and dynamic lists for Friends, Enemies, and Lovers. It also brings the SP and Armor Penalty values for all armor directly in line with the Cyberpunk RED Core Rulebook.</p>
         <p style="margin-bottom:0.8rem;line-height:1.7">The <strong>v3.2 Update</strong> introduces recursive Cyberware options (such as the Modular Finger Cyberhand and its cyberfingers) with accurate nested Humanity Cost calculations, and resolves various point calculation bugs during character creation.</p>
 <h3 style="margin:1rem 0 0.4rem">Features</h3>
 <ul style="line-height:1.8;padding-left:1.2rem">

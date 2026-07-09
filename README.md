@@ -1,6 +1,10 @@
-# Cyberpunk RED Character Generator v3.2
+# Cyberpunk RED Character Generator v3.3
 
 A fully self-contained, highly-optimized interactive character manager for **Cyberpunk RED** by R. Talsorian Games. Create, customize, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. No server, no external build tools during runtime, no internet required — just open the compiled `index.html` file in your browser.
+
+## What's New in v3.3
+- **Lifepath Overhaul**: The Lifepath tab has been completely redesigned with standard static dropdowns and container divs for dynamic lists (Friends, Enemies, Lovers).
+- **Core Rulebook Accuracy**: Corrected the SP and Armor Penalty values for all armor to perfectly match the Cyberpunk RED Core Rulebook.
 
 ## What's New in v3.2
 - **Recursive Cyberware Options**: Deep nesting support for complex cyberware like the Modular Finger Cyberhand and its Cyberfingers, appearing neatly tucked inside your Cyberarm.

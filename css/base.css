@@ -23,8 +23,9 @@ header { display: flex; align-items: center; justify-content: space-between; pad
 .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6rem; }
 .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.6rem; }
 .grid-split { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-label { display: flex; flex-direction: column; font-size: 0.8rem; font-weight: 500; gap: 2px; }
-input, select { padding: 0.4rem 0.6rem; border: 1px solid; border-radius: 4px; font-size: 0.9rem; font-family: inherit; }
+label { display: flex; flex-direction: column; font-size: 0.8rem; font-weight: 500; gap: 2px; min-width: 0; }
+input, select { padding: 0.4rem 0.6rem; border: 1px solid; border-radius: 4px; font-size: 0.9rem; font-family: inherit; max-width: 100%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+select { width: 100%; }
 input[type="number"] { width: 100%; }
 .readonly-input { background: transparent; border-style: dashed; opacity: 0.8; cursor: default; }
 .mt-1 { margin-top: 1rem; }
