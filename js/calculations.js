@@ -22,7 +22,7 @@ const calcEmpFromHumanity = (currentHumanity) => Math.floor(currentHumanity / 10
 const calcStatBonus = (statValue) => (statValue <= 0 ? 0 : statValue);
 
 const getEffectiveStat = (statId) => {
-  let base = state.stats[statId] || 2;
+  let base = Number(state.stats[statId]) || 2;
   if (statId === "emp") {
     const humMax = calcHumanityMax(base);
     const hcTotal = totalCyberwareHC(state.cyberware);
@@ -33,8 +33,8 @@ const getEffectiveStat = (statId) => {
 };
 
 const calcSkillTotal = (statValue, ranks, itemBonus, specialBonus) => {
-  const statBonus = calcStatBonus(statValue);
-  return statBonus + ranks + (itemBonus || 0) + (specialBonus || 0);
+  const statBonus = calcStatBonus(Number(statValue));
+  return statBonus + Number(ranks) + Number(itemBonus || 0) + Number(specialBonus || 0);
 };
 
 const calcBmr = (move) => move * 5;
@@ -49,12 +49,12 @@ const calcEvasionSkillRank = (dex, ranks, evasionBase) => {
 
 const totalCyberwareHC = (cyberwareList) => {
   let total = 0;
+  if (!cyberwareList) return total;
   for (const cw of cyberwareList) {
+    if (!cw) continue;
     total += cw.hc || 0;
     if (cw.options) {
-      for (const opt of cw.options) {
-        if (opt) total += opt.hc || 0;
-      }
+      total += totalCyberwareHC(cw.options);
     }
   }
   return total;

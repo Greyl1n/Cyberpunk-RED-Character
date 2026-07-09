@@ -1,4 +1,3 @@
-
 let state = {
   stats: {},
   skillRanks: {},
@@ -193,6 +192,11 @@ function updateStatPointsBar() {
   document.getElementById("stat_points_remaining").textContent = rem;
   let bar = document.getElementById("stat_points_bar");
   bar.style.opacity = rem < 0 ? "0.6" : "1";
+  if (rem === 0) {
+    bar.style.display = "none";
+  } else {
+    bar.style.display = "";
+  }
 }
 
 function renderSkills() {
@@ -205,24 +209,51 @@ function renderSkills() {
     let statId = statKeys[si];
     let skillList = DATA.skills[statId];
     for (let j = 0; j < skillList.length; j++) {
-      let skill = skillList[j];
-      let name = skill.name;
-      if (search && name.toLowerCase().indexOf(search) === -1) continue;
-      let ranks = state.skillRanks[skill.id] || 0;
-      let item = state.skillItem[skill.id] || 0;
-      let statVal = getEffectiveStat(statId);
-      let cyber = calcSkillCyberBonus(skill.id);
-      let total = calcSkillTotal(statVal, ranks, item, cyber);
-      let tr = document.createElement("tr");
-      tr.innerHTML = '<td>' + name + '</td>' +
-        '<td>' + statId.toUpperCase() + '</td>' +
-        '<td>' + calcStatBonus(statVal) + '</td>' +
-        '<td><input type="number" class="skill-rank" data-skill="' + skill.id + '" value="' + ranks + '" min="0" max="10" style="width:50px"></td>' +
-        '<td><input type="number" class="skill-item" data-skill="' + skill.id + '" value="' + item + '" style="width:50px"></td>' +
-        '<td>' + (cyber > 0 ? '+' + cyber : '0') + '</td>' +
-        '<td><strong>' + (total >= 0 ? "+" : "") + total + '</strong></td>';
-      frag.appendChild(tr);
-    }
+        let skill = skillList[j];
+        let name = skill.name;
+        if (search && name.toLowerCase().indexOf(search) === -1) continue;
+        
+        let statVal = getEffectiveStat(statId);
+        let cyber = calcSkillCyberBonus(skill.id);
+        
+        if (skill.subs) {
+          let trHeader = document.createElement("tr");
+          trHeader.innerHTML = '<td><strong>' + name + '</strong></td>' +
+            '<td>' + statId.toUpperCase() + '</td>' +
+            '<td colspan="5"></td>';
+          frag.appendChild(trHeader);
+          
+          for (let s = 1; s <= skill.subs; s++) {
+            let subId = skill.id + "_" + s;
+            let subName = state.subSkillNames ? (state.subSkillNames[subId] || "") : "";
+            let ranks = state.skillRanks[subId] || 0;
+            let item = state.skillItem[subId] || 0;
+            let total = calcSkillTotal(statVal, ranks, item, cyber);
+            let tr = document.createElement("tr");
+            tr.innerHTML = '<td style="padding-left: 20px;"><input type="text" class="subskill-name" data-sub="' + subId + '" value="' + subName + '" placeholder="Specify..." style="width:120px"></td>' +
+              '<td></td>' +
+              '<td>' + calcStatBonus(statVal) + '</td>' +
+              '<td><input type="number" class="skill-rank" data-skill="' + subId + '" value="' + ranks + '" min="0" max="10" style="width:50px"></td>' +
+              '<td><input type="number" class="skill-item" data-skill="' + subId + '" value="' + item + '" style="width:50px"></td>' +
+              '<td>' + (cyber > 0 ? '+' + cyber : '0') + '</td>' +
+              '<td><strong>' + (total >= 0 ? "+" : "") + total + '</strong></td>';
+            frag.appendChild(tr);
+          }
+        } else {
+          let ranks = state.skillRanks[skill.id] || 0;
+          let item = state.skillItem[skill.id] || 0;
+          let total = calcSkillTotal(statVal, ranks, item, cyber);
+          let tr = document.createElement("tr");
+          tr.innerHTML = '<td>' + name + '</td>' +
+            '<td>' + statId.toUpperCase() + '</td>' +
+            '<td>' + calcStatBonus(statVal) + '</td>' +
+            '<td><input type="number" class="skill-rank" data-skill="' + skill.id + '" value="' + ranks + '" min="0" max="10" style="width:50px"></td>' +
+            '<td><input type="number" class="skill-item" data-skill="' + skill.id + '" value="' + item + '" style="width:50px"></td>' +
+            '<td>' + (cyber > 0 ? '+' + cyber : '0') + '</td>' +
+            '<td><strong>' + (total >= 0 ? "+" : "") + total + '</strong></td>';
+          frag.appendChild(tr);
+        }
+      }
   }
   tbody.appendChild(frag);
   attachSkillEvents();
@@ -249,20 +280,32 @@ function payIpCost(cost) {
 }
 
 function calcCreationPointsUsed() {
-  let spent = 0;
-  for (const group in DATA.skills) {
-    for (const skill of DATA.skills[group]) {
-      let rank = state.skillRanks[skill.id] || 0;
-      let costPerRank = skill.ipMult || 1;
+    let total = 0;
+    let languageFreePointsUsed = 0;
+    
+    for (let sid in state.skillRanks) {
+      let baseId = sid;
+      let match = sid.match(/^(.+)_(\d+)$/);
+      if (match) baseId = match[1];
       
-      if (skill.id === "language") {
-        rank = Math.max(0, rank - 4);
+      let item = DATA._index.skillById[baseId];
+      if (!item) continue;
+      
+      let r = state.skillRanks[sid] || 0;
+      let mult = item.skill.ipMult || 1;
+      
+      if (baseId === "language") {
+        let freeAvailable = Math.max(0, 4 - languageFreePointsUsed);
+        let freeUsed = Math.min(r, freeAvailable);
+        languageFreePointsUsed += freeUsed;
+        
+        let chargeableRanks = r - freeUsed;
+        total += chargeableRanks * mult;
+      } else {
+        total += r * mult;
       }
-      
-      spent += rank * costPerRank;
     }
-  }
-  return spent;
+    return total;
 }
 
 function updateCreationPoints() {
@@ -279,20 +322,21 @@ function toggleCreationMode(enabled) {
   if (disp) disp.style.display = enabled ? "inline-block" : "none";
   
   if (enabled) {
-    for (const group in DATA.skills) {
-      for (const skill of DATA.skills[group]) {
-        if (skill.basic) {
-          if ((state.skillRanks[skill.id] || 0) < 2) {
-            state.skillRanks[skill.id] = 2;
+      for (const group in DATA.skills) {
+        for (const skill of DATA.skills[group]) {
+          if (skill.basic) {
+            let targetId = skill.subs ? skill.id + "_1" : skill.id;
+            if ((state.skillRanks[targetId] || 0) < 2) {
+              state.skillRanks[targetId] = 2;
+            }
           }
-        }
-        if (skill.id === "language") {
-          if ((state.skillRanks[skill.id] || 0) < 4) {
-            state.skillRanks[skill.id] = 4;
+          if (skill.id === "language") {
+            if ((state.skillRanks["language_1"] || 0) < 4) {
+              state.skillRanks["language_1"] = 4;
+            }
           }
         }
       }
-    }
     updateCreationPoints();
     renderSkills();
   } else {
@@ -300,8 +344,41 @@ function toggleCreationMode(enabled) {
   }
 }
 
+function updateSkillRow(id) {
+  let baseId = id;
+  let match = id.match(/^(.+)_(\d+)$/);
+  if (match) baseId = match[1];
+  
+  let idxItem = DATA._index.skillById[baseId];
+  if (!idxItem) return;
+  let statId = idxItem.statId;
+  let ranks = state.skillRanks[id] || 0;
+  let item = state.skillItem[id] || 0;
+  let statVal = getEffectiveStat(statId);
+  let cyber = calcSkillCyberBonus(baseId);
+  let total = calcSkillTotal(statVal, ranks, item, cyber);
+  
+  let input = document.querySelector('.skill-rank[data-skill="' + id + '"]');
+  if (input) {
+    let tr = input.closest('tr');
+    if (tr) {
+      let tds = tr.querySelectorAll('td');
+      if (tds.length >= 7) {
+        tds[6].innerHTML = '<strong>' + (total >= 0 ? "+" : "") + total + '</strong>';
+      }
+    }
+  }
+}
+
 function attachSkillEvents() {
-  let ranks = document.querySelectorAll(".skill-rank");
+    let subnames = document.querySelectorAll(".subskill-name");
+    for (let i = 0; i < subnames.length; i++) {
+      subnames[i].onchange = function() {
+        if (!state.subSkillNames) state.subSkillNames = {};
+        state.subSkillNames[this.dataset.sub] = this.value;
+      };
+    }
+    let ranks = document.querySelectorAll(".skill-rank");
   let items = document.querySelectorAll(".skill-item");
   for (let i = 0; i < ranks.length; i++) {
     let input = ranks[i];
@@ -313,20 +390,23 @@ function attachSkillEvents() {
       if (newVal === oldVal) return;
       
       if (state.creationMode) {
-        let idxItem = DATA._index.skillById[id];
-        let isBasic = idxItem && idxItem.skill && idxItem.skill.basic;
+        let baseId = id;
+          let match = id.match(/^(.+)_(\d+)$/);
+          if (match) baseId = match[1];
+          let idxItem = DATA._index.skillById[baseId];
+          let isBasic = idxItem && idxItem.skill && idxItem.skill.basic;
         
         if (newVal > 6) {
           alert("Skills cannot exceed Rank 6 during character creation.");
           this.value = oldVal;
           return;
         }
-        if (isBasic && newVal < 2) {
+        if (isBasic && newVal < 2 && (!match || id.endsWith("_1"))) {
           alert("Basic skills must be at least Rank 2.");
           this.value = oldVal;
           return;
         }
-        if (id === "language" && newVal < 4) {
+        if (baseId === "language" && id === "language_1" && newVal < 4) {
           alert("Language skill gets 4 free ranks and cannot be below 4.");
           this.value = oldVal;
           return;
@@ -342,7 +422,7 @@ function attachSkillEvents() {
         
         this.dataset.oldVal = newVal;
         updateCreationPoints();
-        renderSkills();
+        updateSkillRow(id);
         return;
       }
       
@@ -356,14 +436,14 @@ function attachSkillEvents() {
       if (cost < 0) payIpCost(cost);
       state.skillRanks[id] = newVal;
       this.dataset.oldVal = newVal;
-      renderSkills();
+      updateSkillRow(id);
     };
   }
   for (let i = 0; i < items.length; i++) {
     items[i].onchange = function() {
       let id = this.dataset.skill;
       state.skillItem[id] = parseInt(this.value) || 0;
-      renderSkills();
+      updateSkillRow(id);
     };
   }
 }
@@ -501,7 +581,7 @@ function renderCyberware() {
     if (c.slots) {
       renderCyberwareRow(frag, c, i, true);
       for (let s = 0; s < c.slots; s++) {
-        renderCyberwareSlot(frag, c, i, s);
+        renderCyberwareSlot(frag, c, i.toString(), s, 0);
       }
     } else {
       renderCyberwareRow(frag, c, i, false);
@@ -514,11 +594,15 @@ function renderCyberware() {
 function renderCyberwareRow(tbody, c, idx) {
   let tr = document.createElement("tr");
   let bonusHtml = formatCyberBonus(c.bonus);
-  tr.innerHTML = '<td>' + c.name + '</td><td>' + c.type + '</td><td>' + (c.hc || 0) + '</td><td>' + (c.cost || 0) + 'eb</td><td><small>' + bonusHtml + '</small></td><td><small>' + (c.desc || '') + '</small></td><td><button class="btn-action cyberware-remove" data-idx="' + idx + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
+  let displayName = c.name;
+  if (c.location && !displayName.includes('(' + c.location + ')')) {
+    displayName += ' (' + c.location + ')';
+  }
+  tr.innerHTML = '<td>' + displayName + '</td><td>' + c.type + '</td><td>' + (c.hc || 0) + '</td><td>' + (c.cost || 0) + 'eb</td><td><small>' + bonusHtml + '</small></td><td><small>' + (c.desc || '') + '</small></td><td><button class="btn-action cyberware-remove" data-idx="' + idx + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
   tbody.appendChild(tr);
 }
 
-function renderCyberwareSlot(tbody, parent, parentIdx, slotIdx) {
+function renderCyberwareSlot(tbody, parent, parentPath, slotIdx, depth) {
   let option = (parent.options && parent.options[slotIdx]) || null;
   let available = getOptionsForParent(parent.id);
   if (available.length === 0) {
@@ -531,7 +615,10 @@ function renderCyberwareSlot(tbody, parent, parentIdx, slotIdx) {
   tr.style.background = "rgba(128,128,128,0.05)";
   tr.style.fontSize = "0.85rem";
   if (!option) tr.className = "cyber-slot-empty";
-  let selectHtml = '<select class="cyber-slot-select" data-parent="' + parentIdx + '" data-slot="' + slotIdx + '" style="width:100%;font-size:0.8rem">';
+  
+  let currentPath = parentPath + "_" + slotIdx;
+  
+  let selectHtml = '<select class="cyber-slot-select" data-path="' + currentPath + '" style="width:100%;font-size:0.8rem">';
   selectHtml += '<option value="">-- Empty --</option>';
   for (let oi = 0; oi < available.length; oi++) {
     let opt = available[oi];
@@ -539,8 +626,19 @@ function renderCyberwareSlot(tbody, parent, parentIdx, slotIdx) {
     selectHtml += '<option value="' + opt.id + '"' + sel + '>' + opt.name + ' (' + opt.cost + 'eb, ' + (opt.hc || 0) + 'HC)' + '</option>';
   }
   selectHtml += '</select>';
-  tr.innerHTML = '<td style="padding-left:1.5rem;border-top:none" colspan="6">Slot ' + (slotIdx + 1) + ': ' + selectHtml + '</td><td style="border-top:none"></td>';
+  
+  let indent = 1.5 + (depth * 1.5);
+  tr.innerHTML = '<td style="padding-left:' + indent + 'rem;border-top:none" colspan="6">Slot ' + (slotIdx + 1) + ': ' + selectHtml + '</td><td style="border-top:none"></td>';
   tbody.appendChild(tr);
+
+  if (option) {
+    let optBase = getDataItemById(option.id);
+    if (optBase && optBase.slots > 0) {
+      for (let s = 0; s < optBase.slots; s++) {
+        renderCyberwareSlot(tbody, option, currentPath, s, depth + 1);
+      }
+    }
+  }
 }
 
 function getOptionsForParent(parentId) {
@@ -568,21 +666,46 @@ function attachCyberwareEvents() {
   for (let i = 0; i < selects.length; i++) {
     selects[i].onclick = function(e) { e.stopPropagation(); };
     selects[i].onchange = function() {
-      let parentIdx = parseInt(this.dataset.parent);
-      let slotIdx = parseInt(this.dataset.slot);
+      let path = this.dataset.path.split('_');
+      let rootIdx = parseInt(path[0]);
       let optionId = this.value;
-      let parent = state.cyberware[parentIdx];
-      if (!parent) return;
-      if (!parent.options) parent.options = [];
-      let oldOption = parent.options[slotIdx] || null;
+      
+      let parentObj = state.cyberware[rootIdx];
+      if (!parentObj) return;
+      
+      let currentObj = parentObj;
+      for (let p = 1; p < path.length - 1; p++) {
+        let sIdx = parseInt(path[p]);
+        if (!currentObj.options) currentObj.options = [];
+        if (!currentObj.options[sIdx]) currentObj.options[sIdx] = {};
+        currentObj = currentObj.options[sIdx];
+      }
+      
+      let slotIdx = parseInt(path[path.length - 1]);
+      if (!currentObj.options) currentObj.options = [];
+      
+      let oldOption = currentObj.options[slotIdx] || null;
       let oldCost = oldOption ? (oldOption.cost || 0) : 0;
+      
       if (optionId) {
         let item = getDataItemById(optionId);
         if (item) {
           let costInput = prompt("Cost in eb (0 = looted):", item.cost || 0);
           if (costInput === null) { this.value = oldOption ? oldOption.id : ''; return; }
           let actualCost = parseInt(costInput) || 0;
-          parent.options[slotIdx] = { id: item.id, name: item.name, hc: item.hc || 0, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, parentType: item.parentType };
+          let actualHc = item.hc || 0;
+          if (actualHc > 0) {
+            let hcInput = prompt("Humanity Cost for " + item.name + "\n(Enter value, or 'r' to roll randomly)", actualHc);
+            if (hcInput !== null) {
+              if (hcInput.toLowerCase().trim() === 'r') {
+                actualHc = rollCyberwareHC(item.hc);
+                alert("Rolled Humanity Cost: " + actualHc);
+              } else {
+                actualHc = parseInt(hcInput) || 0;
+              }
+            }
+          }
+          currentObj.options[slotIdx] = { id: item.id, name: item.name, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, parentType: item.parentType };
         }
       } else {
         let sellInput = prompt("Sell price in eb (0 = discard):", oldCost);
@@ -591,21 +714,33 @@ function attachCyberwareEvents() {
         let el = document.getElementById("currency_eb");
         el.value = (parseInt(el.value) || 0) + sellPrice;
         oldCost = 0;
-        parent.options[slotIdx] = null;
+        currentObj.options[slotIdx] = null;
       }
-      let newOption = parent.options[slotIdx] || null;
+      
+      let newOption = currentObj.options[slotIdx] || null;
       let newCost = newOption ? (newOption.cost || 0) : 0;
       let diff = newCost - oldCost;
-      if (diff !== 0) {
-        let el = document.getElementById("currency_eb");
-        el.value = (parseInt(el.value) || 0) - diff;
-      }
+      let el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) - diff;
+      
       renderCyberware();
       renderHumanity();
       renderStats();
       renderSkills();
+      updateAllDerived();
     };
   }
+}
+
+function rollCyberwareHC(avgHc) {
+  if (!avgHc) return 0;
+  function r() { return Math.floor(Math.random() * 6) + 1; }
+  if (avgHc === 14 || avgHc === 4) return r() + r() + r() + r();
+  if (avgHc === 7) return r() + r();
+  if (avgHc === 3) return r();
+  if (avgHc === 2) return Math.ceil(r() / 2);
+  if (avgHc === 1) return 1;
+  return avgHc;
 }
 
 function getDataItemById(id) {
@@ -809,36 +944,85 @@ function initAddButtons() {
   document.getElementById("add_cyberware_btn").onclick = function() {
     let standalone = DATA.cyberware.filter(function(c) { return !c.parentType || c.slots; });
     showItemSelector("cyberware", standalone, function(item) {
+      let selectedLoc = null;
+      let isPairedPurchase = (item.id === "romanova_cyberlegs" || item.id === "skydrivers");
       let bodyPart = item.bodyPart;
+      
       if (bodyPart) {
         let limits = { eye: 2, arm: 2, leg: 2 };
         let max = limits[bodyPart] || 99;
-        let count = 0;
+        let hasLeft = false;
+        let hasRight = false;
+        
         for (let i = 0; i < state.cyberware.length; i++) {
           let dataItem = getDataItemById(state.cyberware[i].id);
-          if (dataItem && dataItem.bodyPart === bodyPart) count++;
+          if (dataItem && dataItem.bodyPart === bodyPart) {
+            let loc = state.cyberware[i].location;
+            if (!loc) {
+              if (!hasLeft) { loc = "Left"; state.cyberware[i].location = "Left"; }
+              else if (!hasRight) { loc = "Right"; state.cyberware[i].location = "Right"; }
+              else { loc = "Both"; }
+            }
+            if (loc === "Left") hasLeft = true;
+            else if (loc === "Right") hasRight = true;
+            else if (loc === "Both" || dataItem.takesBoth) { hasLeft = true; hasRight = true; }
+          }
         }
-        let addCount = (item.id === "romanova_cyberlegs" || item.id === "skydrivers") ? 2 : 1;
-        if (count + addCount > max) {
-          alert("Maximum " + max + " " + bodyPart + "(s) allowed. Remove one first.");
-          return;
+        
+        if (item.takesBoth || isPairedPurchase) {
+          if (hasLeft || hasRight) {
+            alert("This item requires both " + bodyPart + "s, but you already have one or more installed. Remove them first.");
+            return;
+          }
+          if (item.takesBoth && !isPairedPurchase) {
+            selectedLoc = "Both";
+          }
+        } else if (max === 2) {
+          if (hasLeft && hasRight) {
+            alert("You already have both " + bodyPart + "s installed. Remove one first.");
+            return;
+          } else if (!hasLeft && !hasRight) {
+            let locInput = prompt("Select location for this " + bodyPart + ":\n1: Left\n2: Right", "1");
+            if (locInput === null) return;
+            selectedLoc = (locInput.trim() === "2") ? "Right" : "Left";
+          } else if (!hasLeft) {
+            selectedLoc = "Left";
+            alert("Auto-assigned to Left " + bodyPart + " (Right is already taken).");
+          } else if (!hasRight) {
+            selectedLoc = "Right";
+            alert("Auto-assigned to Right " + bodyPart + " (Left is already taken).");
+          }
         }
       }
       let costInput = prompt("Cost in eb (0 = looted):", item.cost || 0);
       if (costInput === null) return;
       let actualCost = parseInt(costInput) || 0;
-      let entry = { id: item.id, name: item.name, type: item.type, hc: item.hc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null };
+      let actualHc = item.hc || 0;
+      if (actualHc > 0) {
+        let hcInput = prompt("Humanity Cost for " + item.name + "\n(Enter value, or 'r' to roll randomly)", actualHc);
+        if (hcInput !== null) {
+          if (hcInput.toLowerCase().trim() === 'r') {
+            actualHc = rollCyberwareHC(item.hc);
+            alert("Rolled Humanity Cost: " + actualHc);
+          } else {
+            actualHc = parseInt(hcInput) || 0;
+          }
+        }
+      }
+      let entry = { id: item.id, name: item.name, type: item.type, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null };
+      if (selectedLoc) entry.location = selectedLoc;
       if (item.slots) { entry.slots = item.slots; entry.options = []; }
+      
       let pairedPrefill = { "romanova_cyberlegs": "talon_feet", "skydrivers": "jump_boosters" };
       let prefillId = pairedPrefill[item.id];
       if (prefillId) {
         let prefillData = getDataItemById(prefillId);
-        let leftLeg = { id: item.id, name: item.name + " (Left)", type: item.type, hc: item.hc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
+        let leftLeg = { id: item.id, name: item.name, location: "Left", type: item.type, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
         if (prefillData) {
           leftLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
         }
         state.cyberware.push(leftLeg);
-        let rightLeg = { id: item.id, name: item.name + " (Right)", type: item.type, hc: item.hc, cost: 0, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
+        let rightLeg = { id: item.id, name: item.name, location: "Right", type: item.type, hc: actualHc, cost: 0, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
         if (prefillData) {
           rightLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
         }
@@ -1084,8 +1268,6 @@ function loadCharacterData(data) {
 }
 
 function resetCharacter() {
-  let cb = document.getElementById("toggle_creation_mode");
-  if (cb) { cb.checked = false; toggleCreationMode(false); }
   initState();
   document.getElementById("char_handle").value = "";
   document.getElementById("char_name").value = "";
@@ -1109,11 +1291,16 @@ function resetCharacter() {
   document.getElementById("lp_notes").value = "";
   state.skillRanks = {};
   state.skillItem = {};
+    state.subSkillNames = {};
   state.weapons = [];
   state.armor = [];
   state.cyberware = [];
   state.gear = [];
   state.ammo = {};
+  
+  let cb = document.getElementById("toggle_creation_mode");
+  if (cb) { cb.checked = true; toggleCreationMode(true); }
+
   renderStats();
   renderSkills();
   renderWeapons();

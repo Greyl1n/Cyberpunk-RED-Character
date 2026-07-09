@@ -1,15 +1,21 @@
-# Cyberpunk RED Character Generator v2.2
+# Cyberpunk RED Character Generator v3.2
 
-A fully self-contained, highly-optimized interactive character manager for **Cyberpunk RED** by R. Talsorian Games. Create, customize, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. No server, no build tools, no internet required — just open the `index.html` file in your browser.
+A fully self-contained, highly-optimized interactive character manager for **Cyberpunk RED** by R. Talsorian Games. Create, customize, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. No server, no external build tools during runtime, no internet required — just open the compiled `index.html` file in your browser.
 
-## What's New in v2.2
-- **Character Creation Mode**: Added a toggle to handle Character Creation logic, enforcing linear point costs for basic and master skills, and tracking creation IP budgets separately.
-- **Cyberdeck & Netrunning Enhancements**: Full Cyberdeck integration in the UI. Cyberdeck buying and equipping is now fully tied to the currency (eurobucks) manager. Installed hardware and programs accurately reflect slot consumption and Eurobuck balances.
-- **Cyberware Database Auditing & Fixes**: 
-  - Overhauled internal cyberware categories (properly separating Cyberarm, Cyberleg, Cybereye, Cyberaudio, Internal Body, etc. from generic Fashionware).
-  - Fixed pricing and humanity loss for Neural Link and its dependent options.
-  - Added missing core rulebook Neuralware options like Interface Plugs, Braindance Recorder, Chemical Analyzer, and Machine/Tech Link.
-- **Printing Enhancements**: Adjusted the print CSS so the Cyberdeck layout appears logically inserted after the Gear table and before the Skills page break.
+## What's New in v3.2
+- **Recursive Cyberware Options**: Deep nesting support for complex cyberware like the Modular Finger Cyberhand and its Cyberfingers, appearing neatly tucked inside your Cyberarm.
+- **Accurate Nested HC Calculations**: The math engine now recursively sums the Humanity Cost (HC) from deeply nested options.
+- **Creation Point Fixes**: Addressed calculation bugs where points were incorrectly subtracted for free basic skills and corrected language skill rank assignments.
+
+## What's New in v3.1
+- **Random Humanity Cost (HC) Rolls**: Implemented support for random d6 Humanity Cost rolls when installing cyberware based on standard Cyberpunk RED rules.
+- **Mobile Optimizations**: Seamless skill adjustments and localized DOM rendering to improve focus retention and performance on mobile browsers.
+- **Improved Print Layout**: Adjusted the print-friendly layout to display notes before skills and optimized it for physical character sheets with black and white readability.
+- **Stats UI Refinements**: The "points remaining" red bar gracefully vanishes when stats are fully allocated for a cleaner look on ready character sheets.
+
+## What's New in v3.0
+- **Neon Cyberpunk Aesthetic**: A complete visual overhaul introducing a dark theme with vibrant neon highlights, glowing focus rings, and custom monospaced fonts for a truly immersive Cyberpunk feel.
+- **Background Dimming**: Fixed background image support with custom dimming layers to ensure high contrast and readability of the text.
 
 ## Key Features
 *   **Zero Dependencies**: The `index.html` file works fully offline.
@@ -17,6 +23,7 @@ A fully self-contained, highly-optimized interactive character manager for **Cyb
 *   **Automated Derived Stats**: HP, Humanity, EMP, and Death Saves update automatically as stats change or cyberware is installed.
 *   **86 Canonical Skills**: Pre-calculated bases (STAT + Rank), including basic skill categorization.
 *   **Full Gear & Cyberware System**: Tracking Eurobucks, slot requirements (for limbs and neural links), and armor SP.
+*   **Ammunition Consumption**: Track remaining rounds directly on your sheet.
 *   **Lifepath Generator**: Completely randomized 1-click Lifepath tables straight from the core rules.
 *   **LocalStorage Support**: Save and manage an infinite number of characters locally.
 *   **JSON Export/Import**: Easily backup and transfer character JSON files.
