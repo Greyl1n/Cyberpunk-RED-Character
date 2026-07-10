@@ -599,7 +599,7 @@ var DATA = {
     { id: "radar_sonar_implant", name: "Radar/Sonar Implant", type: "Internal Body", hc: 3, cost: 2000, desc: "[CRB] Detect moving objects within 50m/yds (not through cover)." },
     { id: "medscanner", name: "Medscanner", type: "Cyberarm Option", hc: 1, cost: 500, desc: "[CRB] Medical diagnostic scanner in cyberarm.", parentType: "cyberarm", bonus: { skills: { first_aid: 2, paramedic: 2 } } },
     { id: "techscanner_cyberarm", name: "Techscanner", type: "Cyberarm Option", hc: 1, cost: 500, desc: "[CRB] Technical diagnostic scanner in cyberarm.", parentType: "cyberarm", bonus: { skills: { basic_tech: 2, cybertech: 2, land_vehicle_tech: 2, sea_vehicle_tech: 2, air_vehicle_tech: 2, electronics_security_tech: 2, weaponstech: 2 } } },
-    { id: "superchrome_covering", name: "Superchrome Covering", type: "Cyberarm Option", hc: 1, cost: 500, desc: "[CRB] Mirror-chrome finish. +2 Wardrobe & Style.", parentType: "cyberarm", bonus: { skills: { wardrobe_and_style: 2 } } },
+    { id: "superchrome_covering", name: "Superchrome Covering", type: "Cyberarm Option", hc: 1, cost: 500, desc: "[CRB] Mirror-chrome finish. +2 Wardrobe & Style.", parentType: "cyberarm", bonus: { skills: { wardrobe_style: 2 } } },
     { id: "skate_foot", name: "Skate Foot", type: "Cyberleg Option", hc: 1, cost: 500, desc: "[CRB] +6m/yds movement when using Run Action.", parentType: "cyberleg" },
     { id: "quick_change_mount", name: "Quick Change Mount", type: "Cyberarm", hc: 7, cost: 100, desc: "[CRB] Remove/install a Cyberarm as an Action." },
     { id: "rippers", name: "Rippers", type: "Cyberarm Option", hc: 3, cost: 500, desc: "[CRB] Retractable carbo-glass claws. Medium Melee Weapon.", parentType: "cyberarm" },

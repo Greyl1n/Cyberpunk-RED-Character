@@ -435,6 +435,11 @@ function updateSkillRow(id) {
       }
     }
   }
+  try {
+    renderWeapons();
+  } catch(e) {
+    console.error("renderWeapons in updateSkillRow crashed", e);
+  }
 }
 
 function attachSkillEvents() {
@@ -542,6 +547,19 @@ function renderWeapons() {
   let tbody = document.getElementById("weapons_body");
   tbody.innerHTML = "";
   let frag = document.createDocumentFragment();
+
+  const weaponSkillMapping = {
+    "Handgun": { stat: "ref", skill: "handgun" },
+    "Shoulder Arms": { stat: "ref", skill: "shoulder_arms" },
+    "Heavy Weapons": { stat: "ref", skill: "heavy_weapons" },
+    "Archery": { stat: "ref", skill: "archery" },
+    "Autofire": { stat: "ref", skill: "autofire" },
+    "Melee Weapon": { stat: "dex", skill: "melee_weapon" },
+    "Brawling": { stat: "dex", skill: "brawling" },
+    "Martial Arts": { stat: "dex", skill: "martial_arts" },
+    "Athletics": { stat: "dex", skill: "athletics" }
+  };
+
   for (let i = 0; i < state.weapons.length; i++) {
     let w = state.weapons[i];
     let tr = document.createElement("tr");
@@ -552,7 +570,19 @@ function renderWeapons() {
     } else {
       actionBtns = '<button class="btn-action weapon-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button>';
     }
-    tr.innerHTML = '<td>' + w.name + '</td><td>' + w.dmg + '</td><td>' + (w.rof || "-") + '</td><td>' + (w.mag || "-") + '</td><td>' + (w.type || "") + '</td><td><input type="number" class="weapon-rank" data-idx="' + i + '" value="' + (w.rank || 0) + '" min="0" max="20" style="width:45px"></td><td>' + actionBtns + '</td>';
+    
+    let skillTotal = "-";
+    if (w.type && weaponSkillMapping[w.type]) {
+      let map = weaponSkillMapping[w.type];
+      let statVal = getEffectiveStat(map.stat);
+      let ranks = state.skillRanks[map.skill] || 0;
+      let item = state.skillItem[map.skill] || 0;
+      let cyber = calcSkillCyberBonus(map.skill);
+      let total = calcSkillTotal(statVal, ranks, item, cyber);
+      skillTotal = (total >= 0 ? "+" : "") + total;
+    }
+
+    tr.innerHTML = '<td>' + w.name + '</td><td>' + w.dmg + '</td><td>' + (w.rof || "-") + '</td><td>' + (w.mag || "-") + '</td><td>' + (w.type || "") + '</td><td style="text-align:center; font-weight:bold">' + skillTotal + '</td><td>' + actionBtns + '</td>';
     frag.appendChild(tr);
   }
   tbody.appendChild(frag);
@@ -561,7 +591,6 @@ function renderWeapons() {
 
 function attachWeaponEvents() {
   let removes = document.querySelectorAll(".weapon-remove");
-  let ranks = document.querySelectorAll(".weapon-rank");
   for (let i = 0; i < removes.length; i++) {
     removes[i].onclick = function() {
       let idx = parseInt(this.dataset.idx);
@@ -595,12 +624,6 @@ function attachWeaponEvents() {
       let idx = parseInt(this.dataset.idx);
       state.weapons.splice(idx, 1);
       renderWeapons();
-    };
-  }
-  for (let i = 0; i < ranks.length; i++) {
-    ranks[i].onchange = function() {
-      let idx = parseInt(this.dataset.idx);
-      state.weapons[idx].rank = parseInt(this.value) || 0;
     };
   }
 }
@@ -1365,7 +1388,16 @@ function updateAllDerived() {
   renderHealth();
   renderHumanity();
   renderSkills();
-  updateRoleInfo();
+  try {
+    renderWeapons();
+  } catch (e) {
+    console.error("renderWeapons crashed:", e);
+  }
+  try {
+    updateRoleInfo();
+  } catch (e) {
+    console.error("updateRoleInfo crashed:", e);
+  }
 }
 
 function getCharacterData() {

@@ -74,39 +74,77 @@ const calcEncumbrance = (gearItems, weapons, armor) => {
   return totalWt;
 };
 
-const calcInitiative = (ref, combatAwarenessRank) => ref + combatAwarenessRank;
+const calcInitiative = (ref, combatAwarenessRank) => {
+  let init = ref + combatAwarenessRank;
+  // Check for Kerenzikov (+2 Initiative)
+  let hasKerenzikov = false;
+  const checkInit = (items) => {
+    if (!items) return;
+    for (const item of items) {
+      if (item.id === "kerenzikov") hasKerenzikov = true;
+      if (item.options) checkInit(item.options);
+    }
+  };
+  checkInit(state.cyberware);
+  if (hasKerenzikov) init += 2;
+  return init;
+};
 
 const calcSkillCyberBonus = (skillId) => {
   let total = 0;
-  for (const cw of state.cyberware) {
-    if (cw.bonus && cw.bonus.skills && cw.bonus.skills[skillId]) {
-      total += cw.bonus.skills[skillId];
-    }
-    if (cw.options) {
-      for (const opt of cw.options) {
-        if (opt && opt.bonus && opt.bonus.skills && opt.bonus.skills[skillId]) {
-          total += opt.bonus.skills[skillId];
-        }
+  let lightTattooCount = 0;
+  let hasChemskin = false;
+  let hasTechhair = false;
+  let quickDigitsCount = 0;
+
+  const sumBonus = (items) => {
+    if (!items) return;
+    for (const item of items) {
+      if (item.id === "light_tattoo" || item.id === "kill_display" || item.id === "leads_turn_on_show_off_nails") {
+        lightTattooCount++;
       }
+      if (item.id === "chemskin") hasChemskin = true;
+      if (item.id === "techhair") hasTechhair = true;
+      if (item.id === "quick_digits") quickDigitsCount++;
+      
+      if (item.bonus && item.bonus.skills && item.bonus.skills[skillId]) {
+        total += item.bonus.skills[skillId];
+      }
+      if (item.options) sumBonus(item.options);
     }
+  };
+  sumBonus(state.cyberware);
+
+  // Conditional bonuses
+  if (skillId === "wardrobe_style" && lightTattooCount >= 3) {
+    total += 2;
   }
+  if (skillId === "personal_grooming" && hasChemskin && hasTechhair) {
+    total += 2;
+  }
+  
+  const quickDigitsSkills = ["conceal_reveal_object", "contortionist", "first_aid", "forgery", "paramedic", "pick_lock", "pick_pocket"];
+  if (quickDigitsCount >= 2 && quickDigitsSkills.includes(skillId)) {
+    total += 1;
+  }
+
   return total;
 };
 
 const calcCyberStatBonus = (statId) => {
   let total = 0;
-  for (const cw of state.cyberware) {
-    if (cw.bonus && cw.bonus.stats && cw.bonus.stats[statId]) {
-      total += cw.bonus.stats[statId];
-    }
-    if (cw.options) {
-      for (const opt of cw.options) {
-        if (opt && opt.bonus && opt.bonus.stats && opt.bonus.stats[statId]) {
-          total += opt.bonus.stats[statId];
-        }
+  
+  const sumBonus = (items) => {
+    if (!items) return;
+    for (const item of items) {
+      if (item.bonus && item.bonus.stats && item.bonus.stats[statId]) {
+        total += item.bonus.stats[statId];
       }
+      if (item.options) sumBonus(item.options);
     }
-  }
+  };
+  sumBonus(state.cyberware);
+
   return total;
 };
 
