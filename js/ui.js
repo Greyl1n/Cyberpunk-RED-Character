@@ -715,6 +715,14 @@ function renderCyberwareSlot(tbody, parent, parentPath, slotIdx, depth) {
     let sel = (option && option.id === opt.id) ? ' selected' : '';
     selectHtml += '<option value="' + opt.id + '"' + sel + '>' + opt.name + ' (' + opt.cost + 'eb, ' + (opt.hc || 0) + 'HC)' + '</option>';
   }
+  
+  // Custom option if it's already selected as custom or to allow selecting custom
+  let customSel = (option && option.id && option.id.startsWith("custom_")) ? ' selected' : '';
+  if (option && option.id && option.id.startsWith("custom_")) {
+    selectHtml += '<option value="' + option.id + '"' + customSel + '>' + option.name + ' (' + option.cost + 'eb, ' + (option.hc || 0) + 'HC) [Custom]</option>';
+  }
+  selectHtml += '<option value="custom">-- Custom Option --</option>';
+  
   selectHtml += '</select>';
   
   let indent = 1.5 + (depth * 1.5);
@@ -777,7 +785,16 @@ function attachCyberwareEvents() {
       let oldOption = currentObj.options[slotIdx] || null;
       let oldCost = oldOption ? (oldOption.cost || 0) : 0;
       
-      if (optionId) {
+      if (optionId === "custom") {
+        let name = prompt("Custom Option Name:");
+        if (!name) { this.value = oldOption ? oldOption.id : ''; return; }
+        let cType = prompt("Type (Fashion, Internal, Neuralware, etc.):") || "Option";
+        let hc = parseInt(prompt("Humanity Cost:") || "0");
+        let cost = parseInt(prompt("Cost in eb:") || "0");
+        let desc = prompt("Description:") || "";
+        let slots = parseInt(prompt("Does this option have slots itself? (0 for none):") || "0");
+        currentObj.options[slotIdx] = { id: "custom_" + Date.now(), name: name, type: cType, hc: hc, cost: cost, desc: desc, bonus: null, slots: slots > 0 ? slots : undefined };
+      } else if (optionId && !optionId.startsWith("custom_")) {
         let item = getDataItemById(optionId);
         if (item) {
           let costInput = prompt("Cost in eb (0 = looted):", item.cost || 0);
@@ -795,8 +812,11 @@ function attachCyberwareEvents() {
               }
             }
           }
-          currentObj.options[slotIdx] = { id: item.id, name: item.name, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, parentType: item.parentType };
+          currentObj.options[slotIdx] = { id: item.id, name: item.name, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, parentType: item.parentType, slots: item.slots };
         }
+      } else if (optionId && optionId.startsWith("custom_")) {
+        // If they just selected the existing custom option from the list (which shouldn't happen naturally unless we are re-rendering)
+        // We don't need to do anything, because it was already set.
       } else {
         let sellInput = prompt("Sell price in eb (0 = discard):", oldCost);
         if (sellInput === null) { this.value = oldOption ? oldOption.id : ''; return; }
@@ -1308,8 +1328,9 @@ function showItemSelector(type, items, callback, groupBy) {
       let hc = parseInt(prompt("Humanity Cost:") || "0");
       let cost = parseInt(prompt("Cost in eb:") || "0");
       let desc = prompt("Description:") || "";
+      let slots = parseInt(prompt("Option slots (e.g., 4 for Cyberarm, 0 for none):") || "0");
       document.body.removeChild(overlay);
-      callback({ id: "custom_" + Date.now(), name: name, type: cType, hc: hc, cost: cost, desc: desc, bonus: null });
+      callback({ id: "custom_" + Date.now(), name: name, type: cType, hc: hc, cost: cost, desc: desc, bonus: null, slots: slots > 0 ? slots : undefined });
     } else {
       let cost = parseInt(prompt("Cost in eb:") || "0");
       let cat = prompt("Category (Gear, Fashion, Electronics, Medical, etc.):") || "Gear";
@@ -1421,6 +1442,7 @@ function getCharacterData() {
     gear: JSON.parse(JSON.stringify(state.gear)),
     ammo: JSON.parse(JSON.stringify(state.ammo)),
     roleSubRanks: JSON.parse(JSON.stringify(state.roleSubRanks)),
+    subSkillNames: JSON.parse(JSON.stringify(state.subSkillNames || {})),
     hpCurrent: parseInt(document.getElementById("hp_current").value) || 0,
     currency: parseInt(document.getElementById("currency_eb").value) || 0,
     lifepath: {
@@ -1467,6 +1489,7 @@ function loadCharacterData(data) {
   state.gear = data.gear || [];
   state.ammo = data.ammo || {};
   state.roleSubRanks = data.roleSubRanks || {};
+  state.subSkillNames = data.subSkillNames || {};
   document.getElementById("hp_current").value = data.hpCurrent || 0;
   document.getElementById("currency_eb").value = data.currency || 0;
   
@@ -1565,11 +1588,39 @@ function generateRandomCharacter() {
   let allSks=[];
   for (let cat in DATA.skills) allSks=allSks.concat(DATA.skills[cat]);
   state.skillRanks={};
-  let sp=38;
-  while (sp>0) { let sk=allSks[Math.floor(Math.random()*allSks.length)]; if (!state.skillRanks[sk.id]) state.skillRanks[sk.id]=0; if (state.skillRanks[sk.id]<6) { state.skillRanks[sk.id]++; sp--; } }
-  let lpF=["lp_background","lp_motivation","lp_hairstyle","lp_clothing","lp_event"];
-  let lpK=["backgrounds","motivations","hairstyles","clothing_styles","life_events"];
-  for (let f=0;f<lpF.length;f++) document.getElementById(lpF[f]).value=DATA.lifepath[lpK[f]][Math.floor(Math.random()*DATA.lifepath[lpK[f]].length)];
+  
+  // 1. Assign mandatory basic skills
+  for (let sk of allSks) {
+    if (sk.basic) {
+      let targetId = sk.subs ? sk.id + "_1" : sk.id;
+      state.skillRanks[targetId] = 2;
+    }
+  }
+  // Language (Streetslang) gets 4 ranks minimum (first 4 are free)
+  state.skillRanks["language_1"] = 4;
+  
+  // 2. Randomly allocate the remaining points until we reach 86
+  let sp = 86 - calcCreationPointsUsed();
+  
+  // In case some skills cost x2, we need a fallback to prevent infinite loops if only 1 point is left
+  let attempts = 0; 
+  while (sp > 0 && attempts < 1000) {
+    attempts++;
+    let sk = allSks[Math.floor(Math.random() * allSks.length)];
+    let targetId = sk.subs ? sk.id + "_1" : sk.id;
+    let currentRank = state.skillRanks[targetId] || 0;
+    
+    // Max 6 ranks at character creation
+    if (currentRank < 6) {
+      let mult = sk.ipMult || 1;
+      // Also language past rank 4 costs points
+      if (sp >= mult) {
+        state.skillRanks[targetId] = currentRank + 1;
+        sp -= mult;
+      }
+    }
+  }
+  randomLifepath();
   let w=DATA.weapons[Math.floor(Math.random()*DATA.weapons.length)];
   state.weapons.push({id:w.id,name:w.name,dmg:w.dmg,rof:w.rof||1,mag:w.mag,type:w.type,rank:0,cost:w.cost||0});
   let ap = DATA.armor.filter(function(x) { return x.slots === "Body"; });
@@ -1579,7 +1630,7 @@ function generateRandomCharacter() {
   for (let g=0;g<gIds.length;g++) { let gi=DATA.gear.find(function(x){return x.id===gIds[g];}); if (gi) state.gear.push({id:gi.id,name:gi.name,cost:gi.cost,cat:gi.cat||"Gear",qty:1}); }
   document.getElementById("hp_current").value=calcHitsMax(state.stats.body||2);
   renderStats();renderSkills();renderWeapons();renderArmor();renderCyberware();renderGear();renderAmmoTracker();
-  updateAllDerived();updateStatPointsBar();updateRoleInfo();
+  updateAllDerived();updateStatPointsBar();updateCreationPoints();updateRoleInfo();
 }
 // ============================================================
 
