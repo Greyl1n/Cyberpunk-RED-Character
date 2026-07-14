@@ -1,10 +1,19 @@
 // ============================================================
 // DATA — Game content definitions (stats, roles, skills, items)
 // ============================================================
+// Think of this file as the application's "Database". It doesn't contain
+// any logic or functions that *do* things. Instead, it holds all the raw
+// information from the Cyberpunk Red rulebook—like how much a pistol costs,
+// what stats exist, and what the Lifepath options are.
+// The rest of the application reads from this DATA object to build the UI.
+
 var DATA = {
   // ----------------------------------------------------------
-  // STATS — 10 core attributes
+  // STATS
   // ----------------------------------------------------------
+  // These are the 10 core attributes every character has.
+  // The 'id' is used in the code to refer to it (e.g., state.stats.ref),
+  // while the 'name' and 'full' properties are what the user actually sees on screen.
   stats: [
     { id: "int", name: "INT", full: "Intelligence", desc: "Memory, deduction, pattern recognition" },
     { id: "ref", name: "REF", full: "Reflexes", desc: "Reaction time, coordination" },
@@ -19,50 +28,54 @@ var DATA = {
   ],
 
   // ----------------------------------------------------------
-  // ROLES — All 10 roles with rank-by-rank ability descriptions
+  // ROLES
   // ----------------------------------------------------------
+  // This array defines the 10 playable roles (Solo, Netrunner, etc.).
+  // Notice that 'rankDesc' is an array of strings. This allows the app
+  // to instantly look up exactly what your Role Ability does at Rank 4 
+  // simply by checking rankDesc[4].
   roles: [
-    { id: "solo", name: "Solo", ability: "Combat Awareness", desc: "Masters of combat. Add REF to initiative. Use Combat Awareness points each turn to boost attacks (+1 to hit), defense (+1 to dodge/block), or damage (+1 to damage).",
+    { id: "solo", name: "Solo", ability: "Combat Awareness", desc: "Divide your Combat Awareness points (equal to Rank) among: Damage Deflection (2pts=-1 dmg), Fumble Recovery (4pts=ignore 1s on attacks), Initiative Reaction (1pt=+1 Init), Precision Attack (3pts=+1 Attack), Spot Weakness (1pt=+1 Dmg on first hit), Threat Detection (1pt=+1 Perception).",
       rankDesc: [
         "",
-        "1 Combat Awareness point per turn. Can distribute 1 point among +1 Attack, +1 Defense, or +1 Damage.",
-        "2 points per turn. May split between Attack, Defense, and Damage.",
-        "3 points per turn.",
-        "4 points per turn. Gain the ability to Spot敌人的弱点 as a Free Action once per turn.",
-        "5 points per turn.",
-        "6 points per turn. Gain Foresight — go first in combat regardless of initiative once per session.",
-        "7 points per turn.",
-        "8 points per turn. Gain Always Watching — cannot be surprised and ignore ambush penalties.",
-        "9 points per turn.",
-        "10 points per turn. Gain One-Man Army — once per combat, take an additional full round of actions."
+        "1 Combat Awareness point to distribute.",
+        "2 Combat Awareness points to distribute.",
+        "3 Combat Awareness points to distribute.",
+        "4 Combat Awareness points to distribute.",
+        "5 Combat Awareness points to distribute.",
+        "6 Combat Awareness points to distribute.",
+        "7 Combat Awareness points to distribute.",
+        "8 Combat Awareness points to distribute.",
+        "9 Combat Awareness points to distribute.",
+        "10 Combat Awareness points to distribute."
       ] },
-    { id: "rockerboy", name: "Rockerboy", ability: "Charismatic Impact", desc: "Megastars who move the masses. Use Charismatic Impact to spread messages through society using Perform (or similar) checks.",
+    { id: "rockerboy", name: "Rockerboy", ability: "Charismatic Impact", desc: "Roll Charismatic Impact + 1d10 to make fans or ask them for favors. DVs: 8 (Single Fan), 10 (Small Group, up to 6), 12 (Huge Group). Fail = can't ask that group for a week.",
       rankDesc: [
         "",
-        "Affects 1 person. Can deliver a simple message. DV9 to sway them.",
-        "Affects up to 2 people. DV9 to sway a small group.",
-        "Affects up to 4 people. DV13 to sway a small crowd.",
-        "Affects up to 8 people. DV13 to sway a moderate crowd. Message can spread by word of mouth over 1d6 days.",
-        "Affects up to 15 people. DV15 to sway a large crowd.",
-        "Affects up to 30 people. DV15 to sway a very large crowd. Message spreads across a district in 1d6 days.",
-        "Affects up to 60 people. DV17 to sway a massive crowd.",
-        "Affects up to 120 people. DV17. Message spreads across a city in 1d6/2 days.",
-        "Affects up to 250 people. DV19. Message spreads across a region in 1d6/3 days.",
-        "Affects up to 500+ people. DV19. Message spreads across the entire city in 1d6 hours. Gain a loyal following."
+        "Venues: Small local clubs. Single (DV8): Small favor. Small Grp (DV10): Ask for autographs. Huge Grp (DV12): None yet.",
+        "Venues: Small local clubs. Single (DV8): Small favor. Small Grp (DV10): Ask for autographs. Huge Grp (DV12): None yet.",
+        "Venues: Well known clubs. Single (DV8): Major favor. Small Grp (DV10): Hang out, provide party favors. Huge Grp (DV12): Strong local following, buy merch.",
+        "Venues: Well known clubs. Single (DV8): Major favor. Small Grp (DV10): Hang out, provide party favors. Huge Grp (DV12): Strong local following, buy merch.",
+        "Venues: Large clubs. Single (DV8): Minor crime. Small Grp (DV10): Act as personal posse. Huge Grp (DV12): Loyal fans across city, do major favors.",
+        "Venues: Large clubs. Single (DV8): Minor crime. Small Grp (DV10): Act as personal posse. Huge Grp (DV12): Loyal fans across city, do major favors.",
+        "Venues: Small concert halls. Single (DV8): Risk life without question. Small Grp (DV10): Minor crime. Huge Grp (DV12): Rabidly loyal, fight rivals, band together to help.",
+        "Venues: Small concert halls. Single (DV8): Risk life without question. Small Grp (DV10): Minor crime. Huge Grp (DV12): Rabidly loyal, fight rivals, band together to help.",
+        "Venues: Large concert halls. Single (DV8): Major crime. Small Grp (DV10): Major crime. Huge Grp (DV12): Cult-like following; will riot, destroy, kill.",
+        "Venues: Huge stadiums. Single (DV8): Sacrifice self without question. Small Grp (DV10): Risk lives as protection. Huge Grp (DV12): Worldwide cult following; a private army."
       ] },
-    { id: "netrunner", name: "Netrunner", ability: "Interface", desc: "Cyberspace hackers who breach NET architectures and control programs. Interface Rank determines the maximum NET Architecture floor you can reach.",
+    { id: "netrunner", name: "Netrunner", ability: "Interface", desc: "Grants access to Interface Abilities:<br>- Backdoor: Break passwords.<br>- Cloak: Hide actions.<br>- Control: Control attached things.<br>- Eye-Dee: Know data value.<br>- Pathfinder: Learn map.<br>- Scanner: Find system locations.<br>- Slide: Escape Black ICE.<br>- Virus: Leave custom virus.<br>- Zap: Basic attack.<br><br>NET Actions per Turn: Ranks 1-3 (2), Ranks 4-6 (3), Ranks 7-9 (4), Rank 10 (5).",
       rankDesc: [
         "",
-        "Interface Rank 1. Can enter NET architectures up to 1 floor deep. +1 Program slot. Can control 1 program at a time.",
-        "Interface Rank 2. Can enter up to 2 floors deep. +1 Program slot. May control up to 2 programs.",
-        "Interface Rank 3. Up to 3 floors. +1 Program slot. Control up to 3 programs.",
-        "Interface Rank 4. Up to 4 floors. +1 Program slot. Control up to 4 programs. Gain +1 to all NET actions.",
-        "Interface Rank 5. Up to 5 floors. +1 Program slot. Control up to 5 programs.",
-        "Interface Rank 6. Up to 6 floors. +1 Program slot. Control up to 6 programs. Gain +2 to all NET actions.",
-        "Interface Rank 7. Up to 7 floors. +1 Program slot. Control up to 7 programs.",
-        "Interface Rank 8. Up to 8 floors. +1 Program slot. Control up to 8 programs. Gain +3 to all NET actions.",
-        "Interface Rank 9. Up to 9 floors. +1 Program slot. Control up to 9 programs.",
-        "Interface Rank 10. Up to 10 floors. +1 Program slot. Control up to 10 programs. Gain +4 to all NET actions."
+        "2 NET Actions per Turn.",
+        "2 NET Actions per Turn.",
+        "2 NET Actions per Turn.",
+        "3 NET Actions per Turn.",
+        "3 NET Actions per Turn.",
+        "3 NET Actions per Turn.",
+        "4 NET Actions per Turn.",
+        "4 NET Actions per Turn.",
+        "4 NET Actions per Turn.",
+        "5 NET Actions per Turn."
       ] },
     { id: "tech", name: "Tech", ability: "Maker", desc: "Inventors and repairers. Fabricate items using Invention Slots and upgrade gear with Fabrication Checks.",
       subSkillsPointsPerRank: 2,
@@ -105,81 +118,84 @@ var DATA = {
         "Crisis/Surgery Rank 9. Can install any cyberware including prototype/Beta (DV19).",
         "Crisis/Surgery Rank 10. Master Medtech. Surgery takes 1/4 normal time. Can revive a clinically dead patient within 1 minute (Referee discretion)."
       ] },
-    { id: "exec", name: "Exec", ability: "Team", desc: "Corporate officers with access to resources and a team of loyal subordinates. Team members scale with rank.",
+        { id: "exec", name: "Exec", ability: "Teamwork", desc: "<style>.exec-row:hover{background-color:rgba(0, 255, 255, 0.2);}.exec-row.selected{background-color:rgba(0, 255, 255, 0.5);}</style><strong>Teamwork:</strong> Build a team to accomplish goals. Loyalty saves (1d6 vs current Loyalty) determine obedience. Team members don't improve skills and wear only Light Armorjack.<br><br><strong>Creating Team Members:</strong> Pick Job (and Cover Job). Roll 1d6 for STATs. Record standard Skills/Cyberware/Gear. Starting Loyalty = 1d6+1.<br><br><details><summary><strong>Company Bodyguard</strong></summary>Cover Jobs: Escort, Personal Trainer. True Job: To protect the Exec.<br><table style='font-size:0.75rem;width:100%;text-align:center;'><tr><th>Roll</th><th>INT</th><th>REF</th><th>DEX</th><th>TECH</th><th>COOL</th><th>WILL</th><th>MOVE</th><th>BODY</th><th>EMP</th></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>1</td><td>3</td><td>7</td><td>7</td><td>4</td><td>7</td><td>6</td><td>4</td><td>8</td><td>4</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>2</td><td>5</td><td>8</td><td>6</td><td>2</td><td>7</td><td>8</td><td>4</td><td>8</td><td>2</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>3</td><td>4</td><td>8</td><td>5</td><td>3</td><td>7</td><td>8</td><td>6</td><td>6</td><td>3</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>4</td><td>4</td><td>7</td><td>8</td><td>4</td><td>7</td><td>7</td><td>4</td><td>7</td><td>2</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>5</td><td>3</td><td>8</td><td>5</td><td>2</td><td>8</td><td>7</td><td>4</td><td>6</td><td>7</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>6</td><td>5</td><td>7</td><td>7</td><td>2</td><td>7</td><td>6</td><td>5</td><td>7</td><td>4</td></tr></table><strong>Skills at +2:</strong> Concentration, Conversation, Education, First Aid, Human Perception, Language (Streetslang), Local Expert (Your Home), Persuasion, Stealth<br><strong>Skills at +4:</strong> Athletics, Evasion, Interrogation, Perception, Resist Torture/Drugs, Tactics<br><strong>Skills at +6:</strong> Handgun, Brawling<br><strong>Cyberware:</strong> Enhanced Antibodies, Subdermal Armor (SP11), Cyberaudio Suite, Internal Agent, Homing Tracer<br><strong>Gear:</strong> Agent, Light Armorjack (SP11), Very Heavy Pistol, Basic VH Pistol Ammo x50</details><details><summary><strong>Company Covert Operative</strong></summary>Cover Jobs: Personal Assistant, Stylist. True Job: Keeping the Exec from getting their hands dirty.<br><table style='font-size:0.75rem;width:100%;text-align:center;'><tr><th>Roll</th><th>INT</th><th>REF</th><th>DEX</th><th>TECH</th><th>COOL</th><th>WILL</th><th>MOVE</th><th>BODY</th><th>EMP</th></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>1</td><td>4</td><td>8</td><td>5</td><td>4</td><td>6</td><td>8</td><td>5</td><td>7</td><td>3</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>2</td><td>3</td><td>8</td><td>6</td><td>2</td><td>8</td><td>6</td><td>6</td><td>6</td><td>5</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>3</td><td>6</td><td>7</td><td>5</td><td>5</td><td>7</td><td>6</td><td>3</td><td>7</td><td>4</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>4</td><td>5</td><td>6</td><td>5</td><td>3</td><td>6</td><td>8</td><td>7</td><td>6</td><td>4</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>5</td><td>3</td><td>8</td><td>4</td><td>4</td><td>8</td><td>7</td><td>4</td><td>8</td><td>4</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>6</td><td>5</td><td>8</td><td>3</td><td>7</td><td>7</td><td>8</td><td>3</td><td>6</td><td>3</td></tr></table><strong>Skills at +2:</strong> Athletics, Brawling, Concentration, Conversation, Education, First Aid, Language (Streetslang), Local Expert (Your Home), Perception, Persuasion<br><strong>Skills at +4:</strong> Bribery, Bureaucracy, Business, Evasion, Human Perception, Pick Lock, Streetwise, Trading, Wardrobe & Style<br><strong>Skills at +6:</strong> Handgun, Stealth<br><strong>Cyberware:</strong> Cybereyes with paired Low Light/Infrared/UV, Color Shift, Cyberarm with Grapple Hand, Popup Ranged Weapon (Very Heavy Pistol), Realskinn Covering<br><strong>Gear:</strong> Agent, Light Armorjack (SP11), Very Heavy Pistol, Basic VH Pistol Ammo x50</details><details><summary><strong>Company Driver</strong></summary>Cover Jobs: Valet, Personal Driver. True Job: Drives, pilots, and maintains the Team's vehicles.<br><table style='font-size:0.75rem;width:100%;text-align:center;'><tr><th>Roll</th><th>INT</th><th>REF</th><th>DEX</th><th>TECH</th><th>COOL</th><th>WILL</th><th>MOVE</th><th>BODY</th><th>EMP</th></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>1</td><td>5</td><td>8</td><td>6</td><td>4</td><td>6</td><td>5</td><td>6</td><td>5</td><td>5</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>2</td><td>5</td><td>7</td><td>7</td><td>5</td><td>5</td><td>7</td><td>4</td><td>7</td><td>3</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>3</td><td>6</td><td>8</td><td>8</td><td>4</td><td>7</td><td>4</td><td>5</td><td>6</td><td>2</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>4</td><td>8</td><td>7</td><td>4</td><td>5</td><td>4</td><td>7</td><td>5</td><td>6</td><td>4</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>5</td><td>7</td><td>8</td><td>3</td><td>5</td><td>7</td><td>6</td><td>4</td><td>6</td><td>4</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>6</td><td>6</td><td>8</td><td>6</td><td>6</td><td>8</td><td>5</td><td>3</td><td>5</td><td>3</td></tr></table><strong>Skills at +2:</strong> Athletics, Concentration, Conversation, Education, First Aid, Human Perception, Language (Streetslang), Local Expert (Your Home), Perception, Persuasion<br><strong>Skills at +4:</strong> Brawling, Endurance, Evasion, Land Vehicle Tech, Pilot Air Vehicle, Pilot Sea Vehicle, Sea Vehicle Tech, Stealth, Tracking<br><strong>Skills at +6:</strong> Drive Land Vehicle, Handgun<br><strong>Cyberware:</strong> Radar/Sonar Implant, Cyberaudio Suite, Internal Agent, Homing Tracer, Radar Detector<br><strong>Gear:</strong> Light Armorjack (SP11), Very Heavy Pistol, Compact Groundcar with Seating Upgrade, Basic VH Pistol Ammo x50</details><details><summary><strong>Company Netrunner</strong></summary>Cover Jobs: I.T. Engineer, Research Specialist. True Job: Netrunning and information gathering.<br><table style='font-size:0.75rem;width:100%;text-align:center;'><tr><th>Roll</th><th>INT</th><th>REF</th><th>DEX</th><th>TECH</th><th>COOL</th><th>WILL</th><th>MOVE</th><th>BODY</th><th>EMP</th></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>1</td><td>6</td><td>7</td><td>8</td><td>7</td><td>5</td><td>4</td><td>5</td><td>5</td><td>3</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>2</td><td>7</td><td>8</td><td>4</td><td>6</td><td>8</td><td>3</td><td>4</td><td>6</td><td>4</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>3</td><td>5</td><td>6</td><td>8</td><td>8</td><td>6</td><td>6</td><td>4</td><td>4</td><td>3</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>4</td><td>7</td><td>8</td><td>5</td><td>6</td><td>4</td><td>4</td><td>6</td><td>5</td><td>5</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>5</td><td>5</td><td>8</td><td>8</td><td>5</td><td>5</td><td>3</td><td>6</td><td>4</td><td>6</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>6</td><td>8</td><td>7</td><td>6</td><td>6</td><td>4</td><td>7</td><td>4</td><td>4</td><td>4</td></tr></table><strong>Skills at +2:</strong> Interface (Netrunner Role Ability), Athletics, Brawling, Concentration, Conversation, Evasion, First Aid, Human Perception, Language (Streetslang), Local Expert (Your Home), Perception, Persuasion<br><strong>Skills at +4:</strong> Basic Tech, Cryptography, Cybertech, Education, Electronics/Security Tech (x2), Forgery, Library Search, Handgun, Stealth<br><strong>Cyberware:</strong> Neural Link, Chipware Socket, Pain Editor, Interface Plugs, Cybereyes with Virtuality<br><strong>Gear:</strong> Agent, Light Armorjack (SP11), Cyberdeck (7 slots: Sword, Sword, Killer, Worm, Worm, Armor), Very Heavy Pistol, Basic VH Pistol Ammo x50</details><details><summary><strong>Company Technician</strong></summary>Cover Jobs: I.T. Engineer, Intern. True Job: Repairs Team's gear and weapons.<br><table style='font-size:0.75rem;width:100%;text-align:center;'><tr><th>Roll</th><th>INT</th><th>REF</th><th>DEX</th><th>TECH</th><th>COOL</th><th>WILL</th><th>MOVE</th><th>BODY</th><th>EMP</th></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>1</td><td>8</td><td>8</td><td>5</td><td>7</td><td>3</td><td>4</td><td>4</td><td>5</td><td>6</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>2</td><td>8</td><td>7</td><td>6</td><td>8</td><td>3</td><td>5</td><td>5</td><td>4</td><td>4</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>3</td><td>8</td><td>6</td><td>5</td><td>8</td><td>4</td><td>3</td><td>3</td><td>7</td><td>6</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>4</td><td>8</td><td>8</td><td>5</td><td>7</td><td>4</td><td>4</td><td>4</td><td>5</td><td>5</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>5</td><td>7</td><td>7</td><td>3</td><td>7</td><td>5</td><td>3</td><td>6</td><td>6</td><td>3</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>6</td><td>7</td><td>8</td><td>5</td><td>8</td><td>6</td><td>3</td><td>3</td><td>5</td><td>5</td></tr></table><strong>Skills at +2:</strong> Athletics, Brawling, Concentration, Conversation, Evasion, First Aid, Human Perception, Language (Streetslang), Local Expert (Your Home), Perception, Persuasion, Stealth<br><strong>Skills at +4:</strong> Education, Handgun, Weaponstech (x2)<br><strong>Skills at +6:</strong> Basic Tech, Cybertech, Electronics/Security Tech (x2)<br><strong>Cyberware:</strong> Tool Hand, Cyberaudio Suite, Internal Agent, Bug Detector, Audio Recorder<br><strong>Gear:</strong> Light Armorjack (SP11), Very Heavy Pistol, Basic VH Pistol Ammo x50</details>",
       rankDesc: [
         "",
-        "1 team member (Rank 1 — intern/assistant). Access to a modest corporate apartment. Small expense account (500eb/month).",
-        "2 team members (Ranks 1-2). Slightly better apartment. Expense account of 1,000eb/month.",
-        "2 team members (Ranks 1-3). Mid-range corporate housing. 2,000eb/month expense account. Access to corporate gym.",
-        "3 team members (Ranks 1-4). 1 team member can be Rank 4. 4,000eb/month. Corporate vehicle (Economy).",
-        "3 team members (Ranks 1-5). 1 team member can be Rank 5. 8,000eb/month expense account. Corporate vehicle (Mid-Range).",
-        "4 team members (Ranks 1-6). 1 team member can be Rank 6. 12,000eb/month. Executive suite. Corporate vehicle (Luxury).",
-        "5 team members (Ranks 1-7). 1 team member can be Rank 7. 20,000eb/month. Floor of corporate tower. AV-4 access.",
-        "5 team members (Ranks 1-8). 1 team member can be Rank 8. 30,000eb/month. Corporate jet for inter-city travel.",
-        "6 team members (Ranks 1-9). 1 team member can be Rank 9. 50,000eb/month. Full executive floor. Company helicopter.",
-        "6 team members (Ranks 1-10). 1 team member can be Rank 10. 100,000eb/month. Near-total corporate resource access (subject to Referee)."
+        "<strong>Signing Bonus:</strong> Businesswear suit (Jacket, Top, Bottom, Footwear).",
+        "<strong>Corporate Housing:</strong> Corporate Conapt (free rent/fees).",
+        "<strong>Team Members:</strong> Gain 1 Team Member.",
+        "<strong>No new perks at this rank.</strong>",
+        "<strong>Team Members:</strong> Gain an additional Team Member (2 total).",
+        "<strong>Health Insurance:</strong> Trauma Team Silver coverage.",
+        "<strong>Corporate Housing:</strong> Upgraded to Beaverville House.",
+        "<strong>Health Insurance:</strong> Upgraded to Trauma Team Executive.",
+        "<strong>Team Members:</strong> Gain an additional Team Member (3 total).",
+        "<strong>Corporate Housing:</strong> Upgraded to Beaverville McMansion or Luxury Penthouse."
       ] },
-    { id: "lawman", name: "Lawman", ability: "Backup", desc: "Badges who call in backup. The higher the rank, the faster and more powerful the response.",
+    { id: "lawman", name: "Lawman", ability: "Backup", desc: "As an Action, roll 1d10 <= Backup Rank to call for Backup. If successful, Backup arrives in 1d6 Rounds. If 6 is rolled on the arrival die, the next highest tier backup arrives (if Rank 10, two separate groups arrive instead).",
       rankDesc: [
         "",
-        "Call Backup (arrives in 1d10/2 rounds). 1 officer arrives (armed with Heavy Pistol, Light Armorjack).",
-        "Call Backup (1d10/2 rounds). 2 officers arrive.",
-        "Call Backup (1d10/2 rounds). 3 officers. One has a Shotgun.",
-        "Call Backup (1d10/2 rounds). 4 officers. Squad has one AV-4 for transport.",
-        "Call Backup (1d10 rounds). 2 officers + 1 AV-4 gunship with door gunner. Officers carry Assault Rifles.",
-        "Call Backup (1d10 rounds). 3 officers + 1 AV-4. One officer carries a Sniper Rifle.",
-        "Call Backup (1d10 rounds). 4 officers + 1 AV-4 + Air Support (attack helicopter). Can declare a Code Red — all officers in district respond.",
-        "Call Backup (1d6 rounds). MaxTac team arrives (4 operatives with heavy weapons and full borg conversion).",
-        "Call Backup (1d6 rounds). MaxTac team + AV-4 gunship. Can declare a Code Black — MaxTac and all available LEOs respond.",
-        "Call Backup (1d6 rounds). Full MaxTac strike force (6 operatives, 2 AV-4s, Air Support). Once per session, call in an airstrike or orbital strike (Referee discretion)."
+        "<strong>Combat Number:</strong> 8 | <strong>SP:</strong> 7 | <strong>HP:</strong> 20 | <strong>MOVE & BODY:</strong> 4<br>Corporate Security. 4 rent-a-cops on foot. Heavy Pistols, Kevlar.",
+        "<strong>Combat Number:</strong> 8 | <strong>SP:</strong> 7 | <strong>HP:</strong> 20 | <strong>MOVE & BODY:</strong> 4<br>Corporate Security. 4 rent-a-cops on foot. Heavy Pistols, Kevlar.",
+        "<strong>Combat Number:</strong> 10 | <strong>SP:</strong> 7 | <strong>HP:</strong> 25 | <strong>MOVE & BODY:</strong> 5<br>Local Beat Cops. 4 cops in 2 Compact Groundcars. Heavy Pistols, Kevlar.",
+        "<strong>Combat Number:</strong> 10 | <strong>SP:</strong> 7 | <strong>HP:</strong> 25 | <strong>MOVE & BODY:</strong> 5<br>Local Beat Cops. 4 cops in 2 Compact Groundcars. Heavy Pistols, Kevlar.",
+        "<strong>Combat Number:</strong> 14 | <strong>SP:</strong> 13 | <strong>HP:</strong> 35 | <strong>MOVE & BODY:</strong> 4<br>Sheriff's Dept. 2 cops in a High Perf. Groundcar. Heavy Pistols, Assault Rifles, Heavy Armorjack.",
+        "<strong>Combat Number:</strong> 14 | <strong>SP:</strong> 13 | <strong>HP:</strong> 35 | <strong>MOVE & BODY:</strong> 4<br>Sheriff's Dept. 2 cops in a High Perf. Groundcar. Heavy Pistols, Assault Rifles, Heavy Armorjack.",
+        "<strong>Combat Number:</strong> 14 | <strong>SP:</strong> 13 | <strong>HP:</strong> 35 | <strong>MOVE & BODY:</strong> 4<br>Sheriff's Dept. 2 cops in a High Perf. Groundcar. Heavy Pistols, Assault Rifles, Heavy Armorjack.",
+        "<strong>Combat Number:</strong> 16 | <strong>SP:</strong> 15 | <strong>HP:</strong> 50 | <strong>MOVE & BODY:</strong> 6<br>Recovery Zone Marshal. 1 Lawman on a Superbike. Very Heavy Pistol, Assault Rifle, Grenade Launcher, Flak Armor.",
+        "<strong>Combat Number:</strong> 15 | <strong>SP:</strong> 18 | <strong>HP:</strong> 35 | <strong>MOVE & BODY:</strong> 4<br>C-SWAT. 2 Psycho Squad hitters in an AV-4. Assault Rifles, Rocket Launchers, Metalgear.",
+        "<strong>Combat Number:</strong> 14 | <strong>SP:</strong> 11 | <strong>HP:</strong> 35 | <strong>MOVE & BODY:</strong> 6<br>National/Interpol. 2 serious hitters in an AV-4. Very Heavy Pistols, Assault Rifles, Light Armorjack. Sticks around to investigate using Combat Number for investigation skills."
       ] },
-    { id: "fixer", name: "Fixer", ability: "Operator", desc: "Dealers who find anything for a price. Gain Contacts and street price reduction on purchased items.",
+    { id: "fixer", name: "Fixer", ability: "Operator", desc: "<strong>Contacts:</strong> Source goods/favors. <strong>Reach:</strong> Source items by price category. <strong>Haggle:</strong> Make deals (Roll COOL + Trading + Operator Rank). <strong>Grease:</strong> Blend into cultures/languages.",
       rankDesc: [
         "",
-        "1 Contact. Gain a 100eb x Rank discount on purchased items (max 50% off). Can find any item up to Premium availability.",
-        "2 Contacts. 200eb x Rank discount. Can find any item up to Premium availability.",
-        "3 Contacts. 300eb x Rank discount. Can find items up to Excellent availability.",
-        "4 Contacts. 400eb x Rank discount. Can find items up to Excellent availability.",
-        "5 Contacts. 500eb x Rank discount. Can find items up to Luxury availability. Can fence stolen goods for 50% value.",
-        "6 Contacts. 600eb x Rank discount. Can find items up to Luxury availability. Fence for 60% value.",
-        "7 Contacts. 700eb x Rank discount. Can find any item (including military/restricted). Fence for 70% value.",
-        "8 Contacts. 800eb x Rank discount. Can find any item. One contact is a Fixer — can source jobs. Fence for 80%.",
-        "9 Contacts. 900eb x Rank discount. Can find multiple units of restricted items. Fence for 90%.",
-        "10 Contacts. 1000eb x Rank discount (max 50% off). Can find anything within 1d6 days. Fence for 100%. Gain a private Night Market."
+        "<strong>Contacts:</strong> Local honcho, gang lord.<br><strong>Reach:</strong> Source Cheap/Everyday items.<br><strong>Haggle:</strong> +/- 10% on market price.<br><strong>Grease:</strong> Know immediate neighborhood culture.",
+        "<strong>Contacts:</strong> Local honcho, gang lord.<br><strong>Reach:</strong> Source Cheap/Everyday items.<br><strong>Haggle:</strong> +/- 10% on market price.<br><strong>Grease:</strong> Know immediate neighborhood culture.",
+        "<strong>Contacts:</strong> City gang honcho, minor politico, Corp Exec.<br><strong>Reach:</strong> Source up to Expensive items.<br><strong>Haggle:</strong> Buy 5, get 1 free.<br><strong>Grease:</strong> +1 Culture & +1 Language (Skill 4).",
+        "<strong>Contacts:</strong> City gang honcho, minor politico, Corp Exec.<br><strong>Reach:</strong> Source up to Expensive items.<br><strong>Haggle:</strong> Buy 5, get 1 free.<br><strong>Grease:</strong> +1 Culture & +1 Language (Skill 4).",
+        "<strong>Contacts:</strong> Major City player, City politico, neighborhood celeb.<br><strong>Reach:</strong> Setup Night Market (source Super Luxury).<br><strong>Haggle:</strong> Negotiate Job pay up 20%.<br><strong>Grease:</strong> +2 Cultures & +2 Languages (Skill 4).",
+        "<strong>Contacts:</strong> Major City player, City politico, neighborhood celeb.<br><strong>Reach:</strong> Setup Night Market (source Super Luxury).<br><strong>Haggle:</strong> Negotiate Job pay up 20%.<br><strong>Grease:</strong> +2 Cultures & +2 Languages (Skill 4).",
+        "<strong>Contacts:</strong> Local Corp president, mayor, local celeb.<br><strong>Reach:</strong> Source up to Very Expensive items.<br><strong>Haggle:</strong> Pay half now, half later for Luxury+.<br><strong>Grease:</strong> +3 Cultures & +3 Languages (Skill 4).",
+        "<strong>Contacts:</strong> Local Corp president, mayor, local celeb.<br><strong>Reach:</strong> Source up to Very Expensive items.<br><strong>Haggle:</strong> Pay half now, half later for Luxury+.<br><strong>Grease:</strong> +3 Cultures & +3 Languages (Skill 4).",
+        "<strong>Contacts:</strong> Divisional Corp head, state politico, well known celeb.<br><strong>Reach:</strong> Source up to Luxury items. Midnight Market access.<br><strong>Haggle:</strong> +/- 20% on market price.<br><strong>Grease:</strong> Blend in with corporate/governmental agencies.",
+        "<strong>Contacts:</strong> Major world leader, major Corp head, world-famous celeb.<br><strong>Reach:</strong> Source up to Super Luxury items.<br><strong>Haggle:</strong> Double pay for Dangerous Job.<br><strong>Grease:</strong> Blend in with secret societies, cults, etc."
       ] },
-    { id: "nomad", name: "Nomad", ability: "Moto", desc: "Transport experts who call in vehicles and modify them. Gains vehicles, upgrade slots, and the ability to drive anything.",
+    { id: "nomad", name: "Nomad", ability: "Moto", desc: "Add Moto Rank to all Drive, Pilot, and Vehicle Tech skills. Each Moto Rank grants a new Family vehicle or an upgrade.",
       rankDesc: [
         "",
-        "1 vehicle (Economy — car or bike). +1 upgrade slot. Can hotwire any ground vehicle in 1d10 rounds.",
-        "1 vehicle (Economy). +2 upgrade slots. Can drive any ground vehicle without penalty.",
-        "1 vehicle (Mid-Range quality). +3 upgrade slots. Can pilot any air vehicle without penalty.",
-        "1 vehicle (Mid-Range). +4 upgrade slots. Once per session, call in a favor for a temporary vehicle.",
-        "1 vehicle (Luxury or Performance quality). +5 upgrade slots. Can pilot any vehicle without penalty (including watercraft).",
-        "2 vehicles (1 Luxury/Performance, 1 Mid-Range). +6 upgrade slots. Vehicles can be called in within 1d10 minutes.",
-        "2 vehicles (1 Super/Luxury, 1 Mid-Range). +7 upgrade slots. Can modify vehicles to add hidden weapon mounts.",
-        "2 vehicles (1 Super/Luxury, 1 Economy). +8 upgrade slots. One vehicle can be a Heavy (armored truck/tank).",
-        "3 vehicles (varying quality). +9 upgrade slots. Vehicles can be called in within 1d10/2 minutes. Can have a home base (garage/compound).",
-        "3 vehicles (1 Supercar/Luxury custom). +10 upgrade slots. Can call in a favor for any vehicle (including military/experimental). Gain a mobile command vehicle."
+        "Gain 1 vehicle (Rank 1-4) or 1 upgrade.<br><strong>Available Vehicles:</strong> Compact Groundcar, Gyrocopter, Jetski, Roadbike",
+        "Gain 1 vehicle (Rank 1-4) or 1 upgrade.<br><strong>Available Vehicles:</strong> Compact Groundcar, Gyrocopter, Jetski, Roadbike",
+        "Gain 1 vehicle (Rank 1-4) or 1 upgrade.<br><strong>Available Vehicles:</strong> Compact Groundcar, Gyrocopter, Jetski, Roadbike",
+        "Gain 1 vehicle (Rank 1-4) or 1 upgrade.<br><strong>Available Vehicles:</strong> Compact Groundcar, Gyrocopter, Jetski, Roadbike",
+        "Gain 1 vehicle (Rank 1-6) or 1 upgrade.<br><strong>Available Vehicles:</strong> Compact Groundcar, Gyrocopter, Jetski, Roadbike, Helicopter, High Performance Groundcar, Speedboat",
+        "Gain 1 vehicle (Rank 1-6) or 1 upgrade.<br><strong>Available Vehicles:</strong> Compact Groundcar, Gyrocopter, Jetski, Roadbike, Helicopter, High Performance Groundcar, Speedboat",
+        "Gain 1 vehicle (Rank 1-8) or 1 upgrade.<br><strong>Available Vehicles:</strong> Compact Groundcar, Gyrocopter, Jetski, Roadbike, Helicopter, High Performance Groundcar, Speedboat, AV-4, Cabin Cruiser, Superbike",
+        "Gain 1 vehicle (Rank 1-8) or 1 upgrade.<br><strong>Available Vehicles:</strong> Compact Groundcar, Gyrocopter, Jetski, Roadbike, Helicopter, High Performance Groundcar, Speedboat, AV-4, Cabin Cruiser, Superbike",
+        "Gain 1 vehicle (Rank 1-10) or 1 upgrade.<br><strong>Available Vehicles:</strong> Compact Groundcar, Gyrocopter, Jetski, Roadbike, Helicopter, High Performance Groundcar, Speedboat, AV-4, Cabin Cruiser, Superbike, Aerozep, AV-9, Super Groundcar, Yacht",
+        "Gain 1 vehicle (Rank 1-10) or 1 upgrade. You are promoted to Family leader and can have all your vehicles out at once.<br><strong>Available Vehicles:</strong> Compact Groundcar, Gyrocopter, Jetski, Roadbike, Helicopter, High Performance Groundcar, Speedboat, AV-4, Cabin Cruiser, Superbike, Aerozep, AV-9, Super Groundcar, Yacht"
       ] },
-    { id: "media", name: "Media", ability: "Credibility", desc: "Investigative reporters who dig up the truth. Credibility determines sources per story and questions per source.",
+    { id: "media", name: "Media", ability: "Credibility", desc: "Hear rumors twice a week (Credibility + 1d10). Publish stories to cause impact; roll 1d10 vs Believability (+1 to chance for 1 piece of evidence, +2 for 4+ pieces).<br>Rumors:<br>- Vague: Passive DV7 / Active DV13<br>- Typical: Passive DV9 / Active DV15<br>- Substantial: Passive DV11 / Active DV17<br>- Detailed: Passive DV13 / Active DV21",
       rankDesc: [
         "",
-        "1 source per story. 1 question per source. Can identify public information with a DV9 Library Search check.",
-        "1 source per story. 2 questions per source. Sources are more willing to talk (DV9 Human Perception to detect lies).",
-        "2 sources per story. 2 questions per source. Can access city records with a DV13 check.",
-        "2 sources per story. 3 questions per source. Sources will share documents/proof (DV13).",
-        "3 sources per story. 3 questions per source. Can access corporate records with a DV15 check.",
-        "3 sources per story. 4 questions per source. Gain a Deep Source — a high-level informant (Referee-assigned).",
-        "4 sources per story. 4 questions per source. Can access military/government records (DV17). Stories reach a city-wide audience.",
-        "4 sources per story. 5 questions per source. Deep Source becomes a reliable contact. Stories can start investigations by authorities (DV17 resist).",
-        "5 sources per story. 5 questions per source. Can access any records with a DV19 check. Stories spread region-wide in 1d6 days.",
-        "5 sources per story. Unlimited questions. Gain an Anonymous Source Network — once per session, get a piece of critical information from an unknown source. Stories can topple corporations (subject to play)."
+        "<strong>Access:</strong> Local honcho, gang lord.<br><strong>Audience:</strong> Neighborhood.<br><strong>Believability:</strong> 2/10.<br><strong>Impact:</strong> Small, incremental.",
+        "<strong>Access:</strong> Local honcho, gang lord.<br><strong>Audience:</strong> Neighborhood.<br><strong>Believability:</strong> 2/10.<br><strong>Impact:</strong> Small, incremental.",
+        "<strong>Access:</strong> City gang honcho, minor politico, Corp Exec.<br><strong>Audience:</strong> Local screamsheet/Data Pool.<br><strong>Believability:</strong> 3/10.<br><strong>Impact:</strong> Direct effect; bad guys arrested.",
+        "<strong>Access:</strong> City gang honcho, minor politico, Corp Exec.<br><strong>Audience:</strong> Local screamsheet/Data Pool.<br><strong>Believability:</strong> 3/10.<br><strong>Impact:</strong> Direct effect; bad guys arrested.",
+        "<strong>Access:</strong> Major City player, City politico, local celeb.<br><strong>Audience:</strong> Citywide.<br><strong>Believability:</strong> 4/10.<br><strong>Impact:</strong> Citywide change, laws passed.",
+        "<strong>Access:</strong> Major City player, City politico, local celeb.<br><strong>Audience:</strong> Citywide.<br><strong>Believability:</strong> 4/10.<br><strong>Impact:</strong> Citywide change, laws passed.",
+        "<strong>Access:</strong> Local Corp president, mayor, City celeb.<br><strong>Audience:</strong> Statewide.<br><strong>Believability:</strong> 5/10.<br><strong>Impact:</strong> Multi-city change, mid-corps fall.",
+        "<strong>Access:</strong> Local Corp president, mayor, City celeb.<br><strong>Audience:</strong> Statewide.<br><strong>Believability:</strong> 5/10.<br><strong>Impact:</strong> Multi-city change, mid-corps fall.",
+        "<strong>Access:</strong> Divisional Corp head, State politico, well known celeb.<br><strong>Audience:</strong> National.<br><strong>Believability:</strong> 6/10.<br><strong>Impact:</strong> National change, large corps fall.",
+        "<strong>Access:</strong> Major world leader, major Corp head, world-famous celeb.<br><strong>Audience:</strong> Worldwide.<br><strong>Believability:</strong> 7/10.<br><strong>Impact:</strong> Global change, Megacorps fall."
       ] }
   ],
 
   // ----------------------------------------------------------
-  // SKILLS — Grouped by linked stat
+  // SKILLS
   // ----------------------------------------------------------
+  // Skills are grouped by the STAT they are linked to (e.g., 'dex', 'ref').
+  // - 'subs' means this skill has sub-categories (like Language: English, Language: Spanish).
+  // - 'ipMult' tells the app if this is a difficult skill that costs 2x points to level up.
   skills: {
     int: [
       { id: "accounting", name: "Accounting" },
@@ -238,7 +254,7 @@ var DATA = {
       { id: "photography_film", name: "Photography/Film" },
       { id: "pick_lock", name: "Pick Lock" },
       { id: "pick_pocket", name: "Pick Pocket" },
-      { id: "play_instrument", name: "Play Instrument", subs: 2, subs: 2, ipMult: 2 },
+      { id: "play_instrument", name: "Play Instrument", subs: 2, subs: 2 },
       { id: "sea_vehicle_tech", name: "Sea Vehicle Tech" },
       { id: "weaponstech", name: "Weaponstech" }
     ],
@@ -264,8 +280,10 @@ var DATA = {
   },
 
   // ----------------------------------------------------------
-  // WEAPONS — Standard + exotic weapons from core rulebook & DLCs
+  // WEAPONS
   // ----------------------------------------------------------
+  // A complete list of weapons. The 'skill' property tells the app which
+  // skill you roll when firing it. 'rof' is Rate of Fire, 'mag' is Magazine size.
   weapons: [
     { id: "heavy_pistol", name: "Heavy Pistol", type: "Handgun", dmg: "3d6", hands: 1, rof: 2, mag: 12, conceal: "Jacket", cost: 500, desc: "[CRB] Standard heavy pistol" },
     { id: "light_pistol", name: "Light Pistol", type: "Handgun", dmg: "2d6", hands: 1, rof: 2, mag: 15, conceal: "Pocket", cost: 250, desc: "[CRB] Small concealable pistol" },
@@ -490,6 +508,8 @@ var DATA = {
   // ----------------------------------------------------------
   // ARMOR
   // ----------------------------------------------------------
+  // Armor is categorized into head and body. 'sp' is Stopping Power,
+  // and 'enc' is the penalty to your stats when you wear heavy armor.
   armor: [
     { id: "armor_head_light", name: "Light Armorjack (Head)", slots: "Head", sp: 11, cost: 100, enc: 0, desc: "[CRB]" },
     { id: "armor_head_medium", name: "Medium Armorjack (Head)", slots: "Head", sp: 12, cost: 500, enc: 2, desc: "[CRB]" },
@@ -526,6 +546,10 @@ var DATA = {
   // ----------------------------------------------------------
   // CYBERWARE
   // ----------------------------------------------------------
+  // A massive list of cyberware. 
+  // 'hc' is the Humanity Cost loss. 
+  // 'slots' tells the app how many sub-options (like optics or audio) can be installed inside it.
+  // 'bonus' is an object that the calculations.js file reads to automatically increase your stats!
   cyberware: [
     { id: "cybereye", name: "Cybereye", type: "Cybereye", hc: 2, cost: 500, desc: "[CRB] Single cybernetic eye.", slots: 3, bodyPart: "eye" },
     { id: "cyberaudio", name: "Cyberaudio Suite", type: "Cyberaudio", hc: 2, cost: 500, desc: "[CRB] Internal ear comms and audio processing.", slots: 3 },
@@ -550,7 +574,7 @@ var DATA = {
     { id: "big_knucks", name: "Big Knucks", type: "Cyberarm Option", hc: 1, cost: 100, desc: "[CRB] Brass knuckles built into cyberarm.", parentType: "cyberarm" },
     { id: "popup_weapon", name: "Popup Weapon (Cyberarm)", type: "Cyberarm Option", hc: 2, cost: 500, desc: "[CRB] Hidden weapon in cyberarm.", parentType: "cyberarm" },
     { id: "implanted_lavatory", name: "Implanted Lavatory", type: "Internal Body", hc: 1, cost: 200, desc: "[CRB] Waste processing implant." },
-    { id: "light_tattoo", name: "Light Tattoo", type: "Fashionware", hc: 0, cost: 200, desc: "[CRB] LED subdermal tattoos. +2 Wardrobe & Style with 3+ installed." },
+    { id: "light_tattoo", name: "Light Tattoo", type: "Fashionware", hc: 0, cost: 200, desc: "[CRB] LED subdermal tattoos.", bonus: { skills: { wardrobe_style: 2 } } },
     { id: "agency_record", name: "Agency Record", type: "Fashionware", hc: 1, cost: 500, desc: "[CRB] Always-on recording of everything you see/hear." },
     { id: "buddy_link", name: "Buddy Link", type: "Internal Body", hc: 1, cost: 200, desc: "[CRB] Private short-range comm with your crew." },
     { id: "bc_budget_chipware", name: "Budget Chipware Socket", type: "Neuralware", hc: 7, cost: 100, desc: "[CRB] A cheap chipware socket.", parentType: "neural_link" },
@@ -581,8 +605,8 @@ var DATA = {
     { id: "bc_one_shot_cyberfinger", name: "One Shot Special Cyberfinger", type: "Cyberfinger", hc: 7, cost: 100, desc: "[CRB] Single-shot Exotic Heavy Pistol concealed in finger. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
     { id: "bc_spray_paint_cyberfinger", name: "Spray Paint Cyberfinger", type: "Cyberfinger", hc: 3, cost: 100, desc: "[CRB] Spray can concealed within the Cyberfinger. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
     { id: "bc_squirt_cyberfinger", name: "Squirt Cyberfinger", type: "Cyberfinger", hc: 3, cost: 100, desc: "[CRB] Dispenses liquids like sanitizer or perfume. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
-    { id: "chemskin", name: "Chemskin", type: "Fashionware", hc: 1, cost: 500, desc: "[CRB] Change skin color. +2 Personal Grooming if also have Techhair." },
-    { id: "techhair", name: "Techhair", type: "Fashionware", hc: 1, cost: 500, desc: "[CRB] Programmable hair. +2 Personal Grooming if also have Chemskin." },
+    { id: "chemskin", name: "Chemskin", type: "Fashionware", hc: 1, cost: 500, desc: "[CRB] Change skin color.", bonus: { skills: { personal_grooming: 2 } } },
+    { id: "techhair", name: "Techhair", type: "Fashionware", hc: 1, cost: 500, desc: "[CRB] Programmable hair.", bonus: { skills: { personal_grooming: 2 } } },
     { id: "kerenzikov", name: "Kerenzikov", type: "Neuralware", hc: 7, cost: 1000, desc: "[CRB] Boosted reflexes. +2 to Initiative.", parentType: "neural_link" },
     { id: "sandevistan", name: "Sandevistan", type: "Neuralware", hc: 7, cost: 1000, desc: "[CRB] Activate for +3 to Initiative for 1 min (Action, 1hr cooldown).", parentType: "neural_link" },
     { id: "image_enhance", name: "Image Enhance", type: "Cybereye Option", hc: 1, cost: 500, desc: "[CRB] Enhanced vision processing.", parentType: "cybereye", bonus: { skills: { perception: 2, lip_reading: 2, conceal_reveal_object: 2 } } },
@@ -611,8 +635,8 @@ var DATA = {
     { id: "cyberpillow", name: "Cyberpillow", type: "Cyberarm Option", hc: 0, cost: 100, desc: "[CRB] Pop-out pillow for napping. Requires Cyberarm.", parentType: "cyberarm" },
     { id: "external_vidscreen", name: "External Vidscreen", type: "External Body", hc: 7, cost: 100, desc: "[CRB] Subcutaneous flexible screen. Turns body part into display for linked Agent or Memory Chip." },
     { id: "holo_projector_palm", name: "Holo Projector Palm", type: "Cyberarm Option", hc: 2, cost: 100, desc: "[CRB] Hologram projector in palm. Can be installed in a meat arm.", parentType: "cyberarm" },
-    { id: "kill_display", name: "Kill Display", type: "Fashionware", hc: 0, cost: 100, desc: "[CRB] Subdermal 'KILLS: #' display. Self-reported via Agent. Counts as Light Tattoo." },
-    { id: "leads_turn_on_show_off_nails", name: "Lead's Turn-On-Show-Off Nails", type: "Fashionware", hc: 0, cost: 100, desc: "[CRB] Programmable lighted fingernails. Counts as Light Tattoo. Works on meat or cyberware hands." },
+    { id: "kill_display", name: "Kill Display", type: "Fashionware", hc: 0, cost: 100, desc: "[CRB] Subdermal 'KILLS: #' display. Self-reported via Agent.", bonus: { skills: { wardrobe_style: 2 } } },
+    { id: "leads_turn_on_show_off_nails", name: "Lead's Turn-On-Show-Off Nails", type: "Fashionware", hc: 0, cost: 100, desc: "[CRB] Programmable lighted fingernails. Works on meat or cyberware hands.", bonus: { skills: { wardrobe_style: 2 } } },
     { id: "mood_eye", name: "Mood Eye", type: "Fashionware", hc: 0, cost: 100, desc: "[CRB] Eye color changes with mood (red=anger, blue=sadness, etc.). Requires Neural Link.", parentType: "neural_link" },
     { id: "neutongue", name: "NeuTongue", type: "Internal Body", hc: 7, cost: 100, desc: "[CRB] Cybernetic tongue. Add virtual seasoning to food via linked Agent." },
     { id: "perfectfit_cyberfoot", name: "PerfectFit Cyberfoot", type: "Cyberleg Option", hc: 2, cost: 100, desc: "[CRB] Adjustable foot size/shape. Eliminates penalty from ill-fitting footwear. Can be installed in a meat leg.", parentType: "cyberleg" },
@@ -636,7 +660,7 @@ var DATA = {
     { id: "fleshweave", name: "Sycust Fleshweave", type: "External Body", hc: 7, cost: 1000, desc: "[CRB] Skinweave. Body and Head SP7. Self-repairs to full after 10 min without strenuous activity." },
     { id: "romanova_cyberlegs", name: "Wyzard Technologies Romanova Cyberlegs", type: "Cyberleg", hc: 14, cost: 1000, desc: "[CRB] Paired Cyberlegs. 3 Option Slots each. Pre-installed Talon Feet.", bodyPart: "leg", slots: 3, parentType: "cyberleg", takesBoth: true },
     { id: "faceplate_mount", name: "Quick Change Faceplate Mount", type: "Internal Body", hc: 14, cost: 1000, desc: "[CRB] Replace meat face with mounting. Comes with 1 personalized Faceplate. Additional: 100eb." },
-    { id: "quick_digits", name: "Rocklin Augmentics Quick Digits", type: "Cyberarm Option", hc: 3, cost: 250, desc: "[CRB] Cyberhand. Two+ grants +1 to Conceal/Reveal, Contortionist, First Aid, Forgery, Paramedic, Pick Lock, Pick Pocket.", parentType: "cyberarm" },
+    { id: "quick_digits", name: "Rocklin Augmentics Quick Digits", type: "Cyberarm Option", hc: 3, cost: 250, desc: "[CRB] Cyberhand.", bonus: { skills: { conceal_reveal_object: 1, contortionist: 1, first_aid: 1, forgery: 1, paramedic: 1, pick_lock: 1, pick_pocket: 1 } }, parentType: "cyberarm" },
     { id: "skydrivers", name: "Rocklin Augmentics Skydrivers", type: "Cyberleg", hc: 14, cost: 1000, desc: "[CRB] Paired Cyberlegs. 2 Option Slots each. Pre-installed Jump Boosters. +3d6 dmg vs cover with leg attacks.", bodyPart: "leg", slots: 2, parentType: "cyberleg", takesBoth: true },
     { id: "cyberspine", name: "Sycust Cyberspine", type: "Internal Body", hc: 7, cost: 1000, desc: "[CRB] Requires 3 Option Slots. Immune to Spinal Injury. Hardened. +1 Contortionist. Can house Cybersnake.", bonus: { skills: { contortionist: 1 } } },
     { id: "cyberconductor_integrated", name: "Zetatech CyberConductor, Integrated", type: "Borgware", hc: 14, cost: 1000, desc: "[CRB] FBC only. All cyberdecks connected. Switch between them with no HP damage. Requires 3 Option Slots." },
@@ -751,8 +775,10 @@ var DATA = {
   ],
 
   // ----------------------------------------------------------
-  // LIFEPATH — Random generation tables
+  // LIFEPATH
   // ----------------------------------------------------------
+  // This section contains arrays of text. The Randomise button simply picks
+  // a random number (using Math.random) and grabs a string from these arrays.
   lifepath: {
     "culturalOrigins": [
         "North American",
@@ -1084,3 +1110,84 @@ var DATA = {
 
 Object.freeze(DATA.stats);
 Object.freeze(DATA._index);
+DATA.roleLifepath = {
+  Rockerboy: [
+    { title: "What Kind of Rockerboy are You?", options: ["Musician", "Slam Poet", "Street Artist", "Performance Artist", "Comedian", "Orator", "Politico", "Rap Artist", "DJ", "Idoru"] },
+    { title: "Are You in a Group or a Solo Act?", options: ["In a Group", "Solo Act"], type: "choose" },
+    { title: "Where Do You Perform?", options: ["Alternative Cafes", "Private Clubs", "Seedy Dive Bars", "Guerrilla Performances", "Nightclubs Around the City", "On the Data Pool"] },
+    { title: "Who's Gunning for You/Your Group?", options: ["Old group member who thinks you did them dirty.", "Rival group or artist trying to steal market share.", "Corporate enemies who don't like your message.", "Critic or other 'influencer' trying to bring you down.", "Older media star who feels threatened by your rising fame.", "Romantic interest or media figure who wants revenge for personal reasons."] },
+    { title: "Were You Once in a Group?", options: ["Yes", "No"], type: "choose" },
+    { title: "Why Did You Leave? (If Yes)", options: ["You were a jerk and the rest of the group voted you out.", "You got caught sleeping around with another member's mainline.", "The rest of the group was killed in a tragic 'accident.'", "The rest of the group was murdered or otherwise broken up by external enemies.", "The group broke up over 'creative differences.'", "You decided to go solo."] }
+  ],
+  Solo: [
+    { title: "What Kind of Solo are You?", options: ["Bodyguard", "Street Muscle for Hire", "Corporate Enforcer who takes jobs on the side", "Corporate or Freelance Black Ops Agent", "Local Vigilante for Hire", "Assassin/Hitman for Hire"] },
+    { title: "What's Your Operational Territory?", options: ["A Corporate Zone", "Combat Zones", "The whole City", "The territory of a single Corporation", "The territory of a particular Fixer or contact", "Wherever the money takes you"] },
+    { title: "Who's Gunning for You?", options: ["A Corporation you may have angered.", "A boostergang you may have tackled earlier.", "Corrupt Lawmen or Lawmen who mistakenly think you're guilty of something.", "A rival Solo from another Corp.", "A Fixer who sees you as a threat.", "A rival Solo who sees you as their nemesis."] },
+    { title: "What's Your Moral Compass Like?", options: ["Always working for good, trying to take out the 'bad guys.'", "Always spare the innocent (elderly, women, children, pets).", "Will occasionally slip and do unethical or bad things, but it's rare.", "Ruthless and profit centered; you will work for anyone, take any job for the money.", "Willing to bend the rules (and the law) to get the job done.", "Totally evil. You engage in illegal, unethical work all the time; in fact, you enjoy it."] }
+  ],
+  Netrunner: [
+    { title: "Got a Partner, or Do You Work Alone?", options: ["Got a Partner", "Work Alone"], type: "choose" },
+    { title: "If You Have a Partner, Who are They?", options: ["Family member", "Old friend", "Possible romantic partner as well", "Secret partner who might be a rogue AI. Might.", "Secret partner with mob/gang connections", "Secret partner with Corporate connections"] },
+    { title: "What Kind of Runner are You?", options: ["Freelancer who will hack for hire.", "Corporate 'clone runner' who hacks for the Man.", "Hacktivist interested in cracking systems and exposing bad guys.", "Just like to crack systems for the fun of it.", "Part of a regular team of freelancers.", "Hack for a Media, politico, or Lawman who hires you as needed."] },
+    { title: "What's Your Workspace Like?", options: ["There are screens everywhere.", "It looks better in Virtuality, you swear.", "It's a filthy bed covered in wires.", "Corporate, modular, and utilitarian.", "Minimalist, clean, and organized.", "It's taken over your entire living space."] },
+    { title: "Who are Some of Your Other Clients?", options: ["Local Fixers who send you clients.", "Local gangers who also protect your work area while you sweep for NET threats.", "Corporate Execs who use you for 'black project' work.", "Local Solos or other combat types who use you to keep their personal systems secure.", "Local Nomads and Fixers who use you to keep their family systems secure.", "You work for yourself and sell whatever data you can find on the NET."] },
+    { title: "Where Do You Get Your Programs?", options: ["Dig around in old abandoned City Zones.", "Steal them from other Netrunners you brain-burn.", "Have a local Fixer supply programs in exchange for hack work.", "Corporate Execs supply you with programs in exchange for your services.", "You have backdoors into a few Corporate warehouses.", "You hit the Night Markets and score programs whenever you can."] },
+    { title: "Who's Gunning for You?", options: ["You think it might be a rogue AI or a NET Ghost. Either way, it's bad news.", "Rival Netrunners who just don't like you.", "Corporates who want you to work for them exclusively.", "Lawmen who consider you an illegal 'black hat' and want to bust you.", "Old clients who think you screwed them over.", "Fixer or another client who wants your services exclusively."] }
+  ],
+  Tech: [
+    { title: "What Kind of Tech are You?", options: ["Cyberware Technician", "Vehicle Mechanic", "Jack of All Trades", "Small Electronics Technician", "Weaponsmith", "Crazy Inventor", "Robot and Drone Mechanic", "Heavy Machinery Mechanic", "Scavenger", "Nautical Mechanic"] },
+    { title: "Got a Partner, or Do You Work Alone?", options: ["Got a Partner", "Work Alone"], type: "choose" },
+    { title: "If You Have a Partner, Who are They?", options: ["Family member", "Old friend", "Possible romantic partner as well", "Mentor", "Secret partner with mob/gang connections", "Secret partner with Corporate connections"] },
+    { title: "What's Your Workspace Like?", options: ["A mess strewn with blueprint paper.", "Everything is color coded, but it's still a nightmare.", "Totally digital and obsessively backed up every day.", "You design everything on your Agent.", "You keep everything just in case you need it later.", "Only you understand your filing system."] },
+    { title: "Who are Your Main Clients?", options: ["Local Fixers who send you clients.", "Local gangers who also protect your work area or home.", "Corporate Execs who use you for 'black project' work.", "Local Solos or other combat types who use you to for weapon upkeep.", "Local Nomads and Fixers who bring you 'found' tech to repair.", "You work for yourself and sell what you invent/repair."] },
+    { title: "Where Do You Get Your Supplies?", options: ["Scavenge the wreckage you find in abandoned City Zones.", "Strip gear from bodies after firefights.", "Have a local Fixer bring you supplies in exchange for repair work.", "Corporate Execs supply you with stuff in exchange for your services.", "You have a backdoor into a few Corporate warehouses.", "You hit the Night Markets and score deals whenever you can."] },
+    { title: "Who's Gunning For You?", options: ["Combat Zone gangers who want you to work for them exclusively.", "Rival Tech trying to steal your customers.", "Corporates who want you to work for them exclusively.", "Larger manufacturer trying to bring you down because your mods are a threat.", "Old client who thinks you screwed them over.", "Rival Tech trying to beat you out for resources and parts."] }
+  ],
+  Medtech: [
+    { title: "What Kind of Medtech are You?", options: ["Surgeon", "General Practitioner", "Trauma Medic", "Psychiatrist", "Cyberpsycho Therapist", "Ripperdoc", "Cryosystems Operator", "Pharmacist", "Bodysculptor", "Forensic Pathologist"] },
+    { title: "What's Your Workspace Like?", options: ["Sterilized daily in the morning like clockwork.", "It's not state-of-the-art anymore, but it's comfortable to you.", "Your cryo equipment is also used to cool drinks.", "Everything possible is single-use and stored compacted until needed.", "Not as clean as many of your patients may have hoped.", "Meticulously organized, sharpened, and sterilized."] },
+    { title: "Got a Partner, or Do You Work Alone?", options: ["Got a Partner", "Work Alone"], type: "choose" },
+    { title: "Tell Us About Your Partner(s)", options: ["Trauma Team group", "Old friend", "Possible romantic partner as well", "Family member", "Secret partner with mob/gang connections", "Secret partner with Corporate connections"] },
+    { title: "Who are Your Main Clients?", options: ["Local Fixers who send you clients.", "Local gangers who also protect your work area or home in exchange for medical help.", "Corporate Execs who use you for 'black project' medical work.", "Local Solos or other combat types who use you for medical help.", "Local Nomads and Fixers who bring you wounded clients.", "Trauma Team paramedical work."] },
+    { title: "Where Do You Get Your Supplies?", options: ["Scavenge stashes of medical supplies you find in abandoned City Zones.", "Strip parts from bodies after firefights.", "Have a local Fixer bring you supplies in exchange for medical work.", "Corporate Execs or Trauma Team supply you with stuff in exchange for your services.", "You have a backdoor into a few Corporate or Hospital warehouses.", "You hit the Night Markets and score deals whenever you can."] }
+  ],
+  Media: [
+    { title: "What Kind of Media are You?", options: ["Blogger", "Writer (Books)", "Videographer", "Documentarian", "Investigative Reporter", "Street Scribe"] },
+    { title: "How Ethical are You?", options: ["Fair, honest reporting, strong ethical practices. You only report the verifiable truth.", "Fair and honest reporting, but willing to go on hearsay and rumor if that's what it takes.", "Will occasionally slip and do unethical things, but it's rare. You have some standards.", "Willing to bend any rules to get the bad guys. But only the bad guys.", "Ruthless and determined to make it big, even if it means breaking the law. You're a muckraker.", "Totally corrupt. You take bribes, engage in illegal, unethical reporting all the time. Your pen is for hire to the highest bidder."] },
+    { title: "How Does Your Work Reach the Public?", options: ["Monthly magazine", "Blog", "Mainstream vid feed", "News channel", "'Book' sales", "Screamsheets"] },
+    { title: "What Types of Stories Do You Want to Tell?", options: ["Political Intrigue", "Ecological Impact", "Celebrity News", "Corporate Takedowns", "Editorials", "Propaganda"] }
+  ],
+  Exec: [
+    { title: "What Kind of Corp Do You Work For?", options: ["Financial", "Media and Communications", "Cybertech and Medical Technologies", "Pharmaceuticals and Biotech", "Food, Clothing, or other General Consumables", "Energy Production", "Personal Electronics and Robotics", "Corporate Services", "Consumer Services", "Real Estate and Construction"] },
+    { title: "What Division Do You Work In?", options: ["Procurement", "Manufacturing", "Research and Development", "Human Resources", "Public Affairs/Publicity/Advertising", "Mergers and Acquisitions"] },
+    { title: "How Good/Bad is Your Corp?", options: ["Always working for good, fully supporting ethical practices.", "Operates as a fair and honest business all the time.", "Will occasionally slip and do unethical things, but it's rare.", "Willing to bend the rules to get what it needs.", "Ruthless and profit-centered, willing to do some bad things.", "Totally evil. Will engage in illegal, unethical business all the time."] },
+    { title: "Current State with Your Boss", options: ["Your Boss mentors you but watch out for their enemies.", "Your Boss gives you a free hand and doesn't want to know what you're up to.", "Your Boss is a micromanager who tries to meddle in your work.", "Your Boss is a psycho whose unpredictable outbursts are offset by quiet paranoia.", "Your Boss is cool and watches your back against rivals.", "Your Boss is threatened by your meteoric rise and is planning to knife you."] },
+    { title: "Where is Your Corp Based?", options: ["One city", "Several cities", "Statewide", "National", "International, offices in a few major cities", "International, offices everywhere"] },
+    { title: "Who's Gunning for Your Group?", options: ["Rival Corp in the same industry.", "Law enforcement is watching you.", "Local Media wants to bring you down.", "Different divisions in your own company are feuding with each other.", "Local government doesn't like your Corp.", "International Corporations are eyeing you for a hostile takeover."] }
+  ],
+  Lawman: [
+    { title: "What is Your Position on the Force?", options: ["Guard", "Standard Beat or Patrol", "Criminal Investigation", "Special Weapons and Tactics", "Motor Patrol", "Internal Affairs"] },
+    { title: "How Wide is Your Group's Jurisdiction?", options: ["Corporate Zones", "Standard City Patrol Zone", "Combat Zones", "Outer City", "Recovery Zones", "Open Highways"] },
+    { title: "How Corrupt is Your Group?", options: ["Fair, honest policing, strong ethical practices.", "Fair and honest policing, but hard on lawbreakers.", "Will occasionally slip and do unethical things, but it's rare.", "Willing to bend any rules to get the bad guys.", "Ruthless and determined to control The Street, even if it means breaking the law.", "Totally corrupt. You take bribes, engage in illegal, and unethical business all the time."] },
+    { title: "Who's Gunning for Your Group?", options: ["Organized Crime", "Boostergangs", "Police Accountability Group", "Dirty Politicians", "Smugglers", "Street Criminals"] },
+    { title: "Who is Your Group's Major Target?", options: ["Organized Crime", "Boostergangs", "Drug Runners", "Dirty Politicians", "Smugglers", "Street Crime"] }
+  ],
+  Fixer: [
+    { title: "What Kind of Fixer are You?", options: ["Broker deals between rival gangs.", "Procure rare or atypical resources for exclusive clientele.", "Specialize in brokering Solo or Tech services as an agent.", "Supply a regular resource for the Night Markets, like food, medicines, or drugs.", "Procure highly illegal resources, like street drugs or milspec weapons.", "Supply resources for Techs and Medtechs, like parts and medical supplies.", "Operate several successful Night Markets, although not as owner.", "Broker use contracts for heavy machinery, military vehicles, and aircraft.", "Broker deals as a fence for scavengers raiding Corps or Combat Zones.", "Act as an exclusive agent for a Media, Rockerboy, or a Nomad Pack."] },
+    { title: "What's Your 'Office' Like?", options: ["You don't have one. You like to keep it mobile.", "A booth in a local bar.", "All Data Pool messages and anonymous dead drops.", "Spare room in a warehouse, shop, or clinic.", "An otherwise abandoned building.", "The lobby of a cube hotel."] },
+    { title: "Got a Partner or Work Alone?", options: ["Got a Partner", "Work Alone"], type: "choose" },
+    { title: "Got a Partner? Who?", options: ["Family member", "Old friend", "Possible romantic partner as well", "Mentor", "Secret partner with mob/gang connections", "Secret partner with Corporate connections"] },
+    { title: "Who are Your Side Clients?", options: ["Local Rockerboys or Medias who use you to get them gigs or contacts.", "Local gangers who also protect your work area or home.", "Corporate Execs who use you for 'black project' procurement work.", "Local Solos or other combat types who use you to get them jobs or contacts.", "Local Nomads and Fixers who use you to set up transactions or deals.", "Local politicos or Execs who depend on you for finding out information."] },
+    { title: "Who's Gunning for You?", options: ["Combat Zone gangers who want you to work for them exclusively.", "Rival Fixers trying to steal your clients.", "Execs who want you to work for them exclusively.", "Enemy of a former client who wants to clean up 'loose ends'—like you.", "Old client who thinks you screwed them over.", "Rival Fixer trying to beat you out for resources and parts."] }
+  ],
+  Nomad: [
+    { title: "How Big is Your Pack?", options: ["A single extended tribe or family", "A couple dozen members", "Forty or fifty members", "A hundred or more members", "A Blood Family (hundreds of members)", "An Affiliated Family (made of several Blood Families)"] },
+    { title: "Is Your Pack Based on Land, Air, or Sea?", options: ["Land", "Air", "Sea"], type: "choose" },
+    { title: "If on Land, What Do They Do?", options: ["Gogang", "Passenger transport", "Chautauqua/school", "Traveling show/carnival", "Migrant farmers", "Cargo transport", "Shipment protection", "Smuggling", "Mercenary army", "Construction work gang"] },
+    { title: "If in Air, What Do They Do?", options: ["Air piracy", "Cargo transport", "Passenger transport", "Aircraft protection", "Smuggling", "Combat support"] },
+    { title: "If at Sea, What Do They Do?", options: ["Piracy", "Cargo transport", "Passenger transport", "Smuggling", "Combat support", "Submarine warfare"] },
+    { title: "What Do You Do for Your Pack?", options: ["Scout (negotiator)", "Outrider (protection, weapons)", "Transport pilot/driver", "Loadmaster (large cargo mover, trucker)", "Solo smuggler", "Procurement (fuel, vehicles, etc.)"] },
+    { title: "What's Your Pack's Overall Philosophy?", options: ["Always working for good; your Pack accepts others, just wants to get along.", "It's more like a family business. Operates as a fair and honest concern.", "Will occasionally slip and do unethical things, but it's rare.", "Willing to bend the rules whenever they get in the way to get what the Pack needs.", "Ruthless and self-centered, willing to do some bad things if it will get the Pack ahead.", "Totally evil. You rage up and down the highways, killing, looting, and just terrorizing everyone."] },
+    { title: "Who's Gunning for Your Pack?", options: ["Organized Crime", "Boostergangs", "Drug Runners", "Dirty Politicians", "Rival Packs in the same businesses", "Dirty Cops"] }
+  ]
+};

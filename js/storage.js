@@ -1,5 +1,13 @@
 // PERSISTENCE — Save/load/delete/export/import
 // ============================================================
+
+/**
+ * saveCharacter(name)
+ * This function takes the current state of the character from the app
+ * and saves it into the browser's built-in "localStorage".
+ * localStorage is like a tiny hard drive inside your web browser that
+ * remembers data even if you refresh or close the page.
+ */
 const saveCharacter = (name) => {
   const data = getCharacterData();
   data._saveName = name;
@@ -9,6 +17,12 @@ const saveCharacter = (name) => {
   return true;
 };
 
+/**
+ * loadCharacter(name)
+ * This function retrieves a saved character from localStorage.
+ * It uses JSON.parse() to turn the raw text back into a usable JavaScript object.
+ * If it fails (or the character doesn't exist), it safely returns null.
+ */
 const loadCharacter = (name) => {
   const key = `cpr_char_${name}`;
   const raw = localStorage.getItem(key);
@@ -20,11 +34,21 @@ const loadCharacter = (name) => {
   }
 };
 
+/**
+ * deleteCharacter(name)
+ * Removes a specific character's saved data from localStorage permanently.
+ */
 const deleteCharacter = (name) => {
   const key = `cpr_char_${name}`;
   localStorage.removeItem(key);
 };
 
+/**
+ * listCharacters()
+ * This function looks through everything saved in the browser's localStorage.
+ * It checks if the saved item's key starts with "cpr_char_" (which means it's a character),
+ * and adds it to a list so the app can display all your saved characters.
+ */
 const listCharacters = () => {
   const chars = [];
   for (let i = 0; i < localStorage.length; i++) {

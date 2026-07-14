@@ -1,6 +1,13 @@
 // ============================================================
 // INIT — Bootstrap and event binding
 // ============================================================
+
+/**
+ * init()
+ * This is the "boot sequence" of the app. When the web page loads,
+ * it runs this function, which triggers all the other initialization functions
+ * to draw the screen (renderStats, renderSkills, etc.) and hook up buttons.
+ */
 const init = () => {
   initState();
   initRoleSelect();
@@ -27,6 +34,11 @@ const init = () => {
   setDefaultValues();
 };
 
+/**
+ * initTabs()
+ * Finds all the tab buttons (Character, Gear, Cyberdeck, etc.) and makes them clickable.
+ * When clicked, it hides all tabs and shows only the one that was clicked.
+ */
 const initTabs = () => {
   const buttons = document.querySelectorAll(".tab-btn");
   for (const btn of buttons) {
@@ -47,6 +59,11 @@ const initTabs = () => {
   }
 };
 
+/**
+ * initWelcome()
+ * Handles the big welcome screen you see when you first open the app.
+ * It waits for a click or tap, and then hides the welcome overlay.
+ */
 const initWelcome = () => {
   const overlay = document.getElementById("welcomeOverlay");
   const startBtn = document.getElementById("welcomeStartBtn");
@@ -66,6 +83,11 @@ const initWelcome = () => {
   startBtn.addEventListener("touchend", (e) => { e.preventDefault(); dismissWelcome(); }, { passive: false });
 };
 
+/**
+ * initCharManager()
+ * Connects all the buttons in the "Save / Load / Manage Characters" popup menu.
+ * (e.g. the Save button runs the saveCharacter() function, Load runs loadCharacter(), etc.)
+ */
 const initCharManager = () => {
   const modal = document.getElementById("characterModal");
   const openBtn = document.getElementById("charactersBtn");
@@ -129,6 +151,10 @@ const initCharManager = () => {
   });
 };
 
+/**
+ * initExportImport()
+ * Hooks up the "Export JSON" and "Import JSON" buttons to their respective functions.
+ */
 const initExportImport = () => {
   document.getElementById("exportBtn").addEventListener("click", exportCharacter);
   document.getElementById("importBtn").addEventListener("click", () => {
@@ -142,6 +168,11 @@ const initExportImport = () => {
   });
 };
 
+/**
+ * initNewChar()
+ * Hooks up the "Random" button (which generates a whole new character instantly)
+ * and the "New" button (which blanks out the character sheet).
+ */
 const initNewChar = () => {
   document.getElementById("randomBtn").addEventListener("click", () => {
     if (!confirm("Generate a random character? Current data will be lost.")) return;
@@ -154,10 +185,19 @@ const initNewChar = () => {
   });
 };
 
+/**
+ * initPrint()
+ * Connects the Print button to the printCharacter() function.
+ */
 const initPrint = () => {
   document.getElementById("printBtn").addEventListener("click", printCharacter);
 };
 
+/**
+ * initSkillSearch()
+ * Adds a "listener" to the skill search text box. As you type, it waits 150 milliseconds 
+ * (to make sure you're done typing) and then redraws the skills list, hiding non-matches.
+ */
 const initSkillSearch = () => {
   let timeout;
   document.getElementById("skillSearch").addEventListener("input", () => {
@@ -168,6 +208,11 @@ const initSkillSearch = () => {
   });
 };
 
+/**
+ * initCurrency()
+ * Makes the Eurobucks +/- buttons work. When you type "500" and click "+/-", 
+ * it adds 500 to your total money. If you type "-500", it subtracts.
+ */
 const initCurrency = () => {
   const btn = document.getElementById("btn_modify_eb");
   const modInput = document.getElementById("modify_eb");
@@ -189,6 +234,11 @@ const initCurrency = () => {
   }
 };
 
+/**
+ * setDefaultValues()
+ * Makes sure that if you load a fresh character, your Hit Points aren't blank.
+ * It calculates your Max HP based on your BODY stat and fills in the current HP.
+ */
 const setDefaultValues = () => {
   const hp = document.getElementById("hp_current");
   if (!hp.value || parseInt(hp.value) === 0) {
@@ -197,4 +247,6 @@ const setDefaultValues = () => {
   }
 };
 
+// This is the magical line that tells the browser: 
+// "When the HTML is fully loaded on the screen, please run the init() function!"
 document.addEventListener("DOMContentLoaded", init);

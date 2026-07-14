@@ -1,44 +1,56 @@
-# Cyberpunk RED Character Generator v3.3
+# Cyberpunk RED Character Generator (Playtest Build v4.0)
 
-A fully self-contained, highly-optimized interactive character manager for **Cyberpunk RED** by R. Talsorian Games. Create, customize, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. No server, no external build tools during runtime, no internet required — just open the compiled `index.html` file in your browser.
+A fully self-contained, highly-optimized interactive character manager for **Cyberpunk RED** by R. Talsorian Games. Create, customize, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. 
 
-## What's New in v3.3
-- **Lifepath Overhaul**: The Lifepath tab has been completely redesigned with standard static dropdowns and container divs for dynamic lists (Friends, Enemies, Lovers).
-- **Core Rulebook Accuracy**: Corrected the SP and Armor Penalty values for all armor to perfectly match the Cyberpunk RED Core Rulebook.
+**No server, no build tools, no internet required.** Just open the single monolith `index.html` file in any modern web browser.
 
-## What's New in v3.2
-- **Recursive Cyberware Options**: Deep nesting support for complex cyberware like the Modular Finger Cyberhand and its Cyberfingers, appearing neatly tucked inside your Cyberarm.
-- **Accurate Nested HC Calculations**: The math engine now recursively sums the Humanity Cost (HC) from deeply nested options.
-- **Creation Point Fixes**: Addressed calculation bugs where points were incorrectly subtracted for free basic skills and corrected language skill rank assignments.
+---
 
-## What's New in v3.1
-- **Random Humanity Cost (HC) Rolls**: Implemented support for random d6 Humanity Cost rolls when installing cyberware based on standard Cyberpunk RED rules.
-- **Mobile Optimizations**: Seamless skill adjustments and localized DOM rendering to improve focus retention and performance on mobile browsers.
-- **Improved Print Layout**: Adjusted the print-friendly layout to display notes before skills and optimized it for physical character sheets with black and white readability.
-- **Stats UI Refinements**: The "points remaining" red bar gracefully vanishes when stats are fully allocated for a cleaner look on ready character sheets.
+## 🚀 Playtest Build Features
+This version introduces massive updates across the board, moving beyond a simple character sheet into a full character management suite.
 
-## What's New in v3.0
-- **Neon Cyberpunk Aesthetic**: A complete visual overhaul introducing a dark theme with vibrant neon highlights, glowing focus rings, and custom monospaced fonts for a truly immersive Cyberpunk feel.
-- **Background Dimming**: Fixed background image support with custom dimming layers to ensure high contrast and readability of the text.
+* **Interactive Role Abilities:** 
+  * Create and manage **Exec** Team Members (with full auto-rolled stats).
+  * Track **Nomad** Family Vehicles & Upgrades.
+  * Handle **Lawman** Backup stats and response times.
+  * Manage **Netrunner** Interface abilities.
+  * Track **Medtech** Pharmaceuticals.
+* **Dynamic Cyberware Tracking:** Automatically handles humanity loss, maximum humanity reduction, and custom slot constraints (e.g., limits you to 7 slots for a Cyberarm).
+* **Comprehensive Lifepath Generation:** Randomize generic and **Role-specific** Lifepaths instantly.
+* **Ammunition Tracking:** Track your remaining rounds and ammo types directly on your sheet.
+* **Seamless Local State Management:** Your character state is saved automatically to your browser's local storage.
 
-## Key Features
-*   **Zero Dependencies**: The `index.html` file works fully offline.
-*   **10 Stats**: Point-buy system support (62 points, min 2 / max 8).
-*   **Automated Derived Stats**: HP, Humanity, EMP, and Death Saves update automatically as stats change or cyberware is installed.
-*   **86 Canonical Skills**: Pre-calculated bases (STAT + Rank), including basic skill categorization.
-*   **Full Gear & Cyberware System**: Tracking Eurobucks, slot requirements (for limbs and neural links), and armor SP.
-*   **Ammunition Consumption**: Track remaining rounds directly on your sheet.
-*   **Lifepath Generator**: Completely randomized 1-click Lifepath tables straight from the core rules.
-*   **LocalStorage Support**: Save and manage an infinite number of characters locally.
-*   **JSON Export/Import**: Easily backup and transfer character JSON files.
-*   **Print-Friendly Layout**: Seamless print styling to generate physical sheets.
+## 🌟 Core Features
+* **10 Stats** with a point-buy system (62 points, min 2 / max 8).
+* **All 10 Roles** with detailed rank-by-rank ability descriptions and deeply integrated mechanical trackers.
+* **Multiclass Support** — take a secondary role once your primary reaches Rank 4.
+* **86 Skills** grouped by linked stat with search, ranks, and item bonuses.
+* **140+ Weapons** mapped accurately to their Cyberpunk RED skills.
+* **Add/Remove Management** with Eurobuck cost deduction for Armor, Cyberware, Fashion & Gear.
+* **Custom Item Entry** for all gear categories.
+* **JSON Export/Import** for sharing characters or backing them up safely.
+* **Print-Friendly Layout:** Optimized for physical character sheets with customizable background dimming.
+* **Mobile-Responsive:** Touch-optimized controls and seamless skill adjustments.
 
-## How to Develop
-This project uses a monolith compilation step to keep development clean while ensuring the final product remains a single, portable HTML file.
+---
 
-1. **Source Files**: Edit the modular files located in `js/` (e.g. `data.js`, `ui.js`, `main.js`, `export.js`) or `css/`.
-2. **Build**: Run `node build.js` in the root directory.
-3. **Deploy**: The script compiles all styles and scripts into a single, offline-ready `index.html`.
+## 🛠️ How to Use (For Players)
+1. Download the `index.html` file.
+2. Double-click to open it in Chrome, Firefox, Edge, Safari, or any modern web browser.
+3. Start creating your Edgerunner!
 
-## Legal
-Cyberpunk RED is a registered trademark of R. Talsorian Games, Inc. This project is an unofficial fan-made tool and is not affiliated with, endorsed, or sponsored by R. Talsorian Games, Inc.
+## 💻 How to Build (For Developers)
+Because this app is designed to be a single, easily-sharable monolith HTML file, the source code is broken down into modular JS, CSS, and HTML files for easy editing. 
+
+To compile your changes into the final `index.html` file:
+1. Ensure you have [Node.js](https://nodejs.org) installed on your system.
+2. Make your edits in the `js/`, `css/`, or `html/` folders (specifically `index_js.html`).
+3. Run the build script in the terminal:
+   ```bash
+   node build.js
+   ```
+4. The script will bundle everything into a fresh `index.html` file in the root directory!
+
+---
+
+*Disclaimer: This is a fan-made project for Cyberpunk RED. Cyberpunk RED is a tabletop roleplaying game created by R. Talsorian Games.*

@@ -1,6 +1,15 @@
+// ============================================================
+// UI AND STATE MANAGEMENT
+// ============================================================
+// This is the largest file in the application. It acts as the "Controller" and "View".
+// It contains the `state` object (which holds your character's current stats, items, etc.)
+// and all the `render...()` functions that take that state and draw HTML on the screen.
+
+// The 'state' object is the live memory of your character. Everything you do updates this.
 let state = {
   stats: {},
   skillRanks: {},
+  subSkillNames: {},
   skillItem: {},
   weapons: [],
   armor: [],
@@ -9,9 +18,14 @@ let state = {
   ammo: {},
   roleSubRanks: {},
   lifepath: { friends: [], enemies: [], lovers: [] },
+  roleLifepath: {},
   currentTab: "tab-character"
 };
 
+/**
+ * initState()
+ * Sets up the default values for a brand new character.
+ */
 function initState() {
   for (let i = 0; i < DATA.stats.length; i++) {
     let s = DATA.stats[i];
@@ -53,6 +67,8 @@ function initRoleSelect() {
   sel.onchange = function() {
     updateSecondaryRoleOptions();
     updateRoleInfo();
+    state.roleLifepath = {}; // reset on role change
+    renderRoleLifepath();
   };
   sel2.onchange = function() { updateRoleInfo(); };
   document.getElementById("multiclass_enabled").onchange = function() {
@@ -153,6 +169,44 @@ function attachRoleSubSkillEvents() {
       }
     });
   }
+  
+  let nomadVehDecs = info.querySelectorAll(".nomad-veh-dec");
+  let nomadVehIncs = info.querySelectorAll(".nomad-veh-inc");
+  let nomadUpgDecs = info.querySelectorAll(".nomad-upg-dec");
+  let nomadUpgIncs = info.querySelectorAll(".nomad-upg-inc");
+
+  function handleNomadChange(isSec, type, delta, rank) {
+    let vehKey = isSec ? "nomadMotoVeh2" : "nomadMotoVeh";
+    let upgKey = isSec ? "nomadMotoUpg2" : "nomadMotoUpg";
+    let veh = state[vehKey] || 0;
+    let upg = state[upgKey] || 0;
+    
+    if (type === 'veh') {
+      if (delta < 0 && veh > 0) state[vehKey]--;
+      else if (delta > 0 && (veh + upg) < rank) state[vehKey]++;
+    } else {
+      if (delta < 0 && upg > 0) state[upgKey]--;
+      else if (delta > 0 && (veh + upg) < rank) state[upgKey]++;
+    }
+    updateRoleInfo();
+  }
+
+  nomadVehDecs.forEach(btn => btn.addEventListener("click", function(e) {
+    e.preventDefault();
+    handleNomadChange(this.getAttribute("data-sec") === "true", 'veh', -1);
+  }));
+  nomadVehIncs.forEach(btn => btn.addEventListener("click", function(e) {
+    e.preventDefault();
+    handleNomadChange(this.getAttribute("data-sec") === "true", 'veh', 1, parseInt(this.getAttribute("data-rank")));
+  }));
+  nomadUpgDecs.forEach(btn => btn.addEventListener("click", function(e) {
+    e.preventDefault();
+    handleNomadChange(this.getAttribute("data-sec") === "true", 'upg', -1);
+  }));
+  nomadUpgIncs.forEach(btn => btn.addEventListener("click", function(e) {
+    e.preventDefault();
+    handleNomadChange(this.getAttribute("data-sec") === "true", 'upg', 1, parseInt(this.getAttribute("data-rank")));
+  }));
 }
 
 function updateRoleInfo() {
@@ -179,6 +233,29 @@ function updateRoleInfo() {
   if (role && role.subSkills) {
     html += renderRoleSubSkills(role, abilityRank);
   }
+  if (role && role.id === "nomad") {
+    let veh = state.nomadMotoVeh || 0;
+    let upg = state.nomadMotoUpg || 0;
+    if (veh + upg > abilityRank) { veh = abilityRank; upg = 0; }
+    state.nomadMotoVeh = veh; state.nomadMotoUpg = upg;
+    html += '<div style="margin-top: 5px; font-size: 0.85rem; padding: 5px; border: 1px solid var(--border); border-radius: 4px; background: rgba(0,0,0,0.3);">' +
+      '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom:4px;">' +
+      '<span>Family Vehicles:</span>' +
+      '<div style="display:flex; align-items:center;">' +
+      '<button class="nomad-veh-dec btn" data-sec="false" style="padding:2px 6px;">-</button>' +
+      '<span style="display:inline-block; width:1.5rem; text-align:center; font-weight:bold; font-family:var(--font-mono);">' + veh + '</span>' +
+      '<button class="nomad-veh-inc btn" data-sec="false" data-rank="' + abilityRank + '" style="padding:2px 6px;">+</button>' +
+      '</div></div>' +
+      '<div style="display: flex; justify-content: space-between; align-items: center;">' +
+      '<span>Upgrades:</span>' +
+      '<div style="display:flex; align-items:center;">' +
+      '<button class="nomad-upg-dec btn" data-sec="false" style="padding:2px 6px;">-</button>' +
+      '<span style="display:inline-block; width:1.5rem; text-align:center; font-weight:bold; font-family:var(--font-mono);">' + upg + '</span>' +
+      '<button class="nomad-upg-inc btn" data-sec="false" data-rank="' + abilityRank + '" style="padding:2px 6px;">+</button>' +
+      '</div></div>' +
+      '<div style="text-align:right; margin-top:4px; font-size:0.75rem; color:' + ((veh + upg) === abilityRank ? 'var(--accent)' : 'var(--text)') + ';">Total Allocated: ' + (veh + upg) + ' / ' + abilityRank + '</div>' +
+      '</div>';
+  }
   
   if (role2) {
     let rank2 = parseInt(document.getElementById("role_secondary_rank").value) || 1;
@@ -189,6 +266,29 @@ function updateRoleInfo() {
     if (role2.subSkills) {
       html += renderRoleSubSkills(role2, rank2);
     }
+    if (role2.id === "nomad") {
+      let veh = state.nomadMotoVeh2 || 0;
+      let upg = state.nomadMotoUpg2 || 0;
+      if (veh + upg > rank2) { veh = rank2; upg = 0; }
+      state.nomadMotoVeh2 = veh; state.nomadMotoUpg2 = upg;
+      html += '<div style="margin-top: 5px; font-size: 0.85rem; padding: 5px; border: 1px solid var(--border); border-radius: 4px; background: rgba(0,0,0,0.3);">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom:4px;">' +
+        '<span>Family Vehicles:</span>' +
+        '<div style="display:flex; align-items:center;">' +
+        '<button class="nomad-veh-dec btn" data-sec="true" style="padding:2px 6px;">-</button>' +
+        '<span style="display:inline-block; width:1.5rem; text-align:center; font-weight:bold; font-family:var(--font-mono);">' + veh + '</span>' +
+        '<button class="nomad-veh-inc btn" data-sec="true" data-rank="' + rank2 + '" style="padding:2px 6px;">+</button>' +
+        '</div></div>' +
+        '<div style="display: flex; justify-content: space-between; align-items: center;">' +
+        '<span>Upgrades:</span>' +
+        '<div style="display:flex; align-items:center;">' +
+        '<button class="nomad-upg-dec btn" data-sec="true" style="padding:2px 6px;">-</button>' +
+        '<span style="display:inline-block; width:1.5rem; text-align:center; font-weight:bold; font-family:var(--font-mono);">' + upg + '</span>' +
+        '<button class="nomad-upg-inc btn" data-sec="true" data-rank="' + rank2 + '" style="padding:2px 6px;">+</button>' +
+        '</div></div>' +
+        '<div style="text-align:right; margin-top:4px; font-size:0.75rem; color:' + ((veh + upg) === rank2 ? 'var(--accent)' : 'var(--text)') + ';">Total Allocated: ' + (veh + upg) + ' / ' + rank2 + '</div>' +
+        '</div>';
+    }
   }
   info.innerHTML = html;
   attachRoleSubSkillEvents();
@@ -197,6 +297,12 @@ function updateRoleInfo() {
 // ============================================================
 // RENDER — All DOM rendering functions
 // ============================================================
+/**
+ * renderStats()
+ * Loops through the 10 core stats in DATA.stats and builds the input boxes you see on screen.
+ * It also attaches an "onchange" event so that when you type a new number, it saves it
+ * to `state.stats` and immediately recalculates your derived stats (like HP and Humanity).
+ */
 function renderStats() {
   let container = document.getElementById("stats_container");
   container.innerHTML = "";
@@ -266,6 +372,11 @@ function updateStatPointsBar() {
   }
 }
 
+/**
+ * renderSkills()
+ * This massive function builds the entire Skills table. It groups skills by their linked STAT,
+ * calculates your total skill base (Stat + Ranks + Cyberware), and builds the + and - buttons.
+ */
 function renderSkills() {
   let tbody = document.getElementById("skills_body");
   let search = (document.getElementById("skillSearch").value || "").toLowerCase();
@@ -278,6 +389,7 @@ function renderSkills() {
     for (let j = 0; j < skillList.length; j++) {
         let skill = skillList[j];
         let name = skill.name;
+        if (skill.ipMult === 2) name += ' <span style="color:var(--accent);font-size:0.75rem;font-weight:bold">(x2)</span>';
         if (search && name.toLowerCase().indexOf(search) === -1) continue;
         
         let statVal = getEffectiveStat(statId);
@@ -358,7 +470,7 @@ function calcCreationPointsUsed() {
       let item = DATA._index.skillById[baseId];
       if (!item) continue;
       
-      let r = state.skillRanks[sid] || 0;
+      let r = parseInt(state.skillRanks[sid]) || 0;
       let mult = item.skill.ipMult || 1;
       
       if (baseId === "language") {
@@ -445,6 +557,10 @@ function updateSkillRow(id) {
 function attachSkillEvents() {
     let subnames = document.querySelectorAll(".subskill-name");
     for (let i = 0; i < subnames.length; i++) {
+      subnames[i].oninput = function() {
+        if (!state.subSkillNames) state.subSkillNames = {};
+        state.subSkillNames[this.dataset.sub] = this.value;
+      };
       subnames[i].onchange = function() {
         if (!state.subSkillNames) state.subSkillNames = {};
         state.subSkillNames[this.dataset.sub] = this.value;
@@ -520,6 +636,11 @@ function attachSkillEvents() {
   }
 }
 
+/**
+ * renderHealth()
+ * Recalculates and displays your Hit Points based on your BODY and WILL stats.
+ * It also determines your "Seriously Wounded" threshold and Death Save number.
+ */
 function renderHealth() {
   let body = state.stats.body || 2;
   let will = state.stats.will || 2;
@@ -662,6 +783,12 @@ function renderArmor() {
   }
 }
 
+/**
+ * renderCyberware()
+ * Builds the Cyberware table. This function is particularly complex because it 
+ * handles "slots" (e.g., a Cybereye has 3 slots for options like Anti-Dazzle or Infrared).
+ * It uses a recursive helper function `renderCyberwareSlot` to draw options inside options.
+ */
 function renderCyberware() {
   let tbody = document.getElementById("cyberware_body");
   tbody.innerHTML = "";
@@ -1140,6 +1267,65 @@ function randomLifepath() {
   }
   
   renderLifepathLists();
+  randomRoleLifepath();
+}
+
+function renderRoleLifepath() {
+  let container = document.getElementById("role_lifepath_container");
+  let content = document.getElementById("role_lifepath_content");
+  if (!container || !content) return;
+  
+  let roleId = document.getElementById("role_select").value;
+  let roleData = null;
+  for (let i = 0; i < DATA.roles.length; i++) {
+    if (DATA.roles[i].id === roleId) roleData = DATA.roles[i];
+  }
+  
+  if (!roleData || !DATA.roleLifepath || !DATA.roleLifepath[roleData.name]) {
+    container.style.display = "none";
+    return;
+  }
+  
+  container.style.display = "block";
+  let questions = DATA.roleLifepath[roleData.name];
+  let html = "";
+  for (let i = 0; i < questions.length; i++) {
+    let q = questions[i];
+    let val = state.roleLifepath[i] || "";
+    html += '<label>' + q.title + ' <select class="role-lp-sel" data-idx="' + i + '">';
+    html += '<option value="">-- Choose --</option>';
+    for (let j = 0; j < q.options.length; j++) {
+      let opt = q.options[j];
+      let selected = (val === opt) ? " selected" : "";
+      html += '<option value="' + opt + '"' + selected + '>' + opt + '</option>';
+    }
+    html += '</select></label>';
+  }
+  content.innerHTML = html;
+  
+  let selects = content.querySelectorAll(".role-lp-sel");
+  for (let i = 0; i < selects.length; i++) {
+    selects[i].onchange = function() {
+      state.roleLifepath[this.dataset.idx] = this.value;
+    };
+  }
+}
+
+function randomRoleLifepath() {
+  let roleId = document.getElementById("role_select").value;
+  let roleData = null;
+  for (let i = 0; i < DATA.roles.length; i++) {
+    if (DATA.roles[i].id === roleId) roleData = DATA.roles[i];
+  }
+  
+  if (!roleData || !DATA.roleLifepath || !DATA.roleLifepath[roleData.name]) return;
+  
+  let questions = DATA.roleLifepath[roleData.name];
+  for (let i = 0; i < questions.length; i++) {
+    let q = questions[i];
+    state.roleLifepath[i] = q.options[Math.floor(Math.random() * q.options.length)];
+  }
+  renderRoleLifepath();
 }
 
 // ============================================================
@@ -1405,6 +1591,12 @@ function showItemSelector(type, items, callback, groupBy) {
   document.body.appendChild(overlay);
 }
 
+/**
+ * updateAllDerived()
+ * This is the ultimate "refresh" function. Whenever you add a piece of cyberware, 
+ * change a stat, or equip armor, this function is called to update EVERYTHING on the 
+ * screen that might have changed (HP, Humanity, Skills, UI tabs, etc.).
+ */
 function updateAllDerived() {
   renderHealth();
   renderHumanity();
@@ -1421,6 +1613,11 @@ function updateAllDerived() {
   }
 }
 
+/**
+ * getCharacterData()
+ * Packages up everything in the `state` object, cleans it up, and prepares it 
+ * to be saved to localStorage or exported as a JSON file.
+ */
 function getCharacterData() {
   let data = {
     handle: document.getElementById("char_handle").value,
@@ -1454,11 +1651,18 @@ function getCharacterData() {
       friends: JSON.parse(JSON.stringify(state.lifepath.friends || [])),
       enemies: JSON.parse(JSON.stringify(state.lifepath.enemies || [])),
       lovers: JSON.parse(JSON.stringify(state.lifepath.lovers || []))
-    }
+    },
+    roleLifepath: JSON.parse(JSON.stringify(state.roleLifepath || {}))
   };
   return data;
 }
 
+/**
+ * loadCharacterData(data)
+ * The exact opposite of getCharacterData(). It takes a saved character object, 
+ * injects it back into the live `state` object, and tells the UI to completely 
+ * redraw itself to show the newly loaded character.
+ */
 function loadCharacterData(data) {
   let cb = document.getElementById("toggle_creation_mode");
   if (cb) { cb.checked = false; toggleCreationMode(false); }
@@ -1512,6 +1716,8 @@ function loadCharacterData(data) {
     state.lifepath.lovers = [];
   }
   renderLifepathLists();
+  state.roleLifepath = data.roleLifepath || {};
+  renderRoleLifepath();
   renderStats();
   renderSkills();
   renderWeapons();
@@ -1545,6 +1751,8 @@ function resetCharacter() {
   }
   state.lifepath = { friends: [], enemies: [], lovers: [] };
   renderLifepathLists();
+  state.roleLifepath = {};
+  renderRoleLifepath();
   state.skillRanks = {};
   state.skillItem = {};
     state.subSkillNames = {};
@@ -1568,6 +1776,16 @@ function resetCharacter() {
   updateStatPointsBar();
 }
 
+/**
+ * generateRandomCharacter()
+ * The magic "Random" button. This function follows the exact Cyberpunk Red 
+ * Complete Package rules to automatically build a playable character:
+ * 1. Rolls exactly 62 points of stats.
+ * 2. Assigns mandatory minimum skill ranks (including the 4 free Language points).
+ * 3. Randomly distributes the remaining 86 points into skills.
+ * 4. Rolls a random lifepath.
+ * 5. Re-renders the entire screen!
+ */
 function generateRandomCharacter() {
   resetCharacter();
   let roleIdx = Math.floor(Math.random() * DATA.roles.length);
@@ -1598,13 +1816,16 @@ function generateRandomCharacter() {
   }
   // Language (Streetslang) gets 4 ranks minimum (first 4 are free)
   state.skillRanks["language_1"] = 4;
+  if (!state.subSkillNames) state.subSkillNames = {};
+  state.subSkillNames["language_1"] = "Streetslang";
+  state.subSkillNames["local_expert_1"] = "Your Home";
   
   // 2. Randomly allocate the remaining points until we reach 86
   let sp = 86 - calcCreationPointsUsed();
   
   // In case some skills cost x2, we need a fallback to prevent infinite loops if only 1 point is left
   let attempts = 0; 
-  while (sp > 0 && attempts < 1000) {
+  while (sp > 0 && attempts < 2000) {
     attempts++;
     let sk = allSks[Math.floor(Math.random() * allSks.length)];
     let targetId = sk.subs ? sk.id + "_1" : sk.id;
@@ -1613,7 +1834,7 @@ function generateRandomCharacter() {
     // Max 6 ranks at character creation
     if (currentRank < 6) {
       let mult = sk.ipMult || 1;
-      // Also language past rank 4 costs points
+      // If we don't have enough points for x2, find another
       if (sp >= mult) {
         state.skillRanks[targetId] = currentRank + 1;
         sp -= mult;
@@ -1628,10 +1849,22 @@ function generateRandomCharacter() {
   state.armor.push({id:a.id,name:a.name,sp:a.sp,slots:a.slots,enc:a.enc,cost:a.cost||0});
   let gIds=["agent","flashlight","rope","duct_tape","first_aid_kit"];
   for (let g=0;g<gIds.length;g++) { let gi=DATA.gear.find(function(x){return x.id===gIds[g];}); if (gi) state.gear.push({id:gi.id,name:gi.name,cost:gi.cost,cat:gi.cat||"Gear",qty:1}); }
-  document.getElementById("hp_current").value=calcHitsMax(state.stats.body||2);
-  renderStats();renderSkills();renderWeapons();renderArmor();renderCyberware();renderGear();renderAmmoTracker();
-  updateAllDerived();updateStatPointsBar();updateCreationPoints();updateRoleInfo();
+  document.getElementById("hp_current").value = calcHitsMax(state.stats.body || 2, state.stats.will || 2);
+  
+  try { renderStats(); } catch(e) {}
+  try { renderSkills(); } catch(e) {}
+  try { renderWeapons(); } catch(e) {}
+  try { renderArmor(); } catch(e) {}
+  try { renderCyberware(); } catch(e) {}
+  try { renderGear(); } catch(e) {}
+  try { renderAmmoTracker(); } catch(e) {}
+  
+  try { updateAllDerived(); } catch(e) {}
+  try { updateStatPointsBar(); } catch(e) {}
+  try { updateCreationPoints(); } catch(e) {}
+  try { updateRoleInfo(); } catch(e) {}
 }
+
 // ============================================================
 
 // ============================================================

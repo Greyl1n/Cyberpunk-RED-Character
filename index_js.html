@@ -20,7 +20,7 @@
 <div class="scanline-overlay"></div>
 <input type="checkbox" id="dismissWelcome" style="display:none">
 <header>
-<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v3.3</span></div></div>
+<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v3.5</span></div></div>
 <div class="header-actions">
 <button id="charactersBtn" class="btn-action">&#128194; Characters</button>
 <button id="importBtn" class="btn-action">&#128229; Import</button>
@@ -159,6 +159,11 @@
 
 <button id="lp_random_btn" class="btn-action mt-1" style="width:100%; padding:0.5rem; font-size:1.1rem">&#127922; Randomise Entire Lifepath</button>
 </div>
+
+<div id="role_lifepath_container" class="section-card" style="display:none; margin-top:1rem;">
+  <h2 class="section-title">Role-Based Lifepath</h2>
+  <div id="role_lifepath_content" class="grid-3 mt-1"></div>
+</div>
 </section>
 
 <!-- ===== TAB: GEAR ===== -->
@@ -282,22 +287,23 @@
 </section>
 <section id="tab-about" class="tab-panel">
 <div class="section-card">
-<h2 class="section-title">About Cyberpunk RED Generator</h2>
-<p style="margin-bottom:0.8rem;line-height:1.7">A fully self-contained, highly-optimised interactive character manager for <strong>Cyberpunk RED</strong> by R. Talsorian Games. Create, customise, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. No server, no build tools, no internet — just open the file.</p>
-        <p style="margin-bottom:0.8rem;line-height:1.7">The <strong>v3.3 Update</strong> completely overhauls the Lifepath tab with standard static dropdowns and dynamic lists for Friends, Enemies, and Lovers. It also brings the SP and Armor Penalty values for all armor directly in line with the Cyberpunk RED Core Rulebook.</p>
-        <p style="margin-bottom:0.8rem;line-height:1.7">The <strong>v3.2 Update</strong> introduces recursive Cyberware options (such as the Modular Finger Cyberhand and its cyberfingers) with accurate nested Humanity Cost calculations, and resolves various point calculation bugs during character creation.</p>
+<h2 class="section-title">About Cyberpunk RED Generator (Playtest Build)</h2>
+<p style="margin-bottom:0.8rem;line-height:1.7">A fully self-contained, highly-optimised interactive character manager for <strong>Cyberpunk RED</strong> by R. Talsorian Games. Create, customise, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. No server, no build tools, no internet - just open the single monolith HTML file in any browser.</p>
+<p style="margin-bottom:0.8rem;line-height:1.7"><strong>Welcome to the Playtest Build!</strong> This version introduces massive updates across the board, moving beyond a simple character sheet into a full character management suite. Key updates include deeply interactive Role Abilities (Exec Team Members, Nomad Vehicle tracking, Lawman Backup, Medtech Pharmaceuticals, Netrunner Interface, and more), fully integrated Cyberware humanity and slot tracking, overhauled generic and Role-specific Lifepaths, Ammunition tracking, and seamless local state management.</p>
 <h3 style="margin:1rem 0 0.4rem">Features</h3>
 <ul style="line-height:1.8;padding-left:1.2rem">
 <li>10 Stats with point-buy system (62 points, min 2 / max 8)</li>
-<li>All 10 Roles with detailed rank-by-rank ability descriptions</li>
-<li>Multiclass support — take a secondary role once your primary reaches Rank 4</li>
+<li>All 10 Roles with detailed rank-by-rank ability descriptions and deeply integrated mechanical trackers</li>
+<li>Interactive Role Abilities: Create and manage Exec Team Members, track Nomad Family Vehicles & Upgrades, handle Lawman Backup stats, manage Netrunner Interface abilities, and track Medtech Pharmaceuticals</li>
+<li>Multiclass support - take a secondary role once your primary reaches Rank 4</li>
 <li>86 Skills grouped by linked stat with search, ranks, and item bonuses</li>
 <li>140+ Weapons mapped accurately to their Cyberpunk RED skills (e.g. Shoulder Arms, Handgun, Heavy Weapons)</li>
 <li>Add/remove management with cost deduction for Armor, Cyberware, Fashion &amp; Gear</li>
-<li>Ammunition Consumption — track remaining rounds directly on your sheet</li>
+<li>Ammunition Consumption - track remaining rounds directly on your sheet</li>
+<li>Dynamic Cyberware Tracking: automatically handles humanity loss, maximum humanity reduction, and custom slot constraints (e.g. 7 slots for a Cyberarm)</li>
 <li>Custom item entry for all gear categories</li>
 <li>Categorised item selectors grouped logically</li>
-<li>Lifepath generation with randomise button</li>
+<li>Full Lifepath generation (Generic and Role-specific) with randomise button</li>
 <li>Character save/load/delete (localStorage), JSON export/import</li>
 <li>Combined print layout optimised for physical character sheets</li>
 <li>Random character generator — one-click complete, playable character</li>
@@ -306,7 +312,6 @@
 <li>Optimised mobile styling with seamless skill adjustments</li>
 <li>Polished print-friendly layout with customisable background dimming</li>
 <li>Mobile-responsive layout with touch-optimised controls</li>
-<li>Single-file or Modular modes — zero external dependencies, works offline</li>
 </ul>
 <h3 style="margin:1rem 0 0.4rem">Source Material</h3>
 <p style="line-height:1.8">
