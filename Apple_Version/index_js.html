@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="Interactive character manager for Cyberpunk RED — stats, skills, gear, cyberware, lifepath, and more.">
+<title>Cyberpunk RED Character Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- ===== STYLES ===== -->
+<style>
+/* Inline styles have been removed. All rules are now in base.css and themes. */
+</style>
+<link href="css/base.css" rel="stylesheet">
+<link id="theme" href="css/theme-dark.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<!-- ===== BODY / HEADER ===== -->
+<body>
+<div class="scanline-overlay"></div>
+<input type="checkbox" id="dismissWelcome" style="display:none">
+<header>
+<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v3.5</span></div></div>
+<div class="header-actions">
+<button id="charactersBtn" class="btn-action">&#128194; Characters</button>
+<button id="importBtn" class="btn-action">&#128229; Import</button>
+<input id="importFile" type="file" accept=".json" style="display:none">
+<button id="exportBtn" class="btn-action">&#128228; Export</button>
+<button id="printBtn" class="btn-action">&#128424; Print</button>
+<button id="randomBtn" class="btn-action">&#127922; Random</button>
+<button id="newCharBtn" class="btn-action">&#10024; New</button>
+</div>
+</header>
+
+<!-- ===== TAB NAVIGATION ===== -->
+<nav id="tabs" class="tabs-nav">
+<button class="tab-btn active" data-tab="tab-character"><img src="src/icons/character.jpg" class="tab-icon"> Character</button>
+<button class="tab-btn" data-tab="tab-gear"><img src="src/icons/gear.jpg" class="tab-icon"> Gear</button>
+<button class="tab-btn" data-tab="tab-cyberdeck"><img src="src/icons/cyberdeck.jpg" class="tab-icon"> Cyberdeck</button>
+<button class="tab-btn" data-tab="tab-notes"><img src="src/icons/notes.jpg" class="tab-icon"> Notes</button>
+<button class="tab-btn" data-tab="tab-about"><img src="src/icons/about.jpg" class="tab-icon"> About</button>
+</nav>
+
+<!-- ===== WELCOME / SPLASH OVERLAY ===== -->
+<div id="welcomeOverlay" class="welcome-overlay">
+<div class="welcome-card">
+<h1 class="welcome-title">&#9881; Cyberpunk RED Generator</h1>
+<p class="welcome-subtitle">Interactive Character Manager for Cyberpunk RED</p>
+<div class="welcome-tabs">
+<div class="welcome-tab"><strong><img src="src/icons/character.jpg" class="tab-icon" style="box-shadow:none; border-color:transparent"> Character</strong> — Stats, role, skills, health, humanity, and lifepath generation</div>
+<div class="welcome-tab"><strong><img src="src/icons/gear.jpg" class="tab-icon" style="box-shadow:none; border-color:transparent"> Gear</strong> — Weapons, armor, cyberware, fashion, equipment, currency tracking, and ammunition consumption</div>
+</div>
+<label for="dismissWelcome" id="welcomeStartBtn" class="btn-welcome">&#9654; Get Started</label>
+</div>
+</div>
+<script>document.getElementById('welcomeOverlay').addEventListener('click',function(e){if(e.target===this||e.target.id==='welcomeStartBtn'){this.style.display='none';this.classList.add('hidden')}})</script>
+<main class="main-content">
+
+<!-- ===== TAB: CHARACTER ===== -->
+<section id="tab-character" class="tab-panel active">
+<div class="section-card">
+<h2 class="section-title">Identity & Role</h2>
+<div class="grid-3">
+<label>Handle <input id="char_handle" type="text" placeholder="Your street name"></label>
+<label>Real Name <input id="char_name" type="text" placeholder="Legal name"></label>
+            <label>Role <select id="role_select"></select></label>
+<label>Role Ability Rank <input id="role_ability_rank" type="number" value="4" min="1" max="10"></label>
+<label>Age <input id="char_age" type="number" value="22" min="16" max="99"></label>
+<label>Improvement Points <input id="char_ip" type="number" value="0"></label>
+</div>
+<div id="role_info" class="role-info mt-1"></div>
+<div id="multiclass_section" class="mt-1" style="border-top:1px dashed var(--border);padding-top:0.5rem">
+<div class="flex-row" style="gap:0.5rem;align-items:center">
+<label style="flex-direction:row;gap:0.3rem;align-items:center;font-size:0.85rem"><input id="multiclass_enabled" type="checkbox"> Multiclass</label>
+</div>
+<div id="multiclass_fields" style="display:none;margin-top:0.4rem" class="grid-3">
+<label>Secondary Role <select id="role_secondary_select"></select></label>
+<label>Secondary Rank <input id="role_secondary_rank" type="number" value="1" min="1" max="10"></label>
+</div>
+</div>
+</div>
+
+<div class="grid-split">
+<div class="section-card">
+<h2 class="section-title">Stats</h2>
+<div id="stat_points_bar" class="stat-points-bar">Points Remaining: <span id="stat_points_remaining">10</span></div>
+<div id="stats_container" class="stat-grid mt-1"></div>
+</div>
+<div class="section-card">
+<h2 class="section-title">Health & Humanity</h2>
+<div class="grid-2">
+<label>Hit Points (Max) <input id="hp_max" type="number" readonly class="readonly-input"></label>
+<label>Current HP <input id="hp_current" type="number"></label>
+<label>Seriously Wounded <input id="hp_seriously" type="number" readonly class="readonly-input"></label>
+<label>Death Save &le; <input id="hp_death" type="number" readonly class="readonly-input"></label>
+</div>
+<div class="grid-2 mt-1">
+<label>Humanity (Max) <input id="hum_max" type="number" readonly class="readonly-input"></label>
+<label>Current Humanity <input id="hum_current" type="number" readonly class="readonly-input"></label>
+<label>Current EMP (from Humanity) <input id="hum_emp" type="number" readonly class="readonly-input" style="font-weight:700"></label>
+<label>Cyberware HC Total <input id="hum_hc_total" type="number" readonly class="readonly-input"></label>
+</div>
+</div>
+</div>
+
+<div class="section-card">
+<h2 class="section-title">Skills</h2>
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1rem;">
+<input id="skillSearch" class="skill-search" type="text" placeholder="Search skills...">
+<div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+  <label style="font-size:0.85rem; display:flex; align-items:center; gap:0.5rem; cursor:pointer; background:var(--bg-card); padding:0.2rem 0.5rem; border-radius:4px; border:1px solid var(--border);">
+    <input type="checkbox" id="toggle_creation_mode">
+    Creation Mode
+  </label>
+  <span id="creation_points_display" style="display:none; font-size:0.85rem; font-weight:bold; color:var(--accent); background:var(--bg-card); padding:0.2rem 0.5rem; border-radius:4px; border:1px solid var(--border);">Starting Points: <span id="creation_points_val">86</span> / 86</span>
+  <span style="font-size:0.85rem;opacity:0.7">Skill = Stat Bonus + Ranks</span>
+</div>
+</div>
+<div class="table-responsive scrollable-table mt-1">
+<table class="premium-table">
+<thead><tr><th>Skill</th><th>Stat</th><th>Stat Bonus</th><th>Ranks</th><th>Item</th><th>Cyber</th><th>Total</th></tr></thead>
+<tbody id="skills_body"></tbody>
+</table>
+</div>
+</div>
+
+<div class="section-card">
+<h2 class="section-title">Lifepath</h2>
+<div class="grid-3">
+<label>Cultural Origin <select id="lp_culturalOrigins"></select></label>
+<label>Personality <select id="lp_personality"></select></label>
+<label>Clothing Style <select id="lp_clothingStyle"></select></label>
+<label>Hairstyle <select id="lp_hairstyle"></select></label>
+<label>Affectation <select id="lp_affectation"></select></label>
+<label>Value Most <select id="lp_valueMost"></select></label>
+<label>Feel About People <select id="lp_feelAboutPeople"></select></label>
+<label>Valued Person <select id="lp_valuedPerson"></select></label>
+<label>Valued Possession <select id="lp_valuedPossession"></select></label>
+<label>Family Background <select id="lp_familyBackground"></select></label>
+<label>Childhood Environment <select id="lp_childhoodEnvironment"></select></label>
+<label>Family Crisis <select id="lp_familyCrisis"></select></label>
+<label>Life Goals <select id="lp_lifeGoals"></select></label>
+</div>
+
+<div class="grid-split mt-1">
+  <div class="section-card" style="padding:1rem; border:1px solid var(--border); background:var(--bg)">
+    <div class="flex-header" style="display:flex; justify-content:space-between; align-items:center"><h3 style="font-size:1.1rem; margin:0">Friends</h3><button id="add_lp_friend_btn" class="btn-action">+ Add Friend</button></div>
+    <div id="lp_friends_container" class="mt-1" style="display:flex; flex-direction:column; gap:0.5rem"></div>
+  </div>
+  <div class="section-card" style="padding:1rem; border:1px solid var(--border); background:var(--bg)">
+    <div class="flex-header" style="display:flex; justify-content:space-between; align-items:center"><h3 style="font-size:1.1rem; margin:0">Enemies</h3><button id="add_lp_enemy_btn" class="btn-action">+ Add Enemy</button></div>
+    <div id="lp_enemies_container" class="mt-1" style="display:flex; flex-direction:column; gap:0.5rem"></div>
+  </div>
+</div>
+<div class="section-card mt-1" style="padding:1rem; border:1px solid var(--border); background:var(--bg)">
+  <div class="flex-header" style="display:flex; justify-content:space-between; align-items:center"><h3 style="font-size:1.1rem; margin:0">Tragic Love Affairs</h3><button id="add_lp_lover_btn" class="btn-action">+ Add Affair</button></div>
+  <div id="lp_lovers_container" class="mt-1" style="display:flex; flex-direction:column; gap:0.5rem"></div>
+</div>
+
+<button id="lp_random_btn" class="btn-action mt-1" style="width:100%; padding:0.5rem; font-size:1.1rem">&#127922; Randomise Entire Lifepath</button>
+</div>
+
+<div id="role_lifepath_container" class="section-card" style="display:none; margin-top:1rem;">
+  <h2 class="section-title">Role-Based Lifepath</h2>
+  <div id="role_lifepath_content" class="grid-3 mt-1"></div>
+</div>
+</section>
+
+<!-- ===== TAB: GEAR ===== -->
+<section id="tab-gear" class="tab-panel">
+<div class="grid-split">
+<div class="section-card">
+<div class="flex-header"><h2 class="section-title">Weapons</h2><button id="add_weapon_btn" class="btn-action">+ Add Weapon</button></div>
+<div class="table-responsive">
+<table class="premium-table">
+<thead><tr><th>Weapon</th><th>Dmg</th><th>RoF</th><th>Mag</th><th>Skill</th><th>Total</th><th></th></tr></thead>
+<tbody id="weapons_body"></tbody>
+</table>
+</div>
+</div>
+<div class="section-card">
+<div class="flex-header"><h2 class="section-title">Armor</h2><button id="add_armor_btn" class="btn-action">+ Add Armor</button></div>
+<div class="table-responsive">
+<table class="premium-table">
+<thead><tr><th>Armor</th><th>SP</th><th>Slots</th><th>Enc</th><th></th></tr></thead>
+<tbody id="armor_body"></tbody>
+</table>
+</div>
+<div class="mt-1" style="font-weight:600">Total SP (Body): <span id="armor_total_sp_body">0</span> | Total SP (Head): <span id="armor_total_sp_head">0</span></div>
+</div>
+</div>
+<div class="grid-split mt-1">
+<div class="section-card">
+<div class="flex-header"><h2 class="section-title">Cyberware</h2><button id="add_cyberware_btn" class="btn-action">+ Add Cyberware</button></div>
+<div class="table-responsive">
+<table class="premium-table">
+<thead><tr><th>Cyberware</th><th>Type</th><th>HC</th><th>Cost</th><th>Bonuses</th><th>Description</th><th></th></tr></thead>
+<tbody id="cyberware_body"></tbody>
+</table>
+</div>
+</div>
+<div class="section-card">
+<div class="flex-header"><h2 class="section-title">Fashion & Gear</h2><button id="add_gear_btn" class="btn-action">+ Add Item</button></div>
+<div class="table-responsive">
+<table class="premium-table">
+<thead><tr><th>Item</th><th>Category</th><th>Cost</th><th>Qty</th><th>Description</th><th></th></tr></thead>
+<tbody id="gear_body"></tbody>
+</table>
+</div>
+<div class="mt-1">
+  <label>Total Currency (eb) <input id="currency_eb" type="number" value="0" style="width:100px; font-weight:bold;" readonly></label>
+  <label style="margin-left:1rem">Modify eb: <input id="modify_eb" type="number" style="width:80px" placeholder="0"></label>
+  <button id="btn_modify_eb" class="btn-action" style="padding:0.2rem 0.5rem; margin-left: 0.5rem;">Add</button>
+</div>
+<div class="mt-1">
+<h3 style="font-size:0.85rem;margin:0.5rem 0 0.3rem">Ammunition Tracker</h3>
+<div class="table-responsive">
+<table class="premium-table" style="font-size:0.85rem">
+<thead><tr><th>Ammunition</th><th>Rounds / Bundle</th><th>Total Rounds</th><th>Use</th></tr></thead>
+<tbody id="ammo_body"></tbody>
+</table>
+</div>
+<p style="font-size:0.75rem;opacity:0.6;margin-top:0.3rem">Purchase ammo from the Gear tab. Consuming the last rounds removes the item from the gear list (no refund).</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ===== TAB: CYBERDECK ===== -->
+<section id="tab-cyberdeck" class="tab-panel">
+<div class="section-card">
+<h2 class="section-title">Cyberdeck & Programs</h2>
+
+<div class="deck-selector-container mb-1">
+<label><strong>Equip Cyberdeck:</strong>
+<select id="sel_cyberdeck">
+<option value="">None</option>
+</select>
+</label>
+<button id="btn_buy_cyberdeck" class="btn-action ml-1">Buy & Equip</button>
+</div>
+
+<div id="deck_dashboard" class="deck-dashboard hidden" style="background: var(--bg); border: 1px solid var(--border); padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
+<h3 id="deck_name" style="margin: 0 0 0.5rem 0;">Deck Name</h3>
+<p style="margin: 0; font-size: 0.9rem;"><strong>Available Slots:</strong> <span id="deck_slots_used">0</span> / <span id="deck_slots_total">0</span></p>
+</div>
+
+<div class="deck-programs-container">
+<h3 style="font-size:1.1rem; border-bottom:1px solid var(--border); padding-bottom:0.25rem; margin-bottom:0.75rem;">Installed Programs & Hardware</h3>
+<div class="flex-row gap-1 mb-1" style="align-items: flex-end;">
+<div style="flex:1">
+<label>Program / Hardware:
+<select id="sel_program"></select>
+</label>
+</div>
+<button id="btn_install_program" class="btn-action">Install (Buy)</button>
+</div>
+
+<div class="table-responsive">
+<table class="premium-table">
+<thead>
+<tr>
+<th>Name</th>
+<th>Class/Type</th>
+<th>Slots</th>
+<th>ATK</th>
+<th>DEF</th>
+<th>REZ</th>
+<th style="width:120px">Action</th>
+</tr>
+</thead>
+<tbody id="programs_body">
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ===== TAB: ABOUT ===== -->
+<section id="tab-notes" class="tab-panel">
+<div class="section-card">
+<h2 class="section-title">Notes</h2>
+<textarea id="char_notes" style="width:100%; height:400px; padding:0.5rem; background: var(--input-bg); color: var(--text); border: 1px solid var(--border);" placeholder="Free text notes..."></textarea>
+</div>
+</section>
+<section id="tab-about" class="tab-panel">
+<div class="section-card">
+<h2 class="section-title">About Cyberpunk RED Generator (Playtest Build)</h2>
+<p style="margin-bottom:0.8rem;line-height:1.7">A fully self-contained, highly-optimised interactive character manager for <strong>Cyberpunk RED</strong> by R. Talsorian Games. Create, customise, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. No server, no build tools, no internet - just open the single monolith HTML file in any browser.</p>
+<p style="margin-bottom:0.8rem;line-height:1.7"><strong>Welcome to the Playtest Build!</strong> This version introduces massive updates across the board, moving beyond a simple character sheet into a full character management suite. Key updates include deeply interactive Role Abilities (Exec Team Members, Nomad Vehicle tracking, Lawman Backup, Medtech Pharmaceuticals, Netrunner Interface, and more), fully integrated Cyberware humanity and slot tracking, overhauled generic and Role-specific Lifepaths, Ammunition tracking, and seamless local state management.</p>
+<h3 style="margin:1rem 0 0.4rem">Features</h3>
+<ul style="line-height:1.8;padding-left:1.2rem">
+<li>10 Stats with point-buy system (62 points, min 2 / max 8)</li>
+<li>All 10 Roles with detailed rank-by-rank ability descriptions and deeply integrated mechanical trackers</li>
+<li>Interactive Role Abilities: Create and manage Exec Team Members, track Nomad Family Vehicles & Upgrades, handle Lawman Backup stats, manage Netrunner Interface abilities, and track Medtech Pharmaceuticals</li>
+<li>Multiclass support - take a secondary role once your primary reaches Rank 4</li>
+<li>86 Skills grouped by linked stat with search, ranks, and item bonuses</li>
+<li>140+ Weapons mapped accurately to their Cyberpunk RED skills (e.g. Shoulder Arms, Handgun, Heavy Weapons)</li>
+<li>Add/remove management with cost deduction for Armor, Cyberware, Fashion &amp; Gear</li>
+<li>Ammunition Consumption - track remaining rounds directly on your sheet</li>
+<li>Dynamic Cyberware Tracking: automatically handles humanity loss, maximum humanity reduction, and custom slot constraints (e.g. 7 slots for a Cyberarm)</li>
+<li>Custom item entry for all gear categories</li>
+<li>Categorised item selectors grouped logically</li>
+<li>Full Lifepath generation (Generic and Role-specific) with randomise button</li>
+<li>Character save/load/delete (localStorage), JSON export/import</li>
+<li>Combined print layout optimised for physical character sheets</li>
+<li>Random character generator — one-click complete, playable character</li>
+<li>Netrunner dark theme with native CSS variables</li>
+<li>Random Humanity Cost (HC) rolls and custom inputs for Cyberware</li>
+<li>Optimised mobile styling with seamless skill adjustments</li>
+<li>Polished print-friendly layout with customisable background dimming</li>
+<li>Mobile-responsive layout with touch-optimised controls</li>
+</ul>
+<h3 style="margin:1rem 0 0.4rem">Source Material</h3>
+<p style="line-height:1.8">
+Cyberpunk RED Core Rulebook v1.24 &bull; Black Chrome v1.0 &bull; Black Chrome+ v1.0<br>
+Hornet's Pharmacy &bull; Must Have Cyberware Deals &bull; Weapons List Update for CPRED<br>
+Toggle's Temple &bull; Woodchipper's Garage &bull; 12 Days of Cutiemas<br>
+12 Days of Cybermas &bull; 12 Days of REDmas &bull; 12 Days of Gearmas &bull; 12 Days of Gunmas
+</p>
+<h3 style="margin:1rem 0 0.4rem">Source Abbreviations</h3>
+<p style="line-height:1.8">
+<strong>[CRB]</strong> Core Rulebook &bull; 
+<strong>[BC]</strong> Black Chrome &bull; 
+<strong>[DGD]</strong> Danger Gal Dossier &bull; 
+<strong>[TotR]</strong> Tales of the RED &bull; 
+<strong>[IR]</strong> Interface Red
+</p>
+<h3 style="margin:1rem 0 0.4rem">Credits</h3>
+<p style="line-height:1.8"><strong>Development</strong> — Built with vanilla HTML, CSS, and JavaScript (no frameworks).<br>
+<strong>Game Design</strong> — Cyberpunk RED &copy; R. Talsorian Games. All game text and mechanics are property of their respective owners.<br>
+<strong>Fonts</strong> — Inter (body), Orbitron (headings) via Google Fonts (loaded on demand, not required).
+</p>
+</div>
+</section>
+
+</main>
+
+<!-- ===== MODAL: CHARACTER SAVE/LOAD ===== -->
+<div id="characterModal" class="modal-overlay">
+<div class="modal-box">
+<h2>Character Manager</h2>
+<div class="char-modal-grid">
+<div class="char-list-panel"><h3>Saved Characters</h3><div id="charList"></div></div>
+<div class="char-action-panel"><h3>Actions</h3><label>Name <input id="charSaveName" type="text"></label><div class="char-buttons"><button id="charSaveBtn" class="btn-save">Save</button><button id="charLoadBtn" class="btn-action">Load</button><button id="charDeleteBtn" class="btn-action">Delete</button><button id="charNewBtn" class="btn-action">New</button></div></div>
+</div>
+<button id="charCloseBtn" class="btn-action" style="margin-top:1rem">Close</button>
+</div>
+</div>
+<!-- ============================================================
+     JAVASCRIPT — All game data, logic, and rendering inlined
+     ============================================================ -->
+<!-- ===== JAVASCRIPT (external files) ===== -->
+<script src="js/data.js"></script>
+<script src="js/calculations.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/export.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

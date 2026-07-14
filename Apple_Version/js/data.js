@@ -1,0 +1,1193 @@
+// ============================================================
+// DATA — Game content definitions (stats, roles, skills, items)
+// ============================================================
+// Think of this file as the application's "Database". It doesn't contain
+// any logic or functions that *do* things. Instead, it holds all the raw
+// information from the Cyberpunk Red rulebook—like how much a pistol costs,
+// what stats exist, and what the Lifepath options are.
+// The rest of the application reads from this DATA object to build the UI.
+
+var DATA = {
+  // ----------------------------------------------------------
+  // STATS
+  // ----------------------------------------------------------
+  // These are the 10 core attributes every character has.
+  // The 'id' is used in the code to refer to it (e.g., state.stats.ref),
+  // while the 'name' and 'full' properties are what the user actually sees on screen.
+  stats: [
+    { id: "int", name: "INT", full: "Intelligence", desc: "Memory, deduction, pattern recognition" },
+    { id: "ref", name: "REF", full: "Reflexes", desc: "Reaction time, coordination" },
+    { id: "dex", name: "DEX", full: "Dexterity", desc: "Fine motor control, steady hands" },
+    { id: "tech", name: "TECH", full: "Technical Ability", desc: "Repair, crafting, operating devices" },
+    { id: "cool", name: "COOL", full: "Composure", desc: "Nerves under pressure, charisma" },
+    { id: "will", name: "WILL", full: "Willpower", desc: "Mental fortitude, resistance" },
+    { id: "luck", name: "LUCK", full: "Luck", desc: "Fortune, fate. Spend to reroll or add to a roll" },
+    { id: "move", name: "MOVE", full: "Movement", desc: "Speed, agility, distance covered" },
+    { id: "body", name: "BODY", full: "Body", desc: "Strength, toughness, endurance" },
+    { id: "emp", name: "EMP", full: "Empathy", desc: "Humanity, social awareness" }
+  ],
+
+  // ----------------------------------------------------------
+  // ROLES
+  // ----------------------------------------------------------
+  // This array defines the 10 playable roles (Solo, Netrunner, etc.).
+  // Notice that 'rankDesc' is an array of strings. This allows the app
+  // to instantly look up exactly what your Role Ability does at Rank 4 
+  // simply by checking rankDesc[4].
+  roles: [
+    { id: "solo", name: "Solo", ability: "Combat Awareness", desc: "Divide your Combat Awareness points (equal to Rank) among: Damage Deflection (2pts=-1 dmg), Fumble Recovery (4pts=ignore 1s on attacks), Initiative Reaction (1pt=+1 Init), Precision Attack (3pts=+1 Attack), Spot Weakness (1pt=+1 Dmg on first hit), Threat Detection (1pt=+1 Perception).",
+      rankDesc: [
+        "",
+        "1 Combat Awareness point to distribute.",
+        "2 Combat Awareness points to distribute.",
+        "3 Combat Awareness points to distribute.",
+        "4 Combat Awareness points to distribute.",
+        "5 Combat Awareness points to distribute.",
+        "6 Combat Awareness points to distribute.",
+        "7 Combat Awareness points to distribute.",
+        "8 Combat Awareness points to distribute.",
+        "9 Combat Awareness points to distribute.",
+        "10 Combat Awareness points to distribute."
+      ] },
+    { id: "rockerboy", name: "Rockerboy", ability: "Charismatic Impact", desc: "Roll Charismatic Impact + 1d10 to make fans or ask them for favors. DVs: 8 (Single Fan), 10 (Small Group, up to 6), 12 (Huge Group). Fail = can't ask that group for a week.",
+      rankDesc: [
+        "",
+        "Venues: Small local clubs. Single (DV8): Small favor. Small Grp (DV10): Ask for autographs. Huge Grp (DV12): None yet.",
+        "Venues: Small local clubs. Single (DV8): Small favor. Small Grp (DV10): Ask for autographs. Huge Grp (DV12): None yet.",
+        "Venues: Well known clubs. Single (DV8): Major favor. Small Grp (DV10): Hang out, provide party favors. Huge Grp (DV12): Strong local following, buy merch.",
+        "Venues: Well known clubs. Single (DV8): Major favor. Small Grp (DV10): Hang out, provide party favors. Huge Grp (DV12): Strong local following, buy merch.",
+        "Venues: Large clubs. Single (DV8): Minor crime. Small Grp (DV10): Act as personal posse. Huge Grp (DV12): Loyal fans across city, do major favors.",
+        "Venues: Large clubs. Single (DV8): Minor crime. Small Grp (DV10): Act as personal posse. Huge Grp (DV12): Loyal fans across city, do major favors.",
+        "Venues: Small concert halls. Single (DV8): Risk life without question. Small Grp (DV10): Minor crime. Huge Grp (DV12): Rabidly loyal, fight rivals, band together to help.",
+        "Venues: Small concert halls. Single (DV8): Risk life without question. Small Grp (DV10): Minor crime. Huge Grp (DV12): Rabidly loyal, fight rivals, band together to help.",
+        "Venues: Large concert halls. Single (DV8): Major crime. Small Grp (DV10): Major crime. Huge Grp (DV12): Cult-like following; will riot, destroy, kill.",
+        "Venues: Huge stadiums. Single (DV8): Sacrifice self without question. Small Grp (DV10): Risk lives as protection. Huge Grp (DV12): Worldwide cult following; a private army."
+      ] },
+    { id: "netrunner", name: "Netrunner", ability: "Interface", desc: "Grants access to Interface Abilities:<br>- Backdoor: Break passwords.<br>- Cloak: Hide actions.<br>- Control: Control attached things.<br>- Eye-Dee: Know data value.<br>- Pathfinder: Learn map.<br>- Scanner: Find system locations.<br>- Slide: Escape Black ICE.<br>- Virus: Leave custom virus.<br>- Zap: Basic attack.<br><br>NET Actions per Turn: Ranks 1-3 (2), Ranks 4-6 (3), Ranks 7-9 (4), Rank 10 (5).",
+      rankDesc: [
+        "",
+        "2 NET Actions per Turn.",
+        "2 NET Actions per Turn.",
+        "2 NET Actions per Turn.",
+        "3 NET Actions per Turn.",
+        "3 NET Actions per Turn.",
+        "3 NET Actions per Turn.",
+        "4 NET Actions per Turn.",
+        "4 NET Actions per Turn.",
+        "4 NET Actions per Turn.",
+        "5 NET Actions per Turn."
+      ] },
+    { id: "tech", name: "Tech", ability: "Maker", desc: "Inventors and repairers. Fabricate items using Invention Slots and upgrade gear with Fabrication Checks.",
+      subSkillsPointsPerRank: 2,
+      subSkills: [
+        { id: "field_expertise", name: "Field Expertise", desc: "Add to Tech skills when repairing/modifying." },
+        { id: "upgrade_expertise", name: "Upgrade Expertise", desc: "Allows upgrading items. Rank determines level of upgrades." },
+        { id: "fabrication_expertise", name: "Fabrication Expertise", desc: "Allows fabricating items. Rank determines max price category." },
+        { id: "invention_expertise", name: "Invention Expertise", desc: "Allows inventing new items. Rank determines max price category." }
+      ],
+      rankDesc: [
+        "",
+        "1 Invention Slot. Can fabricate DV9 items. Can Field Strip a single device as an Action.",
+        "1 Invention Slot. Can upgrade weapons/armor by 1 level (DV13).",
+        "2 Invention Slots. Can fabricate DV13 items. Field Strip as a Free Action once per turn.",
+        "2 Invention Slots. Can upgrade weapons/armor by 2 levels (DV15).",
+        "3 Invention Slots. Can fabricate DV15 items. Can upgrade cyberware (DV15).",
+        "3 Invention Slots. Can upgrade weapons/armor by 3 levels (DV17). Field Strip any device instantly.",
+        "4 Invention Slots. Can fabricate DV17 items. Can upgrade cyberware by 2 levels (DV17).",
+        "4 Invention Slots. Can upgrade weapons/armor by 4 levels (DV19). Can invent entirely new items (Referee approval).",
+        "5 Invention Slots. Can fabricate DV19 items. Upgrades cost half time and materials.",
+        "5 Invention Slots. Master Maker. Can upgrade anything by any level (DV19). Fabrication takes half time."
+      ] },
+    { id: "medtech", name: "Medtech", ability: "Medicine", desc: "Trauma surgeons and cyber-docs. Perform surgery, treat critical injuries, and install/remove cyberware using their Medicine skill.",
+      subSkillsPointsPerRank: 1,
+      subSkills: [
+        { id: "surgery", name: "Surgery", desc: "Treat critical injuries." },
+        { id: "pharmaceuticals", name: "Medical Tech (Pharmaceuticals)", desc: "Synthesize street drugs and medicines." },
+        { id: "cryosystems", name: "Medical Tech (Cryosystem Operation)", desc: "Operate cryopumps to keep dying characters alive." }
+      ],
+      rankDesc: [
+        "",
+        "Crisis/Surgery Rank 1. Can treat 1 Critical Injury per operation. Can install Standard cyberware (DV9). Can diagnose injuries as an Action.",
+        "Crisis/Surgery Rank 2. Can treat up to 2 Critical Injuries per operation.",
+        "Crisis/Surgery Rank 3. Can install Premium cyberware (DV13). Can perform emergency field surgery.",
+        "Crisis/Surgery Rank 4. Can treat up to 3 Critical Injuries per operation. Stabilize a dying patient as a Single Action.",
+        "Crisis/Surgery Rank 5. Can install Excellent cyberware (DV15). Surgery recovery time halved.",
+        "Crisis/Surgery Rank 6. Can treat up to 4 Critical Injuries per operation. Can install cyberware in half the normal time.",
+        "Crisis/Surgery Rank 7. Can install Borg cyberware (DV17). Can perform surgery without a clinic (field conditions).",
+        "Crisis/Surgery Rank 8. Can treat any number of Critical Injuries per operation. Surgery recovery time reduced to 1/3.",
+        "Crisis/Surgery Rank 9. Can install any cyberware including prototype/Beta (DV19).",
+        "Crisis/Surgery Rank 10. Master Medtech. Surgery takes 1/4 normal time. Can revive a clinically dead patient within 1 minute (Referee discretion)."
+      ] },
+        { id: "exec", name: "Exec", ability: "Teamwork", desc: "<style>.exec-row:hover{background-color:rgba(0, 255, 255, 0.2);}.exec-row.selected{background-color:rgba(0, 255, 255, 0.5);}</style><strong>Teamwork:</strong> Build a team to accomplish goals. Loyalty saves (1d6 vs current Loyalty) determine obedience. Team members don't improve skills and wear only Light Armorjack.<br><br><strong>Creating Team Members:</strong> Pick Job (and Cover Job). Roll 1d6 for STATs. Record standard Skills/Cyberware/Gear. Starting Loyalty = 1d6+1.<br><br><details><summary><strong>Company Bodyguard</strong></summary>Cover Jobs: Escort, Personal Trainer. True Job: To protect the Exec.<br><table style='font-size:0.75rem;width:100%;text-align:center;'><tr><th>Roll</th><th>INT</th><th>REF</th><th>DEX</th><th>TECH</th><th>COOL</th><th>WILL</th><th>MOVE</th><th>BODY</th><th>EMP</th></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>1</td><td>3</td><td>7</td><td>7</td><td>4</td><td>7</td><td>6</td><td>4</td><td>8</td><td>4</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>2</td><td>5</td><td>8</td><td>6</td><td>2</td><td>7</td><td>8</td><td>4</td><td>8</td><td>2</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>3</td><td>4</td><td>8</td><td>5</td><td>3</td><td>7</td><td>8</td><td>6</td><td>6</td><td>3</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>4</td><td>4</td><td>7</td><td>8</td><td>4</td><td>7</td><td>7</td><td>4</td><td>7</td><td>2</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>5</td><td>3</td><td>8</td><td>5</td><td>2</td><td>8</td><td>7</td><td>4</td><td>6</td><td>7</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>6</td><td>5</td><td>7</td><td>7</td><td>2</td><td>7</td><td>6</td><td>5</td><td>7</td><td>4</td></tr></table><strong>Skills at +2:</strong> Concentration, Conversation, Education, First Aid, Human Perception, Language (Streetslang), Local Expert (Your Home), Persuasion, Stealth<br><strong>Skills at +4:</strong> Athletics, Evasion, Interrogation, Perception, Resist Torture/Drugs, Tactics<br><strong>Skills at +6:</strong> Handgun, Brawling<br><strong>Cyberware:</strong> Enhanced Antibodies, Subdermal Armor (SP11), Cyberaudio Suite, Internal Agent, Homing Tracer<br><strong>Gear:</strong> Agent, Light Armorjack (SP11), Very Heavy Pistol, Basic VH Pistol Ammo x50</details><details><summary><strong>Company Covert Operative</strong></summary>Cover Jobs: Personal Assistant, Stylist. True Job: Keeping the Exec from getting their hands dirty.<br><table style='font-size:0.75rem;width:100%;text-align:center;'><tr><th>Roll</th><th>INT</th><th>REF</th><th>DEX</th><th>TECH</th><th>COOL</th><th>WILL</th><th>MOVE</th><th>BODY</th><th>EMP</th></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>1</td><td>4</td><td>8</td><td>5</td><td>4</td><td>6</td><td>8</td><td>5</td><td>7</td><td>3</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>2</td><td>3</td><td>8</td><td>6</td><td>2</td><td>8</td><td>6</td><td>6</td><td>6</td><td>5</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>3</td><td>6</td><td>7</td><td>5</td><td>5</td><td>7</td><td>6</td><td>3</td><td>7</td><td>4</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>4</td><td>5</td><td>6</td><td>5</td><td>3</td><td>6</td><td>8</td><td>7</td><td>6</td><td>4</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>5</td><td>3</td><td>8</td><td>4</td><td>4</td><td>8</td><td>7</td><td>4</td><td>8</td><td>4</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>6</td><td>5</td><td>8</td><td>3</td><td>7</td><td>7</td><td>8</td><td>3</td><td>6</td><td>3</td></tr></table><strong>Skills at +2:</strong> Athletics, Brawling, Concentration, Conversation, Education, First Aid, Language (Streetslang), Local Expert (Your Home), Perception, Persuasion<br><strong>Skills at +4:</strong> Bribery, Bureaucracy, Business, Evasion, Human Perception, Pick Lock, Streetwise, Trading, Wardrobe & Style<br><strong>Skills at +6:</strong> Handgun, Stealth<br><strong>Cyberware:</strong> Cybereyes with paired Low Light/Infrared/UV, Color Shift, Cyberarm with Grapple Hand, Popup Ranged Weapon (Very Heavy Pistol), Realskinn Covering<br><strong>Gear:</strong> Agent, Light Armorjack (SP11), Very Heavy Pistol, Basic VH Pistol Ammo x50</details><details><summary><strong>Company Driver</strong></summary>Cover Jobs: Valet, Personal Driver. True Job: Drives, pilots, and maintains the Team's vehicles.<br><table style='font-size:0.75rem;width:100%;text-align:center;'><tr><th>Roll</th><th>INT</th><th>REF</th><th>DEX</th><th>TECH</th><th>COOL</th><th>WILL</th><th>MOVE</th><th>BODY</th><th>EMP</th></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>1</td><td>5</td><td>8</td><td>6</td><td>4</td><td>6</td><td>5</td><td>6</td><td>5</td><td>5</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>2</td><td>5</td><td>7</td><td>7</td><td>5</td><td>5</td><td>7</td><td>4</td><td>7</td><td>3</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>3</td><td>6</td><td>8</td><td>8</td><td>4</td><td>7</td><td>4</td><td>5</td><td>6</td><td>2</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>4</td><td>8</td><td>7</td><td>4</td><td>5</td><td>4</td><td>7</td><td>5</td><td>6</td><td>4</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>5</td><td>7</td><td>8</td><td>3</td><td>5</td><td>7</td><td>6</td><td>4</td><td>6</td><td>4</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>6</td><td>6</td><td>8</td><td>6</td><td>6</td><td>8</td><td>5</td><td>3</td><td>5</td><td>3</td></tr></table><strong>Skills at +2:</strong> Athletics, Concentration, Conversation, Education, First Aid, Human Perception, Language (Streetslang), Local Expert (Your Home), Perception, Persuasion<br><strong>Skills at +4:</strong> Brawling, Endurance, Evasion, Land Vehicle Tech, Pilot Air Vehicle, Pilot Sea Vehicle, Sea Vehicle Tech, Stealth, Tracking<br><strong>Skills at +6:</strong> Drive Land Vehicle, Handgun<br><strong>Cyberware:</strong> Radar/Sonar Implant, Cyberaudio Suite, Internal Agent, Homing Tracer, Radar Detector<br><strong>Gear:</strong> Light Armorjack (SP11), Very Heavy Pistol, Compact Groundcar with Seating Upgrade, Basic VH Pistol Ammo x50</details><details><summary><strong>Company Netrunner</strong></summary>Cover Jobs: I.T. Engineer, Research Specialist. True Job: Netrunning and information gathering.<br><table style='font-size:0.75rem;width:100%;text-align:center;'><tr><th>Roll</th><th>INT</th><th>REF</th><th>DEX</th><th>TECH</th><th>COOL</th><th>WILL</th><th>MOVE</th><th>BODY</th><th>EMP</th></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>1</td><td>6</td><td>7</td><td>8</td><td>7</td><td>5</td><td>4</td><td>5</td><td>5</td><td>3</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>2</td><td>7</td><td>8</td><td>4</td><td>6</td><td>8</td><td>3</td><td>4</td><td>6</td><td>4</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>3</td><td>5</td><td>6</td><td>8</td><td>8</td><td>6</td><td>6</td><td>4</td><td>4</td><td>3</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>4</td><td>7</td><td>8</td><td>5</td><td>6</td><td>4</td><td>4</td><td>6</td><td>5</td><td>5</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>5</td><td>5</td><td>8</td><td>8</td><td>5</td><td>5</td><td>3</td><td>6</td><td>4</td><td>6</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>6</td><td>8</td><td>7</td><td>6</td><td>6</td><td>4</td><td>7</td><td>4</td><td>4</td><td>4</td></tr></table><strong>Skills at +2:</strong> Interface (Netrunner Role Ability), Athletics, Brawling, Concentration, Conversation, Evasion, First Aid, Human Perception, Language (Streetslang), Local Expert (Your Home), Perception, Persuasion<br><strong>Skills at +4:</strong> Basic Tech, Cryptography, Cybertech, Education, Electronics/Security Tech (x2), Forgery, Library Search, Handgun, Stealth<br><strong>Cyberware:</strong> Neural Link, Chipware Socket, Pain Editor, Interface Plugs, Cybereyes with Virtuality<br><strong>Gear:</strong> Agent, Light Armorjack (SP11), Cyberdeck (7 slots: Sword, Sword, Killer, Worm, Worm, Armor), Very Heavy Pistol, Basic VH Pistol Ammo x50</details><details><summary><strong>Company Technician</strong></summary>Cover Jobs: I.T. Engineer, Intern. True Job: Repairs Team's gear and weapons.<br><table style='font-size:0.75rem;width:100%;text-align:center;'><tr><th>Roll</th><th>INT</th><th>REF</th><th>DEX</th><th>TECH</th><th>COOL</th><th>WILL</th><th>MOVE</th><th>BODY</th><th>EMP</th></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>1</td><td>8</td><td>8</td><td>5</td><td>7</td><td>3</td><td>4</td><td>4</td><td>5</td><td>6</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>2</td><td>8</td><td>7</td><td>6</td><td>8</td><td>3</td><td>5</td><td>5</td><td>4</td><td>4</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>3</td><td>8</td><td>6</td><td>5</td><td>8</td><td>4</td><td>3</td><td>3</td><td>7</td><td>6</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>4</td><td>8</td><td>8</td><td>5</td><td>7</td><td>4</td><td>4</td><td>4</td><td>5</td><td>5</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>5</td><td>7</td><td>7</td><td>3</td><td>7</td><td>5</td><td>3</td><td>6</td><td>6</td><td>3</td></tr><tr class=\"exec-row\" style=\"cursor:pointer;\" onclick=\"this.parentElement.querySelectorAll('.exec-row').forEach(r=>r.classList.remove('selected')); this.classList.add('selected');\"><td>6</td><td>7</td><td>8</td><td>5</td><td>8</td><td>6</td><td>3</td><td>3</td><td>5</td><td>5</td></tr></table><strong>Skills at +2:</strong> Athletics, Brawling, Concentration, Conversation, Evasion, First Aid, Human Perception, Language (Streetslang), Local Expert (Your Home), Perception, Persuasion, Stealth<br><strong>Skills at +4:</strong> Education, Handgun, Weaponstech (x2)<br><strong>Skills at +6:</strong> Basic Tech, Cybertech, Electronics/Security Tech (x2)<br><strong>Cyberware:</strong> Tool Hand, Cyberaudio Suite, Internal Agent, Bug Detector, Audio Recorder<br><strong>Gear:</strong> Light Armorjack (SP11), Very Heavy Pistol, Basic VH Pistol Ammo x50</details>",
+      rankDesc: [
+        "",
+        "<strong>Signing Bonus:</strong> Businesswear suit (Jacket, Top, Bottom, Footwear).",
+        "<strong>Corporate Housing:</strong> Corporate Conapt (free rent/fees).",
+        "<strong>Team Members:</strong> Gain 1 Team Member.",
+        "<strong>No new perks at this rank.</strong>",
+        "<strong>Team Members:</strong> Gain an additional Team Member (2 total).",
+        "<strong>Health Insurance:</strong> Trauma Team Silver coverage.",
+        "<strong>Corporate Housing:</strong> Upgraded to Beaverville House.",
+        "<strong>Health Insurance:</strong> Upgraded to Trauma Team Executive.",
+        "<strong>Team Members:</strong> Gain an additional Team Member (3 total).",
+        "<strong>Corporate Housing:</strong> Upgraded to Beaverville McMansion or Luxury Penthouse."
+      ] },
+    { id: "lawman", name: "Lawman", ability: "Backup", desc: "As an Action, roll 1d10 <= Backup Rank to call for Backup. If successful, Backup arrives in 1d6 Rounds. If 6 is rolled on the arrival die, the next highest tier backup arrives (if Rank 10, two separate groups arrive instead).",
+      rankDesc: [
+        "",
+        "<strong>Combat Number:</strong> 8 | <strong>SP:</strong> 7 | <strong>HP:</strong> 20 | <strong>MOVE & BODY:</strong> 4<br>Corporate Security. 4 rent-a-cops on foot. Heavy Pistols, Kevlar.",
+        "<strong>Combat Number:</strong> 8 | <strong>SP:</strong> 7 | <strong>HP:</strong> 20 | <strong>MOVE & BODY:</strong> 4<br>Corporate Security. 4 rent-a-cops on foot. Heavy Pistols, Kevlar.",
+        "<strong>Combat Number:</strong> 10 | <strong>SP:</strong> 7 | <strong>HP:</strong> 25 | <strong>MOVE & BODY:</strong> 5<br>Local Beat Cops. 4 cops in 2 Compact Groundcars. Heavy Pistols, Kevlar.",
+        "<strong>Combat Number:</strong> 10 | <strong>SP:</strong> 7 | <strong>HP:</strong> 25 | <strong>MOVE & BODY:</strong> 5<br>Local Beat Cops. 4 cops in 2 Compact Groundcars. Heavy Pistols, Kevlar.",
+        "<strong>Combat Number:</strong> 14 | <strong>SP:</strong> 13 | <strong>HP:</strong> 35 | <strong>MOVE & BODY:</strong> 4<br>Sheriff's Dept. 2 cops in a High Perf. Groundcar. Heavy Pistols, Assault Rifles, Heavy Armorjack.",
+        "<strong>Combat Number:</strong> 14 | <strong>SP:</strong> 13 | <strong>HP:</strong> 35 | <strong>MOVE & BODY:</strong> 4<br>Sheriff's Dept. 2 cops in a High Perf. Groundcar. Heavy Pistols, Assault Rifles, Heavy Armorjack.",
+        "<strong>Combat Number:</strong> 14 | <strong>SP:</strong> 13 | <strong>HP:</strong> 35 | <strong>MOVE & BODY:</strong> 4<br>Sheriff's Dept. 2 cops in a High Perf. Groundcar. Heavy Pistols, Assault Rifles, Heavy Armorjack.",
+        "<strong>Combat Number:</strong> 16 | <strong>SP:</strong> 15 | <strong>HP:</strong> 50 | <strong>MOVE & BODY:</strong> 6<br>Recovery Zone Marshal. 1 Lawman on a Superbike. Very Heavy Pistol, Assault Rifle, Grenade Launcher, Flak Armor.",
+        "<strong>Combat Number:</strong> 15 | <strong>SP:</strong> 18 | <strong>HP:</strong> 35 | <strong>MOVE & BODY:</strong> 4<br>C-SWAT. 2 Psycho Squad hitters in an AV-4. Assault Rifles, Rocket Launchers, Metalgear.",
+        "<strong>Combat Number:</strong> 14 | <strong>SP:</strong> 11 | <strong>HP:</strong> 35 | <strong>MOVE & BODY:</strong> 6<br>National/Interpol. 2 serious hitters in an AV-4. Very Heavy Pistols, Assault Rifles, Light Armorjack. Sticks around to investigate using Combat Number for investigation skills."
+      ] },
+    { id: "fixer", name: "Fixer", ability: "Operator", desc: "<strong>Contacts:</strong> Source goods/favors. <strong>Reach:</strong> Source items by price category. <strong>Haggle:</strong> Make deals (Roll COOL + Trading + Operator Rank). <strong>Grease:</strong> Blend into cultures/languages.",
+      rankDesc: [
+        "",
+        "<strong>Contacts:</strong> Local honcho, gang lord.<br><strong>Reach:</strong> Source Cheap/Everyday items.<br><strong>Haggle:</strong> +/- 10% on market price.<br><strong>Grease:</strong> Know immediate neighborhood culture.",
+        "<strong>Contacts:</strong> Local honcho, gang lord.<br><strong>Reach:</strong> Source Cheap/Everyday items.<br><strong>Haggle:</strong> +/- 10% on market price.<br><strong>Grease:</strong> Know immediate neighborhood culture.",
+        "<strong>Contacts:</strong> City gang honcho, minor politico, Corp Exec.<br><strong>Reach:</strong> Source up to Expensive items.<br><strong>Haggle:</strong> Buy 5, get 1 free.<br><strong>Grease:</strong> +1 Culture & +1 Language (Skill 4).",
+        "<strong>Contacts:</strong> City gang honcho, minor politico, Corp Exec.<br><strong>Reach:</strong> Source up to Expensive items.<br><strong>Haggle:</strong> Buy 5, get 1 free.<br><strong>Grease:</strong> +1 Culture & +1 Language (Skill 4).",
+        "<strong>Contacts:</strong> Major City player, City politico, neighborhood celeb.<br><strong>Reach:</strong> Setup Night Market (source Super Luxury).<br><strong>Haggle:</strong> Negotiate Job pay up 20%.<br><strong>Grease:</strong> +2 Cultures & +2 Languages (Skill 4).",
+        "<strong>Contacts:</strong> Major City player, City politico, neighborhood celeb.<br><strong>Reach:</strong> Setup Night Market (source Super Luxury).<br><strong>Haggle:</strong> Negotiate Job pay up 20%.<br><strong>Grease:</strong> +2 Cultures & +2 Languages (Skill 4).",
+        "<strong>Contacts:</strong> Local Corp president, mayor, local celeb.<br><strong>Reach:</strong> Source up to Very Expensive items.<br><strong>Haggle:</strong> Pay half now, half later for Luxury+.<br><strong>Grease:</strong> +3 Cultures & +3 Languages (Skill 4).",
+        "<strong>Contacts:</strong> Local Corp president, mayor, local celeb.<br><strong>Reach:</strong> Source up to Very Expensive items.<br><strong>Haggle:</strong> Pay half now, half later for Luxury+.<br><strong>Grease:</strong> +3 Cultures & +3 Languages (Skill 4).",
+        "<strong>Contacts:</strong> Divisional Corp head, state politico, well known celeb.<br><strong>Reach:</strong> Source up to Luxury items. Midnight Market access.<br><strong>Haggle:</strong> +/- 20% on market price.<br><strong>Grease:</strong> Blend in with corporate/governmental agencies.",
+        "<strong>Contacts:</strong> Major world leader, major Corp head, world-famous celeb.<br><strong>Reach:</strong> Source up to Super Luxury items.<br><strong>Haggle:</strong> Double pay for Dangerous Job.<br><strong>Grease:</strong> Blend in with secret societies, cults, etc."
+      ] },
+    { id: "nomad", name: "Nomad", ability: "Moto", desc: "Add Moto Rank to all Drive, Pilot, and Vehicle Tech skills. Each Moto Rank grants a new Family vehicle or an upgrade.",
+      rankDesc: [
+        "",
+        "Gain 1 vehicle (Rank 1-4) or 1 upgrade.<br><strong>Available Vehicles:</strong> Compact Groundcar, Gyrocopter, Jetski, Roadbike",
+        "Gain 1 vehicle (Rank 1-4) or 1 upgrade.<br><strong>Available Vehicles:</strong> Compact Groundcar, Gyrocopter, Jetski, Roadbike",
+        "Gain 1 vehicle (Rank 1-4) or 1 upgrade.<br><strong>Available Vehicles:</strong> Compact Groundcar, Gyrocopter, Jetski, Roadbike",
+        "Gain 1 vehicle (Rank 1-4) or 1 upgrade.<br><strong>Available Vehicles:</strong> Compact Groundcar, Gyrocopter, Jetski, Roadbike",
+        "Gain 1 vehicle (Rank 1-6) or 1 upgrade.<br><strong>Available Vehicles:</strong> Compact Groundcar, Gyrocopter, Jetski, Roadbike, Helicopter, High Performance Groundcar, Speedboat",
+        "Gain 1 vehicle (Rank 1-6) or 1 upgrade.<br><strong>Available Vehicles:</strong> Compact Groundcar, Gyrocopter, Jetski, Roadbike, Helicopter, High Performance Groundcar, Speedboat",
+        "Gain 1 vehicle (Rank 1-8) or 1 upgrade.<br><strong>Available Vehicles:</strong> Compact Groundcar, Gyrocopter, Jetski, Roadbike, Helicopter, High Performance Groundcar, Speedboat, AV-4, Cabin Cruiser, Superbike",
+        "Gain 1 vehicle (Rank 1-8) or 1 upgrade.<br><strong>Available Vehicles:</strong> Compact Groundcar, Gyrocopter, Jetski, Roadbike, Helicopter, High Performance Groundcar, Speedboat, AV-4, Cabin Cruiser, Superbike",
+        "Gain 1 vehicle (Rank 1-10) or 1 upgrade.<br><strong>Available Vehicles:</strong> Compact Groundcar, Gyrocopter, Jetski, Roadbike, Helicopter, High Performance Groundcar, Speedboat, AV-4, Cabin Cruiser, Superbike, Aerozep, AV-9, Super Groundcar, Yacht",
+        "Gain 1 vehicle (Rank 1-10) or 1 upgrade. You are promoted to Family leader and can have all your vehicles out at once.<br><strong>Available Vehicles:</strong> Compact Groundcar, Gyrocopter, Jetski, Roadbike, Helicopter, High Performance Groundcar, Speedboat, AV-4, Cabin Cruiser, Superbike, Aerozep, AV-9, Super Groundcar, Yacht"
+      ] },
+    { id: "media", name: "Media", ability: "Credibility", desc: "Hear rumors twice a week (Credibility + 1d10). Publish stories to cause impact; roll 1d10 vs Believability (+1 to chance for 1 piece of evidence, +2 for 4+ pieces).<br>Rumors:<br>- Vague: Passive DV7 / Active DV13<br>- Typical: Passive DV9 / Active DV15<br>- Substantial: Passive DV11 / Active DV17<br>- Detailed: Passive DV13 / Active DV21",
+      rankDesc: [
+        "",
+        "<strong>Access:</strong> Local honcho, gang lord.<br><strong>Audience:</strong> Neighborhood.<br><strong>Believability:</strong> 2/10.<br><strong>Impact:</strong> Small, incremental.",
+        "<strong>Access:</strong> Local honcho, gang lord.<br><strong>Audience:</strong> Neighborhood.<br><strong>Believability:</strong> 2/10.<br><strong>Impact:</strong> Small, incremental.",
+        "<strong>Access:</strong> City gang honcho, minor politico, Corp Exec.<br><strong>Audience:</strong> Local screamsheet/Data Pool.<br><strong>Believability:</strong> 3/10.<br><strong>Impact:</strong> Direct effect; bad guys arrested.",
+        "<strong>Access:</strong> City gang honcho, minor politico, Corp Exec.<br><strong>Audience:</strong> Local screamsheet/Data Pool.<br><strong>Believability:</strong> 3/10.<br><strong>Impact:</strong> Direct effect; bad guys arrested.",
+        "<strong>Access:</strong> Major City player, City politico, local celeb.<br><strong>Audience:</strong> Citywide.<br><strong>Believability:</strong> 4/10.<br><strong>Impact:</strong> Citywide change, laws passed.",
+        "<strong>Access:</strong> Major City player, City politico, local celeb.<br><strong>Audience:</strong> Citywide.<br><strong>Believability:</strong> 4/10.<br><strong>Impact:</strong> Citywide change, laws passed.",
+        "<strong>Access:</strong> Local Corp president, mayor, City celeb.<br><strong>Audience:</strong> Statewide.<br><strong>Believability:</strong> 5/10.<br><strong>Impact:</strong> Multi-city change, mid-corps fall.",
+        "<strong>Access:</strong> Local Corp president, mayor, City celeb.<br><strong>Audience:</strong> Statewide.<br><strong>Believability:</strong> 5/10.<br><strong>Impact:</strong> Multi-city change, mid-corps fall.",
+        "<strong>Access:</strong> Divisional Corp head, State politico, well known celeb.<br><strong>Audience:</strong> National.<br><strong>Believability:</strong> 6/10.<br><strong>Impact:</strong> National change, large corps fall.",
+        "<strong>Access:</strong> Major world leader, major Corp head, world-famous celeb.<br><strong>Audience:</strong> Worldwide.<br><strong>Believability:</strong> 7/10.<br><strong>Impact:</strong> Global change, Megacorps fall."
+      ] }
+  ],
+
+  // ----------------------------------------------------------
+  // SKILLS
+  // ----------------------------------------------------------
+  // Skills are grouped by the STAT they are linked to (e.g., 'dex', 'ref').
+  // - 'subs' means this skill has sub-categories (like Language: English, Language: Spanish).
+  // - 'ipMult' tells the app if this is a difficult skill that costs 2x points to level up.
+  skills: {
+    int: [
+      { id: "accounting", name: "Accounting" },
+      { id: "animal_handling", name: "Animal Handling" },
+      { id: "bureaucracy", name: "Bureaucracy" },
+      { id: "business", name: "Business" },
+      { id: "composition", name: "Composition" },
+      { id: "conceal_reveal_object", name: "Conceal/Reveal Object" },
+      { id: "criminology", name: "Criminology" },
+      { id: "cryptography", name: "Cryptography" },
+      { id: "deduction", name: "Deduction" },
+      { id: "education", name: "Education", basic: true },
+      { id: "gamble", name: "Gamble" },
+      { id: "language", name: "Language", subs: 3, subs: 3, basic: true },
+      { id: "library_search", name: "Library Search" },
+      { id: "lip_reading", name: "Lip Reading" },
+      { id: "local_expert", name: "Local Expert", subs: 3, subs: 3, basic: true },
+      { id: "perception", name: "Perception", basic: true },
+      { id: "science", name: "Science", subs: 2, subs: 2 },
+      { id: "tactics", name: "Tactics" },
+      { id: "tracking", name: "Tracking" },
+      { id: "wilderness_survival", name: "Wilderness Survival" }
+    ],
+    ref: [
+      { id: "archery", name: "Archery" },
+      { id: "autofire", name: "Autofire", ipMult: 2 },
+      { id: "drive_land_vehicle", name: "Drive Land Vehicle" },
+      { id: "handgun", name: "Handgun" },
+      { id: "heavy_weapons", name: "Heavy Weapons", ipMult: 2 },
+      { id: "pilot_air_vehicle", name: "Pilot Air Vehicle", ipMult: 2 },
+      { id: "pilot_sea_vehicle", name: "Pilot Sea Vehicle" },
+      { id: "riding", name: "Riding" },
+      { id: "shoulder_arms", name: "Shoulder Arms" }
+    ],
+    dex: [
+      { id: "athletics", name: "Athletics", basic: true },
+      { id: "brawling", name: "Brawling", basic: true },
+      { id: "contortionist", name: "Contortionist" },
+      { id: "dance", name: "Dance" },
+      { id: "evasion", name: "Evasion", basic: true },
+      { id: "martial_arts", name: "Martial Arts", ipMult: 2 },
+      { id: "melee_weapon", name: "Melee Weapon" },
+      { id: "stealth", name: "Stealth", basic: true }
+    ],
+    tech: [
+      { id: "air_vehicle_tech", name: "Air Vehicle Tech" },
+      { id: "basic_tech", name: "Basic Tech" },
+      { id: "cybertech", name: "Cybertech" },
+      { id: "demolitions", name: "Demolitions", ipMult: 2 },
+      { id: "electronics_security_tech", name: "Electronics/Security Tech", ipMult: 2 },
+      { id: "first_aid", name: "First Aid", basic: true },
+      { id: "forgery", name: "Forgery" },
+      { id: "land_vehicle_tech", name: "Land Vehicle Tech" },
+      { id: "paint_draw_sculpt", name: "Paint/Draw/Sculpt" },
+      { id: "paramedic", name: "Paramedic", ipMult: 2 },
+      { id: "photography_film", name: "Photography/Film" },
+      { id: "pick_lock", name: "Pick Lock" },
+      { id: "pick_pocket", name: "Pick Pocket" },
+      { id: "play_instrument", name: "Play Instrument", subs: 2, subs: 2 },
+      { id: "sea_vehicle_tech", name: "Sea Vehicle Tech" },
+      { id: "weaponstech", name: "Weaponstech" }
+    ],
+    cool: [
+      { id: "acting", name: "Acting" },
+      { id: "bribery", name: "Bribery" },
+      { id: "interrogation", name: "Interrogation" },
+      { id: "persuasion", name: "Persuasion", basic: true },
+      { id: "personal_grooming", name: "Personal Grooming" },
+      { id: "streetwise", name: "Streetwise" },
+      { id: "trading", name: "Trading" },
+      { id: "wardrobe_style", name: "Wardrobe & Style" }
+    ],
+    emp: [
+      { id: "conversation", name: "Conversation", basic: true },
+      { id: "human_perception", name: "Human Perception", basic: true }
+    ],
+    will: [
+      { id: "concentration", name: "Concentration", basic: true },
+      { id: "endurance", name: "Endurance" },
+      { id: "resist_torture_drugs", name: "Resist Torture/Drugs" }
+    ]
+  },
+
+  // ----------------------------------------------------------
+  // WEAPONS
+  // ----------------------------------------------------------
+  // A complete list of weapons. The 'skill' property tells the app which
+  // skill you roll when firing it. 'rof' is Rate of Fire, 'mag' is Magazine size.
+  weapons: [
+    { id: "heavy_pistol", name: "Heavy Pistol", type: "Handgun", dmg: "3d6", hands: 1, rof: 2, mag: 12, conceal: "Jacket", cost: 500, desc: "[CRB] Standard heavy pistol" },
+    { id: "light_pistol", name: "Light Pistol", type: "Handgun", dmg: "2d6", hands: 1, rof: 2, mag: 15, conceal: "Pocket", cost: 250, desc: "[CRB] Small concealable pistol" },
+    { id: "very_heavy_pistol", name: "Very Heavy Pistol", type: "Handgun", dmg: "4d6", hands: 1, rof: 1, mag: 8, conceal: "Jacket", cost: 750, desc: "[CRB] Large caliber pistol" },
+    { id: "assault_rifle", name: "Assault Rifle", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 25, conceal: "Long gun", cost: 1000, desc: "[CRB] Full-auto capable rifle" },
+    { id: "smg", name: "Submachine Gun", type: "Shoulder Arms", dmg: "3d6", hands: 2, rof: 2, mag: 30, conceal: "Long gun", cost: 750, desc: "[CRB] Automatic weapon" },
+    { id: "shotgun_pump", name: "Shotgun (Pump)", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 6, conceal: "Long gun", cost: 500, desc: "[CRB] Pump-action shotgun" },
+    { id: "shotgun_auto", name: "Shotgun (Auto)", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 2, mag: 10, conceal: "Long gun", cost: 1000, desc: "[CRB] Automatic shotgun" },
+    { id: "sniper_rifle", name: "Sniper Rifle", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 6, conceal: "Cannot conceal", cost: 1500, desc: "[CRB] Long range precision rifle" },
+    { id: "heavy_smg", name: "Heavy SMG", type: "Shoulder Arms", dmg: "4d6", hands: 2, rof: 2, mag: 40, conceal: "Long gun", cost: 1000, desc: "[CRB] Large caliber SMG" },
+    { id: "heavy_pistol_smart", name: "Smart Heavy Pistol", type: "Handgun", dmg: "3d6", hands: 1, rof: 2, mag: 12, conceal: "Jacket", cost: 2000, desc: "[CRB] Smart-linked heavy pistol" },
+    { id: "medium_pistol", name: "Medium Pistol", type: "Handgun", dmg: "2d6+3", hands: 1, rof: 2, mag: 14, conceal: "Jacket", cost: 350, desc: "[CRB] Reliable medium pistol" },
+    { id: "bow", name: "Bow", type: "Archery", dmg: "4d6", hands: 2, rof: 1, mag: 1, conceal: "Long gun", cost: 200, desc: "[CRB] Compound hunting bow" },
+    { id: "crossbow", name: "Crossbow", type: "Archery", dmg: "4d6", hands: 2, rof: 1, mag: 1, conceal: "Long gun", cost: 300, desc: "[CRB] Silent ranged weapon" },
+    { id: "grenade_frag", name: "Frag Grenade", type: "Heavy Weapons", dmg: "6d6", hands: 1, rof: 1, mag: null, conceal: "Pocket", cost: 100, desc: "[CRB] High explosive fragmentation grenade" },
+    { id: "grenade_smoke", name: "Smoke Grenade", type: "Heavy Weapons", dmg: "0", hands: 1, rof: 1, mag: null, conceal: "Pocket", cost: 50, desc: "[CRB] Creates smoke screen" },
+    { id: "knife", name: "Knife", type: "Melee Weapon", dmg: "1d6", hands: 1, conceal: "Pocket", cost: 50, desc: "[CRB] Standard combat knife" },
+    { id: "machete", name: "Machete", type: "Melee Weapon", dmg: "2d6", hands: 1, conceal: "Jacket", cost: 100, desc: "[CRB] Heavy blade" },
+    { id: "katana", name: "Katana", type: "Melee Weapon", dmg: "3d6", hands: 2, conceal: "Long gun", cost: 500, desc: "[CRB] Masterwork blade" },
+    { id: "lead_pipe", name: "Lead Pipe", type: "Melee Weapon", dmg: "2d6", hands: 1, conceal: "Jacket", cost: 10, desc: "[CRB] Heavy metal pipe" },
+    { id: "baseball_bat", name: "Baseball Bat", type: "Melee Weapon", dmg: "2d6", hands: 2, conceal: "Long gun", cost: 20, desc: "[CRB] Standard baseball bat" },
+    { id: "tonfa", name: "Tonfa", type: "Melee Weapon", dmg: "2d6", hands: 1, conceal: "Jacket", cost: 50, desc: "[CRB] Police-issue tonfa" },
+    { id: "chainsaw", name: "Chainsaw", type: "Melee Weapon", dmg: "4d6", hands: 2, conceal: "Cannot conceal", cost: 200, desc: "[CRB] Powered saw blade" },
+    { id: "stun_baton", name: "Stun Baton", type: "Melee Weapon", dmg: "1d6+stun", hands: 1, conceal: "Jacket", cost: 150, desc: "[CRB] Electric stun baton" },
+    { id: "big_dreem", name: "Big Dreem", type: "Autofire", dmg: "3d6", hands: 1, rof: 1, mag: 30, conceal: "No", cost: 10, desc: "[CRB] Exotic SMG, Autofire only. Continues firing for 2 turns after trigger pulled." },
+    { id: "everest_sportmaster", name: "Everest SportMaster", type: "Shoulder Arms", dmg: "3d6", hands: 2, rof: 1, mag: 25, conceal: "No", cost: 50, desc: "[CRB] Assault Rifle, single shot only. Only loads Small Game Ammo." },
+    { id: "everest_survivalmaster", name: "Everest SurvivalMaster", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 5, conceal: "Yes (disassembled)", cost: 100, desc: "[CRB] Exotic Assault Rifle. Can disassemble to fit in stock for concealment." },
+    { id: "sanroo_hello_cutie", name: "Sanroo Hello Cutie 1TruLuv", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 4, conceal: "No", cost: 1000, desc: "[CRB] Exotic Sniper Rifle with Sniper Scope, Nightvision Scope, and pseudo AI girlfriend." },
+    { id: "molotov_cocktail", name: "Molotov Cocktail", type: "Athletics", dmg: "5d6", hands: 1, rof: 1, mag: null, conceal: "No", cost: 20, desc: "[CRB] Incendiary grenade. 50% chance to break when you take damage, setting you on fire." },
+    { id: "timeless_ww1_conversion", name: "Timeless WW1 Conversion", type: "Handgun", dmg: "4d6", hands: 1, rof: 1, mag: 5, conceal: "No", cost: 20, desc: "[CRB] Poor Quality VH Pistol. Requires an Action to chamber next round." },
+    { id: "club_bat_baton", name: "Club / Baseball Bat / Auto Spring Baton", type: "Melee Weapon", dmg: "1d6", hands: 2, conceal: "Yes", cost: 20, desc: "[CRB] Poor. Crit Fail on ATK roll of 1." },
+    { id: "sword", name: "Sword", type: "Melee Weapon", dmg: "3d6", hands: 2, conceal: "No", cost: 100, desc: "[CRB] Standard." },
+    { id: "knife_bayonet", name: "Knife / Survival Knife / Bayonet / Switchblade", type: "Melee Weapon", dmg: "1d6", hands: 1, conceal: "Yes", cost: 50, desc: "[CRB] Standard. Throw. Bayonet can attach to SMG/Assault Rifle." },
+    { id: "axe_melee", name: "Axe", type: "Melee Weapon", dmg: "3d6", hands: 2, conceal: "No", cost: 50, desc: "[CRB] Standard." },
+    { id: "hatchet_tomahawk", name: "Hatchet / Tomahawk", type: "Melee Weapon", dmg: "1d6", hands: 1, conceal: "Yes", cost: 20, desc: "[CRB] Poor. Throw. Crit Fail on ATK 1. One Action to reverse." },
+    { id: "nunchaku_tonfa", name: "Nunchaku / Tonfa", type: "Melee Weapon", dmg: "1d6", hands: 2, conceal: "Yes", cost: 50, desc: "[CRB] Standard. Hidden spring blade +50eb for +1d6 dmg." },
+    { id: "naginata", name: "Naginata", type: "Melee Weapon", dmg: "3d6", hands: 2, conceal: "No", cost: 500, desc: "[CRB] Excellent. 2M range." },
+    { id: "shuriken", name: "Shuriken", type: "Melee Weapon", dmg: "1d6/2", hands: 1, conceal: "Yes", cost: 50, desc: "[CRB] Standard. Throw. Poison can be added." },
+    { id: "brass_knuckles", name: "Brass Knuckles / Knuckle Duster", type: "Melee Weapon", dmg: "1d6", hands: 1, conceal: "Yes", cost: 20, desc: "[CRB] Poor. Add spikes for 2d6 dmg (+50eb). Crit Fail on ATK 1." },
+    { id: "sledgehammer_spiked_bat", name: "Sledgehammer / Spiked Baseball Bat", type: "Melee Weapon", dmg: "4d6/3d6", hands: 2, conceal: "No", cost: 100, desc: "[CRB] Standard." },
+    { id: "chainsaw_melee", name: "Chainsaw", type: "Melee Weapon", dmg: "4d6+1", hands: 2, conceal: "No", cost: 500, desc: "[CRB] Standard. AP vs Soft Armor, damages 2 SP/hit." },
+    { id: "utility_sword_machete", name: "Utility Sword / Machete", type: "Melee Weapon", dmg: "2d6", hands: 1, conceal: "No", cost: 50, desc: "[CRB] Standard. Can be used as agricultural tool." },
+    { id: "entrenching_tool", name: "Entrenching Tool", type: "Melee Weapon", dmg: "2d6", hands: 2, conceal: "No", cost: 50, desc: "[CRB] Poor. Crit Fail on ATK 1. One Action to reverse." },
+    { id: "excalibur_nightstick", name: "Excalibur Nightstick", type: "Melee Weapon", dmg: "2d6", hands: 1, conceal: "Yes", cost: 100, desc: "[CRB] Excellent. +1 ATK. Taser (Stun) or Mace (Gas Effect)." },
+    { id: "kendachi_monokatana", name: "Kendachi MonoKatana 3", type: "Melee Weapon", dmg: "4d6+1", hands: "1 or 2", conceal: "No", cost: 5000, desc: "[CRB] Excellent. +1 ATK. Ignores armor SP<11. Naginata version +200eb, 2M range." },
+    { id: "imi_chainknife", name: "IMI Chainknife", type: "Melee Weapon", dmg: "2d6", hands: 1, conceal: "Yes", cost: 100, desc: "[CRB] Excellent. +1 ATK." },
+    { id: "kendachi_monoknife", name: "Kendachi Monoknife", type: "Melee Weapon", dmg: "3d6+1", hands: 1, conceal: "Yes", cost: 500, desc: "[CRB] Excellent. +1 ATK. Ignores armor SP<11." },
+    { id: "kendachi_monowhip", name: "Kendachi Monowhip", type: "Melee Weapon", dmg: "2d6+1", hands: 1, conceal: "Yes", cost: 500, desc: "[CRB] Excellent. +1 ATK. 1-3M range. Can be used as garrote/cutter/grapple." },
+    { id: "spm1_battleglove", name: "SPM-1 Battleglove", type: "Melee Weapon", dmg: "3d6/2d6", hands: 1, conceal: "No", cost: 1000, desc: "[CRB] Excellent. +1 ATK. 3d6 crush/2d6 punch. Contains 3 cyberarm option slots." },
+    { id: "spawnblade", name: "SlamDance Spawnblade", type: "Melee Weapon", dmg: "1d6+1", hands: 1, conceal: "Yes", cost: 500, desc: "[CRB] Excellent. +1 ATK. Thrown. DV20 First Aid to remove or 1d6/2 dmg." },
+    { id: "mystic_nunchaku_blade", name: "Mystic Technologies Nunchaku/Blade", type: "Melee Weapon", dmg: "1d6/2d6", hands: 1, conceal: "Yes", cost: 200, desc: "[CRB] Standard. 60cm staff splits into nunchaku. 2d6 dmg two-handed." },
+    { id: "arasaka_half_bow", name: "Arasaka Arms Half-Bow", type: "Archery", dmg: "3d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 200, desc: "[CRB] Standard. Arrows." },
+    { id: "eagletech_tomcat", name: "Eagletech Tomcat Compound Bow", type: "Archery", dmg: "4d6+1", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 300, desc: "[CRB] Excellent. +1 ATK. Arrows, gyro-stabilized." },
+    { id: "eagletech_tigercat", name: "Eagletech Tigercat Compound Bow", type: "Archery", dmg: "4d6+1", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 600, desc: "[CRB] Excellent. +1 ATK. Arrows, computerized sight, gyro-stabilized." },
+    { id: "eagletech_arbalest", name: "Eagletech Arbalest Crossbow", type: "Archery", dmg: "4d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 500, desc: "[CRB] Excellent. +1 ATK. Bolt. Cyberarm w/ internal bracing can manually reload (ROF 1)." },
+    { id: "eagletech_handbow", name: "Eagletech Handbow Crossbow", type: "Archery", dmg: "2d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 100, desc: "[CRB] Standard. Bolt. Can be installed in cyberarm w/ autoloader (+200eb)." },
+    { id: "eagletech_stryker", name: "Eagletech Stryker Crossbow", type: "Archery", dmg: "4d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 300, desc: "[CRB] Excellent. +1 ATK. Bolt." },
+    { id: "eagletech_wildcat", name: "Eagletech Wildcat Sport Bow", type: "Archery", dmg: "3d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 150, desc: "[CRB] Poor. Arrows. Crit Fail on ATK 1. One Action to reverse." },
+    { id: "arasaka_wsa", name: "Arasaka WSA Autopistol", type: "Handgun", dmg: "2d6", hands: 1, rof: 2, mag: 16, conceal: "Yes", cost: 500, desc: "[CRB] Standard." },
+    { id: "federated_x9", name: "Federated Arms X-9", type: "Handgun", dmg: "2d6", hands: 1, rof: 2, mag: 16, conceal: "Yes", cost: 300, desc: "[CRB] Standard." },
+    { id: "dai_lung_streetmaster", name: "Dai Lung Streetmaster", type: "Handgun", dmg: "2d6", hands: 1, rof: 2, mag: 16, conceal: "Yes", cost: 100, desc: "[CRB] Poor." },
+    { id: "budgetarm_c41", name: "BudgetArm C-41", type: "Handgun", dmg: "2d6", hands: 1, rof: 2, mag: 16, conceal: "Yes", cost: 800, desc: "[CRB] Excellent. Extended Magazine." },
+    { id: "beretta_m97p", name: "Beretta M97P", type: "Handgun", dmg: "2d6", hands: 1, rof: 2, mag: 18, conceal: "Yes", cost: 600, desc: "[CRB] Excellent. Underbarrel Integral Laser Sight." },
+    { id: "glock_thirty", name: "Glock Thirty Machine Pistol", type: "Handgun", dmg: "2d6", hands: 1, rof: 2, mag: 30, conceal: "Yes", cost: 800, desc: "[CRB] Excellent. Extended mag. +1 ATK. Smartchip link." },
+    { id: "militech_avenger", name: "Militech Arms Avenger", type: "Handgun", dmg: "2d6", hands: 1, rof: 2, mag: 16, conceal: "Yes", cost: 350, desc: "[CRB] Excellent. Extended magazine." },
+    { id: "towa_type14", name: "Towa Mfg Type-14 Police Pistol", type: "Handgun", dmg: "2d6", hands: 1, rof: 2, mag: 16, conceal: "Yes", cost: 1100, desc: "[CRB] Smartchip link. +1 ATK." },
+    { id: "nova_citygun", name: "Nova Model 338 Citygun", type: "Handgun", dmg: "3d6", hands: 1, rof: 2, mag: 8, conceal: "Yes", cost: 500, desc: "[CRB] Excellent." },
+    { id: "mustang_mark3", name: "Mustang Arms Mark III", type: "Handgun", dmg: "3d6", hands: 1, rof: 2, mag: 20, conceal: "Yes", cost: 500, desc: "[CRB] Standard. Extended magazine." },
+    { id: "dai_lung_magnum", name: "Dai Lung Magnum", type: "Handgun", dmg: "3d6", hands: 1, rof: 2, mag: 8, conceal: "Yes", cost: 50, desc: "[CRB] Poor. 60% chance explosion on fumble. 2d6 dmg to arm." },
+    { id: "nova_cityhunter", name: "Nova Model 757 Cityhunter", type: "Handgun", dmg: "3d6", hands: 1, rof: 2, mag: 16, conceal: "Yes", cost: 500, desc: "[CRB] Excellent. Extended magazine." },
+    { id: "sternmeyer_p35", name: "Sternmeyer P-35", type: "Handgun", dmg: "3d6", hands: 1, rof: 2, mag: 8, conceal: "Yes", cost: 500, desc: "[CRB] Standard." },
+    { id: "budgetarms_auto3", name: "BudgetArms Auto-3", type: "Handgun", dmg: "3d6", hands: 1, rof: 2, mag: 8, conceal: "Yes", cost: 200, desc: "[CRB] Poor. 10% chance explosion on fumble. 2d6 dmg to arm." },
+    { id: "ameritech_magnum", name: "Ameritech Magnum", type: "Handgun", dmg: "4d6", hands: 1, rof: 1, mag: 6, conceal: "Yes", cost: 1000, desc: "[CRB] Excellent. Laser-sighted or Smartgun. +1 ATK." },
+    { id: "federated_super_chief", name: "Federated Arms 454 DA Super Chief", type: "Handgun", dmg: "4d6", hands: 1, rof: 1, mag: 6, conceal: "Yes", cost: 500, desc: "[CRB] Excellent." },
+    { id: "shotgun_pistol", name: "Shotgun Pistol", type: "Handgun", dmg: "3d6/4d6", hands: 1, rof: 1, mag: 2, conceal: "Yes", cost: 200, desc: "[CRB] Standard. Shotgun shells / Slugs." },
+    { id: "militech_boomer_buster", name: "Militech .477 Boomer Buster", type: "Handgun", dmg: "5d6", hands: 1, rof: 1, mag: 4, conceal: "Yes", cost: 1000, desc: "[CRB] Excellent. Folding arm brace. Conceal drops without brace deployed or cyberarm." },
+    { id: "colt_amt_2000", name: "Colt AMT Model 2000", type: "Handgun", dmg: "4d6", hands: 1, rof: 1, mag: 8, conceal: "Yes", cost: 600, desc: "[CRB] Excellent." },
+    { id: "armalite_44", name: "Armalite-44", type: "Handgun", dmg: "4d6", hands: 1, rof: 1, mag: 8, conceal: "Yes", cost: 400, desc: "[CRB] Standard." },
+    { id: "royal_enfield_spitfire", name: "Royal Enfield Ordnance Spitfire", type: "Handgun", dmg: "4d6", hands: 1, rof: 1, mag: 12, conceal: "Yes", cost: 800, desc: "[CRB] Standard. Smartchip link. +1 ATK." },
+    { id: "federated_tech_assault", name: "Federated Arms Tech-Assault", type: "Handgun", dmg: "2d6", hands: 2, rof: 1, mag: 30, conceal: "Yes", cost: 100, desc: "[CRB] Standard. Autofire (3). Suppressive Fire. Integral silencer +100eb." },
+    { id: "uzi_miniauto9", name: "Uzi Miniauto 9", type: "Handgun", dmg: "2d6", hands: 2, rof: 1, mag: 30, conceal: "Yes", cost: 500, desc: "[CRB] Standard. Autofire (3). Suppressive Fire." },
+    { id: "setsuko_arasaka_pms", name: "Setsuko-Arasaka PMS SMG", type: "Handgun", dmg: "3d6", hands: 2, rof: 1, mag: 40, conceal: "Yes", cost: 1500, desc: "[CRB] Excellent. Autofire (3). Suppressive Fire. Smartchip. +1 ATK." },
+    { id: "militech_mini_gat", name: "Militech Mini Gat Machine Carbine", type: "Handgun", dmg: "2d6", hands: 2, rof: 1, mag: 40, conceal: "Yes", cost: 1700, desc: "[CRB] Excellent. +1 ATK. Autofire (3). Suppressive Fire. Smartchip." },
+    { id: "federated_tech_assault3", name: "Federated Arms Tech-Assault III", type: "Handgun", dmg: "2d6", hands: 2, rof: 1, mag: 50, conceal: "Yes", cost: 400, desc: "[CRB] Standard. Autofire (3). Suppressive Fire." },
+    { id: "kalashnikov_ppsh14", name: "Kalashnikov PPsh 14", type: "Handgun", dmg: "2d6", hands: 2, rof: 1, mag: 30, conceal: "Yes", cost: 500, desc: "[CRB] Standard. Autofire (3). Suppressive Fire." },
+    { id: "hkv_mpk9", name: "Heckler & Koch MPK-9", type: "Handgun", dmg: "2d6", hands: 2, rof: 1, mag: 30, conceal: "Yes", cost: 500, desc: "[CRB] Standard. Autofire (3). Suppressive Fire." },
+    { id: "arasaka_minami10", name: "Arasaka WMA Minami 10 SMG", type: "Handgun", dmg: "2d6", hands: 1, rof: 1, mag: 40, conceal: "Yes", cost: 500, desc: "[CRB] Excellent. +1 ATK. Autofire (3). Suppressive Fire." },
+    { id: "mustang_ars5c", name: "Mustang Arms ARS-5C SMG", type: "Handgun", dmg: "2d6", hands: 1, rof: 1, mag: 40, conceal: "Yes", cost: 1700, desc: "[CRB] Standard. Autofire (3). Suppressive Fire. Smartchip. +1 ATK. Detachable scopes, Laser Sight." },
+    { id: "stolbavoy_sts", name: "Stolbavoy STS SMG", type: "Handgun", dmg: "2d6", hands: 1, rof: 1, mag: 30, conceal: "Yes", cost: 1200, desc: "[CRB] Standard. Autofire (3). Suppressive Fire. Smartchip. +1 ATK." },
+    { id: "militech_10_smg", name: "Militech 10 SMG", type: "Handgun", dmg: "2d6", hands: 1, rof: 1, mag: 30, conceal: "Yes", cost: 500, desc: "[CRB] Standard. Autofire (3). Suppressive Fire." },
+    { id: "beretta_pm24s", name: "Beretta PM-24s Advanced SMG", type: "Handgun", dmg: "2d6", hands: 1, rof: 1, mag: 50, conceal: "Yes", cost: 1200, desc: "[CRB] Excellent. +1 ATK. Autofire (3). Suppressive Fire. Smartchip." },
+    { id: "beretta_1010", name: "Beretta 1010 Machine Pistol", type: "Handgun", dmg: "2d6", hands: 1, rof: 1, mag: 30, conceal: "Yes", cost: 500, desc: "[CRB] Excellent. +1 ATK. Autofire (3). Suppressive Fire." },
+    { id: "hkv_mp2013", name: "Heckler & Koch MP-2013 SMG", type: "Handgun", dmg: "2d6", hands: 1, rof: 1, mag: 30, conceal: "Yes", cost: 500, desc: "[CRB] Standard. Autofire (3). Suppressive Fire." },
+    { id: "beretta_pm36", name: "Beretta PM 36 SMG", type: "Handgun", dmg: "3d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 800, desc: "[CRB] Standard. Autofire (3). Suppressive Fire." },
+    { id: "ccmmc_tuzi7", name: "CCMMC Tuzi-7 SMG", type: "Handgun", dmg: "3d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 200, desc: "[CRB] Autofire (3). Suppressive Fire." },
+    { id: "sternmeyer_smg21", name: "Sternmeyer SMG 21", type: "Handgun", dmg: "2d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 500, desc: "[CRB] Standard. Autofire (3). Suppressive Fire." },
+    { id: "chadran_city_reaper", name: "Chadran Arms City Reaper", type: "Handgun", dmg: "3d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 1000, desc: "[CRB] Excellent. Autofire (3). Suppressive Fire. +1 ATK. Shotgun shells." },
+    { id: "ingram_mac14", name: "Ingram MAC 14 SMG", type: "Handgun", dmg: "3d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 600, desc: "[CRB] Standard. Autofire (3). Suppressive Fire." },
+    { id: "hkv_mpk11", name: "Heckler & Koch MPK-11 SMG", type: "Handgun", dmg: "3d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 800, desc: "[CRB] Standard. Autofire (3). Suppressive Fire. Bullpup, accepts grenade launcher mount." },
+    { id: "hkv_mpk20", name: "Heckler & Koch MPK-20 SMG", type: "Handgun", dmg: "3d6", hands: 2, rof: 1, mag: 60, conceal: "No", cost: 600, desc: "[CRB] Standard. Autofire (3). Suppressive Fire. Laser Sight." },
+    { id: "arasaka_rapid_assault_12", name: "Arasaka WCAA Rapid Assault Shot 12", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 20, conceal: "No", cost: 800, desc: "[CRB] Standard. Shotgun Shell." },
+    { id: "militech_bulldog", name: "Militech Bulldog Compact Assault Shotgun", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 20, conceal: "No", cost: 1200, desc: "[CRB] Excellent. Shotgun Shell, AP Slug, HE load, Autofire (3). Suppressive Fire." },
+    { id: "constitution_hurricane", name: "Constitution Arms Hurricane Assault Weapon", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 40, conceal: "No", cost: 5000, desc: "[CRB] Excellent. Shotgun Shell, Slug." },
+    { id: "franchi_spas102", name: "Franchi SPAS-102", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 700, desc: "[CRB] Standard. Shotgun Shell. Auto or Pump action." },
+    { id: "militech_crusher_ssg", name: "Militech Crusher SSG", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 500, desc: "[CRB] Standard. Shotgun Shell. Pistol-sized shotgun." },
+    { id: "militech_csh45", name: "Militech CSH-45", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 800, desc: "[CRB] Standard. Shotgun Shell, Slug." },
+    { id: "militech_m6_shotgun", name: "Militech M6 Close Combat Shotgun", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 500, desc: "[CRB] Standard. Shotgun Shell." },
+    { id: "mustang_close_control", name: "Mustang Arms Close Control Shotgun", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 500, desc: "[CRB] Shotgun Shell." },
+    { id: "mossberg_ata10", name: "Mossberg ATA-10", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 500, desc: "[CRB] Shotgun Shell." },
+    { id: "tsunami_ragnarok", name: "Tsunami Arms Ragnarok CAW", type: "Shoulder Arms", dmg: "5d6+1", hands: 2, rof: 1, mag: 40, conceal: "No", cost: 5000, desc: "[CRB] Excellent. Shotgun Shell, Slug." },
+    { id: "stovolboy_12mag", name: "Stovolboy 12 MAG Shotgun", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 20, conceal: "No", cost: 750, desc: "[CRB] Standard. Shotgun Shell." },
+    { id: "militech_mil_police_shotgun", name: "Militech Military/Police Shotgun", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 10, conceal: "No", cost: 1000, desc: "[CRB] Standard. Shotgun Shell, Slug." },
+    { id: "militech_m12", name: "Militech M-12 Close Assault Weapon", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 20, conceal: "No", cost: 900, desc: "[CRB] Standard. Shotgun Shell, Slug." },
+    { id: "sawnoff_shotgun", name: "Sawn-off Double Barrel / Pump Shotgun", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: "2/6", conceal: "Yes", cost: 400, desc: "[CRB] Standard. Shotgun Shell." },
+    { id: "akr20", name: "AKR-20 Medium Assault Rifle", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 500, desc: "[CRB] Standard. Autofire (4). Suppressive Fire." },
+    { id: "chadran_jungle_reaper", name: "Chadran Arms Jungle Reaper", type: "Shoulder Arms", dmg: "5d6+1", hands: 2, rof: 1, mag: 60, conceal: "No", cost: 2000, desc: "[CRB] Excellent. Autofire (4). Suppressive Fire. Underbarrel Grenade Launcher (25mm, 6 shots)." },
+    { id: "federated_light_assault15", name: "Federated Arms Light Assault 15", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 1200, desc: "[CRB] Standard. Autofire (4). Suppressive Fire. Smartchip. +1 ATK." },
+    { id: "fn_ral", name: "FN-RAL Heavy Assault Rifle", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 800, desc: "[CRB] Standard. Autofire (4). Suppressive Fire." },
+    { id: "colt_m18", name: "Colt M-18 Assault Rifle", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 35, conceal: "No", cost: 1000, desc: "[CRB] Excellent. Autofire (4). Suppressive Fire. Optical sight +1 ATK." },
+    { id: "arasaka_waa_bullpup", name: "Arasaka WAA Bullpup Assault Weapon", type: "Shoulder Arms", dmg: "5d6+1", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 1200, desc: "[CRB] Excellent. Autofire (4). Suppressive Fire. Smartchip. +1 ATK." },
+    { id: "ccmmc_jinhua_m9", name: "CCMMC Jinhua M-9", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 500, desc: "[CRB] Standard. Autofire (4). Suppressive Fire." },
+    { id: "kalashnikov_a80", name: "Kalashnikov A-80 Heavy Assault Rifle", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 600, desc: "[CRB] Standard. Autofire (4). Suppressive Fire." },
+    { id: "militech_mk4", name: "Militech Mk IV Assault Weapon", type: "Shoulder Arms", dmg: "6d6", hands: 2, rof: 1, mag: 35, conceal: "No", cost: 1000, desc: "[CRB] Excellent. Autofire (4). Suppressive Fire. Can mount M-205 Grenade Launcher (40mm)." },
+    { id: "towa_type20", name: "Towa Mfg Type-20 Advanced Infantry Combat Weapon", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 2000, desc: "[CRB] Standard. Autofire (4). Suppressive Fire. Smartchip. Mini-Grenade Launcher (25mm, 4 shots)." },
+    { id: "stolbovoy_st5", name: "Stolbovoy St-5 Assault Rifle", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 1800, desc: "[CRB] Autofire (4). Suppressive Fire. Smartchip. +1 ATK." },
+    { id: "militech_ronin", name: "Militech Ronin Light Assault Weapon", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 600, desc: "[CRB] Excellent. Autofire (4). Suppressive Fire. Can mount M-205 Grenade Launcher (40mm)." },
+    { id: "militech_dragon", name: "Militech Dragon Light Assault Weapon", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 800, desc: "[CRB] Autofire (4). Suppressive Fire. Smartchip." },
+    { id: "militech_m31a1", name: "Militech M-31a1 Advanced Infantry Combat Weapon", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 150, conceal: "No", cost: 1700, desc: "[CRB] Standard. Autofire (4). Suppressive Fire. Underbarrel Grenade Launcher (25mm, 4 shots)." },
+    { id: "arasaka_wssa", name: "Arasaka WSSA Sniper System", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 40, conceal: "No", cost: 2500, desc: "[CRB] Excellent. 3.5mm FF. Sniping Scope +1 ATK. Smartchip. +1 ATK." },
+    { id: "militech_arbus", name: "Militech Arbus", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 10, conceal: "No", cost: 2100, desc: "[CRB] Excellent. 7mm. Sniping Scope +1 ATK. Smartgun +1 ATK. Extended Magazine." },
+    { id: "stolvoboy_oktober", name: "Stolvoboy Oktober", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 1200, desc: "[CRB] Excellent. 6mm. Smartchip +1 ATK. Sniping Scope +1 ATK. Extended Magazine." },
+    { id: "walther_wa2021", name: "Walther WA-2021", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 10, conceal: "No", cost: 2800, desc: "[CRB] Excellent. 7.62mm. Smartchip +1 ATK. Sniping Scope +1 ATK." },
+    { id: "remington_950", name: "Remington 950", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 6, conceal: "No", cost: 1000, desc: "[CRB] Excellent. .03-06. Sniping Scope +1 ATK." },
+    { id: "barrett_m99", name: "Barrett M-99 Sniper Rifle", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 10, conceal: "No", cost: 1800, desc: "[CRB] Excellent. .50 BMG. Sniping Scope +1 ATK. Smartgun +1 ATK." },
+    { id: "hkv_g38sk", name: "Heckler & Koch G38SK", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 10, conceal: "No", cost: 1600, desc: "[CRB] Excellent. 5.56mm. Sniping Scope +1 ATK. Suppressor. Smartgun +1 ATK." },
+    { id: "constitution_cyclone", name: "Constitution Arms Cyclone SSW", type: "Heavy Weapons", dmg: "5d6", hands: 2, rof: 1, mag: 100, conceal: "No", cost: 1300, desc: "[CRB] Standard. 7.62mm. Autofire (4). Suppressive Fire." },
+    { id: "militech_renegade", name: "Militech Renegade SAW", type: "Heavy Weapons", dmg: "5d6", hands: 2, rof: 1, mag: 200, conceal: "No", cost: 1100, desc: "[CRB] Standard. Autofire (4). Suppressive Fire." },
+    { id: "towa_type8_mmg", name: "Towa Mfg Type-8 Medium Machine Gun", type: "Heavy Weapons", dmg: "5d6", hands: 2, rof: 1, mag: 100, conceal: "No", cost: 2500, desc: "[CRB] Excellent. 7.62mm. Autofire (4). Suppressive Fire." },
+    { id: "sternmeyer_m5a", name: "Sternmeyer M-5A SAW", type: "Heavy Weapons", dmg: "5d6", hands: 2, rof: 1, mag: 200, conceal: "No", cost: 1000, desc: "[CRB] Standard. 7.62mm. Autofire (4). Suppressive Fire." },
+    { id: "fn_browning_mg6", name: "FN Browning MG-6", type: "Heavy Weapons", dmg: "5d6", hands: 2, rof: 1, mag: 100, conceal: "No", cost: 1800, desc: "[CRB] Excellent. 5.56mm. Autofire (4). Suppressive Fire." },
+    { id: "armalite_m60e4", name: "Armalite M60-E4", type: "Heavy Weapons", dmg: "5d6", hands: 2, rof: 1, mag: 100, conceal: "No", cost: 1200, desc: "[CRB] Excellent. 7.62mm. Autofire (4). Suppressive Fire." },
+    { id: "militech_m232", name: "Militech M-232 Squad Assault/Automatic Weapon", type: "Heavy Weapons", dmg: "5d6", hands: 2, rof: 1, mag: 100, conceal: "No", cost: 1100, desc: "[CRB] Excellent. 5.56mm. Autofire (4). Suppressive Fire." },
+    { id: "m212_gl", name: "M-212 Grenade Launcher", type: "Heavy Weapons", dmg: "varies (40mm)", hands: 2, rof: 2, mag: 8, conceal: "No", cost: 500, desc: "[CRB] Excellent. Explosive. Can select round, slows ROF to 1." },
+    { id: "hkv_mgl4", name: "Heckler & Koch MGL-4 Grenade Launcher", type: "Heavy Weapons", dmg: "varies (40mm)", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 2300, desc: "[CRB] Excellent. Explosive." },
+    { id: "towa_type9_gl", name: "Towa Mfg Type-9 Grenade Launcher", type: "Heavy Weapons", dmg: "varies (40mm)", hands: 2, rof: 2, mag: 8, conceal: "No", cost: 800, desc: "[CRB] Standard. Explosive." },
+    { id: "militech_mini_gl_drum", name: "Militech Mini-Grenade Launcher (Drum)", type: "Heavy Weapons", dmg: "varies (25mm)", hands: 2, rof: 2, mag: 16, conceal: "No", cost: 500, desc: "[CRB] Standard. Explosive." },
+    { id: "militech_cowboy_u55", name: "Militech Cowboy U-55 Grenade Launcher", type: "Heavy Weapons", dmg: "varies (25mm)", hands: 2, rof: 3, mag: 12, conceal: "No", cost: 900, desc: "[CRB] Standard. Explosive." },
+    { id: "commercial_gl", name: "Commercial Grenade Launcher", type: "Heavy Weapons", dmg: "varies (40mm)", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 200, desc: "[CRB] Standard. Explosive. Underbarrel attachable to assault rifle." },
+    { id: "m205_gl", name: "M-205 Grenade Launcher", type: "Heavy Weapons", dmg: "varies (40mm)", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 500, desc: "[CRB] Excellent. Explosive. Underbarrel attachable." },
+    { id: "mortar_60mm", name: "60mm Light Mortar", type: "Heavy Weapons", dmg: "8d6", hands: 2, rof: 2, mag: 1, conceal: "No", cost: 800, desc: "[CRB] Excellent. Explosive. 10m x 10m area. 2 crew for ROF 2." },
+    { id: "rheinmetall_emg85", name: "Rheinmetall EMG-85 Railgun", type: "Heavy Weapons", dmg: "10d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 12000, desc: "[CRB] Standard. Min BOD 11 without linear frame or ACPA. Smartgun link." },
+    { id: "tsunami_type17", name: "Tsunami Arms Type-17 Anti-Armor Rifle", type: "Heavy Weapons", dmg: "8d6 (20mm)", hands: 2, rof: 1, mag: 12, conceal: "No", cost: 2000, desc: "[CRB] Excellent. Computerized sights +1 ATK. Smartgun +1 ATK. Bipod or vehicle mounted." },
+    { id: "enfield_cockerill", name: "Enfield 25mm Cockerill Assault Cannon", type: "Heavy Weapons", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 1000, desc: "[CRB] Excellent. Explosive. 10m x 10m area." },
+    { id: "militech_am3", name: "Militech AM-3 Anti-Matter Rifle", type: "Heavy Weapons", dmg: "8d6 (30mm)", hands: 2, rof: 2, mag: 8, conceal: "No", cost: 3000, desc: "[CRB] Excellent. Rocket boosted. Cyberoptic smartgun +1 ATK. Scope w/ low-light/thermal." },
+    { id: "colt_mauser_m2x", name: "Colt-Mauser M-2x 20mm Cannon", type: "Heavy Weapons", dmg: "8d6", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 2000, desc: "[CRB] Excellent. Sniping Scope +1 ATK." },
+    { id: "browning_m2hb", name: "M2A5HB Browning .50cal HMG", type: "Heavy Weapons", dmg: "6d6", hands: 2, rof: 1, mag: 30, conceal: "No", cost: 1000, desc: "[CRB] Excellent. Autofire (4). Suppressive Fire. Crew Served tripod/Vehicle mounted." },
+    { id: "ccmmc_msh85", name: "CCMMC MSH-85", type: "Heavy Weapons", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 2000, desc: "[CRB] Poor. Explosive. 10m x 10m area." },
+    { id: "hughes_hlaw", name: "Hughes HLAW", type: "Heavy Weapons", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 700, desc: "[CRB] Standard. Explosive. 10m x 10m area." },
+    { id: "militech_rpgb", name: "Militech RPG-B", type: "Heavy Weapons", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 1500, desc: "[CRB] Excellent. Explosive. 10m x 10m area." },
+    { id: "militech_baz12", name: "Militech BAZ-12", type: "Heavy Weapons", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 3000, desc: "[CRB] Standard. Explosive. 10m x 10m area." },
+    { id: "militech_scorpion16", name: "Militech Scorpion 16 SAM", type: "Heavy Weapons", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 2100, desc: "[CRB] Excellent. Explosive. 10m x 10m area. Surface to Air." },
+    { id: "royal_enfield_rl111", name: "Royal Enfield Ordnance RL111", type: "Heavy Weapons", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 2000, desc: "[CRB] Excellent. Explosive. 10m x 10m area." },
+    { id: "militech_hotshot", name: "Militech Hotshot L-ATGM", type: "Heavy Weapons", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 2500, desc: "[CRB] Excellent. Explosive. 10m x 10m area. Wire-guided light anti-tank missile." },
+    { id: "emp_grenade", name: "EMP Grenade", type: "Heavy Weapons", dmg: "Special", hands: 1, rof: 1, mag: null, conceal: "Yes", cost: 200, desc: "[CRB] Non-lethal. EMP effect 5 sec. Unshielded electronics/cyberware disabled. 4M radius." },
+    { id: "scatter_grenade", name: "Scatter Grenade", type: "Heavy Weapons", dmg: "Special", hands: 1, rof: 1, mag: null, conceal: "Yes", cost: 60, desc: "[CRB] Smoke + particles. Blocks normal sight, IR, and thermal. 5M radius." },
+    { id: "ninja_smoke_pellet", name: "Ninja Smoke Pellet", type: "Heavy Weapons", dmg: "Special", hands: 1, rof: 1, mag: null, conceal: "Yes", cost: 25, desc: "[CRB] Distraction. Target loses next action. Stealth to escape. 1M radius." },
+    { id: "arasaka_nauseator", name: "Arasaka Nauseator Riot-Control Device", type: "Exotic", dmg: "8d6", hands: 2, rof: 1, mag: 10, conceal: "No", cost: 2000, desc: "[CRB] Conical pattern 15m deep x 25m wide. BOD+25 check or disorientation (−4 all actions 1d6 rds)." },
+    { id: "dynatech_hand_taser", name: "Dynatech Industries Hand Taser", type: "Melee Weapon", dmg: "Stun", hands: 1, rof: 1, mag: 12, conceal: "Yes", cost: 50, desc: "[CRB] Touch bare skin. Stun Save at −2 or unconscious 1d10 min." },
+    { id: "urbantech_lance", name: "UrbanTech Lance Mini-Missile", type: "Heavy Weapons", dmg: "8d6 (HEAT)", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 100, desc: "[CRB] Single Shot. Use INT instead of REF. 2d6 in 1M blast." },
+    { id: "slamdance_hyper_hammer", name: "SlamDance Hyper Hammer", type: "Melee Weapon", dmg: "9d6", hands: 2, conceal: "No", cost: 2000, desc: "[CRB] BOD MIN 18. Solid-tungsten sledgehammer. Rocket booster in hammer head." },
+    { id: "militech_electronic_taser", name: "Militech Electronic Taser II", type: "Exotic", dmg: "Stun", hands: 1, rof: 1, mag: 4, conceal: "Yes", cost: 100, desc: "[CRB] Small flashlight-sized. Wired darts up to 10M." },
+    { id: "arasaka_wxa", name: "Arasaka WXA Computer-Aimed Weapon", type: "Exotic", dmg: "6d6", hands: 2, rof: 1, mag: 500, conceal: "No", cost: 4000, desc: "[CRB] Belt-fed, computer aimed. Fires 10°-360°, 2m-400m range." },
+    { id: "avante_needlegun", name: "Avante P-1135 Needlegun", type: "Handgun", dmg: "Drugs (needle)", hands: 1, rof: 1, mag: 15, conceal: "Yes", cost: 200, desc: "[CRB] Underbarrel or standalone." },
+    { id: "borg_12g_pistol", name: "Generic Full Borg 12-Gauge Pistol", type: "Handgun", dmg: "4d6 (12ga)", hands: 1, rof: 1, mag: 9, conceal: "No", cost: 1000, desc: "[CRB] BOD MIN 12. Shell or Slug." },
+    { id: "borg_127mm_rifle", name: "Generic Full Borg 12.7mm Assault Rifle", type: "Shoulder Arms", dmg: "8d6 (12.7mm)", hands: 2, rof: 1, mag: 50, conceal: "No", cost: 2000, desc: "[CRB] Autofire (4). Suppressive Fire. BOD MIN 12." },
+    { id: "borg_556_smg", name: "Generic Full Borg 5.56mm Caseless SMG", type: "Handgun", dmg: "5d6 (5.56)", hands: 2, rof: 1, mag: 50, conceal: "No", cost: 2000, desc: "[CRB] Autofire (3). Suppressive Fire. BOD MIN 10." },
+    { id: "arasaka_malorian_50", name: "Arasaka-Malorian Assault .50", type: "Heavy Weapons", dmg: "7d6 (.50)", hands: 2, rof: 1, mag: 25, conceal: "No", cost: 2000, desc: "[CRB] BOD MIN 11. Smartchipped." },
+    { id: "arasaka_rage_15mm", name: "Arasaka Rage 15mm SMG", type: "Handgun", dmg: "6d6 (15mm)", hands: 2, rof: 1, mag: 20, conceal: "No", cost: 4000, desc: "[CRB] BOD MIN 15. 7d6 HE 1M radius." },
+    { id: "borg_14mm_big_gov", name: "Generic Full Borg 14mm Magnum Opus Big Government", type: "Handgun", dmg: "6d6 (14mm)", hands: 1, rof: 1, mag: 13, conceal: "Yes", cost: 2000, desc: "[CRB] BOD MIN 12." },
+    { id: "borg_30mm_autogl", name: "Generic Full Borg 30mm HiVel Caseless Auto-GL", type: "Heavy Weapons", dmg: "Varies (30mm)", hands: 2, rof: 1, mag: 25, conceal: "No", cost: 2000, desc: "[CRB] Explosive. BOD MIN 12." },
+    { id: "glock_145mm", name: "Glock 14.5mm Assault Rifle", type: "Heavy Weapons", dmg: "8d6 (14.5mm)", hands: 2, rof: 1, mag: 50, conceal: "No", cost: 2500, desc: "[CRB] Autofire (4). Suppressive Fire. BOD MIN 12." },
+    { id: "magnum_opus_hellbringer", name: "Magnum Opus Hellbringer .666 Magnum Revolver", type: "Handgun", dmg: "7d6 (.666)", hands: 1, rof: 1, mag: 3, conceal: "No", cost: 2000, desc: "[CRB] BOD MIN 15." },
+    { id: "malorian_3600", name: "Malorian 3600 Super-SMG", type: "Handgun", dmg: "6d6 (14mm)", hands: 2, rof: 1, mag: 20, conceal: "No", cost: 3000, desc: "[CRB] Autofire (3). Suppressive Fire. BOD MIN 11." },
+    { id: "militech_aar49", name: "Militech AAR-49", type: "Heavy Weapons", dmg: "8d6 (30mm)", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 7000, desc: "[CRB] Autofire (4). Suppressive Fire. BOD MIN 15." },
+    { id: "texhofforhov_127mm", name: "Texhofforhov 12.7mm Assault Rifle", type: "Heavy Weapons", dmg: "8d6 (12.7mm)", hands: 2, rof: 1, mag: 50, conceal: "No", cost: 2000, desc: "[CRB] Autofire (4). Suppressive Fire. BOD MIN 11." },
+    { id: "tsunami_helix", name: "Tsunami Arms Helix", type: "Shoulder Arms", dmg: "5d6 (10ga)", hands: 2, rof: 1, mag: 60, conceal: "No", cost: 5000, desc: "[CRB] BOD MIN 15. #00 Buck or Slug (Flechette)." },
+    { id: "magnum_opus_big_gov_14mm", name: "Magnum Opus Big Government 14mm", type: "Handgun", dmg: "6d6 (14mm)", hands: 1, rof: 1, mag: 13, conceal: "No", cost: 2000, desc: "[CRB] BOD MIN 12." },
+
+    { id: "captain_cuddlefish", name: "Captain Cuddlefish Ultra Snag-Em", type: "Melee Weapon", dmg: "1d6", hands: 1, rof: 2, conceal: "Yes", cost: 200, desc: "[CRB] Exotic Light Melee. Range 10m/yds. -6 for Held Item Aimed Shot. Collectible outfits available." },
+    { id: "fisher_kitty", name: "Hello Cutie Fisher Kitty", type: "Handgun", dmg: "2d6", hands: 1, rof: 2, mag: 4, conceal: "Yes", cost: 500, desc: "[CRB] Exotic. Archery skill. Range 50m. Mini-harpoons. Electrify for 2d6/3d6 dmg." },
+    { id: "gun_gun_friend_friend", name: "Hello Cutie Gun-Gun Friend-Friend", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 25, conceal: "No", cost: 1000, desc: "[CRB] Excellent. Autofire (4). Suppressive Fire. Can install a pop-up One-Handed Ranged Weapon." },
+    { id: "hypurr_hammer", name: "Hello Cutie Hypurr-Hammer", type: "Melee Weapon", dmg: "4d6", hands: 2, rof: 1, conceal: "No", cost: 1000, desc: "[CRB] Very Heavy Melee. Doesn't halve SP. BODY 9+: 5d6 and roll Crit Injury twice." },
+    { id: "janus_hex", name: "Hello Cutie Janus Hex", type: "Handgun", dmg: "1d6", hands: 1, rof: 1, mag: 2, conceal: "Yes", cost: 500, desc: "[CRB] Excellent VH Pistol. Fires Scent Ball rounds. DV15 Resist or -3 to attacks/vision checks 1 hr." },
+    { id: "modball_gun", name: "Hello Cutie ModBall Gun", type: "Handgun", dmg: "Varies", hands: 1, rof: 2, mag: 5, conceal: "Yes", cost: 500, desc: "[CRB] Exotic. Fires ModBall ammo (Dazzle, Mega Ouchie, Ouchie, Slippy, Splashie). Mix ammo types." },
+    { id: "my_friend_the_ocelot", name: "Hello Cutie My Friend the Ocelot", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 12, conceal: "No", cost: 1500, desc: "[CRB] Excellent. Slug only. Autofire (4) on SMG table. Biometric pet-to-unlock reload." },
+    { id: "thundercat_bat", name: "Hello Cutie Thundercat Bat", type: "Melee Weapon", dmg: "2d6", hands: 2, rof: 2, conceal: "No", cost: 750, desc: "[CRB] Excellent Stun Baton. DV15 Resist Torture/Drugs or Damaged Ear Critical." },
+
+    { id: "enviro_launcher", name: "Biotechnica Enviro-launcher", type: "Heavy Weapons", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 500, desc: "[CRB] Exotic Rocket Launcher. Single-use. Decomposes in 1 hr." },
+    { id: "triple_treat", name: "BudgetArms Triple Treat", type: "Heavy Weapons", dmg: "8d6", hands: 2, rof: 1, mag: 2, conceal: "No", cost: 500, desc: "[CRB] Poor Exotic Rocket Launcher. Integrated Poor GL Underbarrel. Fires non-Basic ammo." },
+    { id: "flare_gun", name: "Flare Gun", type: "Heavy Weapons", dmg: "6d6", hands: 1, rof: 1, mag: 1, conceal: "No", cost: 100, desc: "[CRB] Exotic Grenade Launcher. Fires grenade ammo or road flares (visible 3 miles)." },
+    { id: "sdf45", name: "Midnight Arms SDF-45", type: "Heavy Weapons", dmg: "8d6", hands: 2, rof: 1, mag: 4, conceal: "No", cost: 1000, desc: "[CRB] Exotic Rocket Launcher. Range 400m. Fires 2 AP rockets at once. GM places hits." },
+    { id: "militech_aegis", name: "Militech Aegis", type: "Heavy Weapons", dmg: "4d6", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 1000, desc: "[CRB] Poor Exotic Shotgun (Heavy Weapons). Shell only. 8 charges (recharge 1hr). Non-lethal." },
+    { id: "militech_archimedes", name: "Militech Archimedes", type: "Heavy Weapons", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 5000, desc: "[CRB] Excellent Exotic Rocket Launcher. Pilot Air Vehicle skill. Smart Rockets only. Requires Targeting Scope." },
+    { id: "nomad_air_cannon", name: "Nomad Air Cannon", type: "Shoulder Arms", dmg: "Special", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 1000, desc: "[CRB] Exotic Shotgun. Liquid ammo. Acid: -1 SP. Poison/Biotoxin: 3 vials/shot, Resist Torture/Drugs." },
+    { id: "tearjerker", name: "Pursuit Security TearJerker", type: "Heavy Weapons", dmg: "Special", hands: 2, rof: 1, mag: 3, conceal: "No", cost: 500, desc: "[CRB] Excellent Exotic Grenade Launcher. Smoke or Teargas ammo only." },
+    { id: "ballistic_harpoon", name: "SlamDance Ballistic Harpoon", type: "Melee Weapon", dmg: "4d6", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 1000, desc: "[CRB] Exotic Very Heavy Melee. Can be fired (Heavy Weapons, Bow range). Ignores 1/2 armor." },
+    { id: "m02_heavy_rifle", name: "Sternmeyer M-02 Heavy Rifle", type: "Shoulder Arms", dmg: "5d6", hands: 2, rof: 1, mag: 80, conceal: "No", cost: 1000, desc: "[CRB] Exotic. Heavy Weapons skill. No Autofire/Suppressive Fire. Proprietary AP trounds (500eb/80)." },
+    { id: "towa_pocket_launcher", name: "Towa Pocket Launcher", type: "Heavy Weapons", dmg: "8d6", hands: 2, rof: 1, mag: 1, conceal: "Yes", cost: 500, desc: "[CRB] Poor Exotic Rocket Launcher. Concealable when unloaded. Collapsible." },
+    { id: "burst_flamethrower", name: "UrbanTech Burst Flamethrower", type: "Heavy Weapons", dmg: "3d6", hands: 2, rof: 1, mag: 4, conceal: "No", cost: 1000, desc: "[CRB] Exotic Shotgun (Heavy Weapons). Incendiary Shells only. 4 dmg/turn on fire. Burst explosion mode." },
+
+    { id: "thermal_dagger", name: "Centurion Essentials Thermal Dagger", type: "Melee Weapon", dmg: "2d6", hands: 1, rof: 2, conceal: "Yes", cost: 1000, desc: "[CRB] Excellent Exotic Medium Melee. Sets targets Strongly On Fire." },
+    { id: "nats_long_barreled", name: "Nat's Long-Barreled Pistol", type: "Handgun", dmg: "4d6", hands: 1, rof: 1, mag: 8, conceal: "No", cost: 500, desc: "[CRB] Excellent VH Pistol. Unique Range Table (up to 400m/yds). 3 Slots." },
+    { id: "etack_rapid_responder", name: "Pursuit Security E-TACK Rapid Responder", type: "Handgun", dmg: "2d6", hands: 1, rof: 2, mag: 18, conceal: "Yes", cost: 500, desc: "[CRB] Poor M Pistol. Burst mode (3d6, treats ammo as AP). Extended Magazine. Stun Bayonet." },
+
+    { id: "constitutional_multi_ammo", name: "Constitutional Arms Multiple Ammunition Pistol", type: "Handgun", dmg: "4d6", hands: 1, rof: 1, mag: 5, conceal: "No", cost: 500, desc: "[CRB] Exotic VH Pistol. Load mix of up to 5 different ammo types." },
+    { id: "kendachi_dragon_flamethrower", name: "Kendachi Dragon Flamethrower", type: "Heavy Weapons", dmg: "Special", hands: 1, rof: 1, mag: 2, conceal: "No", cost: 1000, desc: "[CRB] Exotic Shotgun (Heavy Weapons). Incendiary Shells only. 4 dmg/turn on fire." },
+    { id: "malorian_sub_flechette", name: "Malorian Arms Sub-Flechette Gun", type: "Handgun", dmg: "3d6", hands: 1, rof: 1, mag: 25, conceal: "No", cost: 5000, desc: "[CRB] Excellent Exotic Heavy SMG. Autofire (4). Smartgun Link. AP ammo ablates 4 SP." },
+    { id: "nomad_pneumatic_bolt", name: "Nomad Pneumatic Bolt Gun", type: "Shoulder Arms", dmg: "4d6", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 500, desc: "[CRB] Exotic Sniper. Fires Arrows. Loads Non-Basic ammo." },
+    { id: "teen_dreem", name: "Teen Dreem", type: "Handgun", dmg: "2d6", hands: 1, rof: 1, mag: 10, conceal: "Yes", cost: 20, desc: "[CRB] Poor Exotic SMG. Autofire (3) drains clip. Destroys weapon on use." }
+  ],
+
+  // ----------------------------------------------------------
+  // ARMOR
+  // ----------------------------------------------------------
+  // Armor is categorized into head and body. 'sp' is Stopping Power,
+  // and 'enc' is the penalty to your stats when you wear heavy armor.
+  armor: [
+    { id: "armor_head_light", name: "Light Armorjack (Head)", slots: "Head", sp: 11, cost: 100, enc: 0, desc: "[CRB]" },
+    { id: "armor_head_medium", name: "Medium Armorjack (Head)", slots: "Head", sp: 12, cost: 500, enc: 2, desc: "[CRB]" },
+    { id: "armor_head_heavy", name: "Heavy Armorjack (Head)", slots: "Head", sp: 13, cost: 1000, enc: 4, desc: "[CRB]" },
+    { id: "armor_body_light", name: "Light Armorjack (Body)", slots: "Body", sp: 11, cost: 100, enc: 0, desc: "[CRB]" },
+    { id: "armor_body_medium", name: "Medium Armorjack (Body)", slots: "Body", sp: 12, cost: 500, enc: 2, desc: "[CRB]" },
+    { id: "armor_body_heavy", name: "Heavy Armorjack (Body)", slots: "Body", sp: 13, cost: 1000, enc: 4, desc: "[CRB]" },
+    { id: "armor_body_flak", name: "Flak (Body)", slots: "Body", sp: 15, cost: 5000, enc: 4, desc: "[CRB]" },
+    { id: "armor_body_metalgear", name: "Metal Gear (Body)", slots: "Body", sp: 18, cost: 5000, enc: 4, desc: "[CRB]" },
+    { id: "kevlar_vest", name: "Kevlar Vest", slots: "Body", sp: 7, cost: 50, enc: 0, desc: "[CRB]" },
+    { id: "leather_jacket", name: "Leather Jacket", slots: "Body", sp: 4, cost: 20, enc: 0, desc: "[CRB]" },
+    { id: "shield_riot", name: "Riot Shield", slots: "Shield", sp: 10, cost: 100, enc: 0, desc: "[CRB]" },
+    { id: "shield_ballistic", name: "Bulletproof Shield", slots: "Shield", sp: 15, cost: 250, enc: 0, desc: "[CRB]" },
+    { id: "scavenged_armor", name: "Scavenged Armor", slots: "Body", sp: 11, cost: 50, enc: 0, desc: "[CRB] Scavenged pieces of metal and synth-leather. Cheap but effective." },
+    { id: "dirk_combat_jacket", name: "Dirk Combat Jacket", slots: "Body", sp: 11, cost: 500, enc: 0, desc: "[BC] Functions as Light Armorjack. Has Appearance of Fashion." },
+    { id: "laser_light_jacket", name: "Laser Light Street Jacket", slots: "Body", sp: 11, cost: 500, enc: 0, desc: "[BC] Glowing accents. Functions as Light Armorjack. Has Appearance of Fashion." },
+    { id: "montage_variable", name: "Montage Variable Clothing", slots: "Body", sp: 11, cost: 500, enc: 0, desc: "[BC] Variable appearance clothing. Functions as Light Armorjack." },
+    { id: "corporate_island", name: "Corporate Island Armor", slots: "Body", sp: 11, cost: 500, enc: 0, desc: "[BC] Wrinkle-free, static-free, tear-proof. Functions as Light Armorjack." },
+    { id: "executive_armor", name: "Executive Armor", slots: "Body", sp: 11, cost: 1000, enc: 0, desc: "[BC] Nanomachines repair 1 point of lost SP each day it takes no damage. Functions as Light Armorjack." },
+    { id: "mimic_clothing_kit", name: "Mimic Clothing Kit", slots: "Body", sp: 11, cost: 100, enc: 0, desc: "[BC] Turns ordinary jacket/top into Light Armorjack. Appearance of Fashion (DV13 Wardrobe/Style or DV15 Perception to detect)." },
+    { id: "masetto_airrider", name: "Masetto AirRider", slots: "Body", sp: 7, cost: 100, enc: 0, desc: "[BC] Premium motorcycle suit. Functions as Kevlar. Integrated airbag inflates during a crash to reduce impact damage." },
+    { id: "shock_armor", name: "Shock Armor", slots: "Body", sp: 7, cost: 500, enc: 0, desc: "[BC] Kevlar Body Armor. As an Action while grappled, emit a shock pulse. Grappler must pass DV15 Resist Torture/Drugs or grapple ends." },
+    { id: "skidrow_trench", name: "SkidRow Trench", slots: "Body", sp: 13, cost: 100, enc: 4, desc: "[BC] Heavy duster. Functions as SP 13 armor. Inflicts an Armor Penalty of -4 to REF, DEX, and MOVE." },
+    { id: "fire_brand_bunker", name: "Fire Brand Bunker Gear", slots: "Body", sp: 15, cost: 1000, enc: 4, desc: "[BC] Firefighter Flak Armor. Wearer is immune to the On Fire condition. Includes built-in Gas Mask and Oxygen Tank." },
+    { id: "lotos_netsuit", name: "Lotos Netsuit", slots: "Body", sp: 13, cost: 5000, enc: 4, desc: "[BC] Netrunner Suit (SP 13 on both Head and Body). Cannot be worn with other armor. Includes a built-in Excellent Quality Cyberdeck." },
+    { id: "mechaman_helmet", name: "MechaMan Helmet", slots: "Head", sp: 15, cost: 5000, enc: 4, desc: "[BC] Flashing high-tech external display. SP 15." },
+    { id: "light_metalgear", name: "Light Metalgear (Body)", slots: "Body", sp: 16, cost: 1000, enc: 4, desc: "[BC] Lighter version of the classic MetalGear." },
+    { id: "light_metalgear_head", name: "Light Metalgear (Head)", slots: "Head", sp: 16, cost: 500, enc: 0, desc: "[BC] Light MetalGear helmet." },
+    { id: "esporma_suit", name: "Esporma Environment Suit", slots: "Body", sp: 8, cost: 5000, enc: 0, desc: "[BC] Environmental Protection Suit. Provides immunity to airborne toxins and corrosive chemicals." },
+    { id: "esporma_suit_head", name: "Esporma Environment Suit (Head)", slots: "Head", sp: 8, cost: 2500, enc: 0, desc: "[BC] Environmental protection helmet." },
+    { id: "skidrow_packshield", name: "SkidRow PackShield", slots: "Shield", sp: 10, cost: 100, enc: 0, desc: "[BC] Functions as a carryall backpack that can be deployed as a Shield (SP 10, 10 HP)." }
+  ],
+
+  // ----------------------------------------------------------
+  // CYBERWARE
+  // ----------------------------------------------------------
+  // A massive list of cyberware. 
+  // 'hc' is the Humanity Cost loss. 
+  // 'slots' tells the app how many sub-options (like optics or audio) can be installed inside it.
+  // 'bonus' is an object that the calculations.js file reads to automatically increase your stats!
+  cyberware: [
+    { id: "cybereye", name: "Cybereye", type: "Cybereye", hc: 2, cost: 500, desc: "[CRB] Single cybernetic eye.", slots: 3, bodyPart: "eye" },
+    { id: "cyberaudio", name: "Cyberaudio Suite", type: "Cyberaudio", hc: 2, cost: 500, desc: "[CRB] Internal ear comms and audio processing.", slots: 3 },
+    { id: "neural_link", name: "Neural Link", type: "Internal", hc: 7, cost: 500, desc: "[CRB] Chip socket interface. Required for most Neuralware.", slots: 5 },
+        { id: "chipware_socket", name: "Chipware Socket", type: "Internal", hc: 7, cost: 500, desc: "[CRB] Extra skill chip socket.", parentType: "neural_link" },
+    { id: "interface_plugs", name: "Interface Plugs", type: "Neuralware", hc: 7, cost: 500, desc: "[CRB] Allows user to interface with cyberdecks, smartguns, vehicles.", parentType: "neural_link" },
+    { id: "braindance_recorder", name: "Braindance Recorder", type: "Neuralware", hc: 7, cost: 500, desc: "[CRB] Record your experiences to braindance format.", parentType: "neural_link" },
+    { id: "chemical_analyzer", name: "Chemical Analyzer", type: "Neuralware", hc: 7, cost: 500, desc: "[CRB] Analyze chemicals by touching or ingesting.", parentType: "neural_link" },
+    { id: "machine_tech_link", name: "Machine/Tech Link", type: "Neuralware", hc: 7, cost: 500, desc: "[CRB] Interface directly with machines/tech for control.", parentType: "neural_link" },
+    { id: "pain_editor", name: "Pain Editor", type: "Internal", hc: 14, cost: 2000, desc: "[CRB] Disables pain. User ignores penalties due to being Seriously Wounded." },
+    { id: "nanosurgeons", name: "Nanosurgeons", type: "Internal", hc: 3, cost: 1500, desc: "[CRB] Auto-stabilize at 0 HP once per day." },
+    { id: "synth_lungs", name: "Synth Lungs", type: "Internal", hc: 3, cost: 1000, desc: "[CRB] Filter toxins, breathe smoke." },
+    { id: "gills", name: "Gills", type: "Internal", hc: 2, cost: 500, desc: "[CRB] Breathe underwater." },
+    { id: "cyberarm", name: "Cyberarm", type: "Cyberarm", hc: 3, cost: 1000, desc: "[CRB] Basic cybernetic arm.", slots: 4, bodyPart: "arm" },
+    { id: "cyberleg", name: "Cyberleg", type: "Cyberleg", hc: 3, cost: 1000, desc: "[CRB] Basic cybernetic leg.", slots: 3, bodyPart: "leg" },
+    { id: "tactile_boost", name: "Tactile Boost", type: "Neuralware", hc: 7, cost: 100, desc: "[CRB] Enhanced touch, +1 to pick lock/pick pocket.", parentType: "neural_link", bonus: { skills: { pick_lock: 1, pick_pocket: 1 } } },
+    { id: "olfactory_boost", name: "Olfactory Boost", type: "Neuralware", hc: 7, cost: 100, desc: "[CRB] Enhanced smell, +2 to tracking via scent.", parentType: "neural_link", bonus: { skills: { tracking: 2 } } },
+    { id: "subdermal_armor", name: "Subdermal Armor", type: "Internal", hc: 14, cost: 2000, desc: "[CRB] SP 7 to area implanted." },
+    { id: "skin_weave", name: "Skin Weave", type: "Internal", hc: 3, cost: 1500, desc: "[CRB] SP 4 all over." },
+    { id: "pneumatics", name: "Pneumatics", type: "Internal", hc: 3, cost: 2000, desc: "[CRB] +2 to BODY for melee damage." },
+    { id: "hydraulic_rams", name: "Hydraulic Rams", type: "Cyberleg Option", hc: 3, cost: 1500, desc: "[CRB] Cyberleg option, +2 MOVE when jumping.", parentType: "cyberleg" },
+    { id: "big_knucks", name: "Big Knucks", type: "Cyberarm Option", hc: 1, cost: 100, desc: "[CRB] Brass knuckles built into cyberarm.", parentType: "cyberarm" },
+    { id: "popup_weapon", name: "Popup Weapon (Cyberarm)", type: "Cyberarm Option", hc: 2, cost: 500, desc: "[CRB] Hidden weapon in cyberarm.", parentType: "cyberarm" },
+    { id: "implanted_lavatory", name: "Implanted Lavatory", type: "Internal Body", hc: 1, cost: 200, desc: "[CRB] Waste processing implant." },
+    { id: "light_tattoo", name: "Light Tattoo", type: "Fashionware", hc: 0, cost: 200, desc: "[CRB] LED subdermal tattoos.", bonus: { skills: { wardrobe_style: 2 } } },
+    { id: "agency_record", name: "Agency Record", type: "Fashionware", hc: 1, cost: 500, desc: "[CRB] Always-on recording of everything you see/hear." },
+    { id: "buddy_link", name: "Buddy Link", type: "Internal Body", hc: 1, cost: 200, desc: "[CRB] Private short-range comm with your crew." },
+    { id: "bc_budget_chipware", name: "Budget Chipware Socket", type: "Neuralware", hc: 7, cost: 100, desc: "[CRB] A cheap chipware socket.", parentType: "neural_link" },
+    { id: "bc_discount_audio", name: "Discount Cyberaudio Suite", type: "Cyberaudio", hc: 3, cost: 100, desc: "[CRB] An inferior audio suite at an affordable price.", slots: 3, parentType: "cyberaudio" },
+    { id: "bc_explicit_memory", name: "Explicit Memory Stimulator", type: "Chipware", hc: 3, cost: 100, desc: "[CRB] +2 to Concentration Checks to remember information.", parentType: "neural_link", bonus: { skills: { concentration: 2 } } },
+    { id: "bc_extra_jointed", name: "Extra-Jointed Cyberlimb Upgrade", type: "Cyberlimb", hc: 3, cost: 500, desc: "[CRB] Extra points of articulation. +2 Contortionist per limb (max +8 all limbs).", bonus: { skills: { contortionist: 2 } } },
+    { id: "bc_flashbulb", name: "Flashbulb", type: "Cyberarm", hc: 7, cost: 500, desc: "[CRB] Blind your enemies with your arm.", parentType: "cyberarm" },
+    { id: "bc_hardened_cybereye", name: "Hardened Cybereye Casing", type: "Cybereye", hc: 3, cost: 500, desc: "[CRB] Protect your Cybereye against EMP effects.", parentType: "cybereye" },
+    { id: "bc_health_monitor", name: "Heuristic Health Monitor", type: "Fashionware", hc: 0, cost: 500, desc: "[CRB] You're fit and now you can show the world." },
+    { id: "bc_integrated_cyberdeck", name: "Integrated Cyberdeck Upgrade", type: "Cyberarm", hc: 7, cost: 500, desc: "[CRB] An extra option slot for your arm-installed Cyberdeck.", parentType: "cyberarm" },
+    { id: "bc_modular_finger_hand", name: "Modular Finger Cyberhand", type: "Cyberarm Option", hc: 3, cost: 100, desc: "[CRB] A hand for modular Cyberfingers.", parentType: "cyberarm", slots: 5 },
+    { id: "bc_neo_soviet_arm", name: "Neo-Soviet Cyberarm", type: "Cyberarm", hc: 7, cost: 100, desc: "[CRB] Neo-Soviet charm for your Cyberarm.", bodyPart: "arm", slots: 4, parentType: "cyberarm" },
+    { id: "bc_popup_net", name: "Popup Net Launcher", type: "Cyberarm", hc: 7, cost: 500, desc: "[CRB] Shoot nets from your arm.", parentType: "cyberarm" },
+    { id: "bc_popup_shotgun", name: "Popup Shotgun", type: "Cyberarm", hc: 7, cost: 1000, desc: "[CRB] A shotgun in your arm.", parentType: "cyberarm" },
+    { id: "bc_racerbracer", name: "RacerBracer", type: "Internal Body", hc: 7, cost: 500, desc: "[CRB] Immunity to Whiplash Critical Injury." },
+    { id: "bc_reflex_coprocessor", name: "Reflex Co-Processor", type: "Neuralware", hc: 14, cost: 500, desc: "[CRB] Dodge bullets without REF 8.", parentType: "neural_link" },
+    { id: "bc_reinforced_limb", name: "Reinforced Cyberlimb Upgrade", type: "Cyberlimb", hc: 3, cost: 1000, desc: "[CRB] Say goodbye to breaking this limb." },
+    { id: "bc_sponsored_cybereye", name: "Sponsored Cybereye", type: "Cybereye", hc: 7, cost: 50, desc: "[CRB] A cheap Cybereye with Chyron and pop-up ads.", bodyPart: "eye", slots: 3, parentType: "cybereye" },
+    { id: "bc_trauma_nanomatrix", name: "Trauma Response Nanomatrix", type: "Internal Body", hc: 7, cost: 1000, desc: "[CRB] Restore all lost Skinweave or Subdermal Armor SP once/day." },
+    { id: "bc_standard_cyberfinger", name: "Standard Cyberfinger", type: "Cyberfinger", hc: 0, cost: 20, desc: "[CRB] A Cyberfinger with no special features. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "bc_lockpick_cyberfinger", name: "Lockpick Cyberfinger", type: "Cyberfinger", hc: 2, cost: 100, desc: "[CRB] Adjustable lockpick and tensioning tool. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "bc_microphone_cyberfinger", name: "Microphone Cyberfinger", type: "Cyberfinger", hc: 2, cost: 100, desc: "[CRB] Microphone linked to Agent or recording device. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "bc_lighter_cyberfinger", name: "Lighter Cyberfinger", type: "Cyberfinger", hc: 3, cost: 100, desc: "[CRB] Lighter concealed in the tip. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "bc_laser_pointer_cyberfinger", name: "Laser Pointer Cyberfinger", type: "Cyberfinger", hc: 3, cost: 100, desc: "[CRB] Laser pointer. 4+ can force DV13 Resist Torture/Drugs. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "bc_wirecutter_cyberfinger", name: "Wirecutter/Scissor Cyberfingers", type: "Cyberfinger", hc: 3, cost: 100, desc: "[CRB] Retractable blades, also a Poor Quality Light Melee Weapon. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "bc_homing_tracer_cyberfinger", name: "Homing Tracer Cyberfinger", type: "Cyberfinger", hc: 3, cost: 500, desc: "[CRB] Points toward linked tracer within 1 mile. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "bc_mini_air_cyberfinger", name: "Mini Air Supply Cyberfinger", type: "Cyberfinger", hc: 2, cost: 500, desc: "[CRB] 10 min air supply, 1 hr to refill. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "bc_one_shot_cyberfinger", name: "One Shot Special Cyberfinger", type: "Cyberfinger", hc: 7, cost: 100, desc: "[CRB] Single-shot Exotic Heavy Pistol concealed in finger. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "bc_spray_paint_cyberfinger", name: "Spray Paint Cyberfinger", type: "Cyberfinger", hc: 3, cost: 100, desc: "[CRB] Spray can concealed within the Cyberfinger. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "bc_squirt_cyberfinger", name: "Squirt Cyberfinger", type: "Cyberfinger", hc: 3, cost: 100, desc: "[CRB] Dispenses liquids like sanitizer or perfume. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
+    { id: "chemskin", name: "Chemskin", type: "Fashionware", hc: 1, cost: 500, desc: "[CRB] Change skin color.", bonus: { skills: { personal_grooming: 2 } } },
+    { id: "techhair", name: "Techhair", type: "Fashionware", hc: 1, cost: 500, desc: "[CRB] Programmable hair.", bonus: { skills: { personal_grooming: 2 } } },
+    { id: "kerenzikov", name: "Kerenzikov", type: "Neuralware", hc: 7, cost: 1000, desc: "[CRB] Boosted reflexes. +2 to Initiative.", parentType: "neural_link" },
+    { id: "sandevistan", name: "Sandevistan", type: "Neuralware", hc: 7, cost: 1000, desc: "[CRB] Activate for +3 to Initiative for 1 min (Action, 1hr cooldown).", parentType: "neural_link" },
+    { id: "image_enhance", name: "Image Enhance", type: "Cybereye Option", hc: 1, cost: 500, desc: "[CRB] Enhanced vision processing.", parentType: "cybereye", bonus: { skills: { perception: 2, lip_reading: 2, conceal_reveal_object: 2 } } },
+    { id: "targeting_scope", name: "Targeting Scope", type: "Cybereye Option", hc: 1, cost: 500, desc: "[CRB] +1 to Aimed Shot checks. Requires paired Cybereyes.", parentType: "cybereye" },
+    { id: "teleoptics", name: "TeleOptics", type: "Cybereye Option", hc: 1, cost: 500, desc: "[CRB] +1 to checks vs targets 51m/yds+.", parentType: "cybereye" },
+    { id: "low_light_cybereye", name: "Low Light/IR/UV Cybereye", type: "Cybereye Option", hc: 1, cost: 500, desc: "[CRB] Negate darkness/smoke/fog penalties. Requires Cybereye.", parentType: "cybereye" },
+    { id: "amplified_hearing", name: "Amplified Hearing", type: "Cyberaudio Option", hc: 1, cost: 500, desc: "[CRB] Enhanced hearing. Requires Cyberaudio.", parentType: "cyberaudio", bonus: { skills: { perception: 2 } } },
+    { id: "voice_stress_analyzer", name: "Voice Stress Analyzer", type: "Cyberaudio Option", hc: 1, cost: 500, desc: "[CRB] Detect lies. Requires Cyberaudio.", parentType: "cyberaudio", bonus: { skills: { human_perception: 2, interrogation: 2 } } },
+    { id: "audiovox", name: "AudioVox", type: "Cyberaudio Option", hc: 1, cost: 500, desc: "[CRB] Voice modulator. Requires Cyberaudio.", parentType: "cyberaudio", bonus: { skills: { acting: 2, play_instrument: 2 } } },
+    { id: "enhanced_antibodies", name: "Enhanced Antibodies", type: "Internal Body", hc: 3, cost: 1500, desc: "[CRB] Heal 2x BODY HP per day when resting." },
+    { id: "grafted_muscle_bone_lace", name: "Grafted Muscle and Bone Lace", type: "Internal Body", hc: 7, cost: 5000, desc: "[CRB] +2 BODY (max 10).", bonus: { stats: { body: 2 } } },
+    { id: "toxin_binders", name: "Toxin Binders", type: "Internal Body", hc: 3, cost: 1500, desc: "[CRB] Filters bloodborne toxins.", bonus: { skills: { resist_torture_drugs: 2 } } },
+    { id: "nasal_filters", name: "Nasal Filters", type: "Internal Body", hc: 2, cost: 500, desc: "[CRB] Immune to inhaled toxins and gases." },
+    { id: "radar_sonar_implant", name: "Radar/Sonar Implant", type: "Internal Body", hc: 3, cost: 2000, desc: "[CRB] Detect moving objects within 50m/yds (not through cover)." },
+    { id: "medscanner", name: "Medscanner", type: "Cyberarm Option", hc: 1, cost: 500, desc: "[CRB] Medical diagnostic scanner in cyberarm.", parentType: "cyberarm", bonus: { skills: { first_aid: 2, paramedic: 2 } } },
+    { id: "techscanner_cyberarm", name: "Techscanner", type: "Cyberarm Option", hc: 1, cost: 500, desc: "[CRB] Technical diagnostic scanner in cyberarm.", parentType: "cyberarm", bonus: { skills: { basic_tech: 2, cybertech: 2, land_vehicle_tech: 2, sea_vehicle_tech: 2, air_vehicle_tech: 2, electronics_security_tech: 2, weaponstech: 2 } } },
+    { id: "superchrome_covering", name: "Superchrome Covering", type: "Cyberarm Option", hc: 1, cost: 500, desc: "[CRB] Mirror-chrome finish. +2 Wardrobe & Style.", parentType: "cyberarm", bonus: { skills: { wardrobe_style: 2 } } },
+    { id: "skate_foot", name: "Skate Foot", type: "Cyberleg Option", hc: 1, cost: 500, desc: "[CRB] +6m/yds movement when using Run Action.", parentType: "cyberleg" },
+    { id: "quick_change_mount", name: "Quick Change Mount", type: "Cyberarm", hc: 7, cost: 100, desc: "[CRB] Remove/install a Cyberarm as an Action." },
+    { id: "rippers", name: "Rippers", type: "Cyberarm Option", hc: 3, cost: 500, desc: "[CRB] Retractable carbo-glass claws. Medium Melee Weapon.", parentType: "cyberarm" },
+    { id: "wolvers", name: "Wolvers", type: "Cyberarm Option", hc: 3, cost: 500, desc: "[CRB] Large forearm blades. Heavy Melee Weapon.", parentType: "cyberarm" },
+    { id: "scratchers", name: "Scratchers", type: "Cyberarm Option", hc: 1, cost: 100, desc: "[CRB] Retractable carbo-glass fingernails. Light Melee Weapon.", parentType: "cyberarm" },
+    { id: "bodyweight_autoinjector", name: "Bodyweight AutoInjector", type: "Internal Body", hc: 3, cost: 100, desc: "[CRB] Load one dose of Street Drug. Inject as Action. With Biomonitor, auto-inject on Initiative/Critical Injury/Wound State." },
+    { id: "pursuitech_gas_jet", name: "Pursuit Security Inc. Gas Jet", type: "Cyberarm Option", hc: 7, cost: 500, desc: "[CRB] Aerosol gas launcher (3 doses). Acts as 1H Exotic Shotgun. Applies loaded substance. Requires Cyberarm, 2 Option Slots.", parentType: "cyberarm" },
+    { id: "appetite_controller", name: "Appetite Controller", type: "Internal Body", hc: 7, cost: 500, desc: "[CRB] Manage hunger via Biomonitor. Ignore HL from long-term environmental stress. Starvation still fatal after 7 days. Requires Biomonitor." },
+    { id: "cyberpillow", name: "Cyberpillow", type: "Cyberarm Option", hc: 0, cost: 100, desc: "[CRB] Pop-out pillow for napping. Requires Cyberarm.", parentType: "cyberarm" },
+    { id: "external_vidscreen", name: "External Vidscreen", type: "External Body", hc: 7, cost: 100, desc: "[CRB] Subcutaneous flexible screen. Turns body part into display for linked Agent or Memory Chip." },
+    { id: "holo_projector_palm", name: "Holo Projector Palm", type: "Cyberarm Option", hc: 2, cost: 100, desc: "[CRB] Hologram projector in palm. Can be installed in a meat arm.", parentType: "cyberarm" },
+    { id: "kill_display", name: "Kill Display", type: "Fashionware", hc: 0, cost: 100, desc: "[CRB] Subdermal 'KILLS: #' display. Self-reported via Agent.", bonus: { skills: { wardrobe_style: 2 } } },
+    { id: "leads_turn_on_show_off_nails", name: "Lead's Turn-On-Show-Off Nails", type: "Fashionware", hc: 0, cost: 100, desc: "[CRB] Programmable lighted fingernails. Works on meat or cyberware hands.", bonus: { skills: { wardrobe_style: 2 } } },
+    { id: "mood_eye", name: "Mood Eye", type: "Fashionware", hc: 0, cost: 100, desc: "[CRB] Eye color changes with mood (red=anger, blue=sadness, etc.). Requires Neural Link.", parentType: "neural_link" },
+    { id: "neutongue", name: "NeuTongue", type: "Internal Body", hc: 7, cost: 100, desc: "[CRB] Cybernetic tongue. Add virtual seasoning to food via linked Agent." },
+    { id: "perfectfit_cyberfoot", name: "PerfectFit Cyberfoot", type: "Cyberleg Option", hc: 2, cost: 100, desc: "[CRB] Adjustable foot size/shape. Eliminates penalty from ill-fitting footwear. Can be installed in a meat leg.", parentType: "cyberleg" },
+    { id: "talon_feet", name: "Talon Feet", type: "Cyberleg Option", hc: 3, cost: 500, desc: "[CRB] Retractable foot talons. Light Melee Weapon (1d6). Requires Cyberlegs.", parentType: "cyberleg" },
+    { id: "jump_boosters", name: "Jump Boosters", type: "Cyberleg Option", hc: 3, cost: 500, desc: "[CRB] Hydraulic leg boosters. +3d6 dmg vs cover with leg attacks. Requires Cyberlegs.", parentType: "cyberleg" },
+    { id: "personalpak_kibblewarmer", name: "PersonalPak KibbleWarmer", type: "Cyberarm Option", hc: 3, cost: 100, desc: "[CRB] Rotisserie oven in forearm. Warms PersonalPak Kibble cylinders. Requires Cyberarm.", parentType: "cyberarm" },
+    { id: "pursuitech_personal_shredder", name: "Pursuit Security Inc. Personal Shredder", type: "Cyberarm Option", hc: 3, cost: 100, desc: "[CRB] Cross-cut shredder in cyberarm with internal reservoir. Requires Cyberarm.", parentType: "cyberarm" },
+    { id: "sponsored_covering", name: "Sponsored Covering", type: "Cyberlimb Option", hc: 0, cost: 50, desc: "[CRB] Illuminated ad on cyberlimb. Pays 20eb/month. Does not take an Option Slot. Requires Cyberarm or Cyberleg." },
+
+    { id: "cyberscanner_integrated", name: "Cyberscanner, Integrated", type: "Cyberarm Option", hc: 7, cost: 500, desc: "[CRB] Cyberscanner installed in a Cyberarm. Requires 2 Option Slots.", parentType: "cyberarm" },
+    { id: "chainripp", name: "ChainRipp", type: "Cyberarm Option", hc: 14, cost: 500, desc: "[CRB] Retractable chainsaw in wrist. Can be revved into Excellent Quality Very Heavy Melee Weapon. Takes 4 Option Slots.", parentType: "cyberarm" },
+    { id: "gang_jazzler", name: "Cybermatrix Gang Jazzler", type: "Cyberarm Option", hc: 7, cost: 500, desc: "[CRB] Electrode needle in arm. On successful Choke, force DV13 Resist Torture/Drugs or Unconscious 1 min.", parentType: "cyberarm" },
+    { id: "bug_eye", name: "Cyclops International Bug Eye", type: "Borgware", hc: 14, cost: 500, desc: "[CRB] Oversized Cybereye. Contains 5 slots for Cybereye Options.", slots: 5, parentType: "cybereye", bodyPart: "eye", takesBoth: true },
+    { id: "deathtrance", name: "DeathTrance", type: "Neuralware", hc: 3, cost: 500, desc: "[CRB] Slow vitals to appear dead. DV17-21 to detect. -4 to all Actions while active.", parentType: "neural_link" },
+    { id: "monovision", name: "Kiroshi MonoVision", type: "Borgware", hc: 14, cost: 500, desc: "[CRB] Single wide-angle cyberoptic visor. Contains 3 slots. Options count as paired.", slots: 3, parentType: "cybereye", bodyPart: "eye", takesBoth: true },
+    { id: "optishield", name: "Kiroshi OptiShield", type: "External Body", hc: 7, cost: 500, desc: "[CRB] Retractable Anti-Dazzle mirrorshades built into brow. Immune to flashblindness." },
+    { id: "watch_man", name: "Psiberstuff Watch-Man", type: "Cyberarm Option", hc: 3, cost: 100, desc: "[CRB] Agent built into cyberarm with flip-up screen.", parentType: "cyberarm" },
+    { id: "poser_chip", name: "Poser Chip", type: "Chipware", hc: 14, cost: 500, desc: "[CRB] +4 to Acting to impersonate persona. +5 if roleplayed. Famous persona: 500eb. Private: 1000eb.", parentType: "neural_link" },
+    { id: "arc_thrower", name: "Radline Blitzkrieg Arc-Thrower Cyberarm", type: "Cyberarm", hc: 14, cost: 1000, desc: "[CRB] 0 Option slots. No hand. Exotic Shotgun (Heavy Weapons), 4d6 Shell fire, 32 charges. Cannot Crit or ablate armor.", bodyPart: "arm" },
+    { id: "microwaldo", name: "Raven Microcybernetics MicroWaldo", type: "Cyberarm Option", hc: 7, cost: 1000, desc: "[CRB] +1 to Surgery Skill. Neuralware and Cyberarm Option.", parentType: "cyberarm", bonus: { skills: { surgery: 1 } } },
+    { id: "fleshweave", name: "Sycust Fleshweave", type: "External Body", hc: 7, cost: 1000, desc: "[CRB] Skinweave. Body and Head SP7. Self-repairs to full after 10 min without strenuous activity." },
+    { id: "romanova_cyberlegs", name: "Wyzard Technologies Romanova Cyberlegs", type: "Cyberleg", hc: 14, cost: 1000, desc: "[CRB] Paired Cyberlegs. 3 Option Slots each. Pre-installed Talon Feet.", bodyPart: "leg", slots: 3, parentType: "cyberleg", takesBoth: true },
+    { id: "faceplate_mount", name: "Quick Change Faceplate Mount", type: "Internal Body", hc: 14, cost: 1000, desc: "[CRB] Replace meat face with mounting. Comes with 1 personalized Faceplate. Additional: 100eb." },
+    { id: "quick_digits", name: "Rocklin Augmentics Quick Digits", type: "Cyberarm Option", hc: 3, cost: 250, desc: "[CRB] Cyberhand.", bonus: { skills: { conceal_reveal_object: 1, contortionist: 1, first_aid: 1, forgery: 1, paramedic: 1, pick_lock: 1, pick_pocket: 1 } }, parentType: "cyberarm" },
+    { id: "skydrivers", name: "Rocklin Augmentics Skydrivers", type: "Cyberleg", hc: 14, cost: 1000, desc: "[CRB] Paired Cyberlegs. 2 Option Slots each. Pre-installed Jump Boosters. +3d6 dmg vs cover with leg attacks.", bodyPart: "leg", slots: 2, parentType: "cyberleg", takesBoth: true },
+    { id: "cyberspine", name: "Sycust Cyberspine", type: "Internal Body", hc: 7, cost: 1000, desc: "[CRB] Requires 3 Option Slots. Immune to Spinal Injury. Hardened. +1 Contortionist. Can house Cybersnake.", bonus: { skills: { contortionist: 1 } } },
+    { id: "cyberconductor_integrated", name: "Zetatech CyberConductor, Integrated", type: "Borgware", hc: 14, cost: 1000, desc: "[CRB] FBC only. All cyberdecks connected. Switch between them with no HP damage. Requires 3 Option Slots." },
+    { id: "hello_cutie_mono_paw", name: "Hello Cutie Mono-Paw", type: "Cyberarm Option", hc: 7, cost: 500, desc: "[CRB] Retractable cat claws. Excellent Quality Medium Melee, 1d6, ignores armor SP<11. Cannot hold items while active.", parentType: "cyberarm" },
+    { id: "sparkle_ize", name: "Hello Cutie Sparkle-ize", type: "Cybereye Option", hc: 3, cost: 250, desc: "[CRB] Big-eyes look. Flashlight built in. Paired: DV15 Resist or Damaged Eye for 1 min. Requires 2 Option Slots.", parentType: "cybereye" },
+    { id: "dynalar_xtradex_glove", name: "Dynalar Xtra-Dex Smart Glove", type: "Cyberarm Option", hc: 0, cost: 1000, desc: "[CRB] 2 Option Slots. Counts as Modular Finger Cyberhand (up to 5 Cyberfingers). Requires Interface Plugs.", parentType: "cyberarm" }
+  ],
+
+  // ----------------------------------------------------------
+  // GEAR - All purchasable items
+  // ----------------------------------------------------------
+  gear: [
+    { id: "berserker", name: "Berserker", cat: "Street Drug", cost: 100, desc: "[CRB] Lasts 10 min. Ignore Critical Injury bonus dmg; halve wound state & facedown penalties. SE DV17." },
+    { id: "prime_time", name: "Prime Time", cat: "Street Drug", cost: 50, desc: "[CRB] Lasts 4 hrs. +2 COOL/WILL (no extra HP). 4d6 Humanity Loss (returned after). SE DV17." },
+    { id: "sixgun", name: "Sixgun", cat: "Street Drug", cost: 100, desc: "[CRB] Lasts 4 hrs. +2 Speed while jacked in; safe jack out; spend 1 HL for +1 NET action. SE DV17." },
+    { id: "timewarp", name: "Timewarp", cat: "Street Drug", cost: 100, desc: "[CRB] Lasts 1 min. +3 Initiative. SE DV17." },
+    { id: "sedative", name: "Sedative", cat: "Pharmaceutical", cost: 100, desc: "[CRB] +2 to Treatment checks on willing target. Unwilling: DV15 Resist or unconscious ~1 min." },
+    { id: "veritas", name: "Veritas", cat: "Pharmaceutical", cost: 100, desc: "[CRB] DV17 Resist or suggestive state 10 min, −5 to Acting/Conversation/Deduction/etc." },
+    { id: "delaying_compound", name: "Delaying Compound", cat: "Additive", cost: 50, desc: "[CRB] Delay poison/biotoxin effects by 1 min or 1 hr." },
+    { id: "distilling_compound", name: "Distilling Compound", cat: "Additive", cost: 100, desc: "[CRB] Increase Resist Torture/Drugs DV of poison/biotoxin by 2." },
+    { id: "osmosis_compound", name: "Osmosis Compound", cat: "Additive", cost: 50, desc: "[CRB] Turn poison/biotoxin into contact-based hazard on a surface." },
+    { id: "suzumebachi_drone", name: "Suzumebachi Assassin Drone", cat: "Drone", cost: 5000, desc: "[CRB] Flying insectoid drone. 6 MOVE, 7SP, 10HP. Observation Camera (LL/IR/UV), Dartgun w/ 8 Biotoxin Arrows, Airhypo." },
+    { id: "bcp_bullet_to_slug", name: "Bullet to Slug Adapter Casings", cost: 100, wt: 0.5, cat: "Weapons", desc: "[CRB] Converts bullet Ammunition into Shotgun Slugs. Reusable. 10 casings per box.", ammo: 10 },
+    { id: "bcp_junk_ammo", name: "Junk Ammunition", cost: 10, wt: 0.5, cat: "Weapons", desc: "[CRB] Reduces damage by 1d6 (min 1d6) vs SP 1+ targets. Reduces Autofire Rating by 1 (min 3). 50 rounds. Arrows, Bullets, Slugs.", ammo: 50 },
+    { id: "bcp_small_game_ammo", name: "Small Game Ammunition", cost: 10, wt: 0.5, cat: "Weapons", desc: "[CRB] Reduces damage by 2d6 (min 1d6). Reduces Autofire Rating by 1 (min 3). 100 rounds. Bullets only.", ammo: 100 },
+    { id: "ammo_basic", name: "Basic Ammunition", cost: 10, cat: "Weapons", desc: "[CRB] Standard ammunition. No special features. All ammo types except Grenades and Rockets. 10 units.", ammo: 10 },
+    { id: "ammo_ap", name: "Armor-Piercing Ammunition", cost: 100, cat: "Weapons", desc: "[CRB] Ablates armor by 2 instead of 1. All ammo types except Shotgun Shells. 10 units.", ammo: 10 },
+    { id: "ammo_expansive", name: "Expansive Ammunition", cost: 100, cat: "Weapons", desc: "[CRB] Arrows, Bullets, Slugs. Foreign Object Critical Injury causes a second Critical Injury roll.", ammo: 10 },
+    { id: "ammo_incendiary", name: "Incendiary Ammunition", cost: 100, cat: "Weapons", desc: "[CRB] Ignites target (2 HP/turn). Arrows, Bullets, Grenades, Shotgun Shells, Slugs.", ammo: 10 },
+    { id: "ammo_rubber", name: "Rubber Ammunition", cost: 10, cat: "Weapons", desc: "[CRB] Less-lethal. Cannot cause Critical Injury or ablate armor. Leaves target at min 1 HP. Arrows, Bullets, Slugs.", ammo: 10 },
+    { id: "ammo_smart", name: "Smart Ammunition", cost: 500, cat: "Weapons", desc: "[CRB] Requires Targeting Scope. Miss by ≤4: reroll with +10. Arrows, Bullets, Rockets, Slugs.", ammo: 10 },
+    { id: "ammo_poison", name: "Poison Ammunition", cost: 100, cat: "Weapons", desc: "[CRB] Arrows and Grenades only. Deals 2d6 direct HP damage (DV13 Resist Torture/Drugs). No initial damage.", ammo: 1 },
+    { id: "smart_glasses", name: "Smart Glasses", cat: "Fashion", cost: 500, desc: "[BC] Functions as a Cybereye (0 HL) with 2 option slots. Requires an Action to put on/take off." },
+    { id: "observer_drone", name: "Observer Drone", cat: "Drone", cost: 1000, desc: "[BC] Flying drone (6 MOVE, 7 SP, 10 HP). Has 2 option slots for Cybereye/Cyberaudio options." },
+    { id: "linear_frame_sigma", name: "External Linear Frame - Sigma", cat: "Gear", cost: 1000, desc: "[BC] Exoskeleton. Increases BODY to 12. Requires Interface Plugs to use without penalty." },
+    { id: "linear_frame_beta", name: "External Linear Frame - Beta", cat: "Gear", cost: 5000, desc: "[BC] Exoskeleton. Increases BODY to 14. Requires Interface Plugs." },
+    { id: "ammo_biotoxin", name: "Biotoxin Ammunition", cost: 500, cat: "Weapons", desc: "[CRB] Arrows and Grenades only. Deals 3d6 direct HP damage (DV15 Resist Torture/Drugs). No initial damage.", ammo: 1 },
+    { id: "ammo_flashbang", name: "Flashbang Ammunition", cost: 100, cat: "Weapons", desc: "[CRB] Grenades only. Damaged Eye and Damaged Ear Critical Injuries for 1 min (DV15 Resist Torture/Drugs).", ammo: 1 },
+    { id: "ammo_sleep", name: "Sleep Ammunition", cost: 500, cat: "Weapons", desc: "[CRB] Arrows and Grenades only. Target becomes Prone and Unconscious for 1 min (DV13 Resist Torture/Drugs).", ammo: 1 },
+    { id: "ammo_smoke", name: "Smoke Ammunition", cost: 50, cat: "Weapons", desc: "[CRB] Grenades only. Obscures 10m x 10m area for 1 min. -4 to perception tasks through smoke.", ammo: 1 },
+    { id: "ammo_teargas", name: "Teargas Ammunition", cost: 50, cat: "Weapons", desc: "[CRB] Grenades only. Damaged Eye Critical Injury for 1 min (DV13 Resist Torture/Drugs).", ammo: 1 },
+    { id: "ammo_emp", name: "EMP Ammunition", cost: 500, cat: "Weapons", desc: "[CRB] Grenades only. Disables 2 pieces of cyberware/electronics for 1 min (DV15 Cybertech).", ammo: 1 },
+    { id: "bcp_piranha_smash", name: "Piranha Smash", cost: 10, wt: 0.5, cat: "Medical", desc: "[CRB]" },
+    { id: "bcp_solo_pillow", name: "Solo of Fortune Bodypillow", cost: 100, wt: 2, cat: "Fashion", desc: "[CRB]" },
+    { id: "bc_chipvault", name: "ChipVault by SecSystems", cost: 100, wt: 0.5, cat: "Electronics", desc: "[CRB]" },
+    { id: "bc_drinkmaster", name: "Drink Master 3000", cost: 1000, wt: 5, cat: "Tools", desc: "[CRB]" },
+    { id: "bc_airwell", name: "Everest AirWell 50", cost: 100, wt: 2, cat: "Survival", desc: "[CRB]" },
+    { id: "bc_one_touch_habitat", name: "Everest One Touch Habitat", cost: 100, wt: 5, cat: "Survival", desc: "[CRB]" },
+    { id: "bc_digital_gladiator", name: "Digital Gladiator App", cost: 20, wt: 0, cat: "Electronics", desc: "[CRB]" },
+    { id: "bc_4tify", name: "4Tify App", cost: 100, wt: 0, cat: "Electronics", desc: "[CRB]" },
+    { id: "bc_ncpd_db", name: "NCPD Crime Database", cost: 500, wt: 0, cat: "Electronics", desc: "[CRB]" },
+    { id: "bc_medscan", name: "Trauma Team MedScan", cost: 20, wt: 0, cat: "Medical", desc: "[CRB]" },
+    { id: "bc_city_db", name: "Ziggurat City Database", cost: 100, wt: 0, cat: "Electronics", desc: "[CRB]" },
+    { id: "agent", name: "Agent (Smartphone)", cost: 100, wt: 0.5, cat: "Electronics", desc: "[CRB]" },
+    { id: "computer", name: "Computer", cost: 500, wt: 3, cat: "Electronics", desc: "[CRB]" },
+    { id: "radio_scanner", name: "Radio Scanner", cost: 200, wt: 2, cat: "Electronics", desc: "[CRB]" },
+    { id: "video_camera", name: "Video Camera", cost: 200, wt: 1, cat: "Electronics", desc: "[CRB]" },
+    { id: "tape_recorder", name: "Tape Recorder", cost: 100, wt: 0.5, cat: "Electronics", desc: "[CRB]" },
+    { id: "flashlight", name: "Flashlight", cost: 20, wt: 1, cat: "Tools", desc: "[CRB]" },
+    { id: "rope", name: "Rope (50ft)", cost: 50, wt: 5, cat: "Tools", desc: "[CRB]" },
+    { id: "duct_tape", name: "Duct Tape", cost: 10, wt: 1, cat: "Tools", desc: "[CRB]" },
+    { id: "lock_mech", name: "Lock (Mechanical)", cost: 50, wt: 1, cat: "Tools", desc: "[CRB]" },
+    { id: "lock_elec", name: "Lock (Electronic)", cost: 150, wt: 2, cat: "Tools", desc: "[CRB]" },
+    { id: "lockpick_set", name: "Lockpick Set", cost: 100, wt: 1, cat: "Tools", desc: "[CRB]" },
+    { id: "tech_scanner", name: "Tech Scanner", cost: 500, wt: 2, cat: "Tools", desc: "[CRB]" },
+    { id: "tool_set", name: "Tool Set", cost: 100, wt: 5, cat: "Tools", desc: "[CRB]" },
+    { id: "first_aid_kit", name: "First Aid Kit", cost: 100, wt: 2, cat: "Medical", desc: "[CRB]" },
+    { id: "trauma_kit", name: "Trauma Kit", cost: 500, wt: 5, cat: "Medical", desc: "[CRB]" },
+    { id: "anti_dote", name: "Anti-Dote", cost: 200, wt: 0.5, cat: "Medical", desc: "[CRB]" },
+    { id: "medscanner", name: "Medscanner", cost: 500, wt: 1, cat: "Medical", desc: "[CRB]" },
+    { id: "tent", name: "Tent", cost: 100, wt: 5, cat: "Survival", desc: "[CRB]" },
+    { id: "sleeping_bag", name: "Sleeping Bag", cost: 50, wt: 3, cat: "Survival", desc: "[CRB]" },
+    { id: "grapple_gun", name: "Grapple Gun", cost: 500, wt: 3, cat: "Tools", desc: "[CRB]" },
+    { id: "night_goggles", name: "Night Goggles", cost: 200, wt: 1, cat: "Electronics", desc: "[CRB]" },
+    { id: "binoculars", name: "Binoculars", cost: 100, wt: 1, cat: "Electronics", desc: "[CRB]" },
+    { id: "camera", name: "Camera", cost: 200, wt: 1, cat: "Electronics", desc: "[CRB]" },
+    { id: "grenade_incendiary", name: "Incendiary Grenade", cost: 100, wt: 1, cat: "Weapons", desc: "[CRB]" },
+    { id: "flare", name: "Flare", cost: 20, wt: 0.5, cat: "Tools", desc: "[CRB]" },
+    { id: "smoke_canister", name: "Smoke Canister", cost: 50, wt: 1, cat: "Tools", desc: "[CRB]" },
+    { id: "poison", name: "Poison (D6 dmg)", cost: 200, wt: 0.5, cat: "Tools", desc: "[CRB]" },
+    { id: "chrm_rave_grenade", name: "Hello Cutie Chromatic Rave Grenade", cat: "Weapons", cost: 50, desc: "[CRB] Creates light/sound show (DV13 Conc or -2). After 2 Rounds, explodes as Smoke Grenade." },
+    { id: "husafell_underjack", name: "Húsafell Hydraulic Underjack", cat: "Gear", cost: 1000, desc: "[CRB] Hydraulic undershirt. +2 BODY (max 10). Does not increase HP or Death Save. Does not stack with other BODY-increasing effects." },
+    { id: "smart_ears", name: "Smart Ears", cat: "Electronics", cost: 1000, desc: "[CRB] Wearable ears. Built-in Radio Scanner/Music Player. 2 Option Slots for Cyberaudio Options." },
+    { id: "zetatech_cyberconductor", name: "Zetatech CyberConductor", cat: "Electronics", cost: 1000, desc: "[CRB] Install up to 3 Cyberdecks. Switch between them while Jacked In. Taking 3 HP dmg on switch." },
+    { id: "cybercam_ex1", name: "Cybercam EX-1", cat: "Electronics", cost: 1000, desc: "[CRB] Head-mounted camera for livecasting. +1 believability to Media's Role Ability." },
+    { id: "cyberscanner", name: "Cyberscanner", cat: "Electronics", cost: 1000, desc: "[CRB] Scan target within 2m/yds. Readout of all installed cyberware. Takes 1 min." },
+    { id: "cyberdude_smart_glove", name: "CyberDude Smart Glove", cat: "Gear", cost: 750, desc: "[CRB] Fingerless glove with Subdermal Grip and 2 Option Slots for Cyberarm/Cyberlimb options." },
+    { id: "hd_bulletproof_shield", name: "High-Density Bulletproof Shield", cat: "Gear", cost: 200, desc: "[CRB] A shield with 15 HP. Cannot be installed in Pop-Up Shield." },
+    { id: "stun_bayonet", name: "Stun Bayonet", cat: "Weapons", cost: 100, desc: "[CRB] Weapon Attachment. Allows firearm to be used as a Stun Baton." },
+    { id: "dpi_smartsticks", name: "DPI Smartsticks", cat: "Gear", cost: 500, desc: "[CRB] Electronic drum sticks. +1 to Play Instrument (Drums) Checks." },
+    { id: "green_light_sniffer", name: "Hammered Industries Green Light Go Sniffer", cat: "Tools", cost: 100, desc: "[CRB] Analyzes a chemical substance's purity. Green = pure, Red = impure." },
+    { id: "ion_cuffs", name: "Ion Cuffs", cat: "Tools", cost: 500, desc: "[CRB] Handcuffs that disable non-hardened cyberware options in bound Cyberlimbs. BODY 13+ breaks them." },
+    { id: "master_mechanic_toolkit", name: "Master Mechanic's Tool Kit", cat: "Tools", cost: 20000, desc: "[CRB] +4 to all Tech Skill Checks for Maker Specialties. Counts as Thick Steel Cover." },
+    { id: "minimag_speakers", name: "MiniMag Speakers by Telectronics", cat: "Electronics", cost: 50, desc: "[CRB] 1-inch magnetic speakers. Wireless to Agent within 100m/yds. Various colors." },
+    { id: "optitech_magviewer", name: "Optitech MagViewer", cat: "Electronics", cost: 500, desc: "[CRB] Binoculars. See detail up to 800m/yds. +1 to Complementary Skill Check for ranged attacks 51m+." },
+    { id: "zonda_metrocar", name: "Zonda Metrocar", cat: "Gear", cost: 1000, desc: "[CRB] Compact Groundcar. Nomad Access 1. SDP 25. Combat Speed 10 MOVE. Narrative Speed 30 MPH. 2 seats." }
+  ],
+
+  // ----------------------------------------------------------
+  // FASHION
+  // ----------------------------------------------------------
+  fashion: [
+    { id: "generic_rack", name: "Generic (Rack)", cost: 10, desc: "[CRB] Cheap, mass-produced clothing" },
+    { id: "generic_urban", name: "Generic (Urban)", cost: 50, desc: "[CRB] Everyday street wear" },
+    { id: "generic_flash", name: "Generic (Flash)", cost: 100, desc: "[CRB] Trendy, bold clothing" },
+    { id: "businesswear", name: "Businesswear", cost: 500, desc: "[CRB] Professional attire" },
+    { id: "leisurewear", name: "Leisurewear", cost: 200, desc: "[CRB] Comfortable high-end casual" },
+    { id: "bodysuit", name: "Bodysuit", cost: 300, desc: "[CRB] Full body suit" },
+    { id: "armor_jacket", name: "Armor Jacket", cost: 100, desc: "[CRB] Jacket with light armor panels" },
+    { id: "raincoat", name: "Raincoat", cost: 80, desc: "[CRB] Waterproof coat" },
+    { id: "night_city_leathers", name: "Night City Leathers", cost: 200, desc: "[CRB] Classic leather jacket and pants" }
+  ],
+
+  // ----------------------------------------------------------
+  // LIFEPATH
+  // ----------------------------------------------------------
+  // This section contains arrays of text. The Randomise button simply picks
+  // a random number (using Math.random) and grabs a string from these arrays.
+  lifepath: {
+    "culturalOrigins": [
+        "North American",
+        "South/Central American",
+        "Western European",
+        "Eastern European",
+        "Middle Eastern/North African",
+        "Sub-Saharan African",
+        "South Asian",
+        "South East Asian",
+        "East Asian",
+        "Oceania/Pacific Islander"
+    ],
+    "personality": [
+        "Shy and secretive",
+        "Rebellious, antisocial, and violent",
+        "Arrogant, proud, and aloof",
+        "Moody, rash, and headstrong",
+        "Picky, fussy, and nervous",
+        "Stable and serious",
+        "Silly and fluff-headed",
+        "Sneaky and deceptive",
+        "Intellectual and detached",
+        "Friendly and outgoing"
+    ],
+    "clothingStyle": [
+        "Generic Chic",
+        "Leisurewear",
+        "Urban Flash",
+        "Businesswear",
+        "High Fashion",
+        "Bohemian",
+        "Bag Lady Chic",
+        "Gang Colors",
+        "Nomad Leathers",
+        "Asia Pop"
+    ],
+    "hairstyle": [
+        "Mohawk",
+        "Long and ratty",
+        "Short and spiked",
+        "Wild and all over",
+        "Bald",
+        "Striped",
+        "Wild colors",
+        "Neat and short",
+        "Short and curly",
+        "Long and straight"
+    ],
+    "affectation": [
+        "Tattoos",
+        "Mirrorshades",
+        "Ritual scars",
+        "Spiked gloves",
+        "Nose rings",
+        "Tongue or other piercings",
+        "Strange fingernail implants",
+        "Spiked boots or heels",
+        "Fingerless gloves",
+        "Strange contacts"
+    ],
+    "valueMost": [
+        "Money",
+        "Honor",
+        "Your word",
+        "Honesty",
+        "Knowledge",
+        "Vengeance",
+        "Love",
+        "Power",
+        "Family",
+        "Friendship"
+    ],
+    "feelAboutPeople": [
+        "I stay neutral.",
+        "I stay neutral.",
+        "I like almost everyone.",
+        "I hate almost everyone.",
+        "People are tools. Use them for your own goals then discard them.",
+        "Every person is a valuable individual.",
+        "People are obstacles to be destroyed if they cross me.",
+        "People are untrustworthy. Don't depend on anyone.",
+        "Wipe 'em all out and let the cockroaches take over.",
+        "People are wonderful!"
+    ],
+    "valuedPerson": [
+        "A parent",
+        "A brother or sister",
+        "A lover",
+        "A friend",
+        "Yourself",
+        "A pet",
+        "A teacher or mentor",
+        "A public figure",
+        "A personal hero",
+        "No one"
+    ],
+    "valuedPossession": [
+        "A weapon",
+        "A tool",
+        "A piece of clothing",
+        "A photograph",
+        "A book or diary",
+        "A recording",
+        "A musical instrument",
+        "A piece of jewelry",
+        "A toy",
+        "A letter"
+    ],
+    "familyBackground": [
+        "Corporate Execs",
+        "Corporate Managers",
+        "Corporate Technicians",
+        "Nomad Pack",
+        "Ganger 'Family'",
+        "Combat Zoners",
+        "Urban Homeless",
+        "Megastructure Warren Rats",
+        "Reclaimers",
+        "Edgerunners"
+    ],
+    "childhoodEnvironment": [
+        "Ran on The Street, with no adult supervision.",
+        "Spent in a safe Corp Zone walled off from the rest of the City.",
+        "In a Nomad pack moving from place to place.",
+        "In a Nomad pack with roots in transport (ships, planes, caravans).",
+        "In a decaying, once upscale neighborhood, now holding off the boosters to survive.",
+        "In the heart of the Combat Zone, living in a wrecked building or other squat.",
+        "In a huge 'megastructure' building controlled by a Corp or the City.",
+        "In the ruins of a deserted town or city taken over by Reclaimers.",
+        "In a Drift Nation (a floating offshore city) that is a meeting place for all kinds of people.",
+        "In a Corporate luxury 'starscraper,' high above the rest of the teeming rabble."
+    ],
+    "familyCrisis": [
+        "Your family lost everything through betrayal.",
+        "Your family lost everything through bad management.",
+        "Your family was exiled or otherwise driven from their original home/nation/Corporation.",
+        "Your family is imprisoned, and you alone escaped.",
+        "Your family vanished. You are the only remaining member.",
+        "Your family was killed, and you were the only survivor.",
+        "Your family is involved in a long-term conspiracy, organization, or association, such as a crime family or revolutionary group.",
+        "Your family was scattered to the winds due to misfortune.",
+        "Your family is cursed with a hereditary feud that has lasted for generations.",
+        "You are the inheritor of a family debt; you must honor this debt before moving on with your life."
+    ],
+    "friendRelationships": [
+        "Like an older sibling to you.",
+        "Like a younger sibling to you.",
+        "A teacher or mentor.",
+        "A partner or coworker.",
+        "A former lover.",
+        "An old enemy.",
+        "Like a parent to you.",
+        "An old childhood friend.",
+        "Someone you know from The Street.",
+        "Someone with a common interest or goal."
+    ],
+    "enemyTypes": [
+        "Ex-friend",
+        "Ex-lover",
+        "Estranged relative",
+        "Childhood enemy",
+        "Person working for you",
+        "Person you work for",
+        "Partner or coworker",
+        "Corporate exec",
+        "Government official",
+        "Boosterganger"
+    ],
+    "enemyCauses": [
+        "Caused the other to lose face or status.",
+        "Caused the loss of lover, friend, or relative.",
+        "Caused a major public humiliation.",
+        "Accused the other of cowardice or some other major personal flaw.",
+        "Deserted or betrayed the other.",
+        "Turned down the other's offer of a job or romantic involvement.",
+        "You just don't like each other.",
+        "One of you was a romantic rival.",
+        "One of you was a business rival.",
+        "One of you set the other up for a crime they didn't commit."
+    ],
+    "enemyForces": [
+        "Just themselves and even they won't go out of their way.",
+        "Just themselves.",
+        "Just themselves and a close friend.",
+        "Themselves and a few (1d6/2) friends.",
+        "Themselves and a few (1d10/2) friends.",
+        "An entire gang (at least 1d10 + 5 people).",
+        "The local cops or other Lawmen.",
+        "A powerful gang lord or small Corporation.",
+        "A powerful Corporation.",
+        "An entire city or government or agency."
+    ],
+    "enemyRevenge": [
+        "Avoid the scum.",
+        "Avoid the scum.",
+        "Go into a murderous rage and try to physically rip their face off.",
+        "Go into a murderous rage and try to physically rip their face off.",
+        "Backstab them indirectly.",
+        "Backstab them indirectly.",
+        "Verbally attack them.",
+        "Verbally attack them.",
+        "Set them up for a crime or other transgression they didn't commit.",
+        "Set out to murder or maim them."
+    ],
+    "loveTragedies": [
+        "Your lover died in an accident.",
+        "Your lover mysteriously vanished.",
+        "It just didn't work out.",
+        "A personal goal or vendetta came between you and your lover.",
+        "Your lover was kidnapped.",
+        "Your lover went insane or cyberpsycho.",
+        "Your lover committed suicide.",
+        "Your lover was killed in a fight.",
+        "A rival cut you out of the action.",
+        "Your lover is imprisoned or exiled."
+    ],
+    "lifeGoals": [
+        "Get rid of a bad reputation.",
+        "Gain power and control.",
+        "Get off The Street no matter what it takes.",
+        "Cause pain and suffering to anyone who crosses you.",
+        "Live down your past life and try to forget it.",
+        "Hunt down those responsible for your miserable life and make them pay.",
+        "Get what's rightfully yours.",
+        "Save, if possible, anyone else involved in your background, like a lover, or family member.",
+        "Gain fame and recognition.",
+        "Become feared and respected."
+    ]
+  },
+  cyberdecks: [
+    { id: 'poor_cyberdeck', name: 'Poor Quality Cyberdeck', cost: 100, slots: 5, desc: 'A cheap, stripped-down deck.', desc: "[CRB]" },
+    { id: 'standard_cyberdeck', name: 'Standard Quality Cyberdeck', cost: 500, slots: 7, desc: 'A standard deck used by most Netrunners.', desc: "[CRB]" },
+    { id: 'excellent_cyberdeck', name: 'Excellent Quality Cyberdeck', cost: 1000, slots: 9, desc: 'A top-of-the-line deck.', desc: "[CRB]" },
+    { id: 'kirama_advanced', name: 'Kirama Advanced Deck', cost: 1000, slots: 9, desc: 'Manufacturer Model', desc: "[CRB]" },
+    { id: 'kirama_entry', name: 'Kirama Entry Deck', cost: 100, slots: 5, desc: 'Manufacturer Model', desc: "[CRB]" },
+    { id: 'kirama_training', name: 'Kirama Training Deck', cost: 100, slots: 5, desc: 'Manufacturer Model', desc: "[CRB]" },
+    { id: 'microtech_assault', name: 'Microtech Assault', cost: 1000, slots: 9, desc: 'Manufacturer Model', desc: "[CRB]" },
+    { id: 'microtech_scout', name: 'Microtech Scout', cost: 500, slots: 7, desc: 'Manufacturer Model', desc: "[CRB]" },
+    { id: 'microtech_warrior', name: 'Microtech Warrior', cost: 500, slots: 7, desc: 'Manufacturer Model', desc: "[CRB]" },
+    { id: 'raven_hummingbird', name: 'Raven Microcybernetics Hummingbird', cost: 500, slots: 7, desc: 'Manufacturer Model', desc: "[CRB]" },
+    { id: 'raven_kestrel2', name: 'Raven Microcybernetics Kestrel 2', cost: 1000, slots: 9, desc: 'Manufacturer Model', desc: "[CRB]" },
+    { id: 'raven_phoenix', name: 'Raven Microcybernetics Phoenix', cost: 1000, slots: 9, desc: 'Manufacturer Model', desc: "[CRB]" },
+    { id: 'sgi_kerberos', name: 'SGI Technologies Kerberos', cost: 1000, slots: 9, desc: 'Manufacturer Model', desc: "[CRB]" },
+    { id: 'sgi_verdant_knight', name: 'SGI Technologies Verdant Knight', cost: 500, slots: 7, desc: 'Manufacturer Model', desc: "[CRB]" },
+    { id: 'sgi_warlocks_book', name: 'SGI Technologies Warlock\'s Book', cost: 500, slots: 7, desc: 'Manufacturer Model', desc: "[CRB]" },
+    { id: 'zetatech_kaliya', name: 'Zetatech Kaliya', cost: 1000, slots: 9, desc: 'Manufacturer Model', desc: "[CRB]" },
+    { id: 'zetatech_micromate', name: 'Zetatech MicroMate', cost: 100, slots: 5, desc: 'Manufacturer Model', desc: "[CRB]" },
+    { id: 'zetatech_parraline6000', name: 'Zetatech Parraline 6000', cost: 500, slots: 7, desc: 'Manufacturer Model', desc: "[CRB]" }
+  ],
+  programs: [
+    { id: 'armor_prog', name: 'Armor', type: 'Defender', cost: 50, slots: 1, desc: 'Lowers all meat damage taken by 4. Brain damage is unaffected.', desc: "[CRB]" },
+    { id: 'flak_prog', name: 'Flak', type: 'Defender', cost: 50, slots: 1, desc: 'Reduces attacker\'s ATK check by 4.', desc: "[CRB]" },
+    { id: 'shield_prog', name: 'Shield', type: 'Defender', cost: 50, slots: 1, desc: 'Stops the first non-Black ICE attack that hits you.', desc: "[CRB]" },
+    { id: 'banhammer_prog', name: 'Banhammer', type: 'Attacker', cost: 50, slots: 1, atk: 1, desc: 'Deals 1d6 Brain Damage to a Netrunner. Can\'t target Black ICE.', desc: "[CRB]" },
+    { id: 'sword_prog', name: 'Sword', type: 'Attacker', cost: 50, slots: 1, atk: 1, desc: 'Deals 2d6 meat damage. Lowers target\'s max HP by 1.', desc: "[CRB]" },
+    { id: 'vrizzbol_prog', name: 'Vrizzbol', type: 'Attacker', cost: 50, slots: 1, atk: 1, desc: 'Deals 1d6 meat damage. Lowers target\'s ATK check by 1 for 1 hour.', desc: "[CRB]" },
+    { id: 'see_ya_prog', name: 'See-Ya', type: 'Booster', cost: 50, slots: 1, desc: '+2 to Pathfinder Checks.', desc: "[CRB]" },
+    { id: 'speedy_gonzalvez_prog', name: 'Speedy Gonzalvez', type: 'Booster', cost: 50, slots: 1, desc: '+2 to Speed Checks.', desc: "[CRB]" },
+    { id: 'worm_prog', name: 'Worm', type: 'Booster', cost: 50, slots: 1, desc: '+2 to Backdoor Checks.', desc: "[CRB]" },
+    { id: 'hellhound_ice', name: 'Hellhound', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 20, desc: 'Anti-Personnel. 2d6 brain damage. On successful attack, target\'s Cyberdeck catches fire.', desc: "[CRB]" },
+    { id: 'kraken_ice', name: 'Kraken', type: 'Black ICE', cost: 1000, slots: 2, atk: 8, def: 6, rez: 30, desc: 'Anti-Personnel. 3d6 brain damage.', desc: "[CRB]" },
+    { id: 'liche_ice', name: 'Liche', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 15, desc: 'Anti-Personnel. 1d6 brain damage. Lowers Netrunner INT/REF/DEX.', desc: "[CRB]" },
+    { id: 'poison_flatline_ice', name: 'Poison Flatline', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 15, desc: 'Anti-Personnel. 2d6 brain damage. Destroys 1 non-Black ICE program.', desc: "[CRB]" },
+    { id: 'raven_ice', name: 'Raven', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 15, desc: 'Anti-Personnel. 1d6 brain damage. Unjacks Netrunner.', desc: "[CRB]" },
+    { id: 'scorpion_ice', name: 'Scorpion', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 15, desc: 'Anti-Personnel. 1d6 brain damage. Lowers movement speed.', desc: "[CRB]" },
+    { id: 'skunk_ice', name: 'Skunk', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 15, desc: 'Anti-Personnel. 1d6 brain damage. Target takes -2 to all checks.', desc: "[CRB]" },
+    { id: 'asp_ice', name: 'Asp', type: 'Black ICE', cost: 100, slots: 1, atk: 4, def: 4, rez: 15, desc: 'Anti-Program. Destroy 1 installed Defender program.', desc: "[CRB]" },
+    { id: 'giant_ice', name: 'Giant', type: 'Black ICE', cost: 1000, slots: 2, atk: 8, def: 6, rez: 30, desc: 'Anti-Program. Destroy 2 installed non-Black ICE programs.', desc: "[CRB]" },
+    { id: 'killer_ice', name: 'Killer', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 15, desc: 'Anti-Program. Destroy 1 installed non-Black ICE program.', desc: "[CRB]" },
+    { id: 'sabertooth_ice', name: 'Sabertooth', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 20, desc: 'Anti-Program. Destroy 1 installed non-Black ICE program.', desc: "[CRB]" },
+    { id: 'dragon_ice', name: 'Dragon', type: 'Black ICE', cost: 1000, slots: 2, atk: 6, def: 6, rez: 30, desc: 'Anti-Demon/Black ICE. Deals 3d6 Damage to Demons/Black ICE.', desc: "[CRB]" }
+  ],
+  hardware: [
+    { id: "backup_drive", name: "Backup Drive", cost: 100, slots: 1, desc: "[CRB] Store one destroyed program for later recovery." },
+    { id: "insulated_wiring", name: "Insulated Wiring", cost: 100, slots: 1, desc: "[CRB] Protects deck from catching fire." },
+    { id: "range_upgrade", name: "Range Upgrade", cost: 500, slots: 1, desc: "[CRB] Increases Jack In range to 8m/yds." }
+  ]
+};
+
+// ============================================================
+// INDEX — One-time lookup maps for O(1) access
+// ============================================================
+(function buildIndex() {
+  const idx = {
+    cyberwareById: Object.create(null),
+    cyberwareByParent: Object.create(null),
+    skillById: Object.create(null),
+    roleById: Object.create(null)
+  };
+
+  for (const cw of DATA.cyberware) {
+    idx.cyberwareById[cw.id] = cw;
+    if (cw.parentType) {
+      if (!idx.cyberwareByParent[cw.parentType]) {
+        idx.cyberwareByParent[cw.parentType] = [];
+      }
+      idx.cyberwareByParent[cw.parentType].push(cw);
+    }
+  }
+
+  for (const statId of Object.keys(DATA.skills)) {
+    for (const sk of DATA.skills[statId]) {
+      idx.skillById[sk.id] = { skill: sk, statId: statId };
+    }
+  }
+
+  for (const role of DATA.roles) {
+    idx.roleById[role.id] = role;
+  }
+
+  idx.deckById = Object.create(null);
+  for (const d of DATA.cyberdecks) {
+    idx.deckById[d.id] = d;
+  }
+
+  idx.programById = Object.create(null);
+  for (const p of DATA.programs) {
+    idx.programById[p.id] = p;
+  }
+
+  idx.hardwareById = Object.create(null);
+  for (const h of DATA.hardware) {
+    idx.hardwareById[h.id] = h;
+  }
+
+  DATA._index = idx;
+})();
+
+Object.freeze(DATA.stats);
+Object.freeze(DATA._index);
+DATA.roleLifepath = {
+  Rockerboy: [
+    { title: "What Kind of Rockerboy are You?", options: ["Musician", "Slam Poet", "Street Artist", "Performance Artist", "Comedian", "Orator", "Politico", "Rap Artist", "DJ", "Idoru"] },
+    { title: "Are You in a Group or a Solo Act?", options: ["In a Group", "Solo Act"], type: "choose" },
+    { title: "Where Do You Perform?", options: ["Alternative Cafes", "Private Clubs", "Seedy Dive Bars", "Guerrilla Performances", "Nightclubs Around the City", "On the Data Pool"] },
+    { title: "Who's Gunning for You/Your Group?", options: ["Old group member who thinks you did them dirty.", "Rival group or artist trying to steal market share.", "Corporate enemies who don't like your message.", "Critic or other 'influencer' trying to bring you down.", "Older media star who feels threatened by your rising fame.", "Romantic interest or media figure who wants revenge for personal reasons."] },
+    { title: "Were You Once in a Group?", options: ["Yes", "No"], type: "choose" },
+    { title: "Why Did You Leave? (If Yes)", options: ["You were a jerk and the rest of the group voted you out.", "You got caught sleeping around with another member's mainline.", "The rest of the group was killed in a tragic 'accident.'", "The rest of the group was murdered or otherwise broken up by external enemies.", "The group broke up over 'creative differences.'", "You decided to go solo."] }
+  ],
+  Solo: [
+    { title: "What Kind of Solo are You?", options: ["Bodyguard", "Street Muscle for Hire", "Corporate Enforcer who takes jobs on the side", "Corporate or Freelance Black Ops Agent", "Local Vigilante for Hire", "Assassin/Hitman for Hire"] },
+    { title: "What's Your Operational Territory?", options: ["A Corporate Zone", "Combat Zones", "The whole City", "The territory of a single Corporation", "The territory of a particular Fixer or contact", "Wherever the money takes you"] },
+    { title: "Who's Gunning for You?", options: ["A Corporation you may have angered.", "A boostergang you may have tackled earlier.", "Corrupt Lawmen or Lawmen who mistakenly think you're guilty of something.", "A rival Solo from another Corp.", "A Fixer who sees you as a threat.", "A rival Solo who sees you as their nemesis."] },
+    { title: "What's Your Moral Compass Like?", options: ["Always working for good, trying to take out the 'bad guys.'", "Always spare the innocent (elderly, women, children, pets).", "Will occasionally slip and do unethical or bad things, but it's rare.", "Ruthless and profit centered; you will work for anyone, take any job for the money.", "Willing to bend the rules (and the law) to get the job done.", "Totally evil. You engage in illegal, unethical work all the time; in fact, you enjoy it."] }
+  ],
+  Netrunner: [
+    { title: "Got a Partner, or Do You Work Alone?", options: ["Got a Partner", "Work Alone"], type: "choose" },
+    { title: "If You Have a Partner, Who are They?", options: ["Family member", "Old friend", "Possible romantic partner as well", "Secret partner who might be a rogue AI. Might.", "Secret partner with mob/gang connections", "Secret partner with Corporate connections"] },
+    { title: "What Kind of Runner are You?", options: ["Freelancer who will hack for hire.", "Corporate 'clone runner' who hacks for the Man.", "Hacktivist interested in cracking systems and exposing bad guys.", "Just like to crack systems for the fun of it.", "Part of a regular team of freelancers.", "Hack for a Media, politico, or Lawman who hires you as needed."] },
+    { title: "What's Your Workspace Like?", options: ["There are screens everywhere.", "It looks better in Virtuality, you swear.", "It's a filthy bed covered in wires.", "Corporate, modular, and utilitarian.", "Minimalist, clean, and organized.", "It's taken over your entire living space."] },
+    { title: "Who are Some of Your Other Clients?", options: ["Local Fixers who send you clients.", "Local gangers who also protect your work area while you sweep for NET threats.", "Corporate Execs who use you for 'black project' work.", "Local Solos or other combat types who use you to keep their personal systems secure.", "Local Nomads and Fixers who use you to keep their family systems secure.", "You work for yourself and sell whatever data you can find on the NET."] },
+    { title: "Where Do You Get Your Programs?", options: ["Dig around in old abandoned City Zones.", "Steal them from other Netrunners you brain-burn.", "Have a local Fixer supply programs in exchange for hack work.", "Corporate Execs supply you with programs in exchange for your services.", "You have backdoors into a few Corporate warehouses.", "You hit the Night Markets and score programs whenever you can."] },
+    { title: "Who's Gunning for You?", options: ["You think it might be a rogue AI or a NET Ghost. Either way, it's bad news.", "Rival Netrunners who just don't like you.", "Corporates who want you to work for them exclusively.", "Lawmen who consider you an illegal 'black hat' and want to bust you.", "Old clients who think you screwed them over.", "Fixer or another client who wants your services exclusively."] }
+  ],
+  Tech: [
+    { title: "What Kind of Tech are You?", options: ["Cyberware Technician", "Vehicle Mechanic", "Jack of All Trades", "Small Electronics Technician", "Weaponsmith", "Crazy Inventor", "Robot and Drone Mechanic", "Heavy Machinery Mechanic", "Scavenger", "Nautical Mechanic"] },
+    { title: "Got a Partner, or Do You Work Alone?", options: ["Got a Partner", "Work Alone"], type: "choose" },
+    { title: "If You Have a Partner, Who are They?", options: ["Family member", "Old friend", "Possible romantic partner as well", "Mentor", "Secret partner with mob/gang connections", "Secret partner with Corporate connections"] },
+    { title: "What's Your Workspace Like?", options: ["A mess strewn with blueprint paper.", "Everything is color coded, but it's still a nightmare.", "Totally digital and obsessively backed up every day.", "You design everything on your Agent.", "You keep everything just in case you need it later.", "Only you understand your filing system."] },
+    { title: "Who are Your Main Clients?", options: ["Local Fixers who send you clients.", "Local gangers who also protect your work area or home.", "Corporate Execs who use you for 'black project' work.", "Local Solos or other combat types who use you to for weapon upkeep.", "Local Nomads and Fixers who bring you 'found' tech to repair.", "You work for yourself and sell what you invent/repair."] },
+    { title: "Where Do You Get Your Supplies?", options: ["Scavenge the wreckage you find in abandoned City Zones.", "Strip gear from bodies after firefights.", "Have a local Fixer bring you supplies in exchange for repair work.", "Corporate Execs supply you with stuff in exchange for your services.", "You have a backdoor into a few Corporate warehouses.", "You hit the Night Markets and score deals whenever you can."] },
+    { title: "Who's Gunning For You?", options: ["Combat Zone gangers who want you to work for them exclusively.", "Rival Tech trying to steal your customers.", "Corporates who want you to work for them exclusively.", "Larger manufacturer trying to bring you down because your mods are a threat.", "Old client who thinks you screwed them over.", "Rival Tech trying to beat you out for resources and parts."] }
+  ],
+  Medtech: [
+    { title: "What Kind of Medtech are You?", options: ["Surgeon", "General Practitioner", "Trauma Medic", "Psychiatrist", "Cyberpsycho Therapist", "Ripperdoc", "Cryosystems Operator", "Pharmacist", "Bodysculptor", "Forensic Pathologist"] },
+    { title: "What's Your Workspace Like?", options: ["Sterilized daily in the morning like clockwork.", "It's not state-of-the-art anymore, but it's comfortable to you.", "Your cryo equipment is also used to cool drinks.", "Everything possible is single-use and stored compacted until needed.", "Not as clean as many of your patients may have hoped.", "Meticulously organized, sharpened, and sterilized."] },
+    { title: "Got a Partner, or Do You Work Alone?", options: ["Got a Partner", "Work Alone"], type: "choose" },
+    { title: "Tell Us About Your Partner(s)", options: ["Trauma Team group", "Old friend", "Possible romantic partner as well", "Family member", "Secret partner with mob/gang connections", "Secret partner with Corporate connections"] },
+    { title: "Who are Your Main Clients?", options: ["Local Fixers who send you clients.", "Local gangers who also protect your work area or home in exchange for medical help.", "Corporate Execs who use you for 'black project' medical work.", "Local Solos or other combat types who use you for medical help.", "Local Nomads and Fixers who bring you wounded clients.", "Trauma Team paramedical work."] },
+    { title: "Where Do You Get Your Supplies?", options: ["Scavenge stashes of medical supplies you find in abandoned City Zones.", "Strip parts from bodies after firefights.", "Have a local Fixer bring you supplies in exchange for medical work.", "Corporate Execs or Trauma Team supply you with stuff in exchange for your services.", "You have a backdoor into a few Corporate or Hospital warehouses.", "You hit the Night Markets and score deals whenever you can."] }
+  ],
+  Media: [
+    { title: "What Kind of Media are You?", options: ["Blogger", "Writer (Books)", "Videographer", "Documentarian", "Investigative Reporter", "Street Scribe"] },
+    { title: "How Ethical are You?", options: ["Fair, honest reporting, strong ethical practices. You only report the verifiable truth.", "Fair and honest reporting, but willing to go on hearsay and rumor if that's what it takes.", "Will occasionally slip and do unethical things, but it's rare. You have some standards.", "Willing to bend any rules to get the bad guys. But only the bad guys.", "Ruthless and determined to make it big, even if it means breaking the law. You're a muckraker.", "Totally corrupt. You take bribes, engage in illegal, unethical reporting all the time. Your pen is for hire to the highest bidder."] },
+    { title: "How Does Your Work Reach the Public?", options: ["Monthly magazine", "Blog", "Mainstream vid feed", "News channel", "'Book' sales", "Screamsheets"] },
+    { title: "What Types of Stories Do You Want to Tell?", options: ["Political Intrigue", "Ecological Impact", "Celebrity News", "Corporate Takedowns", "Editorials", "Propaganda"] }
+  ],
+  Exec: [
+    { title: "What Kind of Corp Do You Work For?", options: ["Financial", "Media and Communications", "Cybertech and Medical Technologies", "Pharmaceuticals and Biotech", "Food, Clothing, or other General Consumables", "Energy Production", "Personal Electronics and Robotics", "Corporate Services", "Consumer Services", "Real Estate and Construction"] },
+    { title: "What Division Do You Work In?", options: ["Procurement", "Manufacturing", "Research and Development", "Human Resources", "Public Affairs/Publicity/Advertising", "Mergers and Acquisitions"] },
+    { title: "How Good/Bad is Your Corp?", options: ["Always working for good, fully supporting ethical practices.", "Operates as a fair and honest business all the time.", "Will occasionally slip and do unethical things, but it's rare.", "Willing to bend the rules to get what it needs.", "Ruthless and profit-centered, willing to do some bad things.", "Totally evil. Will engage in illegal, unethical business all the time."] },
+    { title: "Current State with Your Boss", options: ["Your Boss mentors you but watch out for their enemies.", "Your Boss gives you a free hand and doesn't want to know what you're up to.", "Your Boss is a micromanager who tries to meddle in your work.", "Your Boss is a psycho whose unpredictable outbursts are offset by quiet paranoia.", "Your Boss is cool and watches your back against rivals.", "Your Boss is threatened by your meteoric rise and is planning to knife you."] },
+    { title: "Where is Your Corp Based?", options: ["One city", "Several cities", "Statewide", "National", "International, offices in a few major cities", "International, offices everywhere"] },
+    { title: "Who's Gunning for Your Group?", options: ["Rival Corp in the same industry.", "Law enforcement is watching you.", "Local Media wants to bring you down.", "Different divisions in your own company are feuding with each other.", "Local government doesn't like your Corp.", "International Corporations are eyeing you for a hostile takeover."] }
+  ],
+  Lawman: [
+    { title: "What is Your Position on the Force?", options: ["Guard", "Standard Beat or Patrol", "Criminal Investigation", "Special Weapons and Tactics", "Motor Patrol", "Internal Affairs"] },
+    { title: "How Wide is Your Group's Jurisdiction?", options: ["Corporate Zones", "Standard City Patrol Zone", "Combat Zones", "Outer City", "Recovery Zones", "Open Highways"] },
+    { title: "How Corrupt is Your Group?", options: ["Fair, honest policing, strong ethical practices.", "Fair and honest policing, but hard on lawbreakers.", "Will occasionally slip and do unethical things, but it's rare.", "Willing to bend any rules to get the bad guys.", "Ruthless and determined to control The Street, even if it means breaking the law.", "Totally corrupt. You take bribes, engage in illegal, and unethical business all the time."] },
+    { title: "Who's Gunning for Your Group?", options: ["Organized Crime", "Boostergangs", "Police Accountability Group", "Dirty Politicians", "Smugglers", "Street Criminals"] },
+    { title: "Who is Your Group's Major Target?", options: ["Organized Crime", "Boostergangs", "Drug Runners", "Dirty Politicians", "Smugglers", "Street Crime"] }
+  ],
+  Fixer: [
+    { title: "What Kind of Fixer are You?", options: ["Broker deals between rival gangs.", "Procure rare or atypical resources for exclusive clientele.", "Specialize in brokering Solo or Tech services as an agent.", "Supply a regular resource for the Night Markets, like food, medicines, or drugs.", "Procure highly illegal resources, like street drugs or milspec weapons.", "Supply resources for Techs and Medtechs, like parts and medical supplies.", "Operate several successful Night Markets, although not as owner.", "Broker use contracts for heavy machinery, military vehicles, and aircraft.", "Broker deals as a fence for scavengers raiding Corps or Combat Zones.", "Act as an exclusive agent for a Media, Rockerboy, or a Nomad Pack."] },
+    { title: "What's Your 'Office' Like?", options: ["You don't have one. You like to keep it mobile.", "A booth in a local bar.", "All Data Pool messages and anonymous dead drops.", "Spare room in a warehouse, shop, or clinic.", "An otherwise abandoned building.", "The lobby of a cube hotel."] },
+    { title: "Got a Partner or Work Alone?", options: ["Got a Partner", "Work Alone"], type: "choose" },
+    { title: "Got a Partner? Who?", options: ["Family member", "Old friend", "Possible romantic partner as well", "Mentor", "Secret partner with mob/gang connections", "Secret partner with Corporate connections"] },
+    { title: "Who are Your Side Clients?", options: ["Local Rockerboys or Medias who use you to get them gigs or contacts.", "Local gangers who also protect your work area or home.", "Corporate Execs who use you for 'black project' procurement work.", "Local Solos or other combat types who use you to get them jobs or contacts.", "Local Nomads and Fixers who use you to set up transactions or deals.", "Local politicos or Execs who depend on you for finding out information."] },
+    { title: "Who's Gunning for You?", options: ["Combat Zone gangers who want you to work for them exclusively.", "Rival Fixers trying to steal your clients.", "Execs who want you to work for them exclusively.", "Enemy of a former client who wants to clean up 'loose ends'—like you.", "Old client who thinks you screwed them over.", "Rival Fixer trying to beat you out for resources and parts."] }
+  ],
+  Nomad: [
+    { title: "How Big is Your Pack?", options: ["A single extended tribe or family", "A couple dozen members", "Forty or fifty members", "A hundred or more members", "A Blood Family (hundreds of members)", "An Affiliated Family (made of several Blood Families)"] },
+    { title: "Is Your Pack Based on Land, Air, or Sea?", options: ["Land", "Air", "Sea"], type: "choose" },
+    { title: "If on Land, What Do They Do?", options: ["Gogang", "Passenger transport", "Chautauqua/school", "Traveling show/carnival", "Migrant farmers", "Cargo transport", "Shipment protection", "Smuggling", "Mercenary army", "Construction work gang"] },
+    { title: "If in Air, What Do They Do?", options: ["Air piracy", "Cargo transport", "Passenger transport", "Aircraft protection", "Smuggling", "Combat support"] },
+    { title: "If at Sea, What Do They Do?", options: ["Piracy", "Cargo transport", "Passenger transport", "Smuggling", "Combat support", "Submarine warfare"] },
+    { title: "What Do You Do for Your Pack?", options: ["Scout (negotiator)", "Outrider (protection, weapons)", "Transport pilot/driver", "Loadmaster (large cargo mover, trucker)", "Solo smuggler", "Procurement (fuel, vehicles, etc.)"] },
+    { title: "What's Your Pack's Overall Philosophy?", options: ["Always working for good; your Pack accepts others, just wants to get along.", "It's more like a family business. Operates as a fair and honest concern.", "Will occasionally slip and do unethical things, but it's rare.", "Willing to bend the rules whenever they get in the way to get what the Pack needs.", "Ruthless and self-centered, willing to do some bad things if it will get the Pack ahead.", "Totally evil. You rage up and down the highways, killing, looting, and just terrorizing everyone."] },
+    { title: "Who's Gunning for Your Pack?", options: ["Organized Crime", "Boostergangs", "Drug Runners", "Dirty Politicians", "Rival Packs in the same businesses", "Dirty Cops"] }
+  ]
+};
