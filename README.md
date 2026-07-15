@@ -1,4 +1,4 @@
-# Cyberpunk RED Character Generator (Playtest Build v3.5)
+# Cyberpunk RED Character Generator (Playtest Build v4.0)
 
 A fully self-contained, highly-optimized interactive character manager for **Cyberpunk RED** by R. Talsorian Games. Create, customize, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. 
 
@@ -54,3 +54,13 @@ To compile your changes into the final `index.html` file:
 ---
 
 *Disclaimer: This is a fan-made project for Cyberpunk RED. Cyberpunk RED is a tabletop roleplaying game created by R. Talsorian Games.*
+
+---
+
+## License
+**Creative Commons Attribution-NonCommercial 4.0 International**
+
+This license requires that reusers give credit to the creator. It allows reusers to distribute, remix, adapt, and build upon the material in any medium or format, for noncommercial purposes only.
+
+* **BY**: Credit must be given to you, the creator.
+* **NC**: Only noncommercial use of your work is permitted. Noncommercial means not primarily intended for or directed towards commercial advantage or monetary compensation.
