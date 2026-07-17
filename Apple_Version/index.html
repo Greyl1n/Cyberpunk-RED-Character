@@ -144,6 +144,36 @@ input[type="number"] { width: 100%; }
 }
 
 @media print {
+  .hidden-print-section { display: none !important; }
+  body.printing #tab-about { display: none !important; }
+  
+  body.printing .section-card {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    margin-bottom: 5px !important;
+    padding: 10px !important;
+  }
+  body.printing .grid-split {
+    gap: 10px !important;
+    margin-bottom: 5px !important;
+  }
+  body.printing h2.section-title {
+    margin-bottom: 5px !important;
+  }
+
+  body.printing #print-section-identity { order: 1; }
+  body.printing #role_info { order: 2; }
+  body.printing #multiclass_section { order: 3; }
+  body.printing #print-section-stats { order: 4; }
+  body.printing #print-section-lifepath { order: 5; }
+  body.printing #role_lifepath_container { order: 6; }
+  body.printing #print-section-weapons { order: 7;  }
+  body.printing #print-section-cyberware { order: 8; }
+  body.printing #print-section-cyberdeck { order: 9; }
+  body.printing #print-section-vehicles { order: 10; }
+  body.printing #print-section-notes { order: 11;  }
+  body.printing #print-section-skills { order: 12;  }
+
   :root, body.printing {
     --bg: #ffffff;
     --bg-card: #ffffff;
@@ -186,15 +216,17 @@ input[type="number"] { width: 100%; }
 
   body.printing .tab-panel { display: contents !important; }
   body.printing .main-content { display: flex; flex-direction: column; }
-  body.printing #tab-character > .section-card:nth-child(1) { order: 1; }
-  body.printing #tab-character > .grid-split:nth-child(2) { order: 2; }
-  body.printing #tab-character > .section-card:nth-child(4) { order: 3; }
-  body.printing #tab-character > #role_lifepath_container { order: 4; }
-  body.printing #tab-gear > .grid-split:nth-child(1) { order: 5; }
-  body.printing #tab-gear > .grid-split:nth-child(2) { order: 6; }
-  body.printing #tab-cyberdeck > .section-card { order: 7; }
-  body.printing #tab-notes > .section-card { order: 8; page-break-before: always; }
-  body.printing #tab-character > .section-card:nth-child(3) { order: 9; page-break-before: always; }
+  
+  
+  
+  /* removed old order 3 */
+  
+  
+  
+
+  
+  
+  
   body.printing .scrollable-table { max-height: none; overflow: visible; }
   body.printing .table-responsive { overflow: visible; }
   body.printing .main-content { max-width: 100%; }
@@ -224,7 +256,7 @@ input[type="number"] { width: 100%; }
   body.printing .stat-row button { width: 18px; height: 18px; font-size: 8pt; }
   body.printing .stat-points-bar { font-size: 7pt; padding: 0.1rem 0.3rem; }
   body.printing .stat-input-row { gap: 0.2rem; }
-  body.printing #stats_container { margin-top: 0.15rem; }
+  
 
   body.printing .panel-gold { padding: 0.2rem 0.5rem; gap: 0.3rem; }
   body.printing .final-large-num { font-size: 9pt; }
@@ -246,20 +278,20 @@ input[type="number"] { width: 100%; }
   body.printing tr { break-inside: avoid; page-break-inside: avoid; }
 
   body.printing #hp_max, body.printing #hp_current, body.printing #hp_seriously, body.printing #hp_death,
-  body.printing #hum_max, body.printing #hum_current, body.printing #hum_emp, body.printing #hum_hc_total { width: 36px; }
+  
 
   body.printing .section-card .grid-2 { grid-template-columns: repeat(4, 1fr); gap: 0.1rem; }
   body.printing .section-card .grid-2 label { font-size: 6pt; gap: 0; }
   body.printing .section-card .grid-2 input { padding: 0.05rem 0.15rem; font-size: 7pt; }
 
-  body.printing #tab-about { display: none !important; }
+  
 
   body.printing .section-card:first-child .grid-3 { grid-template-columns: repeat(3, 1fr); gap: 0.2rem; }
   body.printing .section-card:first-child .grid-3 label { font-size: 6pt; gap: 0; }
   body.printing .section-card:first-child .grid-3 input,
   body.printing .section-card:first-child .grid-3 select { padding: 0.05rem 0.15rem; font-size: 7pt; }
   body.printing .section-card:first-child .grid-3 input[type="number"] { width: 100%; }
-  body.printing .section-card:first-child #role_info { display: none; }
+  /* removed display: none for #role_info */
   body.printing .section-card:first-child #multiclass_section { display: none; }
   body.printing .section-card:first-child { padding-bottom: 0.2rem; }
   body.printing .section-card:first-child .section-title { margin-bottom: 0.1rem; }
@@ -388,7 +420,7 @@ select option { color: var(--primary); background: #000; }
 <div class="scanline-overlay"></div>
 <input type="checkbox" id="dismissWelcome" style="display:none">
 <header>
-<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v3.5</span></div></div>
+<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v4.0 Final</span></div></div>
 <div class="header-actions">
 <button id="charactersBtn" class="btn-action">&#128194; Characters</button>
 <button id="importBtn" class="btn-action">&#128229; Import</button>
@@ -426,7 +458,7 @@ select option { color: var(--primary); background: #000; }
 
 <!-- ===== TAB: CHARACTER ===== -->
 <section id="tab-character" class="tab-panel active">
-<div class="section-card">
+<div id="print-section-identity" class="section-card">
 <h2 class="section-title">Identity & Role</h2>
 <div class="grid-3">
 <label>Handle <input id="char_handle" type="text" placeholder="Your street name"></label>
@@ -448,7 +480,7 @@ select option { color: var(--primary); background: #000; }
 </div>
 </div>
 
-<div class="grid-split">
+<div id="print-section-stats" class="grid-split">
 <div class="section-card">
 <h2 class="section-title">Stats</h2>
 <div id="stat_points_bar" class="stat-points-bar">Points Remaining: <span id="stat_points_remaining">10</span></div>
@@ -471,7 +503,7 @@ select option { color: var(--primary); background: #000; }
 </div>
 </div>
 
-<div class="section-card">
+<div id="print-section-skills" class="section-card">
 <h2 class="section-title">Skills</h2>
 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1rem;">
 <input id="skillSearch" class="skill-search" type="text" placeholder="Search skills...">
@@ -492,7 +524,7 @@ select option { color: var(--primary); background: #000; }
 </div>
 </div>
 
-<div class="section-card">
+<div id="print-section-lifepath" class="section-card">
 <h2 class="section-title">Lifepath</h2>
 <div class="grid-3">
 <label>Cultural Origin <select id="lp_culturalOrigins"></select></label>
@@ -536,7 +568,7 @@ select option { color: var(--primary); background: #000; }
 
 <!-- ===== TAB: GEAR ===== -->
 <section id="tab-gear" class="tab-panel">
-<div class="grid-split">
+<div id="print-section-weapons" class="grid-split">
 <div class="section-card">
 <div class="flex-header"><h2 class="section-title">Weapons</h2><button id="add_weapon_btn" class="btn-action">+ Add Weapon</button></div>
 <div class="table-responsive">
@@ -557,7 +589,7 @@ select option { color: var(--primary); background: #000; }
 <div class="mt-1" style="font-weight:600">Total SP (Body): <span id="armor_total_sp_body">0</span> | Total SP (Head): <span id="armor_total_sp_head">0</span></div>
 </div>
 </div>
-<div class="grid-split mt-1">
+<div id="print-section-cyberware" class="grid-split mt-1">
 <div class="section-card">
 <div class="flex-header"><h2 class="section-title">Cyberware</h2><button id="add_cyberware_btn" class="btn-action">+ Add Cyberware</button></div>
 <div class="table-responsive">
@@ -592,12 +624,24 @@ select option { color: var(--primary); background: #000; }
 </div>
 </div>
 </div>
+<div id="print-section-vehicles" class="section-card mt-1">
+<div class="flex-header">
+<h2 class="section-title">Vehicles & Upgrades</h2>
+<button id="add_vehicle_btn" class="btn-action">+ Add Vehicle</button>
+</div>
+<div class="table-responsive">
+<table class="premium-table">
+<thead><tr><th>Vehicle</th><th>SDP</th><th>Seats</th><th>Cost</th><th>Description</th><th></th></tr></thead>
+<tbody id="vehicles_body"></tbody>
+</table>
+</div>
+</div>
 </div>
 </section>
 
 <!-- ===== TAB: CYBERDECK ===== -->
 <section id="tab-cyberdeck" class="tab-panel">
-<div class="section-card">
+<div id="print-section-cyberdeck" class="section-card">
 <h2 class="section-title">Cyberdeck & Programs</h2>
 
 <div class="deck-selector-container mb-1">
@@ -648,16 +692,16 @@ select option { color: var(--primary); background: #000; }
 
 <!-- ===== TAB: ABOUT ===== -->
 <section id="tab-notes" class="tab-panel">
-<div class="section-card">
+<div id="print-section-notes" class="section-card">
 <h2 class="section-title">Notes</h2>
 <textarea id="char_notes" style="width:100%; height:400px; padding:0.5rem; background: var(--input-bg); color: var(--text); border: 1px solid var(--border);" placeholder="Free text notes..."></textarea>
 </div>
 </section>
 <section id="tab-about" class="tab-panel">
 <div class="section-card">
-<h2 class="section-title">About Cyberpunk RED Generator (Playtest Build)</h2>
+<h2 class="section-title">About Cyberpunk RED Generator (v4.0 Final)</h2>
 <p style="margin-bottom:0.8rem;line-height:1.7">A fully self-contained, highly-optimised interactive character manager for <strong>Cyberpunk RED</strong> by R. Talsorian Games. Create, customise, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. No server, no build tools, no internet - just open the single monolith HTML file in any browser.</p>
-<p style="margin-bottom:0.8rem;line-height:1.7"><strong>Welcome to the Playtest Build!</strong> This version introduces massive updates across the board, moving beyond a simple character sheet into a full character management suite. Key updates include deeply interactive Role Abilities (Exec Team Members, Nomad Vehicle tracking, Lawman Backup, Medtech Pharmaceuticals, Netrunner Interface, and more), fully integrated Cyberware humanity and slot tracking, overhauled generic and Role-specific Lifepaths, Ammunition tracking, and seamless local state management.</p>
+<p style="margin-bottom:0.8rem;line-height:1.7"><strong>Welcome to v4.0 Final!</strong> This version concludes massive updates across the board. Key additions include robust Custom Eurobuck Management, a brand-new dedicated Apple-optimized version for Safari/iOS devices, seamless integration of Black Chrome Vehicles and Weapons, and Smart Selective Printing that allows you to omit blank sections to save paper. We also finalized interactive Role Abilities (Exec Team Members, Nomad Vehicle tracking, Lawman Backup, Medtech Pharmaceuticals, Netrunner Interface, and more), fully integrated Cyberware humanity and slot tracking, and overhauled Lifepaths.</p>
 <h3 style="margin:1rem 0 0.4rem">Features</h3>
 <ul style="line-height:1.8;padding-left:1.2rem">
 <li>10 Stats with point-buy system (62 points, min 2 / max 8)</li>
@@ -665,14 +709,17 @@ select option { color: var(--primary); background: #000; }
 <li>Interactive Role Abilities: Create and manage Exec Team Members, track Nomad Family Vehicles & Upgrades, handle Lawman Backup stats, manage Netrunner Interface abilities, and track Medtech Pharmaceuticals</li>
 <li>Multiclass support - take a secondary role once your primary reaches Rank 4</li>
 <li>86 Skills grouped by linked stat with search, ranks, and item bonuses</li>
-<li>140+ Weapons mapped accurately to their Cyberpunk RED skills (e.g. Shoulder Arms, Handgun, Heavy Weapons)</li>
-<li>Add/remove management with cost deduction for Armor, Cyberware, Fashion &amp; Gear</li>
+<li>140+ Weapons mapped accurately to their Cyberpunk RED skills, including Black Chrome selections</li>
+<li>Add/remove management with cost deduction for Armor, Cyberware, Fashion, Vehicles &amp; Gear</li>
+<li>Custom Eurobuck entry for quick accounting (bribes, payouts, etc)</li>
+<li>Custom Item Entry for all gear categories</li>
+<li>JSON Export/Import for sharing characters or backing them up safely</li>
+<li>Print-Friendly Layout: Smart Selective Printing with restacked DOM layout for perfect page rendering on Chrome and Safari</li>
+<li>Mobile-Responsive: Touch-optimized controls and seamless skill adjustments</li>
 <li>Ammunition Consumption - track remaining rounds directly on your sheet</li>
 <li>Dynamic Cyberware Tracking: automatically handles humanity loss, maximum humanity reduction, and custom slot constraints (e.g. 7 slots for a Cyberarm)</li>
-<li>Custom item entry for all gear categories</li>
 <li>Categorised item selectors grouped logically</li>
 <li>Full Lifepath generation (Generic and Role-specific) with randomise button</li>
-<li>Character save/load/delete (localStorage), JSON export/import</li>
 <li>Combined print layout optimised for physical character sheets</li>
 <li>Random character generator — one-click complete, playable character</li>
 <li>Netrunner dark theme with native CSS variables</li>
@@ -1923,6 +1970,66 @@ DATA.roleLifepath = {
   ]
 };
 
+DATA.vehicleTypes = [
+    { id: "compact_groundcar", name: "Compact Groundcar", sdp: 35, seats: 4, cat: "Land", cost: 30000, desc: "Combat Move: 10, MPH: 30." },
+    { id: "hp_groundcar", name: "High Performance Groundcar", sdp: 50, seats: 4, cat: "Land", cost: 50000, desc: "Combat Move: 15, MPH: 100." },
+    { id: "super_groundcar", name: "Super Groundcar", sdp: 75, seats: 4, cat: "Land", cost: 100000, desc: "Combat Move: 20, MPH: 200." },
+    { id: "roadbike", name: "Roadbike", sdp: 25, seats: 2, cat: "Land", cost: 20000, desc: "Combat Move: 15, MPH: 100." },
+    { id: "superbike", name: "Superbike", sdp: 50, seats: 2, cat: "Land", cost: 50000, desc: "Combat Move: 20, MPH: 200." },
+    { id: "gyrocopter", name: "Gyrocopter", sdp: 25, seats: 2, cat: "Air", cost: 20000, desc: "Combat Move: 10, MPH: 50." },
+    { id: "helicopter", name: "Helicopter", sdp: 50, seats: 6, cat: "Air", cost: 50000, desc: "Combat Move: 15, MPH: 100." },
+    { id: "av4", name: "AV-4", sdp: 75, seats: 6, cat: "Air", cost: 100000, desc: "Combat Move: 20, MPH: 200." },
+    { id: "av9", name: "AV-9", sdp: 100, seats: 4, cat: "Air", cost: 150000, desc: "Combat Move: 25, MPH: 250." },
+    { id: "aerozep", name: "Aerozep", sdp: 100, seats: 4, cat: "Air", cost: 100000, desc: "Combat Move: 10, MPH: 30." },
+    { id: "jetski", name: "Jetski", sdp: 25, seats: 2, cat: "Sea", cost: 20000, desc: "Combat Move: 10, MPH: 50." },
+    { id: "speedboat", name: "Speedboat", sdp: 50, seats: 4, cat: "Sea", cost: 50000, desc: "Combat Move: 15, MPH: 100." },
+    { id: "cabin_cruiser", name: "Cabin Cruiser", sdp: 75, seats: 6, cat: "Sea", cost: 100000, desc: "Combat Move: 10, MPH: 30." },
+    { id: "yacht", name: "Yacht", sdp: 100, seats: 10, cat: "Sea", cost: 200000, desc: "Combat Move: 15, MPH: 100." },
+    { id: "sh45_patroller", name: "SH-45 Patroller", sdp: 25, seats: 1, cat: "Air", cost: 16000, desc: "[Gyrocopter] Bulletproof Glass. Incompatible with Seating Upgrade. Nomad Access: 2. Combat Move: 10, MPH: 50." },
+    { id: "sh45_patroller_law", name: "SH-45 Patroller Law", sdp: 25, seats: 1, cat: "Air", cost: 21000, desc: "[Gyrocopter] 2x Bulletproof Glass, Onboard Machine Gun. Incompatible with Seating Upgrade. Nomad Access: 4. Combat Move: 10, MPH: 50." },
+    { id: "dayton_tdt_004", name: "Dayton TDT 004", sdp: 50, seats: 8, cat: "Air", cost: 43000, desc: "[Helicopter] Heavy Chassis, 2x Seating Upgrades. Nomad Access: 7. Combat Move: 15, MPH: 100." },
+    { id: "tanson_bellhop", name: "Tanson Bellhop", sdp: 25, seats: 1, cat: "Air", cost: 16000, desc: "[Gyrocopter] Can transform to easy-to-carry mode. Incompatible with Seating Upgrade. Nomad Access: 1. Combat Move: 10, MPH: 50." },
+    { id: "zetatech_aerovox", name: "Zetatech AeroVox", sdp: 75, seats: 6, cat: "Air", cost: 51000, desc: "[AV-4] Multipurpose Aerodyne. Heavy Chassis. Nomad Access: 8. Combat Move: 20, MPH: 200." },
+    { id: "zetatech_aerocop", name: "Zetatech AeroCop", sdp: 75, seats: 6, cat: "Air", cost: 58000, desc: "[AV-4] Multipurpose Aerodyne. Heavy Chassis, Armored Chassis, 2x Bulletproof Glass, Onboard Machine Gun. Nomad Access: 10. Combat Move: 20, MPH: 200." },
+    { id: "zetatech_destination", name: "Zetatech Destination", sdp: 75, seats: 4, cat: "Air", cost: 40000, desc: "[AV-4] Multipurpose Aerodyne. Incompatible with Heavy Chassis and Seating Upgrades. Nomad Access: 6. Combat Move: 20, MPH: 200." },
+    { id: "zetatech_herakles", name: "Zetatech Herakles", sdp: 75, seats: 7, cat: "Air", cost: 63000, desc: "[AV-4] Multipurpose Aerodyne. Armored Chassis, Bulletproof Glass, Heavy Chassis, Seating Upgrade, Onboard Machine Gun, Vehicle Heavy Weapon Mount. Nomad Access: 10. Combat Move: 20, MPH: 200." },
+    { id: "econocompact", name: "EconoCompact", sdp: 35, seats: 3, cat: "Land", cost: 20000, desc: "[Compact Groundcar] Incompatible with Heavy Chassis and Seating Upgrades. Nomad Access: 1. Combat Move: 10, MPH: 30." },
+    { id: "family_star_van", name: "Family Star Van", sdp: 35, seats: 5, cat: "Land", cost: 31000, desc: "[Compact Groundcar] Seating Upgrade. Nomad Access: 2. Combat Move: 10, MPH: 30." },
+    { id: "chupacabra", name: "Chupacabra", sdp: 35, seats: 5, cat: "Land", cost: 37000, desc: "[Compact Groundcar] NOS, Seating Upgrade, Heavy Chassis. Nomad Access: 4. Combat Move: 10, MPH: 30." },
+    { id: "range_trike", name: "Range Trike", sdp: 25, seats: 3, cat: "Land", cost: 31000, desc: "[Roadbike] Armored Chassis, Heavy Chassis. Incompatible with Seating Upgrade. Nomad Access: 4. Combat Move: 15, MPH: 100." },
+    { id: "the_grundy", name: "The Grundy", sdp: 35, seats: 4, cat: "Land", cost: 41000, desc: "[Compact Groundcar] Heavy Chassis, Armored Chassis, Combat Plow. Nomad Access: 4. Combat Move: 10, MPH: 30." },
+    { id: "the_harvey_100", name: "The Harvey 100", sdp: 25, seats: 2, cat: "Land", cost: 20000, desc: "[Roadbike] Nomad Access: 1. Combat Move: 15, MPH: 100." },
+    { id: "the_harriet_100", name: "The Harriet 100", sdp: 25, seats: 2, cat: "Land", cost: 21000, desc: "[Roadbike] Smuggling Upgrade. Nomad Access: 2. Combat Move: 15, MPH: 100." },
+    { id: "the_harvey_merc", name: "The Harvey Merc", sdp: 25, seats: 2, cat: "Land", cost: 30000, desc: "[Roadbike] Onboard Machine Gun, Onboard Rocket Pod. Nomad Access: 4. Combat Move: 15, MPH: 100." },
+    { id: "highway_master_artemis", name: "Highway Master Artemis", sdp: 25, seats: 2, cat: "Land", cost: 60000, desc: "[Roadbike] Armored Chassis. Retractable canopy (2x Bulletproof Glass). Can supercharge to act as Superbike for 10 mins. Nomad Access: 5. Combat Move: 15, MPH: 100." },
+    { id: "kaukaz_volkhov", name: "Kaukaz Volkhov", sdp: 35, seats: 4, cat: "Land", cost: 41000, desc: "[Compact Groundcar] Heavy Chassis, Armored Chassis, Vehicle Heavy Weapon Mount with BMG-500. Nomad Access: 7. Combat Move: 10, MPH: 30." },
+    { id: "makigai_ebi", name: "Makigai Ebi", sdp: 35, seats: 4, cat: "Land", cost: 23000, desc: "[Compact Groundcar] 35 SDP. Incompatible with Heavy Chassis. Nomad Access: 1. Combat Move: 10, MPH: 30." },
+    { id: "militech_gorgon_security_van", name: "Militech Gorgon Security Van", sdp: 35, seats: 5, cat: "Land", cost: 37000, desc: "[Compact Groundcar] Armored Chassis, Bulletproof Glass, Seating Upgrade. Nomad Access: 4. Combat Move: 10, MPH: 30." },
+    { id: "the_zacatzontli_pickup_truck", name: "The Zacatzontli Pickup Truck", sdp: 35, seats: 4, cat: "Land", cost: 27000, desc: "[Compact Groundcar] Heavy Chassis, Housing Upgrade, includes Aerial Sphere, Mr. Biscuit, 5x AirWell 50s. Nomad Access: 4. Combat Move: 10, MPH: 30." },
+    { id: "the_paladin_500", name: "The Paladin 500", sdp: 50, seats: 4, cat: "Land", cost: 59000, desc: "[High Performance Groundcar] Armored Chassis, 2x front-mounted Onboard Machine Guns, 2x NOS Upgrades. Nomad Access: 8. Combat Move: 15, MPH: 100." },
+    { id: "quadra_thunderx", name: "Quadra Thunder-X", sdp: 50, seats: 4, cat: "Land", cost: 57000, desc: "[High Performance Groundcar] Armored Chassis, Bulletproof Glass, NOS. Nomad Access: 8. Combat Move: 15, MPH: 100." },
+    { id: "street_king_combat_vehicle", name: "Street King Combat Vehicle", sdp: 50, seats: 5, cat: "Land", cost: 63000, desc: "[High Performance Groundcar] Heavy Chassis, Armored Chassis, 2x Bulletproof Glass, Seating Upgrade, NOS. Nomad Access: 10. Combat Move: 15, MPH: 100." },
+    { id: "tanson_jetboy_hoverboard", name: "Tanson JetBoy Hoverboard", sdp: 10, seats: 1, cat: "Land", cost: 1000, desc: "[Land Vehicle] 10 SDP. Hovers. Drive with Athletics, no hands needed. Narrative Speed: 30 MPH, Combat Move: 15. Cannot be upgraded. Nomad Access: N/A. Combat Move: 15, MPH: 30." },
+    { id: "tetracorp_america_megahauler", name: "TetraCorp America MegaHauler", sdp: 35, seats: 5, cat: "Land", cost: 143000, desc: "[Compact Groundcar] 200 SDP. Armored Chassis, Comms Center, Combat Plow, Housing Capacity Upgrade, 2x Bulletproof Glass, 3x Smuggling Upgrades, Security Upgrade (no cloaking). Nomad Access: 10. Combat Move: 10, MPH: 30." },
+    { id: "tetracorp_america_badger_corporate_bus", name: "TetraCorp America Badger Corporate Bus", sdp: 35, seats: 8, cat: "Land", cost: 50000, desc: "[Compact Groundcar] Heavy Chassis, Armored Chassis, Bulletproof Glass, Security Upgrade, 4x Seating Upgrades, includes Drink Master 3000, 2x Banshee Microphones. Nomad Access: 6. Combat Move: 10, MPH: 30." },
+    { id: "yangs_wheels_rickshaw", name: "Yang's Wheels Rickshaw", sdp: 25, seats: 3, cat: "Land", cost: 21000, desc: "[Roadbike] Seating Upgrade. Can disconnect carriage (2 seats). Nomad Access: 2. Combat Move: 15, MPH: 100." },
+    { id: "zonda_molly_1k", name: "Zonda Molly 1K", sdp: 35, seats: 2, cat: "Land", cost: 15000, desc: "[Compact Groundcar] No Interface Plugs. Narrative Speed: 60 MPH. Incompatible with Heavy Chassis and Seating Upgrades. Nomad Access: 1. Combat Move: 10, MPH: 30." },
+    { id: "zonda_parallax_cybercycle", name: "Zonda Parallax Cybercycle", sdp: 50, seats: 2, cat: "Land", cost: 110000, desc: "[Superbike] Armored Chassis, NOS, Enhanced Interface Plug Integration. Nomad Access: 8. Combat Move: 20, MPH: 200." },
+    { id: "zonda_sliver", name: "Zonda Sliver", sdp: 25, seats: 2, cat: "Land", cost: 27000, desc: "[Roadbike] Comms Center, Bulletproof Glass, Security Upgrade. Nomad Access: 4. Combat Move: 15, MPH: 100." }
+];
+
+DATA.vehicleUpgrades = [
+    { id: "armored_chassis", name: "Armored Chassis", cost: 5000, desc: "+25 SDP, Bulletproof Glass (SP 13, 15 HP)." },
+    { id: "comms_center", name: "Communications Center", cost: 1000, desc: "Acts as a mobile Data Pool link, scrambled comms." },
+    { id: "heavy_weapon_mount", name: "Heavy Weapon Mount", cost: 5000, desc: "Mounts one Heavy Weapon. Fires using user's Action and Heavy Weapons skill." },
+    { id: "nos", name: "NOS", cost: 1000, desc: "Increase Combat Move by 5, Narrative MPH by 50 for 1 minute." },
+    { id: "smuggling_compartment", name: "Smuggling Compartment", cost: 1000, desc: "Concealable space for items/one person. Requires DV 17 Perception to find." },
+    { id: "hover_upgrade", name: "Hover Upgrade", cost: 5000, desc: "Allows ground vehicle to hover over water and rough terrain." },
+    { id: "onboard_machine_gun", name: "Onboard Machine Gun", cost: 5000, desc: "Assault Rifle mounted internally (forward facing)." },
+    { id: "onboard_melee_weapon", name: "Onboard Melee Weapon", cost: 1000, desc: "Very Heavy Melee Weapon attached to exterior." },
+    { id: "security_system", name: "Security System", cost: 1000, desc: "Shock panels and alarms (4d6 damage to unauthorized access)." }
+];
+
 // ============================================================
 // STATE — Runtime character state object
 // ============================================================
@@ -2321,11 +2428,109 @@ const importCharacter = async (file) => {
  * the @media print rules in our CSS to hide buttons and reorder tabs.
  * It then opens the browser's print dialog, and removes the class shortly after.
  */
-const printCharacter = () => {
+const printCharacter = async () => {
+  let toHide = [];
+  if (typeof showPrintOptions === "function") {
+    toHide = await showPrintOptions();
+    if (toHide === null) return;
+  }
+
+  // Desired print order explicitly defined
+  const printOrder = [
+    '#print-section-identity',
+    '#role_info',
+    '#multiclass_section',
+    '#print-section-stats',
+    '#print-section-lifepath',
+    '#role_lifepath_container',
+    '#print-section-weapons',
+    '#print-section-cyberware',
+    '#print-section-cyberdeck',
+    '#print-section-vehicles',
+    '#print-section-notes',
+    '#print-section-skills'
+  ];
+
   document.body.classList.add("printing");
-  window.print();
-  setTimeout(() => {
+  
+  // Physically move elements into a temporary print container to bypass Apple/Safari flex order bugs
+  let printContainer = document.createElement("div");
+  printContainer.id = "safari-print-container";
+  printContainer.style.display = "flex";
+  printContainer.style.flexDirection = "column";
+  printContainer.style.width = "100%";
+  
+  // Create an array to track where elements came from so we can restore them exactly
+  let restoreData = [];
+
+  printOrder.forEach(sel => {
+    // If it's in the toHide list, we just skip moving it (it stays in the hidden main UI)
+    if (toHide.includes(sel)) return;
+    
+    let el = document.querySelector(sel);
+    if (el && el.style.display !== 'none') {
+        // Create a placeholder
+        let ph = document.createElement('div');
+        ph.className = 'safari-print-ph';
+        ph.style.display = 'none';
+        
+        el.parentNode.insertBefore(ph, el);
+        restoreData.push({ el: el, ph: ph });
+        
+        printContainer.appendChild(el);
+    }
+  });
+
+  // Hide the entire original main content from the printer
+  let dynamicStyle = document.createElement("style");
+  dynamicStyle.id = "print-hider";
+  dynamicStyle.innerHTML = `
+    @media print { 
+        .main-content, .tabs-nav { display: none !important; } 
+        .print-overlay-hide { display: none !important; }
+    }
+  `;
+  document.head.appendChild(dynamicStyle);
+  
+  // Append the newly ordered container directly to the body
+  document.body.appendChild(printContainer);
+
+  // Create a cleanup overlay that the user must click to restore the UI
+  let restoreOverlay = document.createElement("div");
+  restoreOverlay.className = "modal-overlay active";
+  restoreOverlay.style.display = "flex";
+  restoreOverlay.style.flexDirection = "column";
+  restoreOverlay.style.zIndex = "10000"; // above everything
+  
+  restoreOverlay.innerHTML = `
+    <div class="modal-box print-overlay-hide" style="text-align:center; max-width:500px;">
+      <h2>Print Mode Active</h2>
+      <p style="margin:1rem 0;color:var(--text-secondary)">Your print dialog should open shortly. If you change print settings, the preview will update properly.<br><br>When you are completely finished printing, click below to return to your character sheet.</p>
+      <button class="btn-action" style="width:100%;margin-top:1rem;" id="finish-print-btn">Finish Printing & Return</button>
+    </div>
+  `;
+  document.body.appendChild(restoreOverlay);
+
+  document.getElementById("finish-print-btn").onclick = () => {
     document.body.classList.remove("printing");
+    
+    // Restore DOM elements to their exact original positions using placeholders
+    // We reverse it just in case there are nested elements, though there shouldn't be
+    for (let i = restoreData.length - 1; i >= 0; i--) {
+        let data = restoreData[i];
+        data.ph.parentNode.insertBefore(data.el, data.ph);
+        data.ph.remove();
+    }
+    
+    printContainer.remove();
+    let styleTag = document.getElementById("print-hider");
+    if (styleTag) styleTag.remove();
+    document.body.removeChild(restoreOverlay);
+  };
+
+  // Small delay then print
+  setTimeout(() => {
+    window.print();
   }, 100);
 };
 // ============================================================
@@ -2372,8 +2577,8 @@ function customConfirm(message) {
       el('div', { style: 'background:#1a1a1a; border:2px solid #ff003c; padding:2rem; max-width:400px; width:100%; display:flex; flex-direction:column; gap:1.5rem;' }, [
         el('div', { style: 'color:#fff; font-size:1.1rem; white-space:pre-wrap;' }, message),
         el('div', { style: 'display:flex; gap:1rem; justify-content:flex-end;' }, [
-          el('button', { className: 'btn-action', style: 'background:#333; color:#fff;', onclick: () => { document.body.removeChild(overlay); resolve(false); } }, 'Cancel'),
-          el('button', { className: 'btn-action', onclick: () => { document.body.removeChild(overlay); resolve(true); } }, 'OK')
+          el('button', { className: 'btn-action', style: 'background:#333; color:#fff;', onclick: () => { document.body.removeChild(overlay); resolve(false); } }, 'No'),
+          el('button', { className: 'btn-action', onclick: () => { document.body.removeChild(overlay); resolve(true); } }, 'Yes')
         ])
       ])
     ]);
@@ -2409,6 +2614,7 @@ let state = {
   armor: [],
   cyberware: [],
   gear: [],
+  vehicles: [],
   ammo: {},
   roleSubRanks: {},
   lifepath: { friends: [], enemies: [], lovers: [] },
@@ -2433,6 +2639,25 @@ function getStatPointsRemaining() {
     used += state.stats[DATA.stats[i].id];
   }
   return STAT_POINTS_TOTAL - used;
+}
+
+
+
+
+
+
+
+function getUsedMotoCount() {
+  let count = 0;
+  for (let v of state.vehicles) {
+    if (v.isMoto) count++;
+    if (v.upgrades) {
+      for (let u of v.upgrades) {
+        if (u.isMoto) count++;
+      }
+    }
+  }
+  return count;
 }
 
 function updateSecondaryRoleOptions() {
@@ -2564,44 +2789,7 @@ function attachRoleSubSkillEvents() {
     });
   }
   
-  let nomadVehDecs = info.querySelectorAll(".nomad-veh-dec");
-  let nomadVehIncs = info.querySelectorAll(".nomad-veh-inc");
-  let nomadUpgDecs = info.querySelectorAll(".nomad-upg-dec");
-  let nomadUpgIncs = info.querySelectorAll(".nomad-upg-inc");
-
-  function handleNomadChange(isSec, type, delta, rank) {
-    let vehKey = isSec ? "nomadMotoVeh2" : "nomadMotoVeh";
-    let upgKey = isSec ? "nomadMotoUpg2" : "nomadMotoUpg";
-    let veh = state[vehKey] || 0;
-    let upg = state[upgKey] || 0;
-    
-    if (type === 'veh') {
-      if (delta < 0 && veh > 0) state[vehKey]--;
-      else if (delta > 0 && (veh + upg) < rank) state[vehKey]++;
-    } else {
-      if (delta < 0 && upg > 0) state[upgKey]--;
-      else if (delta > 0 && (veh + upg) < rank) state[upgKey]++;
-    }
-    updateRoleInfo();
   }
-
-  nomadVehDecs.forEach(btn => btn.addEventListener("click", function(e) {
-    e.preventDefault();
-    handleNomadChange(this.getAttribute("data-sec") === "true", 'veh', -1);
-  }));
-  nomadVehIncs.forEach(btn => btn.addEventListener("click", function(e) {
-    e.preventDefault();
-    handleNomadChange(this.getAttribute("data-sec") === "true", 'veh', 1, parseInt(this.getAttribute("data-rank")));
-  }));
-  nomadUpgDecs.forEach(btn => btn.addEventListener("click", function(e) {
-    e.preventDefault();
-    handleNomadChange(this.getAttribute("data-sec") === "true", 'upg', -1);
-  }));
-  nomadUpgIncs.forEach(btn => btn.addEventListener("click", function(e) {
-    e.preventDefault();
-    handleNomadChange(this.getAttribute("data-sec") === "true", 'upg', 1, parseInt(this.getAttribute("data-rank")));
-  }));
-}
 
 function updateRoleInfo() {
   let roleId = document.getElementById("role_select").value;
@@ -2628,26 +2816,19 @@ function updateRoleInfo() {
     html += renderRoleSubSkills(role, abilityRank);
   }
   if (role && role.id === "nomad") {
-    let veh = state.nomadMotoVeh || 0;
-    let upg = state.nomadMotoUpg || 0;
-    if (veh + upg > abilityRank) { veh = abilityRank; upg = 0; }
-    state.nomadMotoVeh = veh; state.nomadMotoUpg = upg;
+    let veh = getUsedMotoVehicles();
+    let upg = getUsedMotoUpgrades();
+    let mRank = getMotoRank();
     html += '<div style="margin-top: 5px; font-size: 0.85rem; padding: 5px; border: 1px solid var(--border); border-radius: 4px; background: rgba(0,0,0,0.3);">' +
       '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom:4px;">' +
       '<span>Family Vehicles:</span>' +
-      '<div style="display:flex; align-items:center;">' +
-      '<button class="nomad-veh-dec btn" data-sec="false" style="padding:2px 6px;">-</button>' +
-      '<span style="display:inline-block; width:1.5rem; text-align:center; font-weight:bold; font-family:var(--font-mono);">' + veh + '</span>' +
-      '<button class="nomad-veh-inc btn" data-sec="false" data-rank="' + abilityRank + '" style="padding:2px 6px;">+</button>' +
-      '</div></div>' +
+      '<span style="font-weight:bold; font-family:var(--font-mono);">' + veh + '</span>' +
+      '</div>' +
       '<div style="display: flex; justify-content: space-between; align-items: center;">' +
       '<span>Upgrades:</span>' +
-      '<div style="display:flex; align-items:center;">' +
-      '<button class="nomad-upg-dec btn" data-sec="false" style="padding:2px 6px;">-</button>' +
-      '<span style="display:inline-block; width:1.5rem; text-align:center; font-weight:bold; font-family:var(--font-mono);">' + upg + '</span>' +
-      '<button class="nomad-upg-inc btn" data-sec="false" data-rank="' + abilityRank + '" style="padding:2px 6px;">+</button>' +
-      '</div></div>' +
-      '<div style="text-align:right; margin-top:4px; font-size:0.75rem; color:' + ((veh + upg) === abilityRank ? 'var(--accent)' : 'var(--text)') + ';">Total Allocated: ' + (veh + upg) + ' / ' + abilityRank + '</div>' +
+      '<span style="font-weight:bold; font-family:var(--font-mono);">' + upg + '</span>' +
+      '</div>' +
+      '<div style="text-align:right; margin-top:4px; font-size:0.75rem; color:' + ((veh + upg) === mRank ? 'var(--accent)' : 'var(--text)') + ';">Total Allocated: ' + (veh + upg) + ' / ' + mRank + '</div>' +
       '</div>';
   }
   
@@ -2661,28 +2842,21 @@ function updateRoleInfo() {
       html += renderRoleSubSkills(role2, rank2);
     }
     if (role2.id === "nomad") {
-      let veh = state.nomadMotoVeh2 || 0;
-      let upg = state.nomadMotoUpg2 || 0;
-      if (veh + upg > rank2) { veh = rank2; upg = 0; }
-      state.nomadMotoVeh2 = veh; state.nomadMotoUpg2 = upg;
-      html += '<div style="margin-top: 5px; font-size: 0.85rem; padding: 5px; border: 1px solid var(--border); border-radius: 4px; background: rgba(0,0,0,0.3);">' +
-        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom:4px;">' +
-        '<span>Family Vehicles:</span>' +
-        '<div style="display:flex; align-items:center;">' +
-        '<button class="nomad-veh-dec btn" data-sec="true" style="padding:2px 6px;">-</button>' +
-        '<span style="display:inline-block; width:1.5rem; text-align:center; font-weight:bold; font-family:var(--font-mono);">' + veh + '</span>' +
-        '<button class="nomad-veh-inc btn" data-sec="true" data-rank="' + rank2 + '" style="padding:2px 6px;">+</button>' +
-        '</div></div>' +
-        '<div style="display: flex; justify-content: space-between; align-items: center;">' +
-        '<span>Upgrades:</span>' +
-        '<div style="display:flex; align-items:center;">' +
-        '<button class="nomad-upg-dec btn" data-sec="true" style="padding:2px 6px;">-</button>' +
-        '<span style="display:inline-block; width:1.5rem; text-align:center; font-weight:bold; font-family:var(--font-mono);">' + upg + '</span>' +
-        '<button class="nomad-upg-inc btn" data-sec="true" data-rank="' + rank2 + '" style="padding:2px 6px;">+</button>' +
-        '</div></div>' +
-        '<div style="text-align:right; margin-top:4px; font-size:0.75rem; color:' + ((veh + upg) === rank2 ? 'var(--accent)' : 'var(--text)') + ';">Total Allocated: ' + (veh + upg) + ' / ' + rank2 + '</div>' +
-        '</div>';
-    }
+    let veh = getUsedMotoVehicles();
+    let upg = getUsedMotoUpgrades();
+    let mRank = getMotoRank();
+    html += '<div style="margin-top: 5px; font-size: 0.85rem; padding: 5px; border: 1px solid var(--border); border-radius: 4px; background: rgba(0,0,0,0.3);">' +
+      '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom:4px;">' +
+      '<span>Family Vehicles:</span>' +
+      '<span style="font-weight:bold; font-family:var(--font-mono);">' + veh + '</span>' +
+      '</div>' +
+      '<div style="display: flex; justify-content: space-between; align-items: center;">' +
+      '<span>Upgrades:</span>' +
+      '<span style="font-weight:bold; font-family:var(--font-mono);">' + upg + '</span>' +
+      '</div>' +
+      '<div style="text-align:right; margin-top:4px; font-size:0.75rem; color:' + ((veh + upg) === mRank ? 'var(--accent)' : 'var(--text)') + ';">Total Allocated: ' + (veh + upg) + ' / ' + mRank + '</div>' +
+      '</div>';
+  }
   }
   info.innerHTML = html;
   attachRoleSubSkillEvents();
@@ -3412,6 +3586,178 @@ function getDataItemById(id) {
   return DATA._index.cyberwareById[id] || null;
 }
 
+
+function getMotoRank() {
+  let rank = 0;
+  if (document.getElementById("role_select").value === "nomad") {
+    rank += parseInt(document.getElementById("role_ability_rank").value) || 0;
+  }
+  if (document.getElementById("multiclass_enabled").checked && document.getElementById("role_secondary_select").value === "nomad") {
+    rank += parseInt(document.getElementById("role_secondary_rank").value) || 0;
+  }
+  return rank;
+}
+
+function getUsedMotoVehicles() {
+  let count = 0;
+  for (let v of state.vehicles) {
+    if (v.isMoto) count++;
+  }
+  return count;
+}
+
+function getUsedMotoUpgrades() {
+  let count = 0;
+  for (let v of state.vehicles) {
+    if (v.upgrades) {
+      for (let u of v.upgrades) {
+        if (u.isMoto) count++;
+      }
+    }
+  }
+  return count;
+}
+
+function getUsedMotoCount() {
+  let count = 0;
+  for (let v of state.vehicles) {
+    if (v.isMoto) count++;
+    if (v.upgrades) {
+      for (let u of v.upgrades) {
+        if (u.isMoto) count++;
+      }
+    }
+  }
+  return count;
+}
+
+
+function renderVehicles() {
+  let tbody = document.getElementById("vehicles_body");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+  let frag = document.createDocumentFragment();
+  for (let i = 0; i < state.vehicles.length; i++) {
+    let v = state.vehicles[i];
+    let tr = el('tr', {}, [
+      el('td', {}, v.name),
+      el('td', {}, String(v.sdp)),
+      el('td', {}, String(v.seats)),
+      el('td', {}, v.cost + 'eb'),
+      el('td', { style: 'font-size:0.8rem' }, v.desc),
+      el('td', {}, [
+        el('button', { className: 'btn-action add-v-upgrade', dataset: { idx: String(i) }, style: 'font-size:0.75rem;padding:0.2rem 0.4rem;margin-right:0.3rem' }, '+ Upg'),
+          el('button', { className: 'btn-action sell-vehicle', dataset: { idx: String(i) }, style: 'font-size:0.75rem;padding:0.2rem 0.4rem;margin-right:0.3rem' }, 'Sell'),
+          el('button', { className: 'btn-action remove-vehicle', dataset: { idx: String(i) }, style: 'font-size:0.75rem;padding:0.2rem 0.4rem' }, 'X')
+      ])
+    ]);
+    frag.appendChild(tr);
+
+    if (v.upgrades && v.upgrades.length > 0) {
+      for (let j = 0; j < v.upgrades.length; j++) {
+        let u = v.upgrades[j];
+        let utr = el('tr', { style: 'background:rgba(128,128,128,0.05); font-size:0.85rem;' }, [
+          el('td', { style: 'padding-left:2rem;border-top:none' }, "↳ " + u.name),
+          el('td', { style: 'border-top:none', colSpan: "2" }, ""),
+          el('td', { style: 'border-top:none' }, u.cost + 'eb'),
+          el('td', { style: 'border-top:none' }, u.desc),
+          el('td', { style: 'border-top:none' }, [
+              el('button', { className: 'btn-action sell-v-upgrade', dataset: { vidx: String(i), uidx: String(j) }, style: 'font-size:0.75rem;padding:0.2rem 0.4rem;margin-right:0.3rem' }, 'Sell'),
+              el('button', { className: 'btn-action remove-v-upgrade', dataset: { vidx: String(i), uidx: String(j) }, style: 'font-size:0.75rem;padding:0.2rem 0.4rem' }, 'X')
+            ])
+        ]);
+        frag.appendChild(utr);
+      }
+    }
+  }
+  tbody.appendChild(frag);
+
+  let vSells = tbody.querySelectorAll(".sell-vehicle");
+  for (let i = 0; i < vSells.length; i++) {
+    vSells[i].onclick = async function() {
+      let idx = parseInt(this.dataset.idx);
+      let v = state.vehicles[idx];
+      let sellInput = await customPrompt("Sell price in eb (0 = discard):", v.cost || 0);
+      if (sellInput === null) return;
+      let sellPrice = parseInt(sellInput) || 0;
+      let el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) + sellPrice;
+      state.vehicles.splice(idx, 1);
+      renderVehicles();
+      updateRoleInfo();
+      updateRoleInfo();
+    };
+  }
+
+  let uSells = tbody.querySelectorAll(".sell-v-upgrade");
+  for (let i = 0; i < uSells.length; i++) {
+    uSells[i].onclick = async function() {
+      let vIdx = parseInt(this.dataset.vidx);
+      let uIdx = parseInt(this.dataset.uidx);
+      let u = state.vehicles[vIdx].upgrades[uIdx];
+      let sellInput = await customPrompt("Sell price in eb (0 = discard):", u.cost || 0);
+      if (sellInput === null) return;
+      let sellPrice = parseInt(sellInput) || 0;
+      let el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) + sellPrice;
+      state.vehicles[vIdx].upgrades.splice(uIdx, 1);
+      renderVehicles();
+      updateRoleInfo();
+      updateRoleInfo();
+    };
+  }
+
+  let rms = tbody.querySelectorAll(".remove-vehicle");
+  for (let i = 0; i < rms.length; i++) {
+    rms[i].onclick = function() {
+      let idx = parseInt(this.dataset.idx);
+      state.vehicles.splice(idx, 1);
+      renderVehicles();
+      updateRoleInfo();
+    };
+  }
+
+  let rmUs = tbody.querySelectorAll(".remove-v-upgrade");
+  for (let i = 0; i < rmUs.length; i++) {
+    rmUs[i].onclick = function() {
+      let vIdx = parseInt(this.dataset.vidx);
+      let uIdx = parseInt(this.dataset.uidx);
+      state.vehicles[vIdx].upgrades.splice(uIdx, 1);
+      renderVehicles();
+      updateRoleInfo();
+    };
+  }
+
+  let addUpgs = tbody.querySelectorAll(".add-v-upgrade");
+  for (let i = 0; i < addUpgs.length; i++) {
+    addUpgs[i].onclick = function() {
+      let vIdx = parseInt(this.dataset.idx);
+      showItemSelector("vehicleUpgrade", DATA.vehicleUpgrades, async function(item) {
+        let isFree = false;
+        let motoRank = getMotoRank();
+        let usedMoto = getUsedMotoCount();
+        if (motoRank > 0 && usedMoto < motoRank) {
+          isFree = await customConfirm(`Is this upgrade free (from Nomad Moto ability)?\nYou have used ${usedMoto}/${motoRank} Moto choices.`);
+        }
+        let cost = 0;
+        if (!isFree) {
+          let costInput = await customPrompt("Cost in eb (0 = looted):", item.cost || 0);
+          if (costInput === null) return;
+          cost = parseInt(costInput) || 0;
+        }
+        if (!state.vehicles[vIdx].upgrades) state.vehicles[vIdx].upgrades = [];
+        state.vehicles[vIdx].upgrades.push({ id: item.id, name: item.name, cost: cost, isMoto: isFree, desc: item.desc });
+        if (!isFree) {
+          let cel = document.getElementById("currency_eb");
+          cel.value = (parseInt(cel.value) || 0) - cost;
+        }
+        renderVehicles();
+        updateRoleInfo();
+      });
+    };
+  }
+}
+
 function renderGear() {
   let tbody = document.getElementById("gear_body");
   tbody.innerHTML = "";
@@ -3909,6 +4255,31 @@ async function initAddButtons() {
       renderSkills();
     }, "type");
   };
+  
+  document.getElementById("add_vehicle_btn").onclick = function() {
+    showItemSelector("vehicle", DATA.vehicleTypes, async function(item) {
+      let isFree = false;
+      let motoRank = getMotoRank();
+      let usedMoto = getUsedMotoCount();
+      if (motoRank > 0 && usedMoto < motoRank) {
+        isFree = await customConfirm(`Is this vehicle free (from Nomad Moto ability)?\nYou have used ${usedMoto}/${motoRank} Moto choices.`);
+      }
+      let cost = 0;
+      if (!isFree) {
+        let costInput = await customPrompt("Cost in eb (0 = looted):", item.cost || 0);
+        if (costInput === null) return;
+        cost = parseInt(costInput) || 0;
+      }
+      state.vehicles.push({ id: item.id, name: item.name, sdp: item.sdp, seats: item.seats, cost: cost, isMoto: isFree, desc: item.desc, upgrades: [] });
+      if (!isFree) {
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) - cost;
+      }
+      renderVehicles();
+      updateRoleInfo();
+    }, "cat");
+  };
+
   document.getElementById("add_gear_btn").onclick = function() {
     let allGear = DATA.gear.concat(DATA.fashion.map(function(f) { return { id: f.id, name: f.name, cost: f.cost, cat: "Fashion" }; }));
     showItemSelector("gear", allGear, async function(item) {
@@ -4148,6 +4519,7 @@ function loadCharacterData(data) {
   state.armor = data.armor || [];
   state.cyberware = data.cyberware || [];
   state.gear = data.gear || [];
+  state.vehicles = data.vehicles || [];
   state.ammo = data.ammo || {};
   state.roleSubRanks = data.roleSubRanks || {};
   state.subSkillNames = data.subSkillNames || {};
@@ -4181,6 +4553,7 @@ function loadCharacterData(data) {
   renderArmor();
   renderCyberware();
   renderGear();
+  renderVehicles();
   renderAmmoTracker();
   updateAllDerived();
   updateStatPointsBar();
@@ -4217,6 +4590,7 @@ function resetCharacter() {
   state.armor = [];
   state.cyberware = [];
   state.gear = [];
+  state.vehicles = [];
   state.ammo = {};
   
   let cb = document.getElementById("toggle_creation_mode");
@@ -4228,6 +4602,7 @@ function resetCharacter() {
   renderArmor();
   renderCyberware();
   renderGear();
+  renderVehicles();
   renderAmmoTracker();
   updateAllDerived();
   updateStatPointsBar();
@@ -4314,6 +4689,7 @@ function generateRandomCharacter() {
   try { renderArmor(); } catch(e) {}
   try { renderCyberware(); } catch(e) {}
   try { renderGear(); } catch(e) {}
+  try { renderVehicles(); } catch(e) {}
   try { renderAmmoTracker(); } catch(e) {}
   
   try { updateAllDerived(); } catch(e) {}
@@ -4505,6 +4881,51 @@ async function removeCyberdeck() {
   state.cyberdeck = null;
   state.programs = [];
   renderCyberdeck();
+}
+
+
+function showPrintOptions() {
+    return new Promise(resolve => {
+                let sections = [
+            { label: "Identity & Role", selector: "#print-section-identity" },
+            { label: "Stats & Health", selector: "#print-section-stats" },
+            { label: "Lifepath", selector: "#print-section-lifepath" },
+            { label: "Role-Based Lifepath", selector: "#role_lifepath_container" },
+            { label: "Weapons & Armor", selector: "#print-section-weapons" },
+            { label: "Cyberware, Fashion & Gear", selector: "#print-section-cyberware" },
+            { label: "Cyberdeck & Programs", selector: "#print-section-cyberdeck" },
+            { label: "Vehicles & Upgrades", selector: "#print-section-vehicles" },
+            { label: "Notes", selector: "#print-section-notes" },
+            { label: "Skills", selector: "#print-section-skills" }
+        ];
+        
+        let checkboxes = [];
+        let list = el('div', { style: 'display:flex; flex-direction:column; gap:0.5rem;' }, sections.map(sec => {
+            let cb = el('input', { type: 'checkbox', checked: true, dataset: { selector: sec.selector }, style: 'width:20px; height:20px; -webkit-appearance:checkbox; appearance:checkbox; opacity:1; cursor:pointer; accent-color:var(--primary);' });
+            checkboxes.push(cb);
+            return el('label', { style: 'display:flex; gap:0.5rem; cursor:pointer; align-items:center; font-size:1rem;' }, [cb, " " + sec.label]);
+        }));
+        
+        let overlay = el('div', { className: 'modal-overlay active', style: 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center; padding:1rem;' }, [
+            el('div', { className: 'modal-box', style: 'background:#1a1a1a; border:2px solid #ff003c; padding:2rem; max-width:400px; width:100%; display:flex; flex-direction:column;' }, [
+                el('h2', {}, 'Print Options'),
+                el('p', { style: 'margin-bottom:1rem;color:#ccc' }, 'Select sections to include in the printout:'),
+                list,
+                el('div', { style: 'display:flex; gap:1rem; justify-content:flex-end; margin-top:1.5rem;' }, [
+                    el('button', { className: 'btn-action', style: 'background:#333; color:#fff;', onclick: () => { document.body.removeChild(overlay); resolve(null); } }, 'Cancel'),
+                    el('button', { className: 'btn-action', onclick: () => {
+                        let toHide = [];
+                        checkboxes.forEach(cb => {
+                            if (!cb.checked) toHide.push(cb.dataset.selector);
+                        });
+                        document.body.removeChild(overlay);
+                        resolve(toHide);
+                    } }, 'Print')
+                ])
+            ])
+        ]);
+        document.body.appendChild(overlay);
+    });
 }
 
 // ============================================================

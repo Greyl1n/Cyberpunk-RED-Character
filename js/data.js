@@ -1191,3 +1191,63 @@ DATA.roleLifepath = {
     { title: "Who's Gunning for Your Pack?", options: ["Organized Crime", "Boostergangs", "Drug Runners", "Dirty Politicians", "Rival Packs in the same businesses", "Dirty Cops"] }
   ]
 };
+
+DATA.vehicleTypes = [
+    { id: "compact_groundcar", name: "Compact Groundcar", sdp: 35, seats: 4, cat: "Land", cost: 30000, desc: "Combat Move: 10, MPH: 30." },
+    { id: "hp_groundcar", name: "High Performance Groundcar", sdp: 50, seats: 4, cat: "Land", cost: 50000, desc: "Combat Move: 15, MPH: 100." },
+    { id: "super_groundcar", name: "Super Groundcar", sdp: 75, seats: 4, cat: "Land", cost: 100000, desc: "Combat Move: 20, MPH: 200." },
+    { id: "roadbike", name: "Roadbike", sdp: 25, seats: 2, cat: "Land", cost: 20000, desc: "Combat Move: 15, MPH: 100." },
+    { id: "superbike", name: "Superbike", sdp: 50, seats: 2, cat: "Land", cost: 50000, desc: "Combat Move: 20, MPH: 200." },
+    { id: "gyrocopter", name: "Gyrocopter", sdp: 25, seats: 2, cat: "Air", cost: 20000, desc: "Combat Move: 10, MPH: 50." },
+    { id: "helicopter", name: "Helicopter", sdp: 50, seats: 6, cat: "Air", cost: 50000, desc: "Combat Move: 15, MPH: 100." },
+    { id: "av4", name: "AV-4", sdp: 75, seats: 6, cat: "Air", cost: 100000, desc: "Combat Move: 20, MPH: 200." },
+    { id: "av9", name: "AV-9", sdp: 100, seats: 4, cat: "Air", cost: 150000, desc: "Combat Move: 25, MPH: 250." },
+    { id: "aerozep", name: "Aerozep", sdp: 100, seats: 4, cat: "Air", cost: 100000, desc: "Combat Move: 10, MPH: 30." },
+    { id: "jetski", name: "Jetski", sdp: 25, seats: 2, cat: "Sea", cost: 20000, desc: "Combat Move: 10, MPH: 50." },
+    { id: "speedboat", name: "Speedboat", sdp: 50, seats: 4, cat: "Sea", cost: 50000, desc: "Combat Move: 15, MPH: 100." },
+    { id: "cabin_cruiser", name: "Cabin Cruiser", sdp: 75, seats: 6, cat: "Sea", cost: 100000, desc: "Combat Move: 10, MPH: 30." },
+    { id: "yacht", name: "Yacht", sdp: 100, seats: 10, cat: "Sea", cost: 200000, desc: "Combat Move: 15, MPH: 100." },
+    { id: "sh45_patroller", name: "SH-45 Patroller", sdp: 25, seats: 1, cat: "Air", cost: 16000, desc: "[Gyrocopter] Bulletproof Glass. Incompatible with Seating Upgrade. Nomad Access: 2. Combat Move: 10, MPH: 50." },
+    { id: "sh45_patroller_law", name: "SH-45 Patroller Law", sdp: 25, seats: 1, cat: "Air", cost: 21000, desc: "[Gyrocopter] 2x Bulletproof Glass, Onboard Machine Gun. Incompatible with Seating Upgrade. Nomad Access: 4. Combat Move: 10, MPH: 50." },
+    { id: "dayton_tdt_004", name: "Dayton TDT 004", sdp: 50, seats: 8, cat: "Air", cost: 43000, desc: "[Helicopter] Heavy Chassis, 2x Seating Upgrades. Nomad Access: 7. Combat Move: 15, MPH: 100." },
+    { id: "tanson_bellhop", name: "Tanson Bellhop", sdp: 25, seats: 1, cat: "Air", cost: 16000, desc: "[Gyrocopter] Can transform to easy-to-carry mode. Incompatible with Seating Upgrade. Nomad Access: 1. Combat Move: 10, MPH: 50." },
+    { id: "zetatech_aerovox", name: "Zetatech AeroVox", sdp: 75, seats: 6, cat: "Air", cost: 51000, desc: "[AV-4] Multipurpose Aerodyne. Heavy Chassis. Nomad Access: 8. Combat Move: 20, MPH: 200." },
+    { id: "zetatech_aerocop", name: "Zetatech AeroCop", sdp: 75, seats: 6, cat: "Air", cost: 58000, desc: "[AV-4] Multipurpose Aerodyne. Heavy Chassis, Armored Chassis, 2x Bulletproof Glass, Onboard Machine Gun. Nomad Access: 10. Combat Move: 20, MPH: 200." },
+    { id: "zetatech_destination", name: "Zetatech Destination", sdp: 75, seats: 4, cat: "Air", cost: 40000, desc: "[AV-4] Multipurpose Aerodyne. Incompatible with Heavy Chassis and Seating Upgrades. Nomad Access: 6. Combat Move: 20, MPH: 200." },
+    { id: "zetatech_herakles", name: "Zetatech Herakles", sdp: 75, seats: 7, cat: "Air", cost: 63000, desc: "[AV-4] Multipurpose Aerodyne. Armored Chassis, Bulletproof Glass, Heavy Chassis, Seating Upgrade, Onboard Machine Gun, Vehicle Heavy Weapon Mount. Nomad Access: 10. Combat Move: 20, MPH: 200." },
+    { id: "econocompact", name: "EconoCompact", sdp: 35, seats: 3, cat: "Land", cost: 20000, desc: "[Compact Groundcar] Incompatible with Heavy Chassis and Seating Upgrades. Nomad Access: 1. Combat Move: 10, MPH: 30." },
+    { id: "family_star_van", name: "Family Star Van", sdp: 35, seats: 5, cat: "Land", cost: 31000, desc: "[Compact Groundcar] Seating Upgrade. Nomad Access: 2. Combat Move: 10, MPH: 30." },
+    { id: "chupacabra", name: "Chupacabra", sdp: 35, seats: 5, cat: "Land", cost: 37000, desc: "[Compact Groundcar] NOS, Seating Upgrade, Heavy Chassis. Nomad Access: 4. Combat Move: 10, MPH: 30." },
+    { id: "range_trike", name: "Range Trike", sdp: 25, seats: 3, cat: "Land", cost: 31000, desc: "[Roadbike] Armored Chassis, Heavy Chassis. Incompatible with Seating Upgrade. Nomad Access: 4. Combat Move: 15, MPH: 100." },
+    { id: "the_grundy", name: "The Grundy", sdp: 35, seats: 4, cat: "Land", cost: 41000, desc: "[Compact Groundcar] Heavy Chassis, Armored Chassis, Combat Plow. Nomad Access: 4. Combat Move: 10, MPH: 30." },
+    { id: "the_harvey_100", name: "The Harvey 100", sdp: 25, seats: 2, cat: "Land", cost: 20000, desc: "[Roadbike] Nomad Access: 1. Combat Move: 15, MPH: 100." },
+    { id: "the_harriet_100", name: "The Harriet 100", sdp: 25, seats: 2, cat: "Land", cost: 21000, desc: "[Roadbike] Smuggling Upgrade. Nomad Access: 2. Combat Move: 15, MPH: 100." },
+    { id: "the_harvey_merc", name: "The Harvey Merc", sdp: 25, seats: 2, cat: "Land", cost: 30000, desc: "[Roadbike] Onboard Machine Gun, Onboard Rocket Pod. Nomad Access: 4. Combat Move: 15, MPH: 100." },
+    { id: "highway_master_artemis", name: "Highway Master Artemis", sdp: 25, seats: 2, cat: "Land", cost: 60000, desc: "[Roadbike] Armored Chassis. Retractable canopy (2x Bulletproof Glass). Can supercharge to act as Superbike for 10 mins. Nomad Access: 5. Combat Move: 15, MPH: 100." },
+    { id: "kaukaz_volkhov", name: "Kaukaz Volkhov", sdp: 35, seats: 4, cat: "Land", cost: 41000, desc: "[Compact Groundcar] Heavy Chassis, Armored Chassis, Vehicle Heavy Weapon Mount with BMG-500. Nomad Access: 7. Combat Move: 10, MPH: 30." },
+    { id: "makigai_ebi", name: "Makigai Ebi", sdp: 35, seats: 4, cat: "Land", cost: 23000, desc: "[Compact Groundcar] 35 SDP. Incompatible with Heavy Chassis. Nomad Access: 1. Combat Move: 10, MPH: 30." },
+    { id: "militech_gorgon_security_van", name: "Militech Gorgon Security Van", sdp: 35, seats: 5, cat: "Land", cost: 37000, desc: "[Compact Groundcar] Armored Chassis, Bulletproof Glass, Seating Upgrade. Nomad Access: 4. Combat Move: 10, MPH: 30." },
+    { id: "the_zacatzontli_pickup_truck", name: "The Zacatzontli Pickup Truck", sdp: 35, seats: 4, cat: "Land", cost: 27000, desc: "[Compact Groundcar] Heavy Chassis, Housing Upgrade, includes Aerial Sphere, Mr. Biscuit, 5x AirWell 50s. Nomad Access: 4. Combat Move: 10, MPH: 30." },
+    { id: "the_paladin_500", name: "The Paladin 500", sdp: 50, seats: 4, cat: "Land", cost: 59000, desc: "[High Performance Groundcar] Armored Chassis, 2x front-mounted Onboard Machine Guns, 2x NOS Upgrades. Nomad Access: 8. Combat Move: 15, MPH: 100." },
+    { id: "quadra_thunderx", name: "Quadra Thunder-X", sdp: 50, seats: 4, cat: "Land", cost: 57000, desc: "[High Performance Groundcar] Armored Chassis, Bulletproof Glass, NOS. Nomad Access: 8. Combat Move: 15, MPH: 100." },
+    { id: "street_king_combat_vehicle", name: "Street King Combat Vehicle", sdp: 50, seats: 5, cat: "Land", cost: 63000, desc: "[High Performance Groundcar] Heavy Chassis, Armored Chassis, 2x Bulletproof Glass, Seating Upgrade, NOS. Nomad Access: 10. Combat Move: 15, MPH: 100." },
+    { id: "tanson_jetboy_hoverboard", name: "Tanson JetBoy Hoverboard", sdp: 10, seats: 1, cat: "Land", cost: 1000, desc: "[Land Vehicle] 10 SDP. Hovers. Drive with Athletics, no hands needed. Narrative Speed: 30 MPH, Combat Move: 15. Cannot be upgraded. Nomad Access: N/A. Combat Move: 15, MPH: 30." },
+    { id: "tetracorp_america_megahauler", name: "TetraCorp America MegaHauler", sdp: 35, seats: 5, cat: "Land", cost: 143000, desc: "[Compact Groundcar] 200 SDP. Armored Chassis, Comms Center, Combat Plow, Housing Capacity Upgrade, 2x Bulletproof Glass, 3x Smuggling Upgrades, Security Upgrade (no cloaking). Nomad Access: 10. Combat Move: 10, MPH: 30." },
+    { id: "tetracorp_america_badger_corporate_bus", name: "TetraCorp America Badger Corporate Bus", sdp: 35, seats: 8, cat: "Land", cost: 50000, desc: "[Compact Groundcar] Heavy Chassis, Armored Chassis, Bulletproof Glass, Security Upgrade, 4x Seating Upgrades, includes Drink Master 3000, 2x Banshee Microphones. Nomad Access: 6. Combat Move: 10, MPH: 30." },
+    { id: "yangs_wheels_rickshaw", name: "Yang's Wheels Rickshaw", sdp: 25, seats: 3, cat: "Land", cost: 21000, desc: "[Roadbike] Seating Upgrade. Can disconnect carriage (2 seats). Nomad Access: 2. Combat Move: 15, MPH: 100." },
+    { id: "zonda_molly_1k", name: "Zonda Molly 1K", sdp: 35, seats: 2, cat: "Land", cost: 15000, desc: "[Compact Groundcar] No Interface Plugs. Narrative Speed: 60 MPH. Incompatible with Heavy Chassis and Seating Upgrades. Nomad Access: 1. Combat Move: 10, MPH: 30." },
+    { id: "zonda_parallax_cybercycle", name: "Zonda Parallax Cybercycle", sdp: 50, seats: 2, cat: "Land", cost: 110000, desc: "[Superbike] Armored Chassis, NOS, Enhanced Interface Plug Integration. Nomad Access: 8. Combat Move: 20, MPH: 200." },
+    { id: "zonda_sliver", name: "Zonda Sliver", sdp: 25, seats: 2, cat: "Land", cost: 27000, desc: "[Roadbike] Comms Center, Bulletproof Glass, Security Upgrade. Nomad Access: 4. Combat Move: 15, MPH: 100." }
+];
+
+DATA.vehicleUpgrades = [
+    { id: "armored_chassis", name: "Armored Chassis", cost: 5000, desc: "+25 SDP, Bulletproof Glass (SP 13, 15 HP)." },
+    { id: "comms_center", name: "Communications Center", cost: 1000, desc: "Acts as a mobile Data Pool link, scrambled comms." },
+    { id: "heavy_weapon_mount", name: "Heavy Weapon Mount", cost: 5000, desc: "Mounts one Heavy Weapon. Fires using user's Action and Heavy Weapons skill." },
+    { id: "nos", name: "NOS", cost: 1000, desc: "Increase Combat Move by 5, Narrative MPH by 50 for 1 minute." },
+    { id: "smuggling_compartment", name: "Smuggling Compartment", cost: 1000, desc: "Concealable space for items/one person. Requires DV 17 Perception to find." },
+    { id: "hover_upgrade", name: "Hover Upgrade", cost: 5000, desc: "Allows ground vehicle to hover over water and rough terrain." },
+    { id: "onboard_machine_gun", name: "Onboard Machine Gun", cost: 5000, desc: "Assault Rifle mounted internally (forward facing)." },
+    { id: "onboard_melee_weapon", name: "Onboard Melee Weapon", cost: 1000, desc: "Very Heavy Melee Weapon attached to exterior." },
+    { id: "security_system", name: "Security System", cost: 1000, desc: "Shock panels and alarms (4d6 damage to unauthorized access)." }
+];

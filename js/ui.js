@@ -15,6 +15,7 @@ let state = {
   armor: [],
   cyberware: [],
   gear: [],
+  vehicles: [],
   ammo: {},
   roleSubRanks: {},
   lifepath: { friends: [], enemies: [], lovers: [] },
@@ -39,6 +40,36 @@ function getStatPointsRemaining() {
     used += state.stats[DATA.stats[i].id];
   }
   return STAT_POINTS_TOTAL - used;
+}
+
+function customConfirm(message, yesText="Yes", noText="No") {
+  return new Promise(resolve => {
+    let overlay = document.createElement('div');
+    overlay.style = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center; padding:1rem;';
+    let box = document.createElement('div');
+    box.style = 'background:#1a1a1a; border:2px solid #ff003c; padding:2rem; max-width:400px; width:100%; display:flex; flex-direction:column; gap:1.5rem;';
+    let msg = document.createElement('div');
+    msg.style = 'color:#fff; font-size:1.1rem; white-space:pre-wrap;';
+    msg.textContent = message;
+    let btns = document.createElement('div');
+    btns.style = 'display:flex; gap:1rem; justify-content:flex-end;';
+    let noBtn = document.createElement('button');
+    noBtn.className = 'btn-action';
+    noBtn.style.background = '#333';
+    noBtn.style.color = '#fff';
+    noBtn.textContent = noText;
+    noBtn.onclick = () => { document.body.removeChild(overlay); resolve(false); };
+    let yesBtn = document.createElement('button');
+    yesBtn.className = 'btn-action';
+    yesBtn.textContent = yesText;
+    yesBtn.onclick = () => { document.body.removeChild(overlay); resolve(true); };
+    btns.appendChild(noBtn);
+    btns.appendChild(yesBtn);
+    box.appendChild(msg);
+    box.appendChild(btns);
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+  });
 }
 
 function updateSecondaryRoleOptions() {
@@ -114,6 +145,50 @@ function setUpRoleRankCost() {
   };
 }
 
+function getMotoRank() {
+  let rank = 0;
+  if (document.getElementById("role_select").value === "nomad") {
+    rank += parseInt(document.getElementById("role_ability_rank").value) || 0;
+  }
+  if (document.getElementById("multiclass_enabled").checked && document.getElementById("role_secondary_select").value === "nomad") {
+    rank += parseInt(document.getElementById("role_secondary_rank").value) || 0;
+  }
+  return rank;
+}
+
+function getUsedMotoVehicles() {
+  let count = 0;
+  for (let v of state.vehicles) {
+    if (v.isMoto) count++;
+  }
+  return count;
+}
+
+function getUsedMotoUpgrades() {
+  let count = 0;
+  for (let v of state.vehicles) {
+    if (v.upgrades) {
+      for (let u of v.upgrades) {
+        if (u.isMoto) count++;
+      }
+    }
+  }
+  return count;
+}
+
+function getUsedMotoCount() {
+  let count = 0;
+  for (let v of state.vehicles) {
+    if (v.isMoto) count++;
+    if (v.upgrades) {
+      for (let u of v.upgrades) {
+        if (u.isMoto) count++;
+      }
+    }
+  }
+  return count;
+}
+
 function renderRoleSubSkills(role, rank) {
   if (!role.subSkills) return "";
   let totalPts = rank * role.subSkillsPointsPerRank;
@@ -170,44 +245,7 @@ function attachRoleSubSkillEvents() {
     });
   }
   
-  let nomadVehDecs = info.querySelectorAll(".nomad-veh-dec");
-  let nomadVehIncs = info.querySelectorAll(".nomad-veh-inc");
-  let nomadUpgDecs = info.querySelectorAll(".nomad-upg-dec");
-  let nomadUpgIncs = info.querySelectorAll(".nomad-upg-inc");
-
-  function handleNomadChange(isSec, type, delta, rank) {
-    let vehKey = isSec ? "nomadMotoVeh2" : "nomadMotoVeh";
-    let upgKey = isSec ? "nomadMotoUpg2" : "nomadMotoUpg";
-    let veh = state[vehKey] || 0;
-    let upg = state[upgKey] || 0;
-    
-    if (type === 'veh') {
-      if (delta < 0 && veh > 0) state[vehKey]--;
-      else if (delta > 0 && (veh + upg) < rank) state[vehKey]++;
-    } else {
-      if (delta < 0 && upg > 0) state[upgKey]--;
-      else if (delta > 0 && (veh + upg) < rank) state[upgKey]++;
-    }
-    updateRoleInfo();
   }
-
-  nomadVehDecs.forEach(btn => btn.addEventListener("click", function(e) {
-    e.preventDefault();
-    handleNomadChange(this.getAttribute("data-sec") === "true", 'veh', -1);
-  }));
-  nomadVehIncs.forEach(btn => btn.addEventListener("click", function(e) {
-    e.preventDefault();
-    handleNomadChange(this.getAttribute("data-sec") === "true", 'veh', 1, parseInt(this.getAttribute("data-rank")));
-  }));
-  nomadUpgDecs.forEach(btn => btn.addEventListener("click", function(e) {
-    e.preventDefault();
-    handleNomadChange(this.getAttribute("data-sec") === "true", 'upg', -1);
-  }));
-  nomadUpgIncs.forEach(btn => btn.addEventListener("click", function(e) {
-    e.preventDefault();
-    handleNomadChange(this.getAttribute("data-sec") === "true", 'upg', 1, parseInt(this.getAttribute("data-rank")));
-  }));
-}
 
 function updateRoleInfo() {
   let roleId = document.getElementById("role_select").value;
@@ -234,26 +272,19 @@ function updateRoleInfo() {
     html += renderRoleSubSkills(role, abilityRank);
   }
   if (role && role.id === "nomad") {
-    let veh = state.nomadMotoVeh || 0;
-    let upg = state.nomadMotoUpg || 0;
-    if (veh + upg > abilityRank) { veh = abilityRank; upg = 0; }
-    state.nomadMotoVeh = veh; state.nomadMotoUpg = upg;
+    let veh = getUsedMotoVehicles();
+    let upg = getUsedMotoUpgrades();
+    let mRank = getMotoRank();
     html += '<div style="margin-top: 5px; font-size: 0.85rem; padding: 5px; border: 1px solid var(--border); border-radius: 4px; background: rgba(0,0,0,0.3);">' +
       '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom:4px;">' +
       '<span>Family Vehicles:</span>' +
-      '<div style="display:flex; align-items:center;">' +
-      '<button class="nomad-veh-dec btn" data-sec="false" style="padding:2px 6px;">-</button>' +
-      '<span style="display:inline-block; width:1.5rem; text-align:center; font-weight:bold; font-family:var(--font-mono);">' + veh + '</span>' +
-      '<button class="nomad-veh-inc btn" data-sec="false" data-rank="' + abilityRank + '" style="padding:2px 6px;">+</button>' +
-      '</div></div>' +
+      '<span style="font-weight:bold; font-family:var(--font-mono);">' + veh + '</span>' +
+      '</div>' +
       '<div style="display: flex; justify-content: space-between; align-items: center;">' +
       '<span>Upgrades:</span>' +
-      '<div style="display:flex; align-items:center;">' +
-      '<button class="nomad-upg-dec btn" data-sec="false" style="padding:2px 6px;">-</button>' +
-      '<span style="display:inline-block; width:1.5rem; text-align:center; font-weight:bold; font-family:var(--font-mono);">' + upg + '</span>' +
-      '<button class="nomad-upg-inc btn" data-sec="false" data-rank="' + abilityRank + '" style="padding:2px 6px;">+</button>' +
-      '</div></div>' +
-      '<div style="text-align:right; margin-top:4px; font-size:0.75rem; color:' + ((veh + upg) === abilityRank ? 'var(--accent)' : 'var(--text)') + ';">Total Allocated: ' + (veh + upg) + ' / ' + abilityRank + '</div>' +
+      '<span style="font-weight:bold; font-family:var(--font-mono);">' + upg + '</span>' +
+      '</div>' +
+      '<div style="text-align:right; margin-top:4px; font-size:0.75rem; color:' + ((veh + upg) === mRank ? 'var(--accent)' : 'var(--text)') + ';">Total Allocated: ' + (veh + upg) + ' / ' + mRank + '</div>' +
       '</div>';
   }
   
@@ -267,28 +298,21 @@ function updateRoleInfo() {
       html += renderRoleSubSkills(role2, rank2);
     }
     if (role2.id === "nomad") {
-      let veh = state.nomadMotoVeh2 || 0;
-      let upg = state.nomadMotoUpg2 || 0;
-      if (veh + upg > rank2) { veh = rank2; upg = 0; }
-      state.nomadMotoVeh2 = veh; state.nomadMotoUpg2 = upg;
-      html += '<div style="margin-top: 5px; font-size: 0.85rem; padding: 5px; border: 1px solid var(--border); border-radius: 4px; background: rgba(0,0,0,0.3);">' +
-        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom:4px;">' +
-        '<span>Family Vehicles:</span>' +
-        '<div style="display:flex; align-items:center;">' +
-        '<button class="nomad-veh-dec btn" data-sec="true" style="padding:2px 6px;">-</button>' +
-        '<span style="display:inline-block; width:1.5rem; text-align:center; font-weight:bold; font-family:var(--font-mono);">' + veh + '</span>' +
-        '<button class="nomad-veh-inc btn" data-sec="true" data-rank="' + rank2 + '" style="padding:2px 6px;">+</button>' +
-        '</div></div>' +
-        '<div style="display: flex; justify-content: space-between; align-items: center;">' +
-        '<span>Upgrades:</span>' +
-        '<div style="display:flex; align-items:center;">' +
-        '<button class="nomad-upg-dec btn" data-sec="true" style="padding:2px 6px;">-</button>' +
-        '<span style="display:inline-block; width:1.5rem; text-align:center; font-weight:bold; font-family:var(--font-mono);">' + upg + '</span>' +
-        '<button class="nomad-upg-inc btn" data-sec="true" data-rank="' + rank2 + '" style="padding:2px 6px;">+</button>' +
-        '</div></div>' +
-        '<div style="text-align:right; margin-top:4px; font-size:0.75rem; color:' + ((veh + upg) === rank2 ? 'var(--accent)' : 'var(--text)') + ';">Total Allocated: ' + (veh + upg) + ' / ' + rank2 + '</div>' +
-        '</div>';
-    }
+    let veh = getUsedMotoVehicles();
+    let upg = getUsedMotoUpgrades();
+    let mRank = getMotoRank();
+    html += '<div style="margin-top: 5px; font-size: 0.85rem; padding: 5px; border: 1px solid var(--border); border-radius: 4px; background: rgba(0,0,0,0.3);">' +
+      '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom:4px;">' +
+      '<span>Family Vehicles:</span>' +
+      '<span style="font-weight:bold; font-family:var(--font-mono);">' + veh + '</span>' +
+      '</div>' +
+      '<div style="display: flex; justify-content: space-between; align-items: center;">' +
+      '<span>Upgrades:</span>' +
+      '<span style="font-weight:bold; font-family:var(--font-mono);">' + upg + '</span>' +
+      '</div>' +
+      '<div style="text-align:right; margin-top:4px; font-size:0.75rem; color:' + ((veh + upg) === mRank ? 'var(--accent)' : 'var(--text)') + ';">Total Allocated: ' + (veh + upg) + ' / ' + mRank + '</div>' +
+      '</div>';
+  }
   }
   info.innerHTML = html;
   attachRoleSubSkillEvents();
@@ -984,6 +1008,128 @@ function getDataItemById(id) {
   return DATA._index.cyberwareById[id] || null;
 }
 
+
+function renderVehicles() {
+  let tbody = document.getElementById("vehicles_body");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+  let frag = document.createDocumentFragment();
+  for (let i = 0; i < state.vehicles.length; i++) {
+    let v = state.vehicles[i];
+    let tr = document.createElement("tr");
+    tr.innerHTML = "<td>" + v.name + "</td>" +
+                   "<td>" + v.sdp + "</td>" +
+                   "<td>" + v.seats + "</td>" +
+                   "<td>" + v.cost + "eb</td>" +
+                   "<td style='font-size:0.8rem'>" + v.desc + "</td>" +
+                   "<td><button class='btn-action add-v-upgrade' data-idx='" + i + "' style='font-size:0.75rem;padding:0.2rem 0.4rem;margin-right:0.3rem'>+ Upg</button>" +
+                   "<button class='btn-action sell-vehicle' data-idx='" + i + "' style='font-size:0.75rem;padding:0.2rem 0.4rem;margin-right:0.3rem'>Sell</button>" +
+                   "<button class='btn-action remove-vehicle' data-idx='" + i + "' style='font-size:0.75rem;padding:0.2rem 0.4rem'>X</button></td>";
+    frag.appendChild(tr);
+    if (v.upgrades && v.upgrades.length > 0) {
+      for (let j = 0; j < v.upgrades.length; j++) {
+        let u = v.upgrades[j];
+        let utr = document.createElement("tr");
+        utr.style.background = "rgba(128,128,128,0.05)";
+        utr.style.fontSize = "0.85rem";
+        utr.innerHTML = "<td style='padding-left:2rem;border-top:none'>↳ " + u.name + "</td>" +
+                        "<td style='border-top:none' colspan='2'></td>" +
+                        "<td style='border-top:none'>" + u.cost + "eb</td>" +
+                        "<td style='border-top:none'>" + u.desc + "</td>" +
+                        "<td style='border-top:none'><button class='btn-action sell-v-upgrade' data-vidx='" + i + "' data-uidx='" + j + "' style='font-size:0.75rem;padding:0.2rem 0.4rem;margin-right:0.3rem'>Sell</button>" +
+                        "<button class='btn-action remove-v-upgrade' data-vidx='" + i + "' data-uidx='" + j + "' style='font-size:0.75rem;padding:0.2rem 0.4rem'>X</button></td>";
+        frag.appendChild(utr);
+      }
+    }
+  }
+  tbody.appendChild(frag);
+
+  let vSells = tbody.querySelectorAll(".sell-vehicle");
+  for (let i = 0; i < vSells.length; i++) {
+    vSells[i].onclick = async function() {
+      let idx = parseInt(this.dataset.idx);
+      let v = state.vehicles[idx];
+      let sellInput = prompt("Sell price in eb (0 = discard):", v.cost || 0);
+      if (sellInput === null) return;
+      let sellPrice = parseInt(sellInput) || 0;
+      let el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) + sellPrice;
+      state.vehicles.splice(idx, 1);
+      renderVehicles();
+      updateRoleInfo();
+      updateRoleInfo();
+    };
+  }
+
+  let uSells = tbody.querySelectorAll(".sell-v-upgrade");
+  for (let i = 0; i < uSells.length; i++) {
+    uSells[i].onclick = async function() {
+      let vIdx = parseInt(this.dataset.vidx);
+      let uIdx = parseInt(this.dataset.uidx);
+      let u = state.vehicles[vIdx].upgrades[uIdx];
+      let sellInput = prompt("Sell price in eb (0 = discard):", u.cost || 0);
+      if (sellInput === null) return;
+      let sellPrice = parseInt(sellInput) || 0;
+      let el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) + sellPrice;
+      state.vehicles[vIdx].upgrades.splice(uIdx, 1);
+      renderVehicles();
+      updateRoleInfo();
+      updateRoleInfo();
+    };
+  }
+
+  let rms = tbody.querySelectorAll(".remove-vehicle");
+  for (let i = 0; i < rms.length; i++) {
+    rms[i].onclick = function() {
+      let idx = parseInt(this.dataset.idx);
+      state.vehicles.splice(idx, 1);
+      renderVehicles();
+      updateRoleInfo();
+    };
+  }
+
+  let rmUs = tbody.querySelectorAll(".remove-v-upgrade");
+  for (let i = 0; i < rmUs.length; i++) {
+    rmUs[i].onclick = function() {
+      let vIdx = parseInt(this.dataset.vidx);
+      let uIdx = parseInt(this.dataset.uidx);
+      state.vehicles[vIdx].upgrades.splice(uIdx, 1);
+      renderVehicles();
+      updateRoleInfo();
+    };
+  }
+
+  let addUpgs = tbody.querySelectorAll(".add-v-upgrade");
+  for (let i = 0; i < addUpgs.length; i++) {
+    addUpgs[i].onclick = function() {
+      let vIdx = parseInt(this.dataset.idx);
+      showItemSelector("vehicleUpgrade", DATA.vehicleUpgrades, async function(item) {
+        let isFree = false;
+        let motoRank = getMotoRank();
+        let usedMoto = getUsedMotoCount();
+        if (motoRank > 0 && usedMoto < motoRank) {
+          isFree = await customConfirm(`Is this upgrade free (from Nomad Moto ability)?\nYou have used ${usedMoto}/${motoRank} Moto choices.`);
+        }
+        let cost = 0;
+        if (!isFree) {
+          let costInput = prompt("Cost in eb (0 = looted):", item.cost || 0);
+          if (costInput === null) return;
+          cost = parseInt(costInput) || 0;
+        }
+        if (!state.vehicles[vIdx].upgrades) state.vehicles[vIdx].upgrades = [];
+        state.vehicles[vIdx].upgrades.push({ id: item.id, name: item.name, cost: cost, isMoto: isFree, desc: item.desc });
+        if (!isFree) {
+          let cel = document.getElementById("currency_eb");
+          cel.value = (parseInt(cel.value) || 0) - cost;
+        }
+        renderVehicles();
+        updateRoleInfo();
+      });
+    };
+  }
+}
+
 function renderGear() {
   let tbody = document.getElementById("gear_body");
   tbody.innerHTML = "";
@@ -1452,6 +1598,31 @@ function initAddButtons() {
       renderSkills();
     }, "type");
   };
+  
+  document.getElementById("add_vehicle_btn").onclick = function() {
+    showItemSelector("vehicle", DATA.vehicleTypes, async function(item) {
+      let isFree = false;
+      let motoRank = getMotoRank();
+      let usedMoto = getUsedMotoCount();
+      if (motoRank > 0 && usedMoto < motoRank) {
+        isFree = await customConfirm(`Is this vehicle free (from Nomad Moto ability)?\nYou have used ${usedMoto}/${motoRank} Moto choices.`);
+      }
+      let cost = 0;
+      if (!isFree) {
+        let costInput = prompt("Cost in eb (0 = looted):", item.cost || 0);
+        if (costInput === null) return;
+        cost = parseInt(costInput) || 0;
+      }
+      state.vehicles.push({ id: item.id, name: item.name, sdp: item.sdp, seats: item.seats, cost: cost, isMoto: isFree, desc: item.desc, upgrades: [] });
+      if (!isFree) {
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) - cost;
+      }
+      renderVehicles();
+      updateRoleInfo();
+    }, "cat");
+  };
+
   document.getElementById("add_gear_btn").onclick = function() {
     let allGear = DATA.gear.concat(DATA.fashion.map(function(f) { return { id: f.id, name: f.name, cost: f.cost, cat: "Fashion" }; }));
     showItemSelector("gear", allGear, function(item) {
@@ -1691,6 +1862,7 @@ function loadCharacterData(data) {
   state.armor = data.armor || [];
   state.cyberware = data.cyberware || [];
   state.gear = data.gear || [];
+  state.vehicles = data.vehicles || [];
   state.ammo = data.ammo || {};
   state.roleSubRanks = data.roleSubRanks || {};
   state.subSkillNames = data.subSkillNames || {};
@@ -1724,6 +1896,7 @@ function loadCharacterData(data) {
   renderArmor();
   renderCyberware();
   renderGear();
+  renderVehicles();
   renderAmmoTracker();
   updateAllDerived();
   updateStatPointsBar();
@@ -1760,6 +1933,7 @@ function resetCharacter() {
   state.armor = [];
   state.cyberware = [];
   state.gear = [];
+  state.vehicles = [];
   state.ammo = {};
   
   let cb = document.getElementById("toggle_creation_mode");
@@ -1771,6 +1945,7 @@ function resetCharacter() {
   renderArmor();
   renderCyberware();
   renderGear();
+  renderVehicles();
   renderAmmoTracker();
   updateAllDerived();
   updateStatPointsBar();
@@ -1857,6 +2032,7 @@ function generateRandomCharacter() {
   try { renderArmor(); } catch(e) {}
   try { renderCyberware(); } catch(e) {}
   try { renderGear(); } catch(e) {}
+  try { renderVehicles(); } catch(e) {}
   try { renderAmmoTracker(); } catch(e) {}
   
   try { updateAllDerived(); } catch(e) {}
@@ -1898,12 +2074,12 @@ function initCyberdeck() {
     }
     selDeck.innerHTML = opts;
     
-    document.getElementById('btn_buy_cyberdeck').addEventListener('click', () => {
+    document.getElementById('btn_buy_cyberdeck').addEventListener('click', async () => {
       const id = selDeck.value;
       if (!id) return;
       const d = DATA._index.deckById[id];
       if (d) {
-        if (state.cyberdeck && !confirm('Replace current cyberdeck? Programs will be lost.')) return;
+        if (state.cyberdeck && !await customConfirm('Replace current cyberdeck? Programs will be lost.')) return;
         if (!deductCurrency(d.cost)) return;
         state.cyberdeck = d.id;
         state.programs = []; // clear programs when buying new deck
@@ -2035,8 +2211,8 @@ function removeProgram(instanceId, cost) {
   renderCyberdeck();
 }
 
-function removeCyberdeck() {
-  if (!confirm('Sell Cyberdeck and all installed programs?')) return;
+async function removeCyberdeck() {
+  if (!await customConfirm('Sell Cyberdeck and all installed programs?')) return;
   const deck = DATA._index.deckById[state.cyberdeck];
   if (deck) refundCurrency(deck.cost);
   
@@ -2048,4 +2224,90 @@ function removeCyberdeck() {
   state.cyberdeck = null;
   state.programs = [];
   renderCyberdeck();
+}
+
+
+function showPrintOptions() {
+    return new Promise(resolve => {
+        let overlay = document.createElement("div");
+        overlay.className = "modal-overlay active";
+        overlay.style.display = "flex";
+        let box = document.createElement("div");
+        box.className = "modal-box";
+        box.style.maxWidth = "400px";
+        box.innerHTML = '<h2>Print Options</h2><p style="margin-bottom:1rem;color:var(--text-secondary)">Select sections to include in the printout:</p>';
+        
+                let sections = [
+            { label: "Identity & Role", selector: "#print-section-identity" },
+            { label: "Stats & Health", selector: "#print-section-stats" },
+            { label: "Lifepath", selector: "#print-section-lifepath" },
+            { label: "Role-Based Lifepath", selector: "#role_lifepath_container" },
+            { label: "Weapons & Armor", selector: "#print-section-weapons" },
+            { label: "Cyberware, Fashion & Gear", selector: "#print-section-cyberware" },
+            { label: "Cyberdeck & Programs", selector: "#print-section-cyberdeck" },
+            { label: "Vehicles & Upgrades", selector: "#print-section-vehicles" },
+            { label: "Notes", selector: "#print-section-notes" },
+            { label: "Skills", selector: "#print-section-skills" }
+        ];
+        
+        let list = document.createElement("div");
+        list.style.display = "flex";
+        list.style.flexDirection = "column";
+        list.style.gap = "0.5rem";
+        
+        let checkboxes = [];
+        sections.forEach(sec => {
+            let label = document.createElement("label");
+            label.style.display = "flex";
+            label.style.gap = "0.5rem";
+            label.style.cursor = "pointer";
+            label.style.alignItems = "center";
+            label.style.fontSize = "1rem";
+            let cb = document.createElement("input");
+            cb.type = "checkbox";
+            cb.checked = true;
+            cb.dataset.selector = sec.selector;
+            cb.style.width = "auto";
+            label.appendChild(cb);
+            label.appendChild(document.createTextNode(" " + sec.label));
+            list.appendChild(label);
+            checkboxes.push(cb);
+        });
+        
+        box.appendChild(list);
+        
+        let btnDiv = document.createElement("div");
+        btnDiv.style.display = "flex";
+        btnDiv.style.justifyContent = "flex-end";
+        btnDiv.style.gap = "1rem";
+        btnDiv.style.marginTop = "1.5rem";
+        
+        let cancelBtn = document.createElement("button");
+        cancelBtn.className = "btn-action";
+        cancelBtn.style.background = "#333";
+        cancelBtn.style.color = "#fff";
+        cancelBtn.textContent = "Cancel";
+        cancelBtn.onclick = () => {
+            document.body.removeChild(overlay);
+            resolve(null);
+        };
+        
+        let printBtn = document.createElement("button");
+        printBtn.className = "btn-action";
+        printBtn.textContent = "Print";
+        printBtn.onclick = () => {
+            let toHide = [];
+            checkboxes.forEach(cb => {
+                if (!cb.checked) toHide.push(cb.dataset.selector);
+            });
+            document.body.removeChild(overlay);
+            resolve(toHide);
+        };
+        
+        btnDiv.appendChild(cancelBtn);
+        btnDiv.appendChild(printBtn);
+        box.appendChild(btnDiv);
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+    });
 }

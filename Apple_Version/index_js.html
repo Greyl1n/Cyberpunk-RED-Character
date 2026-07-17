@@ -20,7 +20,7 @@
 <div class="scanline-overlay"></div>
 <input type="checkbox" id="dismissWelcome" style="display:none">
 <header>
-<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v3.5</span></div></div>
+<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v4.0 Final</span></div></div>
 <div class="header-actions">
 <button id="charactersBtn" class="btn-action">&#128194; Characters</button>
 <button id="importBtn" class="btn-action">&#128229; Import</button>
@@ -58,7 +58,7 @@
 
 <!-- ===== TAB: CHARACTER ===== -->
 <section id="tab-character" class="tab-panel active">
-<div class="section-card">
+<div id="print-section-identity" class="section-card">
 <h2 class="section-title">Identity & Role</h2>
 <div class="grid-3">
 <label>Handle <input id="char_handle" type="text" placeholder="Your street name"></label>
@@ -80,7 +80,7 @@
 </div>
 </div>
 
-<div class="grid-split">
+<div id="print-section-stats" class="grid-split">
 <div class="section-card">
 <h2 class="section-title">Stats</h2>
 <div id="stat_points_bar" class="stat-points-bar">Points Remaining: <span id="stat_points_remaining">10</span></div>
@@ -103,7 +103,7 @@
 </div>
 </div>
 
-<div class="section-card">
+<div id="print-section-skills" class="section-card">
 <h2 class="section-title">Skills</h2>
 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1rem;">
 <input id="skillSearch" class="skill-search" type="text" placeholder="Search skills...">
@@ -124,7 +124,7 @@
 </div>
 </div>
 
-<div class="section-card">
+<div id="print-section-lifepath" class="section-card">
 <h2 class="section-title">Lifepath</h2>
 <div class="grid-3">
 <label>Cultural Origin <select id="lp_culturalOrigins"></select></label>
@@ -168,7 +168,7 @@
 
 <!-- ===== TAB: GEAR ===== -->
 <section id="tab-gear" class="tab-panel">
-<div class="grid-split">
+<div id="print-section-weapons" class="grid-split">
 <div class="section-card">
 <div class="flex-header"><h2 class="section-title">Weapons</h2><button id="add_weapon_btn" class="btn-action">+ Add Weapon</button></div>
 <div class="table-responsive">
@@ -189,7 +189,7 @@
 <div class="mt-1" style="font-weight:600">Total SP (Body): <span id="armor_total_sp_body">0</span> | Total SP (Head): <span id="armor_total_sp_head">0</span></div>
 </div>
 </div>
-<div class="grid-split mt-1">
+<div id="print-section-cyberware" class="grid-split mt-1">
 <div class="section-card">
 <div class="flex-header"><h2 class="section-title">Cyberware</h2><button id="add_cyberware_btn" class="btn-action">+ Add Cyberware</button></div>
 <div class="table-responsive">
@@ -224,12 +224,24 @@
 </div>
 </div>
 </div>
+<div id="print-section-vehicles" class="section-card mt-1">
+<div class="flex-header">
+<h2 class="section-title">Vehicles & Upgrades</h2>
+<button id="add_vehicle_btn" class="btn-action">+ Add Vehicle</button>
+</div>
+<div class="table-responsive">
+<table class="premium-table">
+<thead><tr><th>Vehicle</th><th>SDP</th><th>Seats</th><th>Cost</th><th>Description</th><th></th></tr></thead>
+<tbody id="vehicles_body"></tbody>
+</table>
+</div>
+</div>
 </div>
 </section>
 
 <!-- ===== TAB: CYBERDECK ===== -->
 <section id="tab-cyberdeck" class="tab-panel">
-<div class="section-card">
+<div id="print-section-cyberdeck" class="section-card">
 <h2 class="section-title">Cyberdeck & Programs</h2>
 
 <div class="deck-selector-container mb-1">
@@ -280,16 +292,16 @@
 
 <!-- ===== TAB: ABOUT ===== -->
 <section id="tab-notes" class="tab-panel">
-<div class="section-card">
+<div id="print-section-notes" class="section-card">
 <h2 class="section-title">Notes</h2>
 <textarea id="char_notes" style="width:100%; height:400px; padding:0.5rem; background: var(--input-bg); color: var(--text); border: 1px solid var(--border);" placeholder="Free text notes..."></textarea>
 </div>
 </section>
 <section id="tab-about" class="tab-panel">
 <div class="section-card">
-<h2 class="section-title">About Cyberpunk RED Generator (Playtest Build)</h2>
+<h2 class="section-title">About Cyberpunk RED Generator (v4.0 Final)</h2>
 <p style="margin-bottom:0.8rem;line-height:1.7">A fully self-contained, highly-optimised interactive character manager for <strong>Cyberpunk RED</strong> by R. Talsorian Games. Create, customise, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. No server, no build tools, no internet - just open the single monolith HTML file in any browser.</p>
-<p style="margin-bottom:0.8rem;line-height:1.7"><strong>Welcome to the Playtest Build!</strong> This version introduces massive updates across the board, moving beyond a simple character sheet into a full character management suite. Key updates include deeply interactive Role Abilities (Exec Team Members, Nomad Vehicle tracking, Lawman Backup, Medtech Pharmaceuticals, Netrunner Interface, and more), fully integrated Cyberware humanity and slot tracking, overhauled generic and Role-specific Lifepaths, Ammunition tracking, and seamless local state management.</p>
+<p style="margin-bottom:0.8rem;line-height:1.7"><strong>Welcome to v4.0 Final!</strong> This version concludes massive updates across the board. Key additions include robust Custom Eurobuck Management, a brand-new dedicated Apple-optimized version for Safari/iOS devices, seamless integration of Black Chrome Vehicles and Weapons, and Smart Selective Printing that allows you to omit blank sections to save paper. We also finalized interactive Role Abilities (Exec Team Members, Nomad Vehicle tracking, Lawman Backup, Medtech Pharmaceuticals, Netrunner Interface, and more), fully integrated Cyberware humanity and slot tracking, and overhauled Lifepaths.</p>
 <h3 style="margin:1rem 0 0.4rem">Features</h3>
 <ul style="line-height:1.8;padding-left:1.2rem">
 <li>10 Stats with point-buy system (62 points, min 2 / max 8)</li>
@@ -297,14 +309,17 @@
 <li>Interactive Role Abilities: Create and manage Exec Team Members, track Nomad Family Vehicles & Upgrades, handle Lawman Backup stats, manage Netrunner Interface abilities, and track Medtech Pharmaceuticals</li>
 <li>Multiclass support - take a secondary role once your primary reaches Rank 4</li>
 <li>86 Skills grouped by linked stat with search, ranks, and item bonuses</li>
-<li>140+ Weapons mapped accurately to their Cyberpunk RED skills (e.g. Shoulder Arms, Handgun, Heavy Weapons)</li>
-<li>Add/remove management with cost deduction for Armor, Cyberware, Fashion &amp; Gear</li>
+<li>140+ Weapons mapped accurately to their Cyberpunk RED skills, including Black Chrome selections</li>
+<li>Add/remove management with cost deduction for Armor, Cyberware, Fashion, Vehicles &amp; Gear</li>
+<li>Custom Eurobuck entry for quick accounting (bribes, payouts, etc)</li>
+<li>Custom Item Entry for all gear categories</li>
+<li>JSON Export/Import for sharing characters or backing them up safely</li>
+<li>Print-Friendly Layout: Smart Selective Printing with restacked DOM layout for perfect page rendering on Chrome and Safari</li>
+<li>Mobile-Responsive: Touch-optimized controls and seamless skill adjustments</li>
 <li>Ammunition Consumption - track remaining rounds directly on your sheet</li>
 <li>Dynamic Cyberware Tracking: automatically handles humanity loss, maximum humanity reduction, and custom slot constraints (e.g. 7 slots for a Cyberarm)</li>
-<li>Custom item entry for all gear categories</li>
 <li>Categorised item selectors grouped logically</li>
 <li>Full Lifepath generation (Generic and Role-specific) with randomise button</li>
-<li>Character save/load/delete (localStorage), JSON export/import</li>
 <li>Combined print layout optimised for physical character sheets</li>
 <li>Random character generator — one-click complete, playable character</li>
 <li>Netrunner dark theme with native CSS variables</li>
