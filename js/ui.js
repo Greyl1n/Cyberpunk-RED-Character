@@ -34,6 +34,24 @@ function initState() {
   }
 }
 
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function autoResizeTextarea(el) {
+  if (!el) return;
+  el.style.height = 'auto';
+  if (el.scrollHeight > 0) {
+    el.style.height = (el.scrollHeight + 2) + 'px';
+  }
+}
+
 function getStatPointsRemaining() {
   let used = 0;
   for (let i = 0; i < DATA.stats.length; i++) {
@@ -727,7 +745,8 @@ function renderWeapons() {
       skillTotal = (total >= 0 ? "+" : "") + total;
     }
 
-    tr.innerHTML = '<td>' + w.name + '</td><td>' + w.dmg + '</td><td>' + (w.rof || "-") + '</td><td>' + (w.mag || "-") + '</td><td>' + (w.type || "") + '</td><td style="text-align:center; font-weight:bold">' + skillTotal + '</td><td>' + actionBtns + '</td>';
+    let descVal = escapeHtml(w.desc || '');
+    tr.innerHTML = '<td>' + w.name + '</td><td>' + w.dmg + '</td><td>' + (w.rof || "-") + '</td><td>' + (w.mag || "-") + '</td><td>' + (w.type || "") + '</td><td style="text-align:center; font-weight:bold">' + skillTotal + '</td><td><textarea class="item-desc-input" data-cat="weapon" data-idx="' + i + '" placeholder="Description" rows="1">' + descVal + '</textarea></td><td>' + actionBtns + '</td>';
     frag.appendChild(tr);
   }
   tbody.appendChild(frag);
@@ -735,18 +754,27 @@ function renderWeapons() {
 }
 
 function attachWeaponEvents() {
+  let weaponDescs = document.querySelectorAll('.item-desc-input[data-cat="weapon"]');
+  for (let i = 0; i < weaponDescs.length; i++) {
+    autoResizeTextarea(weaponDescs[i]);
+    weaponDescs[i].oninput = function() {
+      let idx = parseInt(this.dataset.idx);
+      if (state.weapons[idx]) state.weapons[idx].desc = this.value;
+      autoResizeTextarea(this);
+    };
+  }
   let removes = document.querySelectorAll(".weapon-remove");
   for (let i = 0; i < removes.length; i++) {
     removes[i].onclick = function() {
       let idx = parseInt(this.dataset.idx);
       let w = state.weapons[idx];
-      let sellInput = prompt("Sell price in eb (0 = discard):", w.cost || 0);
-      if (sellInput === null) return;
-      let sellPrice = parseInt(sellInput) || 0;
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) + sellPrice;
-      state.weapons.splice(idx, 1);
-      renderWeapons();
+      showSellItemModal(w.name, w.cost || 0, function(sellPrice) {
+        if (sellPrice === null) return;
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) + sellPrice;
+        state.weapons.splice(idx, 1);
+        renderWeapons();
+      });
     };
   }
   let sells = document.querySelectorAll(".weapon-sell");
@@ -754,13 +782,13 @@ function attachWeaponEvents() {
     sells[i].onclick = function() {
       let idx = parseInt(this.dataset.idx);
       let w = state.weapons[idx];
-      let sellInput = prompt("Sell price in eb:", w.cost || 0);
-      if (sellInput === null) return;
-      let sellPrice = parseInt(sellInput) || 0;
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) + sellPrice;
-      state.weapons.splice(idx, 1);
-      renderWeapons();
+      showSellItemModal(w.name, w.cost || 0, function(sellPrice) {
+        if (sellPrice === null) return;
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) + sellPrice;
+        state.weapons.splice(idx, 1);
+        renderWeapons();
+      });
     };
   }
   let uses = document.querySelectorAll(".weapon-use");
@@ -782,7 +810,8 @@ function renderArmor() {
   for (let i = 0; i < state.armor.length; i++) {
     let a = state.armor[i];
     let tr = document.createElement("tr");
-    tr.innerHTML = '<td>' + a.name + '</td><td>' + a.sp + '</td><td>' + a.slots + '</td><td>' + a.enc + '</td><td><button class="btn-action armor-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
+    let descVal = escapeHtml(a.desc || '');
+    tr.innerHTML = '<td>' + a.name + '</td><td><input type="number" class="armor-sp-input" data-idx="' + i + '" value="' + a.sp + '" min="0" max="99" style="width:60px;text-align:center;padding:0.25rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></td><td>' + a.slots + '</td><td>' + a.enc + '</td><td><textarea class="item-desc-input" data-cat="armor" data-idx="' + i + '" placeholder="Description" rows="1">' + descVal + '</textarea></td><td><button class="btn-action armor-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
     frag.appendChild(tr);
     if (a.slots === "Body") bodySP = Math.max(bodySP, a.sp);
     if (a.slots === "Head") headSP = Math.max(headSP, a.sp);
@@ -791,18 +820,52 @@ function renderArmor() {
   tbody.appendChild(frag);
   document.getElementById("armor_total_sp_body").textContent = bodySP;
   document.getElementById("armor_total_sp_head").textContent = headSP;
+
+  let spInputs = tbody.querySelectorAll(".armor-sp-input");
+  for (let i = 0; i < spInputs.length; i++) {
+    spInputs[i].oninput = function() {
+      let idx = parseInt(this.dataset.idx);
+      let newSp = parseInt(this.value);
+      if (isNaN(newSp) || newSp < 0) newSp = 0;
+      if (state.armor[idx]) {
+        state.armor[idx].sp = newSp;
+      }
+      let bSP = 0;
+      let hSP = 0;
+      for (let j = 0; j < state.armor.length; j++) {
+        let item = state.armor[j];
+        let val = item.sp || 0;
+        if (item.slots === "Body") bSP = Math.max(bSP, val);
+        if (item.slots === "Head") hSP = Math.max(hSP, val);
+        if (item.slots === "Shield") bSP = Math.max(bSP, val);
+      }
+      document.getElementById("armor_total_sp_body").textContent = bSP;
+      document.getElementById("armor_total_sp_head").textContent = hSP;
+    };
+  }
+
+  let armorDescs = tbody.querySelectorAll('.item-desc-input[data-cat="armor"]');
+  for (let i = 0; i < armorDescs.length; i++) {
+    autoResizeTextarea(armorDescs[i]);
+    armorDescs[i].oninput = function() {
+      let idx = parseInt(this.dataset.idx);
+      if (state.armor[idx]) state.armor[idx].desc = this.value;
+      autoResizeTextarea(this);
+    };
+  }
   let removes = document.querySelectorAll(".armor-remove");
   for (let i = 0; i < removes.length; i++) {
     removes[i].onclick = function() {
       let idx = parseInt(this.dataset.idx);
-      let sellInput = prompt("Sell price in eb (0 = discard):", state.armor[idx].cost || 0);
-      if (sellInput === null) return;
-      let sellPrice = parseInt(sellInput) || 0;
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) + sellPrice;
-      state.armor.splice(idx, 1);
-      renderArmor();
-      renderHumanity();
+      let a = state.armor[idx];
+      showSellItemModal(a.name, a.cost || 0, function(sellPrice) {
+        if (sellPrice === null) return;
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) + sellPrice;
+        state.armor.splice(idx, 1);
+        renderArmor();
+        renderHumanity();
+      });
     };
   }
 }
@@ -839,18 +902,51 @@ function renderCyberwareRow(tbody, c, idx) {
   if (c.location && !displayName.includes('(' + c.location + ')')) {
     displayName += ' (' + c.location + ')';
   }
-  tr.innerHTML = '<td>' + displayName + '</td><td>' + c.type + '</td><td>' + (c.hc || 0) + '</td><td>' + (c.cost || 0) + 'eb</td><td><small>' + bonusHtml + '</small></td><td><small>' + (c.desc || '') + '</small></td><td><button class="btn-action cyberware-remove" data-idx="' + idx + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
+  let descVal = escapeHtml(c.desc || '');
+  tr.innerHTML = '<td>' + displayName + '</td><td>' + c.type + '</td><td>' + (c.hc || 0) + '</td><td>' + (c.cost || 0) + 'eb</td><td><small>' + bonusHtml + '</small></td><td><textarea class="item-desc-input" data-cat="cyberware" data-idx="' + idx + '" placeholder="Description" rows="1">' + descVal + '</textarea></td><td><button class="btn-action cyberware-remove" data-idx="' + idx + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
   tbody.appendChild(tr);
+}
+
+function mapTypeToParentType(typeStr) {
+  if (!typeStr) return null;
+  let t = typeStr.toLowerCase().trim();
+  if (t.includes("optic") || t.includes("eye")) return "cybereye";
+  if (t.includes("audio") || t.includes("ear")) return "cyberaudio";
+  if (t.includes("arm") || t.includes("hand")) return "cyberarm";
+  if (t.includes("leg") || t.includes("foot")) return "cyberleg";
+  if (t.includes("neural") || t.includes("chip")) return "neural_link";
+  if (t.includes("internal")) return "internal";
+  if (t.includes("external")) return "external";
+  if (t.includes("fashion")) return "fashionware";
+  if (t.includes("borg")) return "borgware";
+  return null;
 }
 
 function renderCyberwareSlot(tbody, parent, parentPath, slotIdx, depth) {
   let option = (parent.options && parent.options[slotIdx]) || null;
-  let available = getOptionsForParent(parent.id);
-  if (available.length === 0) {
+  let available = [];
+  
+  let pType = parent.parentType;
+  if (!pType && parent.id) {
     let parentDataItem = getDataItemById(parent.id);
-    if (parentDataItem && parentDataItem.parentType) {
-      available = getOptionsForParent(parentDataItem.parentType);
-    }
+    if (parentDataItem && parentDataItem.parentType) pType = parentDataItem.parentType;
+  }
+  if (!pType && parent.type) {
+    pType = mapTypeToParentType(parent.type);
+  }
+  
+  if (pType) {
+    available = getOptionsForParent(pType);
+  }
+  if (available.length === 0 && parent.id) {
+    available = getOptionsForParent(parent.id);
+  }
+  if (available.length === 0) {
+    available = (DATA._index.cyberwareByParent['cybereye'] || [])
+      .concat(DATA._index.cyberwareByParent['cyberaudio'] || [])
+      .concat(DATA._index.cyberwareByParent['cyberarm'] || [])
+      .concat(DATA._index.cyberwareByParent['cyberleg'] || [])
+      .concat(DATA._index.cyberwareByParent['neural_link'] || []);
   }
   let tr = document.createElement("tr");
   tr.style.background = "rgba(128,128,128,0.05)";
@@ -859,7 +955,7 @@ function renderCyberwareSlot(tbody, parent, parentPath, slotIdx, depth) {
   
   let currentPath = parentPath + "_" + slotIdx;
   
-  let selectHtml = '<select class="cyber-slot-select" data-path="' + currentPath + '" style="width:100%;font-size:0.8rem">';
+  let selectHtml = '<select class="cyber-slot-select" data-path="' + currentPath + '" style="width:50%;font-size:0.8rem;vertical-align:middle">';
   selectHtml += '<option value="">-- Empty --</option>';
   for (let oi = 0; oi < available.length; oi++) {
     let opt = available[oi];
@@ -873,11 +969,16 @@ function renderCyberwareSlot(tbody, parent, parentPath, slotIdx, depth) {
     selectHtml += '<option value="' + option.id + '"' + customSel + '>' + option.name + ' (' + option.cost + 'eb, ' + (option.hc || 0) + 'HC) [Custom]</option>';
   }
   selectHtml += '<option value="custom">-- Custom Option --</option>';
-  
   selectHtml += '</select>';
+
+  let optionDescHtml = '';
+  if (option) {
+    let optDescVal = escapeHtml(option.desc || '');
+    optionDescHtml = ' <textarea class="cyber-option-desc-input" data-path="' + currentPath + '" placeholder="Option Description" rows="1" style="width:45%;">' + optDescVal + '</textarea>';
+  }
   
   let indent = 1.5 + (depth * 1.5);
-  tr.innerHTML = '<td style="padding-left:' + indent + 'rem;border-top:none" colspan="6">Slot ' + (slotIdx + 1) + ': ' + selectHtml + '</td><td style="border-top:none"></td>';
+  tr.innerHTML = '<td style="padding-left:' + indent + 'rem;border-top:none" colspan="6">Slot ' + (slotIdx + 1) + ': ' + selectHtml + optionDescHtml + '</td><td style="border-top:none"></td>';
   tbody.appendChild(tr);
 
   if (option) {
@@ -894,21 +995,56 @@ function getOptionsForParent(parentId) {
   return DATA._index.cyberwareByParent[parentId] || [];
 }
 
+function getOptionByPath(path) {
+  let parts = path.split('_');
+  let rootIdx = parseInt(parts[0]);
+  let obj = state.cyberware[rootIdx];
+  for (let p = 1; p < parts.length; p++) {
+    let sIdx = parseInt(parts[p]);
+    if (obj && obj.options && obj.options[sIdx]) {
+      obj = obj.options[sIdx];
+    } else {
+      return null;
+    }
+  }
+  return obj;
+}
+
 function attachCyberwareEvents() {
+  let cyberwareDescs = document.querySelectorAll('.item-desc-input[data-cat="cyberware"]');
+  for (let i = 0; i < cyberwareDescs.length; i++) {
+    autoResizeTextarea(cyberwareDescs[i]);
+    cyberwareDescs[i].oninput = function() {
+      let idx = parseInt(this.dataset.idx);
+      if (state.cyberware[idx]) state.cyberware[idx].desc = this.value;
+      autoResizeTextarea(this);
+    };
+  }
+  let optionDescs = document.querySelectorAll('.cyber-option-desc-input');
+  for (let i = 0; i < optionDescs.length; i++) {
+    autoResizeTextarea(optionDescs[i]);
+    optionDescs[i].oninput = function() {
+      let path = this.dataset.path;
+      let opt = getOptionByPath(path);
+      if (opt) opt.desc = this.value;
+      autoResizeTextarea(this);
+    };
+  }
   let removes = document.querySelectorAll(".cyberware-remove");
   for (let i = 0; i < removes.length; i++) {
     removes[i].onclick = function() {
       let idx = parseInt(this.dataset.idx);
-      let sellInput = prompt("Sell price in eb (0 = discard):", state.cyberware[idx].cost || 0);
-      if (sellInput === null) return;
-      let sellPrice = parseInt(sellInput) || 0;
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) + sellPrice;
-      state.cyberware.splice(idx, 1);
-      renderCyberware();
-      renderHumanity();
-      renderStats();
-      renderSkills();
+      let c = state.cyberware[idx];
+      showSellItemModal(c.name, c.cost || 0, function(sellPrice) {
+        if (sellPrice === null) return;
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) + sellPrice;
+        state.cyberware.splice(idx, 1);
+        renderCyberware();
+        renderHumanity();
+        renderStats();
+        renderSkills();
+      });
     };
   }
   let selects = document.querySelectorAll(".cyber-slot-select");
@@ -935,47 +1071,53 @@ function attachCyberwareEvents() {
       
       let oldOption = currentObj.options[slotIdx] || null;
       let oldCost = oldOption ? (oldOption.cost || 0) : 0;
-      
       if (optionId === "custom") {
-        let name = prompt("Custom Option Name:");
-        if (!name) { this.value = oldOption ? oldOption.id : ''; return; }
-        let cType = prompt("Type (Fashion, Internal, Neuralware, etc.):") || "Option";
-        let hc = parseInt(prompt("Humanity Cost:") || "0");
-        let cost = parseInt(prompt("Cost in eb:") || "0");
-        let desc = prompt("Description:") || "";
-        let slots = parseInt(prompt("Does this option have slots itself? (0 for none):") || "0");
-        currentObj.options[slotIdx] = { id: "custom_" + Date.now(), name: name, type: cType, hc: hc, cost: cost, desc: desc, bonus: null, slots: slots > 0 ? slots : undefined };
+        showCustomSlotOptionModal(true, function(customOpt) {
+          if (!customOpt) {
+            selects[i].value = oldOption ? oldOption.id : '';
+            return;
+          }
+          currentObj.options[slotIdx] = customOpt;
+          let diff = (customOpt.cost || 0) - oldCost;
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) - diff;
+          renderCyberware();
+          renderHumanity();
+          renderStats();
+          renderSkills();
+        });
+        return;
       } else if (optionId && !optionId.startsWith("custom_")) {
         let item = getDataItemById(optionId);
         if (item) {
-          let costInput = prompt("Cost in eb (0 = looted):", item.cost || 0);
-          if (costInput === null) { this.value = oldOption ? oldOption.id : ''; return; }
-          let actualCost = parseInt(costInput) || 0;
-          let actualHc = item.hc || 0;
-          if (actualHc > 0) {
-            let hcInput = prompt("Humanity Cost for " + item.name + "\n(Enter value, or 'r' to roll randomly)", actualHc);
-            if (hcInput !== null) {
-              if (hcInput.toLowerCase().trim() === 'r') {
-                actualHc = rollCyberwareHC(item.hc);
-                alert("Rolled Humanity Cost: " + actualHc);
-              } else {
-                actualHc = parseInt(hcInput) || 0;
-              }
-            }
-          }
-          currentObj.options[slotIdx] = { id: item.id, name: item.name, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, parentType: item.parentType, slots: item.slots };
+          showSlotOptionPurchaseModal(item, true, function(res) {
+            if (!res) { selects[i].value = oldOption ? oldOption.id : ''; return; }
+            let actualCost = res.cost;
+            let actualHc = res.hc || 0;
+            currentObj.options[slotIdx] = { id: item.id, name: item.name, type: item.type, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, parentType: item.parentType, slots: item.slots };
+            let diff = actualCost - oldCost;
+            let el = document.getElementById("currency_eb");
+            el.value = (parseInt(el.value) || 0) - diff;
+            renderCyberware();
+            renderHumanity();
+            renderStats();
+            renderSkills();
+          });
+          return;
         }
       } else if (optionId && optionId.startsWith("custom_")) {
-        // If they just selected the existing custom option from the list (which shouldn't happen naturally unless we are re-rendering)
-        // We don't need to do anything, because it was already set.
       } else {
-        let sellInput = prompt("Sell price in eb (0 = discard):", oldCost);
-        if (sellInput === null) { this.value = oldOption ? oldOption.id : ''; return; }
-        let sellPrice = parseInt(sellInput) || 0;
-        let el = document.getElementById("currency_eb");
-        el.value = (parseInt(el.value) || 0) + sellPrice;
-        oldCost = 0;
-        currentObj.options[slotIdx] = null;
+        showSellItemModal(oldOption ? oldOption.name : "Option", oldCost, function(sellPrice) {
+          if (sellPrice === null) { selects[i].value = oldOption ? oldOption.id : ''; return; }
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) + sellPrice;
+          currentObj.options[slotIdx] = null;
+          renderCyberware();
+          renderHumanity();
+          renderStats();
+          renderSkills();
+        });
+        return;
       }
       
       let newOption = currentObj.options[slotIdx] || null;
@@ -988,9 +1130,84 @@ function attachCyberwareEvents() {
       renderHumanity();
       renderStats();
       renderSkills();
-      updateAllDerived();
     };
   }
+}
+
+function showCustomSlotOptionModal(isCyberware, callback) {
+  let overlay = document.createElement("div");
+  overlay.className = "modal-overlay active";
+  overlay.style.display = "flex";
+  overlay.style.zIndex = "10000";
+
+  let box = document.createElement("div");
+  box.className = "modal-box";
+  box.style.maxWidth = "550px";
+  box.style.width = "90%";
+  box.style.padding = "1.5rem";
+
+  let title = isCyberware ? "Cyberware Slot Option" : "Gear / Item Option";
+  let html = `<h2 style="margin-top:0;margin-bottom:1rem;color:var(--accent)">\u270E Create Custom ${title}</h2>`;
+  html += `<div style="display:flex;flex-direction:column;gap:0.75rem;">`;
+
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Option Name *</label><input type="text" id="custom_opt_name" placeholder="Option Name" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
+
+  if (isCyberware) {
+    html += `<div style="display:flex;gap:0.5rem"><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Type</label><input type="text" id="custom_opt_type" value="Option" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Humanity Cost (HC)</label><input type="number" id="custom_opt_hc" value="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Option Slots</label><input type="number" id="custom_opt_slots" value="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div></div>`;
+  } else {
+    html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Option Slots</label><input type="number" id="custom_opt_slots" value="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
+  }
+
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Cost in eb (0 = looted)</label><input type="number" id="custom_opt_cost" value="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
+
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Description</label><textarea id="custom_opt_desc" placeholder="Option details, stats, rules..." rows="3" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px;resize:vertical"></textarea></div>`;
+
+  html += `</div>`;
+
+  html += `<div style="display:flex;justify-content:flex-end;gap:0.5rem;margin-top:1.25rem">
+    <button id="custom_opt_cancel" class="btn-action" style="padding:0.4rem 0.8rem">Cancel</button>
+    <button id="custom_opt_save" class="btn-action" style="background:var(--accent);color:#fff;font-weight:bold;padding:0.4rem 0.8rem">Save Option</button>
+  </div>`;
+
+  box.innerHTML = html;
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  document.getElementById("custom_opt_name").focus();
+
+  function closeModal() {
+    if (document.body.contains(overlay)) {
+      document.body.removeChild(overlay);
+    }
+  }
+
+  document.getElementById("custom_opt_cancel").onclick = function() {
+    closeModal();
+    callback(null);
+  };
+
+  document.getElementById("custom_opt_save").onclick = function() {
+    let name = document.getElementById("custom_opt_name").value.trim();
+    if (!name) {
+      alert("Please enter an option name.");
+      document.getElementById("custom_opt_name").focus();
+      return;
+    }
+
+    let cost = parseInt(document.getElementById("custom_opt_cost").value) || 0;
+    let desc = document.getElementById("custom_opt_desc").value || "";
+    let slots = parseInt(document.getElementById("custom_opt_slots").value) || 0;
+    let res = { id: "custom_" + Date.now(), name: name, cost: cost, desc: desc, slots: slots > 0 ? slots : undefined };
+
+    if (isCyberware) {
+      res.type = document.getElementById("custom_opt_type").value || "Option";
+      res.hc = parseInt(document.getElementById("custom_opt_hc").value) || 0;
+      res.bonus = null;
+    }
+
+    closeModal();
+    callback(res);
+  };
 }
 
 function rollCyberwareHC(avgHc) {
@@ -1017,11 +1234,12 @@ function renderVehicles() {
   for (let i = 0; i < state.vehicles.length; i++) {
     let v = state.vehicles[i];
     let tr = document.createElement("tr");
+    let vDescVal = escapeHtml(v.desc || '');
     tr.innerHTML = "<td>" + v.name + "</td>" +
                    "<td>" + v.sdp + "</td>" +
                    "<td>" + v.seats + "</td>" +
                    "<td>" + v.cost + "eb</td>" +
-                   "<td style='font-size:0.8rem'>" + v.desc + "</td>" +
+                   "<td><textarea class='item-desc-input' data-cat='vehicle' data-idx='" + i + "' placeholder='Description' rows='1'>" + vDescVal + "</textarea></td>" +
                    "<td><button class='btn-action add-v-upgrade' data-idx='" + i + "' style='font-size:0.75rem;padding:0.2rem 0.4rem;margin-right:0.3rem'>+ Upg</button>" +
                    "<button class='btn-action sell-vehicle' data-idx='" + i + "' style='font-size:0.75rem;padding:0.2rem 0.4rem;margin-right:0.3rem'>Sell</button>" +
                    "<button class='btn-action remove-vehicle' data-idx='" + i + "' style='font-size:0.75rem;padding:0.2rem 0.4rem'>X</button></td>";
@@ -1032,10 +1250,11 @@ function renderVehicles() {
         let utr = document.createElement("tr");
         utr.style.background = "rgba(128,128,128,0.05)";
         utr.style.fontSize = "0.85rem";
+        let uDescVal = escapeHtml(u.desc || '');
         utr.innerHTML = "<td style='padding-left:2rem;border-top:none'>↳ " + u.name + "</td>" +
                         "<td style='border-top:none' colspan='2'></td>" +
                         "<td style='border-top:none'>" + u.cost + "eb</td>" +
-                        "<td style='border-top:none'>" + u.desc + "</td>" +
+                        "<td style='border-top:none'><textarea class='item-desc-input' data-cat='vehicleUpgrade' data-vidx='" + i + "' data-uidx='" + j + "' placeholder='Description' rows='1'>" + uDescVal + "</textarea></td>" +
                         "<td style='border-top:none'><button class='btn-action sell-v-upgrade' data-vidx='" + i + "' data-uidx='" + j + "' style='font-size:0.75rem;padding:0.2rem 0.4rem;margin-right:0.3rem'>Sell</button>" +
                         "<button class='btn-action remove-v-upgrade' data-vidx='" + i + "' data-uidx='" + j + "' style='font-size:0.75rem;padding:0.2rem 0.4rem'>X</button></td>";
         frag.appendChild(utr);
@@ -1044,20 +1263,41 @@ function renderVehicles() {
   }
   tbody.appendChild(frag);
 
+  let vDescs = tbody.querySelectorAll('.item-desc-input[data-cat="vehicle"]');
+  for (let i = 0; i < vDescs.length; i++) {
+    autoResizeTextarea(vDescs[i]);
+    vDescs[i].oninput = function() {
+      let idx = parseInt(this.dataset.idx);
+      if (state.vehicles[idx]) state.vehicles[idx].desc = this.value;
+      autoResizeTextarea(this);
+    };
+  }
+  let vuDescs = tbody.querySelectorAll('.item-desc-input[data-cat="vehicleUpgrade"]');
+  for (let i = 0; i < vuDescs.length; i++) {
+    autoResizeTextarea(vuDescs[i]);
+    vuDescs[i].oninput = function() {
+      let vidx = parseInt(this.dataset.vidx);
+      let uidx = parseInt(this.dataset.uidx);
+      if (state.vehicles[vidx] && state.vehicles[vidx].upgrades && state.vehicles[vidx].upgrades[uidx]) {
+        state.vehicles[vidx].upgrades[uidx].desc = this.value;
+      }
+      autoResizeTextarea(this);
+    };
+  }
+
   let vSells = tbody.querySelectorAll(".sell-vehicle");
   for (let i = 0; i < vSells.length; i++) {
     vSells[i].onclick = async function() {
       let idx = parseInt(this.dataset.idx);
       let v = state.vehicles[idx];
-      let sellInput = prompt("Sell price in eb (0 = discard):", v.cost || 0);
-      if (sellInput === null) return;
-      let sellPrice = parseInt(sellInput) || 0;
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) + sellPrice;
-      state.vehicles.splice(idx, 1);
-      renderVehicles();
-      updateRoleInfo();
-      updateRoleInfo();
+      showSellItemModal(v.name, v.cost || 0, function(sellPrice) {
+        if (sellPrice === null) return;
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) + sellPrice;
+        state.vehicles.splice(idx, 1);
+        renderVehicles();
+        updateRoleInfo();
+      });
     };
   }
 
@@ -1067,15 +1307,14 @@ function renderVehicles() {
       let vIdx = parseInt(this.dataset.vidx);
       let uIdx = parseInt(this.dataset.uidx);
       let u = state.vehicles[vIdx].upgrades[uIdx];
-      let sellInput = prompt("Sell price in eb (0 = discard):", u.cost || 0);
-      if (sellInput === null) return;
-      let sellPrice = parseInt(sellInput) || 0;
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) + sellPrice;
-      state.vehicles[vIdx].upgrades.splice(uIdx, 1);
-      renderVehicles();
-      updateRoleInfo();
-      updateRoleInfo();
+      showSellItemModal(u.name, u.cost || 0, function(sellPrice) {
+        if (sellPrice === null) return;
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) + sellPrice;
+        state.vehicles[vIdx].upgrades.splice(uIdx, 1);
+        renderVehicles();
+        updateRoleInfo();
+      });
     };
   }
 
@@ -1111,20 +1350,28 @@ function renderVehicles() {
         if (motoRank > 0 && usedMoto < motoRank) {
           isFree = await customConfirm(`Is this upgrade free (from Nomad Moto ability)?\nYou have used ${usedMoto}/${motoRank} Moto choices.`);
         }
-        let cost = 0;
-        if (!isFree) {
-          let costInput = prompt("Cost in eb (0 = looted):", item.cost || 0);
-          if (costInput === null) return;
-          cost = parseInt(costInput) || 0;
+        if (!isFree && (!item.id || !item.id.startsWith("custom_"))) {
+          showItemPurchaseModal(item, "Vehicle Upgrade", {}, function(res) {
+            if (!res) return;
+            let cost = res.cost;
+            if (!state.vehicles[vIdx].upgrades) state.vehicles[vIdx].upgrades = [];
+            state.vehicles[vIdx].upgrades.push({ id: item.id, name: item.name, cost: cost, isMoto: false, desc: item.desc });
+            let cel = document.getElementById("currency_eb");
+            cel.value = (parseInt(cel.value) || 0) - cost;
+            renderVehicles();
+            updateRoleInfo();
+          });
+        } else {
+          let cost = isFree ? 0 : (item.cost || 0);
+          if (!state.vehicles[vIdx].upgrades) state.vehicles[vIdx].upgrades = [];
+          state.vehicles[vIdx].upgrades.push({ id: item.id, name: item.name, cost: cost, isMoto: isFree, desc: item.desc });
+          if (!isFree) {
+            let cel = document.getElementById("currency_eb");
+            cel.value = (parseInt(cel.value) || 0) - cost;
+          }
+          renderVehicles();
+          updateRoleInfo();
         }
-        if (!state.vehicles[vIdx].upgrades) state.vehicles[vIdx].upgrades = [];
-        state.vehicles[vIdx].upgrades.push({ id: item.id, name: item.name, cost: cost, isMoto: isFree, desc: item.desc });
-        if (!isFree) {
-          let cel = document.getElementById("currency_eb");
-          cel.value = (parseInt(cel.value) || 0) - cost;
-        }
-        renderVehicles();
-        updateRoleInfo();
       });
     };
   }
@@ -1132,23 +1379,136 @@ function renderVehicles() {
 
 function renderGear() {
   let tbody = document.getElementById("gear_body");
+  if (!tbody) return;
   tbody.innerHTML = "";
   let frag = document.createDocumentFragment();
-  let consumableCats = ["Street Drug", "Pharmaceutical", "Additive", "Medical"];
   for (let i = 0; i < state.gear.length; i++) {
     let g = state.gear[i];
-    let tr = document.createElement("tr");
-    let isConsumable = consumableCats.indexOf(g.cat) !== -1 || g.ammo;
-    let actionBtns;
-    if (isConsumable) {
-      actionBtns = '<button class="btn-action gear-sell" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">Sell</button> <button class="btn-action gear-use" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">Use</button>';
-    } else {
-      actionBtns = '<button class="btn-action gear-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button>';
+    renderGearRow(frag, g, i);
+    if (g.slots) {
+      for (let s = 0; s < g.slots; s++) {
+        renderGearSlot(frag, g, i.toString(), s, 0);
+      }
     }
-    tr.innerHTML = '<td>' + g.name + '</td><td>' + (g.cat || "-") + '</td><td>' + g.cost + 'eb</td><td><input type="number" class="gear-qty" data-idx="' + i + '" value="' + (g.qty || 1) + '" min="1" style="width:45px"></td><td><small>' + (g.desc || "") + '</small></td><td>' + actionBtns + '</td>';
-    frag.appendChild(tr);
   }
   tbody.appendChild(frag);
+  attachGearEvents();
+}
+
+function renderGearRow(tbody, g, idx) {
+  let tr = document.createElement("tr");
+  let consumableCats = ["Street Drug", "Pharmaceutical", "Additive", "Medical"];
+  let isConsumable = consumableCats.indexOf(g.cat) !== -1 || g.ammo;
+  let actionBtns;
+  if (isConsumable) {
+    actionBtns = '<button class="btn-action gear-sell" data-idx="' + idx + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">Sell</button> <button class="btn-action gear-use" data-idx="' + idx + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">Use</button>';
+  } else {
+    actionBtns = '<button class="btn-action gear-remove" data-idx="' + idx + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button>';
+  }
+  let descVal = escapeHtml(g.desc || '');
+  tr.innerHTML = '<td>' + g.name + '</td><td>' + (g.cat || "-") + '</td><td>' + g.cost + 'eb</td><td><input type="number" class="gear-qty" data-idx="' + idx + '" value="' + (g.qty || 1) + '" min="1" style="width:70px;min-width:65px"></td><td><textarea class="item-desc-input" data-cat="gear" data-idx="' + idx + '" placeholder="Description" rows="1">' + descVal + '</textarea></td><td>' + actionBtns + '</td>';
+  tbody.appendChild(tr);
+}
+
+function renderGearSlot(tbody, parent, parentPath, slotIdx, depth) {
+  let option = (parent.options && parent.options[slotIdx]) || null;
+  let available = [];
+  let pType = parent.parentType;
+  if (!pType && parent.id) {
+    let itemData = getDataItemById(parent.id);
+    if (itemData && itemData.parentType) pType = itemData.parentType;
+  }
+  if (!pType && (parent.type || parent.cat || parent.name)) {
+    pType = mapTypeToParentType(parent.type || parent.cat || parent.name);
+  }
+  if (pType) {
+    available = getOptionsForParent(pType);
+  }
+  if (available.length === 0) {
+    available = (DATA._index.cyberwareByParent['cybereye'] || [])
+      .concat(DATA._index.cyberwareByParent['cyberaudio'] || [])
+      .concat(DATA._index.cyberwareByParent['cyberarm'] || [])
+      .concat(DATA._index.cyberwareByParent['cyberleg'] || [])
+      .concat(DATA._index.cyberwareByParent['neural_link'] || []);
+  }
+
+  let tr = document.createElement("tr");
+  tr.style.background = "rgba(128,128,128,0.05)";
+  tr.style.fontSize = "0.85rem";
+  if (!option) tr.className = "gear-slot-empty";
+  
+  let currentPath = parentPath + "_" + slotIdx;
+  
+  let selectHtml = '<select class="gear-slot-select" data-path="' + currentPath + '" style="width:50%;font-size:0.8rem;vertical-align:middle">';
+  selectHtml += '<option value="">-- Empty --</option>';
+  for (let oi = 0; oi < available.length; oi++) {
+    let opt = available[oi];
+    let sel = (option && option.id === opt.id) ? ' selected' : '';
+    selectHtml += '<option value="' + opt.id + '"' + sel + '>' + opt.name + ' (' + opt.cost + 'eb)' + '</option>';
+  }
+  
+  let customSel = (option && option.id && option.id.startsWith("custom_")) ? ' selected' : '';
+  if (option && option.id && option.id.startsWith("custom_")) {
+    selectHtml += '<option value="' + option.id + '"' + customSel + '>' + option.name + ' (' + option.cost + 'eb) [Custom]</option>';
+  }
+  selectHtml += '<option value="custom">-- Custom Option --</option>';
+  selectHtml += '</select>';
+
+  let optionDescHtml = '';
+  if (option) {
+    let optDescVal = escapeHtml(option.desc || '');
+    optionDescHtml = ' <textarea class="gear-option-desc-input" data-path="' + currentPath + '" placeholder="Option Description" rows="1" style="width:45%;">' + optDescVal + '</textarea>';
+  }
+  
+  let indent = 1.5 + (depth * 1.5);
+  tr.innerHTML = '<td style="padding-left:' + indent + 'rem;border-top:none" colspan="5">Slot ' + (slotIdx + 1) + ': ' + selectHtml + optionDescHtml + '</td><td style="border-top:none"></td>';
+  tbody.appendChild(tr);
+
+  if (option) {
+    let optBase = getDataItemById(option.id);
+    if (optBase && optBase.slots > 0) {
+      for (let s = 0; s < optBase.slots; s++) {
+        renderGearSlot(tbody, option, currentPath, s, depth + 1);
+      }
+    }
+  }
+}
+
+function getGearOptionByPath(path) {
+  let parts = path.split('_');
+  let rootIdx = parseInt(parts[0]);
+  let obj = state.gear[rootIdx];
+  for (let p = 1; p < parts.length; p++) {
+    let sIdx = parseInt(parts[p]);
+    if (obj && obj.options && obj.options[sIdx]) {
+      obj = obj.options[sIdx];
+    } else {
+      return null;
+    }
+  }
+  return obj;
+}
+
+function attachGearEvents() {
+  let gearDescs = document.querySelectorAll('.item-desc-input[data-cat="gear"]');
+  for (let i = 0; i < gearDescs.length; i++) {
+    autoResizeTextarea(gearDescs[i]);
+    gearDescs[i].oninput = function() {
+      let idx = parseInt(this.dataset.idx);
+      if (state.gear[idx]) state.gear[idx].desc = this.value;
+      autoResizeTextarea(this);
+    };
+  }
+  let gearOptionDescs = document.querySelectorAll('.gear-option-desc-input');
+  for (let i = 0; i < gearOptionDescs.length; i++) {
+    autoResizeTextarea(gearOptionDescs[i]);
+    gearOptionDescs[i].oninput = function() {
+      let path = this.dataset.path;
+      let opt = getGearOptionByPath(path);
+      if (opt) opt.desc = this.value;
+      autoResizeTextarea(this);
+    };
+  }
   let removes = document.querySelectorAll(".gear-remove");
   let qtys = document.querySelectorAll(".gear-qty");
   for (let i = 0; i < removes.length; i++) {
@@ -1156,18 +1516,19 @@ function renderGear() {
       let idx = parseInt(this.dataset.idx);
       let g = state.gear[idx];
       let totalCost = (g.cost || 0) * (g.qty || 1);
-      let sellInput = prompt("Sell price in eb (0 = discard):", totalCost);
-      if (sellInput === null) return;
-      let sellPrice = parseInt(sellInput) || 0;
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) + sellPrice;
-      if (g.ammo && state.ammo[g.id]) {
-        state.ammo[g.id].total -= g.ammo * (g.qty || 1);
-        if (state.ammo[g.id].total <= 0) delete state.ammo[g.id];
-      }
-      state.gear.splice(idx, 1);
-      renderGear();
-      renderAmmoTracker();
+      showSellItemModal(g.name, totalCost, function(sellPrice) {
+        if (sellPrice === null) return;
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) + sellPrice;
+        let key = g.ammoKey || g.id;
+        if (g.ammo && state.ammo[key]) {
+          state.ammo[key].total -= g.ammo * (g.qty || 1);
+          if (state.ammo[key].total <= 0) delete state.ammo[key];
+        }
+        state.gear.splice(idx, 1);
+        renderGear();
+        renderAmmoTracker();
+      });
     };
   }
   let gearSells = document.querySelectorAll(".gear-sell");
@@ -1176,18 +1537,19 @@ function renderGear() {
       let idx = parseInt(this.dataset.idx);
       let g = state.gear[idx];
       let totalCost = (g.cost || 0) * (g.qty || 1);
-      let sellInput = prompt("Sell price in eb:", totalCost);
-      if (sellInput === null) return;
-      let sellPrice = parseInt(sellInput) || 0;
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) + sellPrice;
-      if (g.ammo && state.ammo[g.id]) {
-        state.ammo[g.id].total -= g.ammo * (g.qty || 1);
-        if (state.ammo[g.id].total <= 0) delete state.ammo[g.id];
-      }
-      state.gear.splice(idx, 1);
-      renderGear();
-      renderAmmoTracker();
+      showSellItemModal(g.name, totalCost, function(sellPrice) {
+        if (sellPrice === null) return;
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) + sellPrice;
+        let key = g.ammoKey || g.id;
+        if (g.ammo && state.ammo[key]) {
+          state.ammo[key].total -= g.ammo * (g.qty || 1);
+          if (state.ammo[key].total <= 0) delete state.ammo[key];
+        }
+        state.gear.splice(idx, 1);
+        renderGear();
+        renderAmmoTracker();
+      });
     };
   }
   let gearUses = document.querySelectorAll(".gear-use");
@@ -1195,9 +1557,10 @@ function renderGear() {
     gearUses[i].onclick = function() {
       let idx = parseInt(this.dataset.idx);
       let g = state.gear[idx];
-      if (g.ammo && state.ammo[g.id]) {
-        state.ammo[g.id].total -= g.ammo * (g.qty || 1);
-        if (state.ammo[g.id].total <= 0) delete state.ammo[g.id];
+      let key = g.ammoKey || g.id;
+      if (g.ammo && state.ammo[key]) {
+        state.ammo[key].total -= g.ammo * (g.qty || 1);
+        if (state.ammo[key].total <= 0) delete state.ammo[key];
       }
       state.gear.splice(idx, 1);
       renderGear();
@@ -1206,18 +1569,113 @@ function renderGear() {
   }
   for (let i = 0; i < qtys.length; i++) {
     qtys[i].onchange = function() {
+      let inputEl = this;
       let idx = parseInt(this.dataset.idx);
       let g = state.gear[idx];
       let oldQty = g.qty || 1;
       let newQty = parseInt(this.value) || 1;
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) - (newQty - oldQty) * (g.cost || 0);
-      if (g.ammo && state.ammo[g.id]) {
-        state.ammo[g.id].total += g.ammo * (newQty - oldQty);
-        if (state.ammo[g.id].total <= 0) delete state.ammo[g.id];
+      let diff = newQty - oldQty;
+
+      if (diff === 0) return;
+
+      if (diff > 0) {
+        showQtyAddModal(g.name, diff, g.cost || 0, function(actualCost) {
+          if (actualCost === null) {
+            inputEl.value = oldQty;
+            return;
+          }
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) - actualCost;
+          g.qty = newQty;
+          let key = g.ammoKey || g.id;
+          if (g.ammo && state.ammo[key]) {
+            state.ammo[key].total += g.ammo * diff;
+          }
+          renderAmmoTracker();
+        });
+      } else {
+        g.qty = newQty;
+        let key = g.ammoKey || g.id;
+        if (g.ammo && state.ammo[key]) {
+          state.ammo[key].total += g.ammo * diff;
+          if (state.ammo[key].total <= 0) delete state.ammo[key];
+        }
+        renderAmmoTracker();
       }
-      g.qty = newQty;
-      renderAmmoTracker();
+    };
+  }
+
+  let gearSelects = document.querySelectorAll(".gear-slot-select");
+  for (let i = 0; i < gearSelects.length; i++) {
+    gearSelects[i].onclick = function(e) { e.stopPropagation(); };
+    gearSelects[i].onchange = function() {
+      let path = this.dataset.path.split('_');
+      let rootIdx = parseInt(path[0]);
+      let optionId = this.value;
+      
+      let parentObj = state.gear[rootIdx];
+      if (!parentObj) return;
+      
+      let currentObj = parentObj;
+      for (let p = 1; p < path.length - 1; p++) {
+        let sIdx = parseInt(path[p]);
+        if (!currentObj.options) currentObj.options = [];
+        if (!currentObj.options[sIdx]) currentObj.options[sIdx] = {};
+        currentObj = currentObj.options[sIdx];
+      }
+      
+      let slotIdx = parseInt(path[path.length - 1]);
+      if (!currentObj.options) currentObj.options = [];
+      
+      let oldOption = currentObj.options[slotIdx] || null;
+      let oldCost = oldOption ? (oldOption.cost || 0) : 0;
+      
+      if (optionId === "custom") {
+        showCustomSlotOptionModal(false, function(customOpt) {
+          if (!customOpt) {
+            gearSelects[i].value = oldOption ? oldOption.id : '';
+            return;
+          }
+          currentObj.options[slotIdx] = customOpt;
+          let diff = (customOpt.cost || 0) - oldCost;
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) - diff;
+          renderGear();
+        });
+        return;
+      } else if (optionId && !optionId.startsWith("custom_")) {
+        let item = getDataItemById(optionId);
+        if (item) {
+          showSlotOptionPurchaseModal(item, false, function(res) {
+            if (!res) { gearSelects[i].value = oldOption ? oldOption.id : ''; return; }
+            let actualCost = res.cost;
+            currentObj.options[slotIdx] = { id: item.id, name: item.name, cost: actualCost, desc: item.desc || '', parentType: item.parentType, slots: item.slots };
+            let diff = actualCost - oldCost;
+            let el = document.getElementById("currency_eb");
+            el.value = (parseInt(el.value) || 0) - diff;
+            renderGear();
+          });
+          return;
+        }
+      } else if (optionId && optionId.startsWith("custom_")) {
+      } else {
+        showSellItemModal(oldOption ? oldOption.name : "Option", oldCost, function(sellPrice) {
+          if (sellPrice === null) { gearSelects[i].value = oldOption ? oldOption.id : ''; return; }
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) + sellPrice;
+          currentObj.options[slotIdx] = null;
+          renderGear();
+        });
+        return;
+      }
+      
+      let newOption = currentObj.options[slotIdx] || null;
+      let newCost = newOption ? (newOption.cost || 0) : 0;
+      let diff = newCost - oldCost;
+      let el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) - diff;
+      
+      renderGear();
     };
   }
 }
@@ -1236,9 +1694,10 @@ function renderAmmoTracker() {
     tr.innerHTML = '<td>' + entry.name + '</td><td>' + entry.perBundle + '</td><td><strong>' + entry.total + '</strong></td><td><input type="number" class="ammo-use-qty" data-ammo="' + id + '" value="1" min="1" max="' + entry.total + '" style="width:55px"> <button class="btn-action ammo-use-btn" data-ammo="' + id + '" style="font-size:0.75rem;padding:0.2rem 0.5rem">Use</button></td>';
     frag.appendChild(tr);
   }
-  tbody.appendChild(frag);
-  if (tbody.children.length === 0) {
+  if (frag.children.length === 0) {
     tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;opacity:0.5">No ammunition purchased. Add ammo from the Gear tab.</td></tr>';
+  } else {
+    tbody.appendChild(frag);
   }
   attachAmmoEvents();
 }
@@ -1257,7 +1716,7 @@ function attachAmmoEvents() {
       if (state.ammo[ammoId].total <= 0) {
         delete state.ammo[ammoId];
         for (let j = 0; j < state.gear.length; j++) {
-          if (state.gear[j].id === ammoId) {
+          if (state.gear[j].ammoKey === ammoId || state.gear[j].id === ammoId) {
             state.gear.splice(j, 1);
             break;
           }
@@ -1480,32 +1939,52 @@ function randomRoleLifepath() {
 function initAddButtons() {
   document.getElementById("add_weapon_btn").onclick = function() {
     showItemSelector("weapon", DATA.weapons, function(item) {
-      let costInput = prompt("Cost in eb (0 = looted):", item.cost || 0);
-      if (costInput === null) return;
-      let actualCost = parseInt(costInput) || 0;
-      state.weapons.push({ id: item.id, name: item.name, dmg: item.dmg, rof: item.rof, mag: item.mag, type: item.type, rank: 0, cost: actualCost });
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) - actualCost;
-      renderWeapons();
+      if (item.id && item.id.startsWith("custom_")) {
+        let actualCost = item.cost || 0;
+        state.weapons.push({ id: item.id, name: item.name, dmg: item.dmg, rof: item.rof, mag: item.mag, type: item.type, rank: 0, cost: actualCost, desc: item.desc || '' });
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) - actualCost;
+        renderWeapons();
+      } else {
+        showItemPurchaseModal(item, "Weapon", {}, function(res) {
+          if (!res) return;
+          let actualCost = res.cost;
+          state.weapons.push({ id: item.id, name: item.name, dmg: item.dmg, rof: item.rof, mag: item.mag, type: item.type, rank: 0, cost: actualCost, desc: item.desc || '' });
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) - actualCost;
+          renderWeapons();
+        });
+      }
     }, "type");
   };
   document.getElementById("add_armor_btn").onclick = function() {
     showItemSelector("armor", DATA.armor, function(item) {
-      let costInput = prompt("Cost in eb (0 = looted):", item.cost || 0);
-      if (costInput === null) return;
-      let actualCost = parseInt(costInput) || 0;
-      state.armor.push({ id: item.id, name: item.name, sp: item.sp, slots: item.slots, enc: item.enc, cost: actualCost });
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) - actualCost;
-      renderArmor();
-      renderHumanity();
+      if (item.id && item.id.startsWith("custom_")) {
+        let actualCost = item.cost || 0;
+        state.armor.push({ id: item.id, name: item.name, sp: item.sp, slots: item.slots, enc: item.enc, cost: actualCost, desc: item.desc || '' });
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) - actualCost;
+        renderArmor();
+        renderHumanity();
+      } else {
+        showItemPurchaseModal(item, "Armor", {}, function(res) {
+          if (!res) return;
+          let actualCost = res.cost;
+          state.armor.push({ id: item.id, name: item.name, sp: item.sp, slots: item.slots, enc: item.enc, cost: actualCost, desc: item.desc || '' });
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) - actualCost;
+          renderArmor();
+          renderHumanity();
+        });
+      }
     });
   };
   document.getElementById("add_cyberware_btn").onclick = function() {
     let standalone = DATA.cyberware.filter(function(c) { return !c.parentType || c.slots; });
     showItemSelector("cyberware", standalone, function(item) {
       let selectedLoc = null;
-      let isPairedPurchase = (item.id === "romanova_cyberlegs" || item.id === "skydrivers");
+      let needLocation = false;
+      let defaultLoc = "Left";
       let bodyPart = item.bodyPart;
       
       if (bodyPart) {
@@ -1529,73 +2008,66 @@ function initAddButtons() {
           }
         }
         
-        if (item.takesBoth || isPairedPurchase) {
+        if (item.takesBoth) {
           if (hasLeft || hasRight) {
             alert("This item requires both " + bodyPart + "s, but you already have one or more installed. Remove them first.");
             return;
           }
-          if (item.takesBoth && !isPairedPurchase) {
-            selectedLoc = "Both";
-          }
+          selectedLoc = "Both";
         } else if (max === 2) {
           if (hasLeft && hasRight) {
             alert("You already have both " + bodyPart + "s installed. Remove one first.");
             return;
           } else if (!hasLeft && !hasRight) {
-            let locInput = prompt("Select location for this " + bodyPart + ":\n1: Left\n2: Right", "1");
-            if (locInput === null) return;
-            selectedLoc = (locInput.trim() === "2") ? "Right" : "Left";
+            needLocation = true;
+            defaultLoc = "Left";
           } else if (!hasLeft) {
             selectedLoc = "Left";
-            alert("Auto-assigned to Left " + bodyPart + " (Right is already taken).");
           } else if (!hasRight) {
             selectedLoc = "Right";
-            alert("Auto-assigned to Right " + bodyPart + " (Left is already taken).");
           }
         }
       }
-      let costInput = prompt("Cost in eb (0 = looted):", item.cost || 0);
-      if (costInput === null) return;
-      let actualCost = parseInt(costInput) || 0;
-      let actualHc = item.hc || 0;
-      if (actualHc > 0) {
-        let hcInput = prompt("Humanity Cost for " + item.name + "\n(Enter value, or 'r' to roll randomly)", actualHc);
-        if (hcInput !== null) {
-          if (hcInput.toLowerCase().trim() === 'r') {
-            actualHc = rollCyberwareHC(item.hc);
-            alert("Rolled Humanity Cost: " + actualHc);
-          } else {
-            actualHc = parseInt(hcInput) || 0;
+
+      let processCyberwareAdd = function(actualCost, actualHc, loc) {
+        if (loc) selectedLoc = loc;
+        let entry = { id: item.id, name: item.name, type: item.type, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null };
+        if (selectedLoc) entry.location = selectedLoc;
+        if (item.slots) { entry.slots = item.slots; entry.options = []; }
+        
+        let pairedPrefill = { "romanova_cyberlegs": "talon_feet", "skydrivers": "jump_boosters" };
+        let prefillId = pairedPrefill[item.id];
+        if (prefillId) {
+          let prefillData = getDataItemById(prefillId);
+          let leftLeg = { id: item.id, name: item.name, location: "Left", type: item.type, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
+          if (prefillData) {
+            leftLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
           }
+          state.cyberware.push(leftLeg);
+          let rightLeg = { id: item.id, name: item.name, location: "Right", type: item.type, hc: actualHc, cost: 0, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
+          if (prefillData) {
+            rightLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
+          }
+          state.cyberware.push(rightLeg);
+        } else {
+          state.cyberware.push(entry);
         }
-      }
-      let entry = { id: item.id, name: item.name, type: item.type, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null };
-      if (selectedLoc) entry.location = selectedLoc;
-      if (item.slots) { entry.slots = item.slots; entry.options = []; }
-      
-      let pairedPrefill = { "romanova_cyberlegs": "talon_feet", "skydrivers": "jump_boosters" };
-      let prefillId = pairedPrefill[item.id];
-      if (prefillId) {
-        let prefillData = getDataItemById(prefillId);
-        let leftLeg = { id: item.id, name: item.name, location: "Left", type: item.type, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
-        if (prefillData) {
-          leftLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
-        }
-        state.cyberware.push(leftLeg);
-        let rightLeg = { id: item.id, name: item.name, location: "Right", type: item.type, hc: actualHc, cost: 0, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
-        if (prefillData) {
-          rightLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
-        }
-        state.cyberware.push(rightLeg);
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) - actualCost;
+        renderCyberware();
+        renderHumanity();
+        renderStats();
+        renderSkills();
+      };
+
+      if (item.id && item.id.startsWith("custom_")) {
+        processCyberwareAdd(item.cost || 0, item.hc || 0, null);
       } else {
-        state.cyberware.push(entry);
+        showItemPurchaseModal(item, "Cyberware", { needLocation: needLocation, defaultLoc: defaultLoc, bodyPart: bodyPart }, function(res) {
+          if (!res) return;
+          processCyberwareAdd(res.cost, res.hc !== undefined ? res.hc : (item.hc || 0), res.location);
+        });
       }
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) - actualCost;
-      renderCyberware();
-      renderHumanity();
-      renderStats();
-      renderSkills();
     }, "type");
   };
   
@@ -1607,38 +2079,570 @@ function initAddButtons() {
       if (motoRank > 0 && usedMoto < motoRank) {
         isFree = await customConfirm(`Is this vehicle free (from Nomad Moto ability)?\nYou have used ${usedMoto}/${motoRank} Moto choices.`);
       }
-      let cost = 0;
-      if (!isFree) {
-        let costInput = prompt("Cost in eb (0 = looted):", item.cost || 0);
-        if (costInput === null) return;
-        cost = parseInt(costInput) || 0;
+      if (isFree || (item.id && item.id.startsWith("custom_"))) {
+        let cost = isFree ? 0 : (item.cost || 0);
+        state.vehicles.push({ id: item.id, name: item.name, sdp: item.sdp, seats: item.seats, cost: cost, isMoto: isFree, desc: item.desc, upgrades: [] });
+        if (!isFree) {
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) - cost;
+        }
+        renderVehicles();
+        updateRoleInfo();
+      } else {
+        showItemPurchaseModal(item, "Vehicle", {}, function(res) {
+          if (!res) return;
+          let cost = res.cost;
+          state.vehicles.push({ id: item.id, name: item.name, sdp: item.sdp, seats: item.seats, cost: cost, isMoto: false, desc: item.desc, upgrades: [] });
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) - cost;
+          renderVehicles();
+          updateRoleInfo();
+        });
       }
-      state.vehicles.push({ id: item.id, name: item.name, sdp: item.sdp, seats: item.seats, cost: cost, isMoto: isFree, desc: item.desc, upgrades: [] });
-      if (!isFree) {
-        let el = document.getElementById("currency_eb");
-        el.value = (parseInt(el.value) || 0) - cost;
-      }
-      renderVehicles();
-      updateRoleInfo();
     }, "cat");
   };
 
   document.getElementById("add_gear_btn").onclick = function() {
-    let allGear = DATA.gear.concat(DATA.fashion.map(function(f) { return { id: f.id, name: f.name, cost: f.cost, cat: "Fashion" }; }));
+    let allGear = DATA.gear.concat(DATA.fashion.map(function(f) { return { id: f.id, name: f.name, cost: f.cost, cat: "Fashion", slots: f.slots, parentType: f.parentType, desc: f.desc }; }));
     showItemSelector("gear", allGear, function(item) {
-      let costInput = prompt("Cost in eb (0 = looted):", item.cost || 0);
-      if (costInput === null) return;
-      let actualCost = parseInt(costInput) || 0;
-      state.gear.push({ id: item.id, name: item.name, cost: actualCost, cat: item.cat || "Gear", desc: item.desc || "", qty: 1, ammo: item.ammo });
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) - actualCost;
-      if (item.ammo) {
-        state.ammo[item.id] = state.ammo[item.id] || { id: item.id, name: item.name, perBundle: item.ammo, total: 0 };
-        state.ammo[item.id].total += item.ammo;
+      if (item.cat === "Ammunition") {
+        showAmmoWeaponTypeModal(item, function(res) {
+          if (!res) return;
+          let gunType = res.gunType;
+          let actualCost = res.cost;
+          let name = item.name + " (" + gunType + ")";
+          let ammoKey = item.id + "_" + gunType.toLowerCase().replace(/[^a-z0-9]/g, '_');
+
+          let gearEntry = { id: item.id, ammoKey: ammoKey, name: name, cost: actualCost, cat: item.cat || "Gear", desc: item.desc || "", qty: 1, ammo: item.ammo, slots: item.slots, parentType: item.parentType };
+          if (item.slots) { gearEntry.options = []; }
+          state.gear.push(gearEntry);
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) - actualCost;
+
+          if (item.ammo) {
+            let perBundle = item.ammo || 10;
+            state.ammo[ammoKey] = state.ammo[ammoKey] || { id: ammoKey, gearId: item.id, name: name, perBundle: perBundle, total: 0 };
+            state.ammo[ammoKey].total += perBundle;
+          }
+          renderGear();
+          renderAmmoTracker();
+        });
+      } else if (item.id && item.id.startsWith("custom_")) {
+        let actualCost = item.cost || 0;
+        let gearEntry = { id: item.id, ammoKey: item.id, name: item.name, cost: actualCost, cat: item.cat || "Gear", desc: item.desc || "", qty: 1, ammo: item.ammo, slots: item.slots, parentType: item.parentType };
+        if (item.slots) { gearEntry.options = []; }
+        state.gear.push(gearEntry);
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) - actualCost;
+        renderGear();
+      } else {
+        showItemPurchaseModal(item, item.cat || "Gear", {}, function(res) {
+          if (!res) return;
+          let actualCost = res.cost;
+          let gearEntry = { id: item.id, ammoKey: item.id, name: item.name, cost: actualCost, cat: item.cat || "Gear", desc: item.desc || "", qty: 1, ammo: item.ammo, slots: item.slots, parentType: item.parentType };
+          if (item.slots) { gearEntry.options = []; }
+          state.gear.push(gearEntry);
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) - actualCost;
+
+          if (item.ammo) {
+            let perBundle = item.ammo || (item.cat === "Grenades" ? 1 : 10);
+            state.ammo[item.id] = state.ammo[item.id] || { id: item.id, gearId: item.id, name: item.name, perBundle: perBundle, total: 0 };
+            state.ammo[item.id].total += perBundle;
+          }
+          renderGear();
+          renderAmmoTracker();
+        });
       }
-      renderGear();
-      renderAmmoTracker();
     }, "cat");
+  };
+}
+
+function showQtyAddModal(itemName, addedQty, unitCost, callback) {
+  let defaultTotalCost = (unitCost || 0) * addedQty;
+  let overlay = document.createElement("div");
+  overlay.className = "modal-overlay active";
+  overlay.style.display = "flex";
+  overlay.style.zIndex = "10000";
+
+  let box = document.createElement("div");
+  box.className = "modal-box";
+  box.style.maxWidth = "420px";
+  box.style.width = "90%";
+  box.style.padding = "1.5rem";
+
+  let html = `<h3 style="margin-top:0;margin-bottom:0.75rem;color:var(--accent)">\u2795 Add +${addedQty} ${escapeHtml(itemName)}</h3>`;
+  html += `<p style="font-size:0.85rem;margin-bottom:1rem;color:var(--muted)">Enter total EB cost paid for +${addedQty} items, or select Looted (0eb):</p>`;
+
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Cost in eb (0 = looted)</label>`;
+  html += `<input type="number" id="qty_modal_cost" value="${defaultTotalCost}" min="0" style="width:100%;padding:0.45rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
+
+  html += `<div style="display:flex;justify-content:space-between;gap:0.5rem;margin-top:1.25rem">
+    <button id="qty_modal_cancel" class="btn-action" style="padding:0.45rem 0.8rem">Cancel</button>
+    <div style="display:flex;gap:0.5rem">
+      <button id="qty_modal_looted" class="btn-action" style="padding:0.45rem 0.8rem;background:var(--card-bg)">Looted (0eb)</button>
+      <button id="qty_modal_confirm" class="btn-action" style="background:var(--accent);color:#fff;font-weight:bold;padding:0.45rem 0.8rem">Confirm Cost</button>
+    </div>
+  </div>`;
+
+  box.innerHTML = html;
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  function closeModal() {
+    if (document.body.contains(overlay)) {
+      document.body.removeChild(overlay);
+    }
+  }
+
+  document.getElementById("qty_modal_cancel").onclick = function() {
+    closeModal();
+    callback(null);
+  };
+
+  document.getElementById("qty_modal_looted").onclick = function() {
+    closeModal();
+    callback(0);
+  };
+
+  document.getElementById("qty_modal_confirm").onclick = function() {
+    let cost = parseInt(document.getElementById("qty_modal_cost").value) || 0;
+    closeModal();
+    callback(cost);
+  };
+}
+
+function showSellItemModal(itemName, defaultPrice, callback) {
+  defaultPrice = defaultPrice || 0;
+  let overlay = document.createElement("div");
+  overlay.className = "modal-overlay active";
+  overlay.style.display = "flex";
+  overlay.style.zIndex = "10000";
+
+  let box = document.createElement("div");
+  box.className = "modal-box";
+  box.style.maxWidth = "420px";
+  box.style.width = "90%";
+  box.style.padding = "1.5rem";
+
+  let html = `<h3 style="margin-top:0;margin-bottom:0.75rem;color:var(--accent)">\uD83D\uDDD1\uFE0F Remove / Sell ${escapeHtml(itemName)}</h3>`;
+  html += `<p style="font-size:0.85rem;margin-bottom:1rem;color:var(--muted)">Enter sale value in Eurodollars to refund, or select Discard for 0eb:</p>`;
+
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Sale / Refund Price (eb)</label>`;
+  html += `<input type="number" id="sell_modal_price" value="${defaultPrice}" min="0" style="width:100%;padding:0.45rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
+
+  html += `<div style="display:flex;justify-content:space-between;gap:0.5rem;margin-top:1.25rem">
+    <button id="sell_modal_cancel" class="btn-action" style="padding:0.45rem 0.8rem">Cancel</button>
+    <div style="display:flex;gap:0.5rem">
+      <button id="sell_modal_discard" class="btn-action" style="padding:0.45rem 0.8rem;background:var(--card-bg)">Discard (0eb)</button>
+      <button id="sell_modal_confirm" class="btn-action" style="background:var(--accent);color:#fff;font-weight:bold;padding:0.45rem 0.8rem">Sell for EB</button>
+    </div>
+  </div>`;
+
+  box.innerHTML = html;
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  function closeModal() {
+    if (document.body.contains(overlay)) {
+      document.body.removeChild(overlay);
+    }
+  }
+
+  document.getElementById("sell_modal_cancel").onclick = function() {
+    closeModal();
+    callback(null);
+  };
+
+  document.getElementById("sell_modal_discard").onclick = function() {
+    closeModal();
+    callback(0);
+  };
+
+  document.getElementById("sell_modal_confirm").onclick = function() {
+    let price = parseInt(document.getElementById("sell_modal_price").value) || 0;
+    closeModal();
+    callback(price);
+  };
+}
+
+function showItemPurchaseModal(item, category, opts, callback) {
+  opts = opts || {};
+  let overlay = document.createElement("div");
+  overlay.className = "modal-overlay active";
+  overlay.style.display = "flex";
+  overlay.style.zIndex = "10000";
+
+  let box = document.createElement("div");
+  box.className = "modal-box";
+  box.style.maxWidth = "480px";
+  box.style.width = "90%";
+  box.style.padding = "1.5rem";
+
+  let html = `<h3 style="margin-top:0;margin-bottom:0.75rem;color:var(--accent)">\u2795 Add ${escapeHtml(item.name)}</h3>`;
+  html += `<div style="display:flex;flex-direction:column;gap:0.85rem;">`;
+
+  if (item.desc || item.dmg || item.sp) {
+    let details = [];
+    if (item.dmg) details.push(`Dmg: ${item.dmg}`);
+    if (item.type) details.push(`Type: ${item.type}`);
+    if (item.sp) details.push(`SP: ${item.sp}`);
+    let detailStr = details.length ? ` (${details.join(', ')})` : '';
+    html += `<div style="font-size:0.85rem;color:var(--muted)">${escapeHtml((item.desc || '') + detailStr)}</div>`;
+  }
+
+  if (opts.needLocation) {
+    let locBody = opts.bodyPart || "Location";
+    html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Installed Location *</label>`;
+    html += `<select id="item_pur_location" style="width:100%;padding:0.45rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px">
+      <option value="Left"${opts.defaultLoc === "Left" ? " selected" : ""}>Left ${escapeHtml(locBody)}</option>
+      <option value="Right"${opts.defaultLoc === "Right" ? " selected" : ""}>Right ${escapeHtml(locBody)}</option>
+    </select></div>`;
+  }
+
+  let defaultCost = (item.cost !== undefined) ? item.cost : 0;
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Cost in eb (0 = looted)</label>`;
+  html += `<input type="number" id="item_pur_cost" value="${defaultCost}" min="0" style="width:100%;padding:0.45rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
+
+  let hasHc = (item.hc && item.hc > 0);
+  if (hasHc) {
+    html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Humanity Cost (HC)</label>`;
+    html += `<div style="display:flex;gap:0.5rem">`;
+    html += `<input type="number" id="item_pur_hc" value="${item.hc}" min="0" style="flex:1;padding:0.45rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px">`;
+    html += `<button type="button" id="item_pur_roll_hc" class="btn-action" style="padding:0.45rem 0.8rem;white-space:nowrap;background:var(--card-bg)">\uD83C\uDFB2 Roll HC</button>`;
+    html += `</div></div>`;
+  }
+
+  html += `</div>`;
+
+  html += `<div style="display:flex;justify-content:flex-end;gap:0.5rem;margin-top:1.25rem">
+    <button id="item_pur_cancel" class="btn-action" style="padding:0.45rem 0.9rem">Cancel</button>
+    <button id="item_pur_confirm" class="btn-action" style="background:var(--accent);color:#fff;font-weight:bold;padding:0.45rem 0.9rem">Add to Character</button>
+  </div>`;
+
+  box.innerHTML = html;
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  if (hasHc) {
+    document.getElementById("item_pur_roll_hc").onclick = function() {
+      let rolled = rollCyberwareHC(item.hc);
+      document.getElementById("item_pur_hc").value = rolled;
+    };
+  }
+
+  function closeModal() {
+    if (document.body.contains(overlay)) {
+      document.body.removeChild(overlay);
+    }
+  }
+
+  document.getElementById("item_pur_cancel").onclick = function() {
+    closeModal();
+    callback(null);
+  };
+
+  document.getElementById("item_pur_confirm").onclick = function() {
+    let cost = parseInt(document.getElementById("item_pur_cost").value) || 0;
+    let res = { cost: cost };
+    if (opts.needLocation) {
+      res.location = document.getElementById("item_pur_location").value;
+    }
+    if (hasHc) {
+      res.hc = parseInt(document.getElementById("item_pur_hc").value) || 0;
+    }
+    closeModal();
+    callback(res);
+  };
+}
+
+function showSlotOptionPurchaseModal(item, isCyberware, callback) {
+  let overlay = document.createElement("div");
+  overlay.className = "modal-overlay active";
+  overlay.style.display = "flex";
+  overlay.style.zIndex = "10000";
+
+  let box = document.createElement("div");
+  box.className = "modal-box";
+  box.style.maxWidth = "450px";
+  box.style.width = "90%";
+  box.style.padding = "1.5rem";
+
+  let html = `<h3 style="margin-top:0;margin-bottom:0.75rem;color:var(--accent)">\u2795 Install ${escapeHtml(item.name)}</h3>`;
+  html += `<div style="display:flex;flex-direction:column;gap:0.85rem;">`;
+
+  if (item.desc) {
+    html += `<div style="font-size:0.85rem;color:var(--muted)">${escapeHtml(item.desc)}</div>`;
+  }
+
+  let defaultCost = (item.cost !== undefined) ? item.cost : 0;
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Cost in eb (0 = looted)</label>`;
+  html += `<input type="number" id="slot_opt_cost" value="${defaultCost}" min="0" style="width:100%;padding:0.45rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
+
+  let hasHc = (isCyberware && item.hc && item.hc > 0);
+  if (hasHc) {
+    html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Humanity Cost (HC)</label>`;
+    html += `<div style="display:flex;gap:0.5rem">`;
+    html += `<input type="number" id="slot_opt_hc" value="${item.hc}" min="0" style="flex:1;padding:0.45rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px">`;
+    html += `<button type="button" id="slot_opt_roll_hc" class="btn-action" style="padding:0.45rem 0.8rem;white-space:nowrap;background:var(--card-bg)">\uD83C\uDFB2 Roll HC</button>`;
+    html += `</div></div>`;
+  }
+
+  html += `</div>`;
+
+  html += `<div style="display:flex;justify-content:flex-end;gap:0.5rem;margin-top:1.25rem">
+    <button id="slot_opt_cancel" class="btn-action" style="padding:0.45rem 0.9rem">Cancel</button>
+    <button id="slot_opt_confirm" class="btn-action" style="background:var(--accent);color:#fff;font-weight:bold;padding:0.45rem 0.9rem">Install Option</button>
+  </div>`;
+
+  box.innerHTML = html;
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  if (hasHc) {
+    document.getElementById("slot_opt_roll_hc").onclick = function() {
+      let rolled = rollCyberwareHC(item.hc);
+      document.getElementById("slot_opt_hc").value = rolled;
+    };
+  }
+
+  function closeModal() {
+    if (document.body.contains(overlay)) {
+      document.body.removeChild(overlay);
+    }
+  }
+
+  document.getElementById("slot_opt_cancel").onclick = function() {
+    closeModal();
+    callback(null);
+  };
+
+  document.getElementById("slot_opt_confirm").onclick = function() {
+    let cost = parseInt(document.getElementById("slot_opt_cost").value) || 0;
+    let res = { cost: cost };
+    if (hasHc) {
+      res.hc = parseInt(document.getElementById("slot_opt_hc").value) || 0;
+    }
+    closeModal();
+    callback(res);
+  };
+}
+
+function showAmmoWeaponTypeModal(item, callback) {
+  let overlay = document.createElement("div");
+  overlay.className = "modal-overlay active";
+  overlay.style.display = "flex";
+  overlay.style.zIndex = "10000";
+
+  let box = document.createElement("div");
+  box.className = "modal-box";
+  box.style.maxWidth = "450px";
+  box.style.width = "90%";
+  box.style.padding = "1.5rem";
+
+  let html = `<h3 style="margin-top:0;margin-bottom:0.75rem;color:var(--accent)">\uD83D\uDD2B Configure ${escapeHtml(item.name)}</h3>`;
+  html += `<div style="display:flex;flex-direction:column;gap:0.75rem;">`;
+
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Weapon Type / Category *</label>`;
+  html += `<select id="ammo_weapon_type_select" style="width:100%;padding:0.5rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px;font-size:0.95rem;">`;
+
+  let equippedWeapons = (state.weapons || []).map(function(w) { return w.name || w.type; }).filter(Boolean);
+  let uniqueEquipped = [];
+  for (let i = 0; i < equippedWeapons.length; i++) {
+    if (uniqueEquipped.indexOf(equippedWeapons[i]) === -1) uniqueEquipped.push(equippedWeapons[i]);
+  }
+
+  if (uniqueEquipped.length > 0) {
+    html += `<optgroup label="Your Equipped Weapons">`;
+    for (let i = 0; i < uniqueEquipped.length; i++) {
+      html += `<option value="${escapeHtml(uniqueEquipped[i])}">${escapeHtml(uniqueEquipped[i])}</option>`;
+    }
+    html += `</optgroup>`;
+  }
+
+  let stdTypes = [
+    "Medium Pistol",
+    "Heavy Pistol",
+    "Very Heavy Pistol",
+    "SMG",
+    "Heavy SMG",
+    "Shotgun (Slugs)",
+    "Shotgun (Shells)",
+    "Assault Rifle",
+    "Sniper Rifle",
+    "Bow / Crossbow",
+    "Grenade Launcher",
+    "Rocket Launcher"
+  ];
+
+  html += `<optgroup label="Standard Weapon Categories">`;
+  for (let i = 0; i < stdTypes.length; i++) {
+    html += `<option value="${escapeHtml(stdTypes[i])}">${escapeHtml(stdTypes[i])}</option>`;
+  }
+  html += `</optgroup>`;
+
+  html += `<option value="Other">Other / Custom Weapon...</option>`;
+  html += `</select></div>`;
+
+  html += `<div id="ammo_custom_weapon_div" style="display:none;">
+    <label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Specify Custom Weapon Type:</label>
+    <input type="text" id="ammo_custom_weapon_input" placeholder="e.g. Railgun, Flamethrower..." style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px">
+  </div>`;
+
+  let defaultCost = item.cost || 0;
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Cost in eb (0 = looted)</label><input type="number" id="ammo_cost_input" value="${defaultCost}" min="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
+
+  html += `</div>`;
+
+  html += `<div style="display:flex;justify-content:flex-end;gap:0.5rem;margin-top:1.25rem">
+    <button id="ammo_wt_cancel" class="btn-action" style="padding:0.4rem 0.8rem">Cancel</button>
+    <button id="ammo_wt_save" class="btn-action" style="background:var(--accent);color:#fff;font-weight:bold;padding:0.4rem 0.8rem">Confirm Ammunition</button>
+  </div>`;
+
+  box.innerHTML = html;
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  let selectEl = document.getElementById("ammo_weapon_type_select");
+  let customDiv = document.getElementById("ammo_custom_weapon_div");
+  let customInput = document.getElementById("ammo_custom_weapon_input");
+
+  selectEl.onchange = function() {
+    if (this.value === "Other") {
+      customDiv.style.display = "block";
+      customInput.focus();
+    } else {
+      customDiv.style.display = "none";
+    }
+  };
+
+  function closeModal() {
+    if (document.body.contains(overlay)) {
+      document.body.removeChild(overlay);
+    }
+  }
+
+  document.getElementById("ammo_wt_cancel").onclick = function() {
+    closeModal();
+    callback(null);
+  };
+
+  document.getElementById("ammo_wt_save").onclick = function() {
+    let chosenType = selectEl.value;
+    if (chosenType === "Other") {
+      chosenType = customInput.value.trim() || "General";
+    }
+    let cost = parseInt(document.getElementById("ammo_cost_input").value) || 0;
+    closeModal();
+    callback({ gunType: chosenType, cost: cost });
+  };
+}
+
+function showCustomItemModal(type, callback) {
+  let overlay = document.createElement("div");
+  overlay.className = "modal-overlay active";
+  overlay.style.display = "flex";
+  overlay.style.zIndex = "10000";
+
+  let box = document.createElement("div");
+  box.className = "modal-box";
+  box.style.maxWidth = "550px";
+  box.style.width = "90%";
+  box.style.padding = "1.5rem";
+
+  let title = type.charAt(0).toUpperCase() + type.slice(1);
+  if (type === "vehicleUpgrade") title = "Vehicle Upgrade";
+  let html = `<h2 style="margin-top:0;margin-bottom:1rem;color:var(--accent)">\u270E Create Custom ${title}</h2>`;
+  html += `<div style="display:flex;flex-direction:column;gap:0.75rem;">`;
+
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Name *</label><input type="text" id="custom_modal_name" placeholder="Item Name" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
+
+  if (type === "weapon") {
+    html += `<div style="display:flex;gap:0.5rem"><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Damage Dice</label><input type="text" id="custom_modal_dmg" value="1d6" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Weapon Skill / Type</label><select id="custom_modal_type" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"><option value="Handgun">Handgun</option><option value="Shoulder Arms">Shoulder Arms</option><option value="Heavy Weapons">Heavy Weapons</option><option value="Melee Weapon">Melee Weapon</option><option value="Archery">Archery</option><option value="Autofire">Autofire</option></select></div></div>`;
+  } else if (type === "armor") {
+    html += `<div style="display:flex;gap:0.5rem"><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">SP Value</label><input type="number" id="custom_modal_sp" value="11" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Armor Location</label><select id="custom_modal_slot" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"><option value="Body">Body</option><option value="Head">Head</option><option value="Shield">Shield</option></select></div><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Encumbrance</label><input type="number" id="custom_modal_enc" value="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div></div>`;
+  } else if (type === "cyberware") {
+    html += `<div style="display:flex;gap:0.5rem"><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Category / Type</label><select id="custom_modal_cType" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"><option value="Fashionware">Fashionware</option><option value="Neuralware">Neuralware</option><option value="Cyberoptics">Cyberoptics</option><option value="Cyberaudio">Cyberaudio</option><option value="Internal Cyberware">Internal Cyberware</option><option value="External Cyberware">External Cyberware</option><option value="Cyberarm">Cyberarm</option><option value="Cyberleg">Cyberleg</option><option value="Borgware">Borgware</option></select></div><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Humanity Cost (HC)</label><input type="number" id="custom_modal_hc" value="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Option Slots</label><input type="number" id="custom_modal_slots" value="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div></div>`;
+  } else if (type === "vehicle" || type === "vehicleUpgrade") {
+    if (type === "vehicle") {
+      html += `<div style="display:flex;gap:0.5rem"><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">SDP</label><input type="number" id="custom_modal_sdp" value="25" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Seats</label><input type="number" id="custom_modal_seats" value="2" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div></div>`;
+    }
+  } else {
+    html += `<div style="display:flex;gap:0.5rem"><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Category</label><select id="custom_modal_cat" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"><option value="Gear">Gear</option><option value="Fashion">Fashion</option><option value="Ammunition">Ammunition</option><option value="Grenades">Grenades</option><option value="Electronics">Electronics</option><option value="Medical">Medical</option><option value="Survival">Survival</option><option value="Tools">Tools</option><option value="Weapons">Weapons</option></select></div><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Option Slots</label><input type="number" id="custom_modal_slots" value="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div></div>`;
+  }
+
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Cost in eb (0 = looted)</label><input type="number" id="custom_modal_cost" value="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
+
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Description</label><textarea id="custom_modal_desc" placeholder="Item details, stats, effects..." rows="3" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px;resize:vertical"></textarea></div>`;
+
+  html += `</div>`;
+
+  html += `<div style="display:flex;justify-content:flex-end;gap:0.5rem;margin-top:1.25rem">
+    <button id="custom_modal_cancel" class="btn-action" style="padding:0.4rem 0.8rem">Cancel</button>
+    <button id="custom_modal_save" class="btn-action" style="background:var(--accent);color:#fff;font-weight:bold;padding:0.4rem 0.8rem">Save & Add Item</button>
+  </div>`;
+
+  box.innerHTML = html;
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  document.getElementById("custom_modal_name").focus();
+
+  function closeModal() {
+    if (document.body.contains(overlay)) {
+      document.body.removeChild(overlay);
+    }
+  }
+
+  document.getElementById("custom_modal_cancel").onclick = closeModal;
+
+  document.getElementById("custom_modal_save").onclick = function() {
+    let name = document.getElementById("custom_modal_name").value.trim();
+    if (!name) {
+      alert("Please enter an item name.");
+      document.getElementById("custom_modal_name").focus();
+      return;
+    }
+
+    let cost = parseInt(document.getElementById("custom_modal_cost").value) || 0;
+    let desc = document.getElementById("custom_modal_desc").value || "";
+    let itemObj = { id: "custom_" + Date.now(), name: name, cost: cost, desc: desc };
+
+    if (type === "weapon") {
+      itemObj.dmg = document.getElementById("custom_modal_dmg").value || "1d6";
+      itemObj.type = document.getElementById("custom_modal_type").value || "Handgun";
+      itemObj.rof = 1; itemObj.mag = null; itemObj.conceal = "Varies"; itemObj.rank = 0;
+    } else if (type === "armor") {
+      itemObj.sp = parseInt(document.getElementById("custom_modal_sp").value) || 0;
+      itemObj.slots = document.getElementById("custom_modal_slot").value || "Body";
+      itemObj.enc = parseInt(document.getElementById("custom_modal_enc").value) || 0;
+    } else if (type === "cyberware") {
+      let cType = document.getElementById("custom_modal_cType").value || "Fashionware";
+      itemObj.type = cType;
+      itemObj.parentType = mapTypeToParentType(cType);
+      let slots = parseInt(document.getElementById("custom_modal_slots").value) || 0;
+      itemObj.slots = slots > 0 ? slots : undefined;
+      itemObj.bonus = null;
+    } else if (type === "vehicle") {
+      itemObj.sdp = parseInt(document.getElementById("custom_modal_sdp").value) || 25;
+      itemObj.seats = parseInt(document.getElementById("custom_modal_seats").value) || 2;
+      itemObj.upgrades = [];
+    } else if (type === "vehicleUpgrade") {
+    } else {
+      let cat = document.getElementById("custom_modal_cat").value || "Gear";
+      let slots = parseInt(document.getElementById("custom_modal_slots").value) || 0;
+      itemObj.cat = cat;
+      itemObj.qty = 1;
+      itemObj.slots = slots > 0 ? slots : undefined;
+      if (slots > 0) {
+        itemObj.parentType = mapTypeToParentType(cat) || mapTypeToParentType(name);
+      }
+      if (cat.toLowerCase() === "ammunition") itemObj.ammo = 10;
+      if (cat.toLowerCase() === "grenades") itemObj.ammo = 1;
+    }
+
+    closeModal();
+    callback(itemObj);
   };
 }
 
@@ -1665,36 +2669,8 @@ function showItemSelector(type, items, callback, groupBy) {
   customBtn.style.fontWeight = "700";
   customBtn.textContent = "\u270E Custom " + title;
   customBtn.onclick = function() {
-    let name = prompt("Enter " + title + " name:");
-    if (!name) return;
-    if (type === "weapon") {
-      let dmg = prompt("Damage dice (e.g. 3d6):") || "1d6";
-      let wType = prompt("Weapon skill (Handgun, Shoulder Arms, Melee, etc.):") || "Handgun";
-      let cost = parseInt(prompt("Cost in eb:") || "0");
-      document.body.removeChild(overlay);
-      callback({ id: "custom_" + Date.now(), name: name, dmg: dmg, type: wType, rof: 1, mag: null, conceal: "Varies", cost: cost, rank: 0 });
-    } else if (type === "armor") {
-      let sp = parseInt(prompt("SP value:") || "0");
-      let slots = prompt("Slots (Body, Head, Shield):") || "Body";
-      let enc = parseInt(prompt("Encumbrance:") || "0");
-      let cost = parseInt(prompt("Cost in eb:") || "0");
-      document.body.removeChild(overlay);
-      callback({ id: "custom_" + Date.now(), name: name, sp: sp, slots: slots, enc: enc, cost: cost });
-    } else if (type === "cyberware") {
-      let cType = prompt("Type (Fashion, Internal, Neuralware, etc.):") || "Fashion";
-      let hc = parseInt(prompt("Humanity Cost:") || "0");
-      let cost = parseInt(prompt("Cost in eb:") || "0");
-      let desc = prompt("Description:") || "";
-      let slots = parseInt(prompt("Option slots (e.g., 4 for Cyberarm, 0 for none):") || "0");
-      document.body.removeChild(overlay);
-      callback({ id: "custom_" + Date.now(), name: name, type: cType, hc: hc, cost: cost, desc: desc, bonus: null, slots: slots > 0 ? slots : undefined });
-    } else {
-      let cost = parseInt(prompt("Cost in eb:") || "0");
-      let cat = prompt("Category (Gear, Fashion, Electronics, Medical, etc.):") || "Gear";
-      let desc = prompt("Description (optional):") || "";
-      document.body.removeChild(overlay);
-      callback({ id: "custom_" + Date.now(), name: name, cost: cost, cat: cat, desc: desc, qty: 1 });
-    }
+    closeModal();
+    showCustomItemModal(type, callback);
   };
   list.appendChild(customBtn);
   if (groupBy) {
@@ -2163,7 +3139,9 @@ function renderCyberdeck() {
     
     const tr = document.createElement('tr');
     const tdName = document.createElement('td');
-    tdName.innerHTML = `<strong>${item.name}</strong><br><span style="font-size:0.75rem;opacity:0.8">${item.desc}</span>`;
+    let pDesc = p.customDesc !== undefined ? p.customDesc : (item.desc || '');
+    let descVal = escapeHtml(pDesc);
+    tdName.innerHTML = `<strong>${item.name}</strong><br><textarea class="program-desc-input" data-instance-id="${p.instanceId}" placeholder="Description" rows="1">${descVal}</textarea>`;
     
     const tdClass = document.createElement('td');
     tdClass.textContent = p.isProg ? item.type : 'Hardware';
@@ -2202,6 +3180,16 @@ function renderCyberdeck() {
     container.innerHTML = '<tr><td colspan="7" class="text-center">No programs or hardware installed.</td></tr>';
   } else {
     container.appendChild(tbody);
+    const progDescs = container.querySelectorAll('.program-desc-input');
+    for (let i = 0; i < progDescs.length; i++) {
+      autoResizeTextarea(progDescs[i]);
+      progDescs[i].oninput = function() {
+        const instId = this.dataset.instanceId;
+        const prog = state.programs.find(p => p.instanceId === instId);
+        if (prog) prog.customDesc = this.value;
+        autoResizeTextarea(this);
+      };
+    }
   }
 }
 

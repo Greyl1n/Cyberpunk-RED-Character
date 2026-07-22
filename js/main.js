@@ -55,6 +55,9 @@ const initTabs = () => {
       document.getElementById(tabId).classList.add("active");
       this.classList.add("active");
       state.currentTab = tabId;
+      document.querySelectorAll('textarea.item-desc-input, textarea.cyber-option-desc-input, textarea.program-desc-input').forEach(function(el) {
+        if (typeof autoResizeTextarea === 'function') autoResizeTextarea(el);
+      });
     });
   }
 };

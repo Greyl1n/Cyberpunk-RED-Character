@@ -420,7 +420,7 @@ select option { color: var(--primary); background: #000; }
 <div class="scanline-overlay"></div>
 <input type="checkbox" id="dismissWelcome" style="display:none">
 <header>
-<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v4.0 Final</span></div></div>
+<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v4.6.2</span></div></div>
 <div class="header-actions">
 <button id="charactersBtn" class="btn-action">&#128194; Characters</button>
 <button id="importBtn" class="btn-action">&#128229; Import</button>
@@ -699,34 +699,29 @@ select option { color: var(--primary); background: #000; }
 </section>
 <section id="tab-about" class="tab-panel">
 <div class="section-card">
-<h2 class="section-title">About Cyberpunk RED Generator (v4.0 Final)</h2>
+<h2 class="section-title">About Cyberpunk RED Generator (v4.6.2)</h2>
 <p style="margin-bottom:0.8rem;line-height:1.7">A fully self-contained, highly-optimised interactive character manager for <strong>Cyberpunk RED</strong> by R. Talsorian Games. Create, customise, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. No server, no build tools, no internet - just open the single monolith HTML file in any browser.</p>
-<p style="margin-bottom:0.8rem;line-height:1.7"><strong>Welcome to v4.0 Final!</strong> This version concludes massive updates across the board. Key additions include robust Custom Eurobuck Management, a brand-new dedicated Apple-optimized version for Safari/iOS devices, seamless integration of Black Chrome Vehicles and Weapons, and Smart Selective Printing that allows you to omit blank sections to save paper. We also finalized interactive Role Abilities (Exec Team Members, Nomad Vehicle tracking, Lawman Backup, Medtech Pharmaceuticals, Netrunner Interface, and more), fully integrated Cyberware humanity and slot tracking, and overhauled Lifepaths.</p>
-<h3 style="margin:1rem 0 0.4rem">Features</h3>
+<p style="margin-bottom:0.8rem;line-height:1.7"><strong>Welcome to v4.6.2!</strong> This release incorporates extensive playtester feedback and complete UI refinements. All native browser prompts have been upgraded to persistent, tab-safe in-page DOM modals. Equipment &amp; Ammunition tracking has been overhauled with weapon type category selection, 1-unit grenade bundles, free/looted quantity adjustments, and editable armor Stopping Power (SP) abrasion tracking.</p>
+<h3 style="margin:1rem 0 0.4rem">v4.6.2 Key Features</h3>
 <ul style="line-height:1.8;padding-left:1.2rem">
+<li><strong>Persistent In-Page DOM Modals</strong>: All catalog additions, slot options, item sales, and custom item creations use tab-persistent, dark-theme modals so switching browser tabs never interrupts your work.</li>
+<li><strong>Editable Armor SP (Abrasion Tracking)</strong>: Track combat damage on armor directly on the character sheet with dynamically recalculated Total Body &amp; Head SP.</li>
+<li><strong>Looted &amp; Purchased Quantity Management</strong>: Easily increase item quantities for free when looted in combat (0eb) or at listed EB cost, while consumption reduces stock without unwanted EB refunds.</li>
+<li><strong>Categorised Ammunition &amp; Weapon Mapping</strong>: Select specific weapon types for ammo with equipped weapon dropdowns and combined EB cost fields in a unified popup.</li>
+<li><strong>Grenade &amp; Explosive Bundles</strong>: Grenades bought and tracked in individual 1-unit bundles instead of 10.</li>
+<li><strong>Custom Slot Options &amp; Cyberware Mapping</strong>: Custom cyberware automatically links parent categories (cybereye, cyberarm, cyberleg, cyberaudio, etc.) to expose appropriate slot options.</li>
+<li><strong>Dynamic QTY Input Width</strong>: Expanded quantity input boxes to gracefully display multi-digit amounts without truncation.</li>
 <li>10 Stats with point-buy system (62 points, min 2 / max 8)</li>
 <li>All 10 Roles with detailed rank-by-rank ability descriptions and deeply integrated mechanical trackers</li>
-<li>Interactive Role Abilities: Create and manage Exec Team Members, track Nomad Family Vehicles & Upgrades, handle Lawman Backup stats, manage Netrunner Interface abilities, and track Medtech Pharmaceuticals</li>
+<li>Interactive Role Abilities: Create and manage Exec Team Members, track Nomad Family Vehicles &amp; Upgrades, handle Lawman Backup stats, manage Netrunner Interface abilities, and track Medtech Pharmaceuticals</li>
 <li>Multiclass support - take a secondary role once your primary reaches Rank 4</li>
 <li>86 Skills grouped by linked stat with search, ranks, and item bonuses</li>
 <li>140+ Weapons mapped accurately to their Cyberpunk RED skills, including Black Chrome selections</li>
-<li>Add/remove management with cost deduction for Armor, Cyberware, Fashion, Vehicles &amp; Gear</li>
-<li>Custom Eurobuck entry for quick accounting (bribes, payouts, etc)</li>
-<li>Custom Item Entry for all gear categories</li>
 <li>JSON Export/Import for sharing characters or backing them up safely</li>
-<li>Print-Friendly Layout: Smart Selective Printing with restacked DOM layout for perfect page rendering on Chrome and Safari</li>
+<li>Print-Friendly Layout: Smart Selective Printing with restacked DOM layout for perfect page rendering</li>
 <li>Mobile-Responsive: Touch-optimized controls and seamless skill adjustments</li>
-<li>Ammunition Consumption - track remaining rounds directly on your sheet</li>
-<li>Dynamic Cyberware Tracking: automatically handles humanity loss, maximum humanity reduction, and custom slot constraints (e.g. 7 slots for a Cyberarm)</li>
-<li>Categorised item selectors grouped logically</li>
 <li>Full Lifepath generation (Generic and Role-specific) with randomise button</li>
-<li>Combined print layout optimised for physical character sheets</li>
 <li>Random character generator — one-click complete, playable character</li>
-<li>Netrunner dark theme with native CSS variables</li>
-<li>Random Humanity Cost (HC) rolls and custom inputs for Cyberware</li>
-<li>Optimised mobile styling with seamless skill adjustments</li>
-<li>Polished print-friendly layout with customisable background dimming</li>
-<li>Mobile-responsive layout with touch-optimised controls</li>
 </ul>
 <h3 style="margin:1rem 0 0.4rem">Source Material</h3>
 <p style="line-height:1.8">
