@@ -38,10 +38,26 @@ header { display: flex; align-items: center; justify-content: space-between; pad
 .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.6rem; }
 .grid-split { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 label { display: flex; flex-direction: column; font-size: 0.8rem; font-weight: 500; gap: 2px; min-width: 0; }
-input, select, textarea { -webkit-appearance: none; appearance: none; border-radius: 4px; }
-input, select { padding: 0.4rem 0.6rem; border: 1px solid; font-size: 0.9rem; font-family: inherit; max-width: 100%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+input, select, textarea { padding: 0.4rem 0.6rem; border: 1px solid; border-radius: 4px; font-size: 0.9rem; font-family: inherit; max-width: 100%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 select { width: 100%; }
 input[type="number"] { width: 100%; }
+textarea.item-desc-input, textarea.cyber-option-desc-input, textarea.program-desc-input {
+  width: 100%;
+  font-size: 0.8rem;
+  font-family: inherit;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: inherit;
+  padding: 3px 5px;
+  border-radius: 3px;
+  resize: vertical;
+  min-height: 28px;
+  box-sizing: border-box;
+  overflow: hidden;
+  white-space: pre-wrap;
+  word-break: break-word;
+  vertical-align: middle;
+}
 .readonly-input { background: transparent; border-style: dashed; opacity: 0.8; cursor: default; }
 .mt-1 { margin-top: 1rem; }
 .table-responsive { overflow-x: auto; touch-action: auto; }
@@ -213,6 +229,14 @@ input[type="number"] { width: 100%; }
   body.printing .gear-remove,
   body.printing .weapon-rank,
   body.printing .gear-qty { display: none !important; }
+
+.gear-qty {
+  width: 70px !important;
+  min-width: 65px !important;
+  padding: 0.25rem;
+  text-align: center;
+  box-sizing: border-box;
+}
 
   body.printing .tab-panel { display: contents !important; }
   body.printing .main-content { display: flex; flex-direction: column; }
@@ -1456,26 +1480,26 @@ var DATA = {
     { id: "distilling_compound", name: "Distilling Compound", cat: "Additive", cost: 100, desc: "[CRB] Increase Resist Torture/Drugs DV of poison/biotoxin by 2." },
     { id: "osmosis_compound", name: "Osmosis Compound", cat: "Additive", cost: 50, desc: "[CRB] Turn poison/biotoxin into contact-based hazard on a surface." },
     { id: "suzumebachi_drone", name: "Suzumebachi Assassin Drone", cat: "Drone", cost: 5000, desc: "[CRB] Flying insectoid drone. 6 MOVE, 7SP, 10HP. Observation Camera (LL/IR/UV), Dartgun w/ 8 Biotoxin Arrows, Airhypo." },
-    { id: "bcp_bullet_to_slug", name: "Bullet to Slug Adapter Casings", cost: 100, wt: 0.5, cat: "Weapons", desc: "[CRB] Converts bullet Ammunition into Shotgun Slugs. Reusable. 10 casings per box.", ammo: 10 },
-    { id: "bcp_junk_ammo", name: "Junk Ammunition", cost: 10, wt: 0.5, cat: "Weapons", desc: "[CRB] Reduces damage by 1d6 (min 1d6) vs SP 1+ targets. Reduces Autofire Rating by 1 (min 3). 50 rounds. Arrows, Bullets, Slugs.", ammo: 50 },
-    { id: "bcp_small_game_ammo", name: "Small Game Ammunition", cost: 10, wt: 0.5, cat: "Weapons", desc: "[CRB] Reduces damage by 2d6 (min 1d6). Reduces Autofire Rating by 1 (min 3). 100 rounds. Bullets only.", ammo: 100 },
-    { id: "ammo_basic", name: "Basic Ammunition", cost: 10, cat: "Weapons", desc: "[CRB] Standard ammunition. No special features. All ammo types except Grenades and Rockets. 10 units.", ammo: 10 },
-    { id: "ammo_ap", name: "Armor-Piercing Ammunition", cost: 100, cat: "Weapons", desc: "[CRB] Ablates armor by 2 instead of 1. All ammo types except Shotgun Shells. 10 units.", ammo: 10 },
-    { id: "ammo_expansive", name: "Expansive Ammunition", cost: 100, cat: "Weapons", desc: "[CRB] Arrows, Bullets, Slugs. Foreign Object Critical Injury causes a second Critical Injury roll.", ammo: 10 },
-    { id: "ammo_incendiary", name: "Incendiary Ammunition", cost: 100, cat: "Weapons", desc: "[CRB] Ignites target (2 HP/turn). Arrows, Bullets, Grenades, Shotgun Shells, Slugs.", ammo: 10 },
-    { id: "ammo_rubber", name: "Rubber Ammunition", cost: 10, cat: "Weapons", desc: "[CRB] Less-lethal. Cannot cause Critical Injury or ablate armor. Leaves target at min 1 HP. Arrows, Bullets, Slugs.", ammo: 10 },
-    { id: "ammo_smart", name: "Smart Ammunition", cost: 500, cat: "Weapons", desc: "[CRB] Requires Targeting Scope. Miss by ≤4: reroll with +10. Arrows, Bullets, Rockets, Slugs.", ammo: 10 },
-    { id: "ammo_poison", name: "Poison Ammunition", cost: 100, cat: "Weapons", desc: "[CRB] Arrows and Grenades only. Deals 2d6 direct HP damage (DV13 Resist Torture/Drugs). No initial damage.", ammo: 1 },
-    { id: "smart_glasses", name: "Smart Glasses", cat: "Fashion", cost: 500, desc: "[BC] Functions as a Cybereye (0 HL) with 2 option slots. Requires an Action to put on/take off." },
-    { id: "observer_drone", name: "Observer Drone", cat: "Drone", cost: 1000, desc: "[BC] Flying drone (6 MOVE, 7 SP, 10 HP). Has 2 option slots for Cybereye/Cyberaudio options." },
+    { id: "bcp_bullet_to_slug", name: "Bullet to Slug Adapter Casings", cost: 100, wt: 0.5, cat: "Tools", desc: "[CRB] Converts bullet Ammunition into Shotgun Slugs. Reusable. 10 casings per box." },
+    { id: "bcp_junk_ammo", name: "Junk Ammunition", cost: 10, wt: 0.5, cat: "Ammunition", desc: "[CRB] Reduces damage by 1d6 (min 1d6) vs SP 1+ targets. Reduces Autofire Rating by 1 (min 3). 50 rounds. Arrows, Bullets, Slugs.", ammo: 50 },
+    { id: "bcp_small_game_ammo", name: "Small Game Ammunition", cost: 10, wt: 0.5, cat: "Ammunition", desc: "[CRB] Reduces damage by 2d6 (min 1d6). Reduces Autofire Rating by 1 (min 3). 100 rounds. Bullets only.", ammo: 100 },
+    { id: "ammo_basic", name: "Basic Ammunition", cost: 10, cat: "Ammunition", desc: "[CRB] Standard ammunition. No special features. All ammo types except Grenades and Rockets. 10 units.", ammo: 10 },
+    { id: "ammo_ap", name: "Armor-Piercing Ammunition", cost: 100, cat: "Ammunition", desc: "[CRB] Ablates armor by 2 instead of 1. All ammo types except Shotgun Shells. 10 units.", ammo: 10 },
+    { id: "ammo_expansive", name: "Expansive Ammunition", cost: 100, cat: "Ammunition", desc: "[CRB] Arrows, Bullets, Slugs. Foreign Object Critical Injury causes a second Critical Injury roll.", ammo: 10 },
+    { id: "ammo_incendiary", name: "Incendiary Ammunition", cost: 100, cat: "Ammunition", desc: "[CRB] Ignites target (2 HP/turn). Arrows, Bullets, Grenades, Shotgun Shells, Slugs.", ammo: 10 },
+    { id: "ammo_rubber", name: "Rubber Ammunition", cost: 10, cat: "Ammunition", desc: "[CRB] Less-lethal. Cannot cause Critical Injury or ablate armor. Leaves target at min 1 HP. Arrows, Bullets, Slugs.", ammo: 10 },
+    { id: "ammo_smart", name: "Smart Ammunition", cost: 500, cat: "Ammunition", desc: "[CRB] Requires Targeting Scope. Miss by ≤4: reroll with +10. Arrows, Bullets, Rockets, Slugs.", ammo: 10 },
+    { id: "ammo_poison", name: "Poison Grenade", cost: 100, cat: "Grenades", desc: "[CRB] Arrows and Grenades only. Deals 2d6 direct HP damage (DV13 Resist Torture/Drugs). No initial damage.", ammo: 1 },
+    { id: "smart_glasses", name: "Smart Glasses", cat: "Fashion", cost: 500, slots: 2, parentType: "cybereye", desc: "[BC] Functions as a Cybereye (0 HL) with 2 option slots. Requires an Action to put on/take off." },
+    { id: "observer_drone", name: "Observer Drone", cat: "Drone", cost: 1000, slots: 2, parentType: "cybereye", desc: "[BC] Flying drone (6 MOVE, 7 SP, 10 HP). Has 2 option slots for Cybereye/Cyberaudio options." },
     { id: "linear_frame_sigma", name: "External Linear Frame - Sigma", cat: "Gear", cost: 1000, desc: "[BC] Exoskeleton. Increases BODY to 12. Requires Interface Plugs to use without penalty." },
     { id: "linear_frame_beta", name: "External Linear Frame - Beta", cat: "Gear", cost: 5000, desc: "[BC] Exoskeleton. Increases BODY to 14. Requires Interface Plugs." },
-    { id: "ammo_biotoxin", name: "Biotoxin Ammunition", cost: 500, cat: "Weapons", desc: "[CRB] Arrows and Grenades only. Deals 3d6 direct HP damage (DV15 Resist Torture/Drugs). No initial damage.", ammo: 1 },
-    { id: "ammo_flashbang", name: "Flashbang Ammunition", cost: 100, cat: "Weapons", desc: "[CRB] Grenades only. Damaged Eye and Damaged Ear Critical Injuries for 1 min (DV15 Resist Torture/Drugs).", ammo: 1 },
-    { id: "ammo_sleep", name: "Sleep Ammunition", cost: 500, cat: "Weapons", desc: "[CRB] Arrows and Grenades only. Target becomes Prone and Unconscious for 1 min (DV13 Resist Torture/Drugs).", ammo: 1 },
-    { id: "ammo_smoke", name: "Smoke Ammunition", cost: 50, cat: "Weapons", desc: "[CRB] Grenades only. Obscures 10m x 10m area for 1 min. -4 to perception tasks through smoke.", ammo: 1 },
-    { id: "ammo_teargas", name: "Teargas Ammunition", cost: 50, cat: "Weapons", desc: "[CRB] Grenades only. Damaged Eye Critical Injury for 1 min (DV13 Resist Torture/Drugs).", ammo: 1 },
-    { id: "ammo_emp", name: "EMP Ammunition", cost: 500, cat: "Weapons", desc: "[CRB] Grenades only. Disables 2 pieces of cyberware/electronics for 1 min (DV15 Cybertech).", ammo: 1 },
+    { id: "ammo_biotoxin", name: "Biotoxin Grenade", cost: 500, cat: "Grenades", desc: "[CRB] Arrows and Grenades only. Deals 3d6 direct HP damage (DV15 Resist Torture/Drugs). No initial damage.", ammo: 1 },
+    { id: "ammo_flashbang", name: "Flashbang Grenade", cost: 100, cat: "Grenades", desc: "[CRB] Grenades only. Damaged Eye and Damaged Ear Critical Injuries for 1 min (DV15 Resist Torture/Drugs).", ammo: 1 },
+    { id: "ammo_sleep", name: "Sleep Grenade", cost: 500, cat: "Grenades", desc: "[CRB] Arrows and Grenades only. Target becomes Prone and Unconscious for 1 min (DV13 Resist Torture/Drugs).", ammo: 1 },
+    { id: "ammo_smoke", name: "Smoke Grenade", cost: 50, cat: "Grenades", desc: "[CRB] Grenades only. Obscures 10m x 10m area for 1 min. -4 to perception tasks through smoke.", ammo: 1 },
+    { id: "ammo_teargas", name: "Teargas Grenade", cost: 50, cat: "Grenades", desc: "[CRB] Grenades only. Damaged Eye Critical Injury for 1 min (DV13 Resist Torture/Drugs).", ammo: 1 },
+    { id: "ammo_emp", name: "EMP Grenade", cost: 500, cat: "Grenades", desc: "[CRB] Grenades only. Disables 2 pieces of cyberware/electronics for 1 min (DV15 Cybertech).", ammo: 1 },
     { id: "bcp_piranha_smash", name: "Piranha Smash", cost: 10, wt: 0.5, cat: "Medical", desc: "[CRB]" },
     { id: "bcp_solo_pillow", name: "Solo of Fortune Bodypillow", cost: 100, wt: 2, cat: "Fashion", desc: "[CRB]" },
     { id: "bc_chipvault", name: "ChipVault by SecSystems", cost: 100, wt: 0.5, cat: "Electronics", desc: "[CRB]" },
@@ -1510,17 +1534,17 @@ var DATA = {
     { id: "night_goggles", name: "Night Goggles", cost: 200, wt: 1, cat: "Electronics", desc: "[CRB]" },
     { id: "binoculars", name: "Binoculars", cost: 100, wt: 1, cat: "Electronics", desc: "[CRB]" },
     { id: "camera", name: "Camera", cost: 200, wt: 1, cat: "Electronics", desc: "[CRB]" },
-    { id: "grenade_incendiary", name: "Incendiary Grenade", cost: 100, wt: 1, cat: "Weapons", desc: "[CRB]" },
+    { id: "grenade_incendiary", name: "Incendiary Grenade", cost: 100, wt: 1, cat: "Grenades", desc: "[CRB]", ammo: 1 },
     { id: "flare", name: "Flare", cost: 20, wt: 0.5, cat: "Tools", desc: "[CRB]" },
-    { id: "smoke_canister", name: "Smoke Canister", cost: 50, wt: 1, cat: "Tools", desc: "[CRB]" },
+    { id: "smoke_canister", name: "Smoke Canister", cost: 50, wt: 1, cat: "Grenades", desc: "[CRB]", ammo: 1 },
     { id: "poison", name: "Poison (D6 dmg)", cost: 200, wt: 0.5, cat: "Tools", desc: "[CRB]" },
-    { id: "chrm_rave_grenade", name: "Hello Cutie Chromatic Rave Grenade", cat: "Weapons", cost: 50, desc: "[CRB] Creates light/sound show (DV13 Conc or -2). After 2 Rounds, explodes as Smoke Grenade." },
+    { id: "chrm_rave_grenade", name: "Hello Cutie Chromatic Rave Grenade", cat: "Grenades", cost: 50, desc: "[CRB] Creates light/sound show (DV13 Conc or -2). After 2 Rounds, explodes as Smoke Grenade.", ammo: 1 },
     { id: "husafell_underjack", name: "Húsafell Hydraulic Underjack", cat: "Gear", cost: 1000, desc: "[CRB] Hydraulic undershirt. +2 BODY (max 10). Does not increase HP or Death Save. Does not stack with other BODY-increasing effects." },
-    { id: "smart_ears", name: "Smart Ears", cat: "Electronics", cost: 1000, desc: "[CRB] Wearable ears. Built-in Radio Scanner/Music Player. 2 Option Slots for Cyberaudio Options." },
+    { id: "smart_ears", name: "Smart Ears", cat: "Electronics", cost: 1000, slots: 2, parentType: "cyberaudio", desc: "[CRB] Wearable ears. Built-in Radio Scanner/Music Player. 2 Option Slots for Cyberaudio Options." },
     { id: "zetatech_cyberconductor", name: "Zetatech CyberConductor", cat: "Electronics", cost: 1000, desc: "[CRB] Install up to 3 Cyberdecks. Switch between them while Jacked In. Taking 3 HP dmg on switch." },
     { id: "cybercam_ex1", name: "Cybercam EX-1", cat: "Electronics", cost: 1000, desc: "[CRB] Head-mounted camera for livecasting. +1 believability to Media's Role Ability." },
     { id: "cyberscanner", name: "Cyberscanner", cat: "Electronics", cost: 1000, desc: "[CRB] Scan target within 2m/yds. Readout of all installed cyberware. Takes 1 min." },
-    { id: "cyberdude_smart_glove", name: "CyberDude Smart Glove", cat: "Gear", cost: 750, desc: "[CRB] Fingerless glove with Subdermal Grip and 2 Option Slots for Cyberarm/Cyberlimb options." },
+    { id: "cyberdude_smart_glove", name: "CyberDude Smart Glove", cat: "Gear", cost: 750, slots: 2, parentType: "cyberarm", desc: "[CRB] Fingerless glove with Subdermal Grip and 2 Option Slots for Cyberarm/Cyberlimb options." },
     { id: "hd_bulletproof_shield", name: "High-Density Bulletproof Shield", cat: "Gear", cost: 200, desc: "[CRB] A shield with 15 HP. Cannot be installed in Pop-Up Shield." },
     { id: "stun_bayonet", name: "Stun Bayonet", cat: "Weapons", cost: 100, desc: "[CRB] Weapon Attachment. Allows firearm to be used as a Stun Baton." },
     { id: "dpi_smartsticks", name: "DPI Smartsticks", cat: "Gear", cost: 500, desc: "[CRB] Electronic drum sticks. +1 to Play Instrument (Drums) Checks." },
@@ -1544,7 +1568,8 @@ var DATA = {
     { id: "bodysuit", name: "Bodysuit", cost: 300, desc: "[CRB] Full body suit" },
     { id: "armor_jacket", name: "Armor Jacket", cost: 100, desc: "[CRB] Jacket with light armor panels" },
     { id: "raincoat", name: "Raincoat", cost: 80, desc: "[CRB] Waterproof coat" },
-    { id: "night_city_leathers", name: "Night City Leathers", cost: 200, desc: "[CRB] Classic leather jacket and pants" }
+    { id: "night_city_leathers", name: "Night City Leathers", cost: 200, desc: "[CRB] Classic leather jacket and pants" },
+    { id: "smart_lens", name: "Smart Lens", cost: 500, slots: 1, parentType: "cybereye", desc: "[CRB] Wearable contact lens. 1 Option Slot for Cybereye Option." }
   ],
 
   // ----------------------------------------------------------
@@ -2247,87 +2272,64 @@ const skillNameById = (id) => {
 // PERSISTENCE — Save/load/delete/export/import
 // ============================================================
 
-// iOS Safari throws SecurityError when accessing localStorage on file://
-let _mockStorage = {};
-let _useMock = false;
-
-try {
-  localStorage.setItem('_test', '1');
-  localStorage.removeItem('_test');
-} catch (e) {
-  _useMock = true;
-  console.warn("localStorage unavailable (iOS local file). Using volatile memory.");
-}
-
-const safeSetItem = (key, val) => {
-  if (_useMock) _mockStorage[key] = val;
-  else localStorage.setItem(key, val);
-};
-
-const safeGetItem = (key) => {
-  return _useMock ? _mockStorage[key] : localStorage.getItem(key);
-};
-
-const safeRemoveItem = (key) => {
-  if (_useMock) delete _mockStorage[key];
-  else localStorage.removeItem(key);
-};
-
-const safeGetKeys = () => {
-  if (_useMock) return Object.keys(_mockStorage);
-  let keys = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    keys.push(localStorage.key(i));
-  }
-  return keys;
-};
-
+/**
+ * saveCharacter(name)
+ * This function takes the current state of the character from the app
+ * and saves it into the browser's built-in "localStorage".
+ * localStorage is like a tiny hard drive inside your web browser that
+ * remembers data even if you refresh or close the page.
+ */
 const saveCharacter = (name) => {
-  try {
-    const data = getCharacterData();
-    data._saveName = name;
-    data._savedAt = new Date().toISOString();
-    const key = `cpr_char_${name}`;
-    safeSetItem(key, JSON.stringify(data));
-    return true;
-  } catch (e) {
-    alert("Failed to save character. If on iOS, use Export instead.");
-    return false;
-  }
+  const data = getCharacterData();
+  data._saveName = name;
+  data._savedAt = new Date().toISOString();
+  const key = `cpr_char_${name}`;
+  localStorage.setItem(key, JSON.stringify(data));
+  return true;
 };
 
+/**
+ * loadCharacter(name)
+ * This function retrieves a saved character from localStorage.
+ * It uses JSON.parse() to turn the raw text back into a usable JavaScript object.
+ * If it fails (or the character doesn't exist), it safely returns null.
+ */
 const loadCharacter = (name) => {
+  const key = `cpr_char_${name}`;
+  const raw = localStorage.getItem(key);
+  if (!raw) return null;
   try {
-    const key = `cpr_char_${name}`;
-    const raw = safeGetItem(key);
-    if (!raw) return null;
     return JSON.parse(raw);
   } catch (e) {
     return null;
   }
 };
 
+/**
+ * deleteCharacter(name)
+ * Removes a specific character's saved data from localStorage permanently.
+ */
 const deleteCharacter = (name) => {
-  try {
-    const key = `cpr_char_${name}`;
-    safeRemoveItem(key);
-  } catch (e) {}
+  const key = `cpr_char_${name}`;
+  localStorage.removeItem(key);
 };
 
+/**
+ * listCharacters()
+ * This function looks through everything saved in the browser's localStorage.
+ * It checks if the saved item's key starts with "cpr_char_" (which means it's a character),
+ * and adds it to a list so the app can display all your saved characters.
+ */
 const listCharacters = () => {
-  try {
-    const chars = [];
-    const keys = safeGetKeys();
-    for (const key of keys) {
-      if (key.indexOf("cpr_char_") === 0) {
-        chars.push(key.substring(9));
-      }
+  const chars = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key.indexOf("cpr_char_") === 0) {
+      chars.push(key.substring(9));
     }
-    chars.sort();
-    return chars;
-  } catch (e) {
-    return [];
   }
+  chars.sort();
+  return chars;
 };
 
 // EXPORT/IMPORT AND PRINTING
@@ -2536,70 +2538,6 @@ const printCharacter = async () => {
 // and all the `render...()` functions that take that state and draw HTML on the screen.
 
 // The 'state' object is the live memory of your character. Everything you do updates this.
-
-function el(tag, attrs, content) {
-  let e = document.createElement(tag);
-  if (attrs) {
-    for (let k in attrs) {
-      if (k === 'className') e.className = attrs[k];
-      else if (k === 'innerHTML') e.innerHTML = attrs[k];
-      else if (k === 'dataset') {
-        for (let d in attrs[k]) e.dataset[d] = attrs[k][d];
-      } else if (k.startsWith('on') && typeof attrs[k] === 'function') {
-        e.addEventListener(k.substring(2).toLowerCase(), attrs[k]);
-      } else if (k === 'onclick' || k === 'onchange' || k === 'oninput') {
-        e[k] = attrs[k];
-      } else if (k === 'selected' || k === 'checked' || k === 'disabled' || k === 'value') {
-        if (attrs[k] !== undefined) {
-          e[k] = (attrs[k] === 'selected' || attrs[k] === 'checked' || attrs[k] === 'disabled') ? true : attrs[k];
-          e.setAttribute(k, attrs[k]);
-        }
-      } else if (attrs[k] !== undefined) e.setAttribute(k, attrs[k]);
-    }
-  }
-  if (content !== undefined) {
-    if (Array.isArray(content)) content.forEach(c => { if(c) e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); });
-    else if (content instanceof HTMLElement) e.appendChild(content);
-    else e.textContent = content;
-  }
-  return e;
-}
-
-// Custom Async Modals for iOS WebKit compatibility
-function customConfirm(message) {
-  return new Promise(resolve => {
-    let overlay = el('div', { style: 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center; padding:1rem;' }, [
-      el('div', { style: 'background:#1a1a1a; border:2px solid #ff003c; padding:2rem; max-width:400px; width:100%; display:flex; flex-direction:column; gap:1.5rem;' }, [
-        el('div', { style: 'color:#fff; font-size:1.1rem; white-space:pre-wrap;' }, message),
-        el('div', { style: 'display:flex; gap:1rem; justify-content:flex-end;' }, [
-          el('button', { className: 'btn-action', style: 'background:#333; color:#fff;', onclick: () => { document.body.removeChild(overlay); resolve(false); } }, 'No'),
-          el('button', { className: 'btn-action', onclick: () => { document.body.removeChild(overlay); resolve(true); } }, 'Yes')
-        ])
-      ])
-    ]);
-    document.body.appendChild(overlay);
-  });
-}
-
-function customPrompt(message, defaultValue = '') {
-  return new Promise(resolve => {
-    let input = el('input', { type: 'text', value: defaultValue, style: 'width:100%; padding:0.5rem; background:#333; color:#fff; border:1px solid #ff003c; font-size:1.1rem; margin-top:0.5rem;' });
-    let overlay = el('div', { style: 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center; padding:1rem;' }, [
-      el('div', { style: 'background:#1a1a1a; border:2px solid #ff003c; padding:2rem; max-width:400px; width:100%; display:flex; flex-direction:column; gap:1.5rem;' }, [
-        el('div', { style: 'color:#fff; font-size:1.1rem; white-space:pre-wrap;' }, message),
-        input,
-        el('div', { style: 'display:flex; gap:1rem; justify-content:flex-end;' }, [
-          el('button', { className: 'btn-action', style: 'background:#333; color:#fff;', onclick: () => { document.body.removeChild(overlay); resolve(null); } }, 'Cancel'),
-          el('button', { className: 'btn-action', onclick: () => { document.body.removeChild(overlay); resolve(input.value); } }, 'OK')
-        ])
-      ])
-    ]);
-    document.body.appendChild(overlay);
-    input.focus();
-    input.select();
-  });
-}
-
 let state = {
   stats: {},
   skillRanks: {},
@@ -2628,6 +2566,24 @@ function initState() {
   }
 }
 
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function autoResizeTextarea(el) {
+  if (!el) return;
+  el.style.height = 'auto';
+  if (el.scrollHeight > 0) {
+    el.style.height = (el.scrollHeight + 2) + 'px';
+  }
+}
+
 function getStatPointsRemaining() {
   let used = 0;
   for (let i = 0; i < DATA.stats.length; i++) {
@@ -2636,23 +2592,34 @@ function getStatPointsRemaining() {
   return STAT_POINTS_TOTAL - used;
 }
 
-
-
-
-
-
-
-function getUsedMotoCount() {
-  let count = 0;
-  for (let v of state.vehicles) {
-    if (v.isMoto) count++;
-    if (v.upgrades) {
-      for (let u of v.upgrades) {
-        if (u.isMoto) count++;
-      }
-    }
-  }
-  return count;
+function customConfirm(message, yesText="Yes", noText="No") {
+  return new Promise(resolve => {
+    let overlay = document.createElement('div');
+    overlay.style = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center; padding:1rem;';
+    let box = document.createElement('div');
+    box.style = 'background:#1a1a1a; border:2px solid #ff003c; padding:2rem; max-width:400px; width:100%; display:flex; flex-direction:column; gap:1.5rem;';
+    let msg = document.createElement('div');
+    msg.style = 'color:#fff; font-size:1.1rem; white-space:pre-wrap;';
+    msg.textContent = message;
+    let btns = document.createElement('div');
+    btns.style = 'display:flex; gap:1rem; justify-content:flex-end;';
+    let noBtn = document.createElement('button');
+    noBtn.className = 'btn-action';
+    noBtn.style.background = '#333';
+    noBtn.style.color = '#fff';
+    noBtn.textContent = noText;
+    noBtn.onclick = () => { document.body.removeChild(overlay); resolve(false); };
+    let yesBtn = document.createElement('button');
+    yesBtn.className = 'btn-action';
+    yesBtn.textContent = yesText;
+    yesBtn.onclick = () => { document.body.removeChild(overlay); resolve(true); };
+    btns.appendChild(noBtn);
+    btns.appendChild(yesBtn);
+    box.appendChild(msg);
+    box.appendChild(btns);
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+  });
 }
 
 function updateSecondaryRoleOptions() {
@@ -2726,6 +2693,50 @@ function setUpRoleRankCost() {
     this.dataset.oldVal = newVal;
     updateRoleInfo();
   };
+}
+
+function getMotoRank() {
+  let rank = 0;
+  if (document.getElementById("role_select").value === "nomad") {
+    rank += parseInt(document.getElementById("role_ability_rank").value) || 0;
+  }
+  if (document.getElementById("multiclass_enabled").checked && document.getElementById("role_secondary_select").value === "nomad") {
+    rank += parseInt(document.getElementById("role_secondary_rank").value) || 0;
+  }
+  return rank;
+}
+
+function getUsedMotoVehicles() {
+  let count = 0;
+  for (let v of state.vehicles) {
+    if (v.isMoto) count++;
+  }
+  return count;
+}
+
+function getUsedMotoUpgrades() {
+  let count = 0;
+  for (let v of state.vehicles) {
+    if (v.upgrades) {
+      for (let u of v.upgrades) {
+        if (u.isMoto) count++;
+      }
+    }
+  }
+  return count;
+}
+
+function getUsedMotoCount() {
+  let count = 0;
+  for (let v of state.vehicles) {
+    if (v.isMoto) count++;
+    if (v.upgrades) {
+      for (let u of v.upgrades) {
+        if (u.isMoto) count++;
+      }
+    }
+  }
+  return count;
 }
 
 function renderRoleSubSkills(role, rank) {
@@ -2875,18 +2886,14 @@ function renderStats() {
     let cyberBonus = calcCyberStatBonus(s.id);
     let effVal = baseVal + cyberBonus;
     let bonus = calcStatBonus(effVal);
-    
-    let cyberStr = cyberBonus > 0 ? el('span', { className: 'cyber-stat-bonus' }, '(+' + cyberBonus + ' chrome)') : '';
-    
-    let row = el('div', { className: 'stat-row' }, [
-      el('span', { className: 'stat-name', title: s.desc }, s.name),
-      el('button', { className: 'stat-dec', dataset: { stat: s.id } }, '-'),
-      el('input', { type: 'number', className: 'stat-input', dataset: { stat: s.id }, value: baseVal, min: STAT_MIN, max: STAT_MAX }),
-      el('button', { className: 'stat-inc', dataset: { stat: s.id } }, '+'),
-      el('span', { className: 'stat-bonus' }, '(' + (bonus >= 0 ? '+' : '') + bonus + ')'),
-      cyberStr
-    ]);
-    
+    let row = document.createElement("div");
+    row.className = "stat-row";
+    let cyberStr = cyberBonus > 0 ? ' <span class="cyber-stat-bonus">(+' + cyberBonus + ' chrome)</span>' : '';
+    row.innerHTML = '<span class="stat-name" title="' + s.desc + '">' + s.name + '</span>' +
+      '<button class="stat-dec" data-stat="' + s.id + '">-</button>' +
+      '<input type="number" class="stat-input" data-stat="' + s.id + '" value="' + baseVal + '" min="' + STAT_MIN + '" max="' + STAT_MAX + '">' +
+      '<button class="stat-inc" data-stat="' + s.id + '">+</button>' +
+      '<span class="stat-bonus">(' + (bonus >= 0 ? "+" : "") + bonus + ')</span>' + cyberStr;
     container.appendChild(row);
   }
   updateStatPointsBar();
@@ -2955,18 +2962,19 @@ function renderSkills() {
     let skillList = DATA.skills[statId];
     for (let j = 0; j < skillList.length; j++) {
         let skill = skillList[j];
-        let titleContent = skill.ipMult === 2 ? [skill.name, ' ', el('span', {style: 'color:var(--accent);font-size:0.75rem;font-weight:bold'}, '(x2)')] : skill.name;
-        if (search && skill.name.toLowerCase().indexOf(search) === -1) continue;
+        let name = skill.name;
+        if (skill.ipMult === 2) name += ' <span style="color:var(--accent);font-size:0.75rem;font-weight:bold">(x2)</span>';
+        if (search && name.toLowerCase().indexOf(search) === -1) continue;
         
         let statVal = getEffectiveStat(statId);
         let cyber = calcSkillCyberBonus(skill.id);
         
         if (skill.subs) {
-          frag.appendChild(el('tr', {}, [
-            el('td', {}, el('strong', {}, titleContent)),
-            el('td', {}, statId.toUpperCase()),
-            el('td', { colSpan: 5 })
-          ]));
+          let trHeader = document.createElement("tr");
+          trHeader.innerHTML = '<td><strong>' + name + '</strong></td>' +
+            '<td>' + statId.toUpperCase() + '</td>' +
+            '<td colspan="5"></td>';
+          frag.appendChild(trHeader);
           
           for (let s = 1; s <= skill.subs; s++) {
             let subId = skill.id + "_" + s;
@@ -2974,31 +2982,29 @@ function renderSkills() {
             let ranks = state.skillRanks[subId] || 0;
             let item = state.skillItem[subId] || 0;
             let total = calcSkillTotal(statVal, ranks, item, cyber);
-            
-            frag.appendChild(el('tr', {}, [
-              el('td', { style: 'padding-left: 20px;' }, el('input', { type: 'text', className: 'subskill-name', dataset: { sub: subId }, value: subName, placeholder: 'Specify...', style: 'width:120px' })),
-              el('td'),
-              el('td', {}, calcStatBonus(statVal).toString()),
-              el('td', {}, el('input', { type: 'number', className: 'skill-rank', dataset: { skill: subId }, value: ranks, min: 0, max: 10, style: 'width:50px' })),
-              el('td', {}, el('input', { type: 'number', className: 'skill-item', dataset: { skill: subId }, value: item, style: 'width:50px' })),
-              el('td', {}, cyber > 0 ? '+' + cyber : '0'),
-              el('td', {}, el('strong', {}, (total >= 0 ? '+' : '') + total))
-            ]));
+            let tr = document.createElement("tr");
+            tr.innerHTML = '<td style="padding-left: 20px;"><input type="text" class="subskill-name" data-sub="' + subId + '" value="' + subName + '" placeholder="Specify..." style="width:120px"></td>' +
+              '<td></td>' +
+              '<td>' + calcStatBonus(statVal) + '</td>' +
+              '<td><input type="number" class="skill-rank" data-skill="' + subId + '" value="' + ranks + '" min="0" max="10" style="width:50px"></td>' +
+              '<td><input type="number" class="skill-item" data-skill="' + subId + '" value="' + item + '" style="width:50px"></td>' +
+              '<td>' + (cyber > 0 ? '+' + cyber : '0') + '</td>' +
+              '<td><strong>' + (total >= 0 ? "+" : "") + total + '</strong></td>';
+            frag.appendChild(tr);
           }
         } else {
           let ranks = state.skillRanks[skill.id] || 0;
           let item = state.skillItem[skill.id] || 0;
           let total = calcSkillTotal(statVal, ranks, item, cyber);
-          
-          frag.appendChild(el('tr', {}, [
-            el('td', {}, titleContent),
-            el('td', {}, statId.toUpperCase()),
-            el('td', {}, calcStatBonus(statVal).toString()),
-            el('td', {}, el('input', { type: 'number', className: 'skill-rank', dataset: { skill: skill.id }, value: ranks, min: 0, max: 10, style: 'width:50px' })),
-            el('td', {}, el('input', { type: 'number', className: 'skill-item', dataset: { skill: skill.id }, value: item, style: 'width:50px' })),
-            el('td', {}, cyber > 0 ? '+' + cyber : '0'),
-            el('td', {}, el('strong', {}, (total >= 0 ? '+' : '') + total))
-          ]));
+          let tr = document.createElement("tr");
+          tr.innerHTML = '<td>' + name + '</td>' +
+            '<td>' + statId.toUpperCase() + '</td>' +
+            '<td>' + calcStatBonus(statVal) + '</td>' +
+            '<td><input type="number" class="skill-rank" data-skill="' + skill.id + '" value="' + ranks + '" min="0" max="10" style="width:50px"></td>' +
+            '<td><input type="number" class="skill-item" data-skill="' + skill.id + '" value="' + item + '" style="width:50px"></td>' +
+            '<td>' + (cyber > 0 ? '+' + cyber : '0') + '</td>' +
+            '<td><strong>' + (total >= 0 ? "+" : "") + total + '</strong></td>';
+          frag.appendChild(tr);
         }
       }
   }
@@ -3251,18 +3257,13 @@ function renderWeapons() {
 
   for (let i = 0; i < state.weapons.length; i++) {
     let w = state.weapons[i];
+    let tr = document.createElement("tr");
     let isGrenade = /grenade|molotov|smoke_pellet/.test(w.id);
     let actionBtns;
     if (isGrenade) {
-      actionBtns = [
-        el('button', { className: 'btn-action weapon-sell', dataset: { idx: i }, style: 'font-size:0.75rem;padding:0.2rem 0.4rem' }, 'Sell'),
-        ' ',
-        el('button', { className: 'btn-action weapon-use', dataset: { idx: i }, style: 'font-size:0.75rem;padding:0.2rem 0.4rem' }, 'Use')
-      ];
+      actionBtns = '<button class="btn-action weapon-sell" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">Sell</button> <button class="btn-action weapon-use" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">Use</button>';
     } else {
-      actionBtns = [
-        el('button', { className: 'btn-action weapon-remove', dataset: { idx: i }, style: 'font-size:0.75rem;padding:0.2rem 0.4rem' }, 'X')
-      ];
+      actionBtns = '<button class="btn-action weapon-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button>';
     }
     
     let skillTotal = "-";
@@ -3276,48 +3277,50 @@ function renderWeapons() {
       skillTotal = (total >= 0 ? "+" : "") + total;
     }
 
-    let tr = el('tr', {}, [
-      el('td', {}, w.name),
-      el('td', {}, w.dmg.toString()),
-      el('td', {}, (w.rof || "-").toString()),
-      el('td', {}, (w.mag || "-").toString()),
-      el('td', {}, (w.type || "").toString()),
-      el('td', { style: 'text-align:center; font-weight:bold' }, skillTotal.toString()),
-      el('td', {}, actionBtns)
-    ]);
+    let descVal = escapeHtml(w.desc || '');
+    tr.innerHTML = '<td>' + w.name + '</td><td>' + w.dmg + '</td><td>' + (w.rof || "-") + '</td><td>' + (w.mag || "-") + '</td><td>' + (w.type || "") + '</td><td style="text-align:center; font-weight:bold">' + skillTotal + '</td><td><textarea class="item-desc-input" data-cat="weapon" data-idx="' + i + '" placeholder="Description" rows="1">' + descVal + '</textarea></td><td>' + actionBtns + '</td>';
     frag.appendChild(tr);
   }
   tbody.appendChild(frag);
   attachWeaponEvents();
 }
 
-async function attachWeaponEvents() {
+function attachWeaponEvents() {
+  let weaponDescs = document.querySelectorAll('.item-desc-input[data-cat="weapon"]');
+  for (let i = 0; i < weaponDescs.length; i++) {
+    autoResizeTextarea(weaponDescs[i]);
+    weaponDescs[i].oninput = function() {
+      let idx = parseInt(this.dataset.idx);
+      if (state.weapons[idx]) state.weapons[idx].desc = this.value;
+      autoResizeTextarea(this);
+    };
+  }
   let removes = document.querySelectorAll(".weapon-remove");
   for (let i = 0; i < removes.length; i++) {
-    removes[i].onclick = async function() {
+    removes[i].onclick = function() {
       let idx = parseInt(this.dataset.idx);
       let w = state.weapons[idx];
-      let sellInput = await customPrompt("Sell price in eb (0 = discard):", w.cost || 0);
-      if (sellInput === null) return;
-      let sellPrice = parseInt(sellInput) || 0;
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) + sellPrice;
-      state.weapons.splice(idx, 1);
-      renderWeapons();
+      showSellItemModal(w.name, w.cost || 0, function(sellPrice) {
+        if (sellPrice === null) return;
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) + sellPrice;
+        state.weapons.splice(idx, 1);
+        renderWeapons();
+      });
     };
   }
   let sells = document.querySelectorAll(".weapon-sell");
   for (let i = 0; i < sells.length; i++) {
-    sells[i].onclick = async function() {
+    sells[i].onclick = function() {
       let idx = parseInt(this.dataset.idx);
       let w = state.weapons[idx];
-      let sellInput = await customPrompt("Sell price in eb:", w.cost || 0);
-      if (sellInput === null) return;
-      let sellPrice = parseInt(sellInput) || 0;
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) + sellPrice;
-      state.weapons.splice(idx, 1);
-      renderWeapons();
+      showSellItemModal(w.name, w.cost || 0, function(sellPrice) {
+        if (sellPrice === null) return;
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) + sellPrice;
+        state.weapons.splice(idx, 1);
+        renderWeapons();
+      });
     };
   }
   let uses = document.querySelectorAll(".weapon-use");
@@ -3338,13 +3341,9 @@ function renderArmor() {
   let headSP = 0;
   for (let i = 0; i < state.armor.length; i++) {
     let a = state.armor[i];
-    let tr = el('tr', {}, [
-      el('td', {}, a.name),
-      el('td', {}, a.sp.toString()),
-      el('td', {}, a.slots),
-      el('td', {}, a.enc.toString()),
-      el('td', {}, el('button', { className: 'btn-action armor-remove', dataset: { idx: i }, style: 'font-size:0.75rem;padding:0.2rem 0.4rem' }, 'X'))
-    ]);
+    let tr = document.createElement("tr");
+    let descVal = escapeHtml(a.desc || '');
+    tr.innerHTML = '<td>' + a.name + '</td><td><input type="number" class="armor-sp-input" data-idx="' + i + '" value="' + a.sp + '" min="0" max="99" style="width:60px;text-align:center;padding:0.25rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></td><td>' + a.slots + '</td><td>' + a.enc + '</td><td><textarea class="item-desc-input" data-cat="armor" data-idx="' + i + '" placeholder="Description" rows="1">' + descVal + '</textarea></td><td><button class="btn-action armor-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
     frag.appendChild(tr);
     if (a.slots === "Body") bodySP = Math.max(bodySP, a.sp);
     if (a.slots === "Head") headSP = Math.max(headSP, a.sp);
@@ -3353,18 +3352,52 @@ function renderArmor() {
   tbody.appendChild(frag);
   document.getElementById("armor_total_sp_body").textContent = bodySP;
   document.getElementById("armor_total_sp_head").textContent = headSP;
+
+  let spInputs = tbody.querySelectorAll(".armor-sp-input");
+  for (let i = 0; i < spInputs.length; i++) {
+    spInputs[i].oninput = function() {
+      let idx = parseInt(this.dataset.idx);
+      let newSp = parseInt(this.value);
+      if (isNaN(newSp) || newSp < 0) newSp = 0;
+      if (state.armor[idx]) {
+        state.armor[idx].sp = newSp;
+      }
+      let bSP = 0;
+      let hSP = 0;
+      for (let j = 0; j < state.armor.length; j++) {
+        let item = state.armor[j];
+        let val = item.sp || 0;
+        if (item.slots === "Body") bSP = Math.max(bSP, val);
+        if (item.slots === "Head") hSP = Math.max(hSP, val);
+        if (item.slots === "Shield") bSP = Math.max(bSP, val);
+      }
+      document.getElementById("armor_total_sp_body").textContent = bSP;
+      document.getElementById("armor_total_sp_head").textContent = hSP;
+    };
+  }
+
+  let armorDescs = tbody.querySelectorAll('.item-desc-input[data-cat="armor"]');
+  for (let i = 0; i < armorDescs.length; i++) {
+    autoResizeTextarea(armorDescs[i]);
+    armorDescs[i].oninput = function() {
+      let idx = parseInt(this.dataset.idx);
+      if (state.armor[idx]) state.armor[idx].desc = this.value;
+      autoResizeTextarea(this);
+    };
+  }
   let removes = document.querySelectorAll(".armor-remove");
   for (let i = 0; i < removes.length; i++) {
-    removes[i].onclick = async function() {
+    removes[i].onclick = function() {
       let idx = parseInt(this.dataset.idx);
-      let sellInput = await customPrompt("Sell price in eb (0 = discard):", state.armor[idx].cost || 0);
-      if (sellInput === null) return;
-      let sellPrice = parseInt(sellInput) || 0;
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) + sellPrice;
-      state.armor.splice(idx, 1);
-      renderArmor();
-      renderHumanity();
+      let a = state.armor[idx];
+      showSellItemModal(a.name, a.cost || 0, function(sellPrice) {
+        if (sellPrice === null) return;
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) + sellPrice;
+        state.armor.splice(idx, 1);
+        renderArmor();
+        renderHumanity();
+      });
     };
   }
 }
@@ -3395,62 +3428,89 @@ function renderCyberware() {
 }
 
 function renderCyberwareRow(tbody, c, idx) {
+  let tr = document.createElement("tr");
   let bonusHtml = formatCyberBonus(c.bonus);
   let displayName = c.name;
   if (c.location && !displayName.includes('(' + c.location + ')')) {
     displayName += ' (' + c.location + ')';
   }
-  let tr = el('tr', {}, [
-    el('td', {}, displayName),
-    el('td', {}, c.type),
-    el('td', {}, (c.hc || 0).toString()),
-    el('td', {}, (c.cost || 0).toString() + 'eb'),
-    el('td', {}, el('small', { innerHTML: bonusHtml })),
-    el('td', {}, el('small', {}, c.desc || '')),
-    el('td', {}, el('button', { className: 'btn-action cyberware-remove', dataset: { idx: idx }, style: 'font-size:0.75rem;padding:0.2rem 0.4rem' }, 'X'))
-  ]);
+  let descVal = escapeHtml(c.desc || '');
+  tr.innerHTML = '<td>' + displayName + '</td><td>' + c.type + '</td><td>' + (c.hc || 0) + '</td><td>' + (c.cost || 0) + 'eb</td><td><small>' + bonusHtml + '</small></td><td><textarea class="item-desc-input" data-cat="cyberware" data-idx="' + idx + '" placeholder="Description" rows="1">' + descVal + '</textarea></td><td><button class="btn-action cyberware-remove" data-idx="' + idx + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
   tbody.appendChild(tr);
+}
+
+function mapTypeToParentType(typeStr) {
+  if (!typeStr) return null;
+  let t = typeStr.toLowerCase().trim();
+  if (t.includes("optic") || t.includes("eye")) return "cybereye";
+  if (t.includes("audio") || t.includes("ear")) return "cyberaudio";
+  if (t.includes("arm") || t.includes("hand")) return "cyberarm";
+  if (t.includes("leg") || t.includes("foot")) return "cyberleg";
+  if (t.includes("neural") || t.includes("chip")) return "neural_link";
+  if (t.includes("internal")) return "internal";
+  if (t.includes("external")) return "external";
+  if (t.includes("fashion")) return "fashionware";
+  if (t.includes("borg")) return "borgware";
+  return null;
 }
 
 function renderCyberwareSlot(tbody, parent, parentPath, slotIdx, depth) {
   let option = (parent.options && parent.options[slotIdx]) || null;
-  let available = getOptionsForParent(parent.id);
-  if (available.length === 0) {
+  let available = [];
+  
+  let pType = parent.parentType;
+  if (!pType && parent.id) {
     let parentDataItem = getDataItemById(parent.id);
-    if (parentDataItem && parentDataItem.parentType) {
-      available = getOptionsForParent(parentDataItem.parentType);
-    }
+    if (parentDataItem && parentDataItem.parentType) pType = parentDataItem.parentType;
   }
-
+  if (!pType && parent.type) {
+    pType = mapTypeToParentType(parent.type);
+  }
+  
+  if (pType) {
+    available = getOptionsForParent(pType);
+  }
+  if (available.length === 0 && parent.id) {
+    available = getOptionsForParent(parent.id);
+  }
+  if (available.length === 0) {
+    available = (DATA._index.cyberwareByParent['cybereye'] || [])
+      .concat(DATA._index.cyberwareByParent['cyberaudio'] || [])
+      .concat(DATA._index.cyberwareByParent['cyberarm'] || [])
+      .concat(DATA._index.cyberwareByParent['cyberleg'] || [])
+      .concat(DATA._index.cyberwareByParent['neural_link'] || []);
+  }
+  let tr = document.createElement("tr");
+  tr.style.background = "rgba(128,128,128,0.05)";
+  tr.style.fontSize = "0.85rem";
+  if (!option) tr.className = "cyber-slot-empty";
+  
   let currentPath = parentPath + "_" + slotIdx;
   
-  let selectOpts = [el('option', { value: '', selected: (!option || !option.id) ? 'selected' : undefined }, '-- Empty --')];
+  let selectHtml = '<select class="cyber-slot-select" data-path="' + currentPath + '" style="width:50%;font-size:0.8rem;vertical-align:middle">';
+  selectHtml += '<option value="">-- Empty --</option>';
   for (let oi = 0; oi < available.length; oi++) {
     let opt = available[oi];
-    let isSel = (option && option.id === opt.id);
-    selectOpts.push(el('option', { value: opt.id, selected: isSel ? 'selected' : undefined }, opt.name + ' (' + opt.cost + 'eb, ' + (opt.hc || 0) + 'HC)'));
+    let sel = (option && option.id === opt.id) ? ' selected' : '';
+    selectHtml += '<option value="' + opt.id + '"' + sel + '>' + opt.name + ' (' + opt.cost + 'eb, ' + (opt.hc || 0) + 'HC)' + '</option>';
   }
   
   // Custom option if it's already selected as custom or to allow selecting custom
+  let customSel = (option && option.id && option.id.startsWith("custom_")) ? ' selected' : '';
   if (option && option.id && option.id.startsWith("custom_")) {
-    selectOpts.push(el('option', { value: option.id, selected: 'selected' }, option.name + ' (' + option.cost + 'eb, ' + (option.hc || 0) + 'HC) [Custom]'));
+    selectHtml += '<option value="' + option.id + '"' + customSel + '>' + option.name + ' (' + option.cost + 'eb, ' + (option.hc || 0) + 'HC) [Custom]</option>';
   }
-  selectOpts.push(el('option', { value: 'custom' }, '-- Custom Option --'));
-  
-  let selectEl = el('select', { className: 'cyber-slot-select', dataset: { path: currentPath }, style: 'width:100%;font-size:0.8rem' }, selectOpts);
-  let indent = 1.5 + (depth * 1.5);
-  
-  let tr = el('tr', {
-    style: 'background:rgba(128,128,128,0.05); font-size:0.85rem;',
-    className: !option ? 'cyber-slot-empty' : undefined
-  }, [
-    el('td', { style: 'padding-left:' + indent + 'rem;border-top:none', colSpan: 6 }, [
-      'Slot ' + (slotIdx + 1) + ': ',
-      selectEl
-    ]),
-    el('td', { style: 'border-top:none' })
-  ]);
+  selectHtml += '<option value="custom">-- Custom Option --</option>';
+  selectHtml += '</select>';
 
+  let optionDescHtml = '';
+  if (option) {
+    let optDescVal = escapeHtml(option.desc || '');
+    optionDescHtml = ' <textarea class="cyber-option-desc-input" data-path="' + currentPath + '" placeholder="Option Description" rows="1" style="width:45%;">' + optDescVal + '</textarea>';
+  }
+  
+  let indent = 1.5 + (depth * 1.5);
+  tr.innerHTML = '<td style="padding-left:' + indent + 'rem;border-top:none" colspan="6">Slot ' + (slotIdx + 1) + ': ' + selectHtml + optionDescHtml + '</td><td style="border-top:none"></td>';
   tbody.appendChild(tr);
 
   if (option) {
@@ -3467,27 +3527,62 @@ function getOptionsForParent(parentId) {
   return DATA._index.cyberwareByParent[parentId] || [];
 }
 
-async function attachCyberwareEvents() {
+function getOptionByPath(path) {
+  let parts = path.split('_');
+  let rootIdx = parseInt(parts[0]);
+  let obj = state.cyberware[rootIdx];
+  for (let p = 1; p < parts.length; p++) {
+    let sIdx = parseInt(parts[p]);
+    if (obj && obj.options && obj.options[sIdx]) {
+      obj = obj.options[sIdx];
+    } else {
+      return null;
+    }
+  }
+  return obj;
+}
+
+function attachCyberwareEvents() {
+  let cyberwareDescs = document.querySelectorAll('.item-desc-input[data-cat="cyberware"]');
+  for (let i = 0; i < cyberwareDescs.length; i++) {
+    autoResizeTextarea(cyberwareDescs[i]);
+    cyberwareDescs[i].oninput = function() {
+      let idx = parseInt(this.dataset.idx);
+      if (state.cyberware[idx]) state.cyberware[idx].desc = this.value;
+      autoResizeTextarea(this);
+    };
+  }
+  let optionDescs = document.querySelectorAll('.cyber-option-desc-input');
+  for (let i = 0; i < optionDescs.length; i++) {
+    autoResizeTextarea(optionDescs[i]);
+    optionDescs[i].oninput = function() {
+      let path = this.dataset.path;
+      let opt = getOptionByPath(path);
+      if (opt) opt.desc = this.value;
+      autoResizeTextarea(this);
+    };
+  }
   let removes = document.querySelectorAll(".cyberware-remove");
   for (let i = 0; i < removes.length; i++) {
-    removes[i].onclick = async function() {
+    removes[i].onclick = function() {
       let idx = parseInt(this.dataset.idx);
-      let sellInput = await customPrompt("Sell price in eb (0 = discard):", state.cyberware[idx].cost || 0);
-      if (sellInput === null) return;
-      let sellPrice = parseInt(sellInput) || 0;
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) + sellPrice;
-      state.cyberware.splice(idx, 1);
-      renderCyberware();
-      renderHumanity();
-      renderStats();
-      renderSkills();
+      let c = state.cyberware[idx];
+      showSellItemModal(c.name, c.cost || 0, function(sellPrice) {
+        if (sellPrice === null) return;
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) + sellPrice;
+        state.cyberware.splice(idx, 1);
+        renderCyberware();
+        renderHumanity();
+        renderStats();
+        renderSkills();
+      });
     };
   }
   let selects = document.querySelectorAll(".cyber-slot-select");
   for (let i = 0; i < selects.length; i++) {
     selects[i].onclick = function(e) { e.stopPropagation(); };
-    selects[i].onchange = async function() {
+    selects[i].onchange = function() {
       let path = this.dataset.path.split('_');
       let rootIdx = parseInt(path[0]);
       let optionId = this.value;
@@ -3508,47 +3603,53 @@ async function attachCyberwareEvents() {
       
       let oldOption = currentObj.options[slotIdx] || null;
       let oldCost = oldOption ? (oldOption.cost || 0) : 0;
-      
       if (optionId === "custom") {
-        let name = await customPrompt("Custom Option Name:");
-        if (!name) { this.value = oldOption ? oldOption.id : ''; return; }
-        let cType = await customPrompt("Type (Fashion, Internal, Neuralware, etc.):") || "Option";
-        let hc = parseInt(await customPrompt("Humanity Cost:") || "0");
-        let cost = parseInt(await customPrompt("Cost in eb:") || "0");
-        let desc = await customPrompt("Description:") || "";
-        let slots = parseInt(await customPrompt("Does this option have slots itself? (0 for none):") || "0");
-        currentObj.options[slotIdx] = { id: "custom_" + Date.now(), name: name, type: cType, hc: hc, cost: cost, desc: desc, bonus: null, slots: slots > 0 ? slots : undefined };
+        showCustomSlotOptionModal(true, function(customOpt) {
+          if (!customOpt) {
+            selects[i].value = oldOption ? oldOption.id : '';
+            return;
+          }
+          currentObj.options[slotIdx] = customOpt;
+          let diff = (customOpt.cost || 0) - oldCost;
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) - diff;
+          renderCyberware();
+          renderHumanity();
+          renderStats();
+          renderSkills();
+        });
+        return;
       } else if (optionId && !optionId.startsWith("custom_")) {
         let item = getDataItemById(optionId);
         if (item) {
-          let costInput = await customPrompt("Cost in eb (0 = looted):", item.cost || 0);
-          if (costInput === null) { this.value = oldOption ? oldOption.id : ''; return; }
-          let actualCost = parseInt(costInput) || 0;
-          let actualHc = item.hc || 0;
-          if (actualHc > 0) {
-            let hcInput = await customPrompt("Humanity Cost for " + item.name + "\n(Enter value, or 'r' to roll randomly)", actualHc);
-            if (hcInput !== null) {
-              if (hcInput.toLowerCase().trim() === 'r') {
-                actualHc = rollCyberwareHC(item.hc);
-                alert("Rolled Humanity Cost: " + actualHc);
-              } else {
-                actualHc = parseInt(hcInput) || 0;
-              }
-            }
-          }
-          currentObj.options[slotIdx] = { id: item.id, name: item.name, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, parentType: item.parentType, slots: item.slots };
+          showSlotOptionPurchaseModal(item, true, function(res) {
+            if (!res) { selects[i].value = oldOption ? oldOption.id : ''; return; }
+            let actualCost = res.cost;
+            let actualHc = res.hc || 0;
+            currentObj.options[slotIdx] = { id: item.id, name: item.name, type: item.type, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, parentType: item.parentType, slots: item.slots };
+            let diff = actualCost - oldCost;
+            let el = document.getElementById("currency_eb");
+            el.value = (parseInt(el.value) || 0) - diff;
+            renderCyberware();
+            renderHumanity();
+            renderStats();
+            renderSkills();
+          });
+          return;
         }
       } else if (optionId && optionId.startsWith("custom_")) {
-        // If they just selected the existing custom option from the list (which shouldn't happen naturally unless we are re-rendering)
-        // We don't need to do anything, because it was already set.
       } else {
-        let sellInput = await customPrompt("Sell price in eb (0 = discard):", oldCost);
-        if (sellInput === null) { this.value = oldOption ? oldOption.id : ''; return; }
-        let sellPrice = parseInt(sellInput) || 0;
-        let el = document.getElementById("currency_eb");
-        el.value = (parseInt(el.value) || 0) + sellPrice;
-        oldCost = 0;
-        currentObj.options[slotIdx] = null;
+        showSellItemModal(oldOption ? oldOption.name : "Option", oldCost, function(sellPrice) {
+          if (sellPrice === null) { selects[i].value = oldOption ? oldOption.id : ''; return; }
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) + sellPrice;
+          currentObj.options[slotIdx] = null;
+          renderCyberware();
+          renderHumanity();
+          renderStats();
+          renderSkills();
+        });
+        return;
       }
       
       let newOption = currentObj.options[slotIdx] || null;
@@ -3561,9 +3662,84 @@ async function attachCyberwareEvents() {
       renderHumanity();
       renderStats();
       renderSkills();
-      updateAllDerived();
     };
   }
+}
+
+function showCustomSlotOptionModal(isCyberware, callback) {
+  let overlay = document.createElement("div");
+  overlay.className = "modal-overlay active";
+  overlay.style.display = "flex";
+  overlay.style.zIndex = "10000";
+
+  let box = document.createElement("div");
+  box.className = "modal-box";
+  box.style.maxWidth = "550px";
+  box.style.width = "90%";
+  box.style.padding = "1.5rem";
+
+  let title = isCyberware ? "Cyberware Slot Option" : "Gear / Item Option";
+  let html = `<h2 style="margin-top:0;margin-bottom:1rem;color:var(--accent)">\u270E Create Custom ${title}</h2>`;
+  html += `<div style="display:flex;flex-direction:column;gap:0.75rem;">`;
+
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Option Name *</label><input type="text" id="custom_opt_name" placeholder="Option Name" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
+
+  if (isCyberware) {
+    html += `<div style="display:flex;gap:0.5rem"><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Type</label><input type="text" id="custom_opt_type" value="Option" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Humanity Cost (HC)</label><input type="number" id="custom_opt_hc" value="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Option Slots</label><input type="number" id="custom_opt_slots" value="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div></div>`;
+  } else {
+    html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Option Slots</label><input type="number" id="custom_opt_slots" value="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
+  }
+
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Cost in eb (0 = looted)</label><input type="number" id="custom_opt_cost" value="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
+
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Description</label><textarea id="custom_opt_desc" placeholder="Option details, stats, rules..." rows="3" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px;resize:vertical"></textarea></div>`;
+
+  html += `</div>`;
+
+  html += `<div style="display:flex;justify-content:flex-end;gap:0.5rem;margin-top:1.25rem">
+    <button id="custom_opt_cancel" class="btn-action" style="padding:0.4rem 0.8rem">Cancel</button>
+    <button id="custom_opt_save" class="btn-action" style="background:var(--accent);color:#fff;font-weight:bold;padding:0.4rem 0.8rem">Save Option</button>
+  </div>`;
+
+  box.innerHTML = html;
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  document.getElementById("custom_opt_name").focus();
+
+  function closeModal() {
+    if (document.body.contains(overlay)) {
+      document.body.removeChild(overlay);
+    }
+  }
+
+  document.getElementById("custom_opt_cancel").onclick = function() {
+    closeModal();
+    callback(null);
+  };
+
+  document.getElementById("custom_opt_save").onclick = function() {
+    let name = document.getElementById("custom_opt_name").value.trim();
+    if (!name) {
+      alert("Please enter an option name.");
+      document.getElementById("custom_opt_name").focus();
+      return;
+    }
+
+    let cost = parseInt(document.getElementById("custom_opt_cost").value) || 0;
+    let desc = document.getElementById("custom_opt_desc").value || "";
+    let slots = parseInt(document.getElementById("custom_opt_slots").value) || 0;
+    let res = { id: "custom_" + Date.now(), name: name, cost: cost, desc: desc, slots: slots > 0 ? slots : undefined };
+
+    if (isCyberware) {
+      res.type = document.getElementById("custom_opt_type").value || "Option";
+      res.hc = parseInt(document.getElementById("custom_opt_hc").value) || 0;
+      res.bonus = null;
+    }
+
+    closeModal();
+    callback(res);
+  };
 }
 
 function rollCyberwareHC(avgHc) {
@@ -3582,51 +3758,6 @@ function getDataItemById(id) {
 }
 
 
-function getMotoRank() {
-  let rank = 0;
-  if (document.getElementById("role_select").value === "nomad") {
-    rank += parseInt(document.getElementById("role_ability_rank").value) || 0;
-  }
-  if (document.getElementById("multiclass_enabled").checked && document.getElementById("role_secondary_select").value === "nomad") {
-    rank += parseInt(document.getElementById("role_secondary_rank").value) || 0;
-  }
-  return rank;
-}
-
-function getUsedMotoVehicles() {
-  let count = 0;
-  for (let v of state.vehicles) {
-    if (v.isMoto) count++;
-  }
-  return count;
-}
-
-function getUsedMotoUpgrades() {
-  let count = 0;
-  for (let v of state.vehicles) {
-    if (v.upgrades) {
-      for (let u of v.upgrades) {
-        if (u.isMoto) count++;
-      }
-    }
-  }
-  return count;
-}
-
-function getUsedMotoCount() {
-  let count = 0;
-  for (let v of state.vehicles) {
-    if (v.isMoto) count++;
-    if (v.upgrades) {
-      for (let u of v.upgrades) {
-        if (u.isMoto) count++;
-      }
-    }
-  }
-  return count;
-}
-
-
 function renderVehicles() {
   let tbody = document.getElementById("vehicles_body");
   if (!tbody) return;
@@ -3634,53 +3765,71 @@ function renderVehicles() {
   let frag = document.createDocumentFragment();
   for (let i = 0; i < state.vehicles.length; i++) {
     let v = state.vehicles[i];
-    let tr = el('tr', {}, [
-      el('td', {}, v.name),
-      el('td', {}, String(v.sdp)),
-      el('td', {}, String(v.seats)),
-      el('td', {}, v.cost + 'eb'),
-      el('td', { style: 'font-size:0.8rem' }, v.desc),
-      el('td', {}, [
-        el('button', { className: 'btn-action add-v-upgrade', dataset: { idx: String(i) }, style: 'font-size:0.75rem;padding:0.2rem 0.4rem;margin-right:0.3rem' }, '+ Upg'),
-          el('button', { className: 'btn-action sell-vehicle', dataset: { idx: String(i) }, style: 'font-size:0.75rem;padding:0.2rem 0.4rem;margin-right:0.3rem' }, 'Sell'),
-          el('button', { className: 'btn-action remove-vehicle', dataset: { idx: String(i) }, style: 'font-size:0.75rem;padding:0.2rem 0.4rem' }, 'X')
-      ])
-    ]);
+    let tr = document.createElement("tr");
+    let vDescVal = escapeHtml(v.desc || '');
+    tr.innerHTML = "<td>" + v.name + "</td>" +
+                   "<td>" + v.sdp + "</td>" +
+                   "<td>" + v.seats + "</td>" +
+                   "<td>" + v.cost + "eb</td>" +
+                   "<td><textarea class='item-desc-input' data-cat='vehicle' data-idx='" + i + "' placeholder='Description' rows='1'>" + vDescVal + "</textarea></td>" +
+                   "<td><button class='btn-action add-v-upgrade' data-idx='" + i + "' style='font-size:0.75rem;padding:0.2rem 0.4rem;margin-right:0.3rem'>+ Upg</button>" +
+                   "<button class='btn-action sell-vehicle' data-idx='" + i + "' style='font-size:0.75rem;padding:0.2rem 0.4rem;margin-right:0.3rem'>Sell</button>" +
+                   "<button class='btn-action remove-vehicle' data-idx='" + i + "' style='font-size:0.75rem;padding:0.2rem 0.4rem'>X</button></td>";
     frag.appendChild(tr);
-
     if (v.upgrades && v.upgrades.length > 0) {
       for (let j = 0; j < v.upgrades.length; j++) {
         let u = v.upgrades[j];
-        let utr = el('tr', { style: 'background:rgba(128,128,128,0.05); font-size:0.85rem;' }, [
-          el('td', { style: 'padding-left:2rem;border-top:none' }, "↳ " + u.name),
-          el('td', { style: 'border-top:none', colSpan: "2" }, ""),
-          el('td', { style: 'border-top:none' }, u.cost + 'eb'),
-          el('td', { style: 'border-top:none' }, u.desc),
-          el('td', { style: 'border-top:none' }, [
-              el('button', { className: 'btn-action sell-v-upgrade', dataset: { vidx: String(i), uidx: String(j) }, style: 'font-size:0.75rem;padding:0.2rem 0.4rem;margin-right:0.3rem' }, 'Sell'),
-              el('button', { className: 'btn-action remove-v-upgrade', dataset: { vidx: String(i), uidx: String(j) }, style: 'font-size:0.75rem;padding:0.2rem 0.4rem' }, 'X')
-            ])
-        ]);
+        let utr = document.createElement("tr");
+        utr.style.background = "rgba(128,128,128,0.05)";
+        utr.style.fontSize = "0.85rem";
+        let uDescVal = escapeHtml(u.desc || '');
+        utr.innerHTML = "<td style='padding-left:2rem;border-top:none'>↳ " + u.name + "</td>" +
+                        "<td style='border-top:none' colspan='2'></td>" +
+                        "<td style='border-top:none'>" + u.cost + "eb</td>" +
+                        "<td style='border-top:none'><textarea class='item-desc-input' data-cat='vehicleUpgrade' data-vidx='" + i + "' data-uidx='" + j + "' placeholder='Description' rows='1'>" + uDescVal + "</textarea></td>" +
+                        "<td style='border-top:none'><button class='btn-action sell-v-upgrade' data-vidx='" + i + "' data-uidx='" + j + "' style='font-size:0.75rem;padding:0.2rem 0.4rem;margin-right:0.3rem'>Sell</button>" +
+                        "<button class='btn-action remove-v-upgrade' data-vidx='" + i + "' data-uidx='" + j + "' style='font-size:0.75rem;padding:0.2rem 0.4rem'>X</button></td>";
         frag.appendChild(utr);
       }
     }
   }
   tbody.appendChild(frag);
 
+  let vDescs = tbody.querySelectorAll('.item-desc-input[data-cat="vehicle"]');
+  for (let i = 0; i < vDescs.length; i++) {
+    autoResizeTextarea(vDescs[i]);
+    vDescs[i].oninput = function() {
+      let idx = parseInt(this.dataset.idx);
+      if (state.vehicles[idx]) state.vehicles[idx].desc = this.value;
+      autoResizeTextarea(this);
+    };
+  }
+  let vuDescs = tbody.querySelectorAll('.item-desc-input[data-cat="vehicleUpgrade"]');
+  for (let i = 0; i < vuDescs.length; i++) {
+    autoResizeTextarea(vuDescs[i]);
+    vuDescs[i].oninput = function() {
+      let vidx = parseInt(this.dataset.vidx);
+      let uidx = parseInt(this.dataset.uidx);
+      if (state.vehicles[vidx] && state.vehicles[vidx].upgrades && state.vehicles[vidx].upgrades[uidx]) {
+        state.vehicles[vidx].upgrades[uidx].desc = this.value;
+      }
+      autoResizeTextarea(this);
+    };
+  }
+
   let vSells = tbody.querySelectorAll(".sell-vehicle");
   for (let i = 0; i < vSells.length; i++) {
     vSells[i].onclick = async function() {
       let idx = parseInt(this.dataset.idx);
       let v = state.vehicles[idx];
-      let sellInput = await customPrompt("Sell price in eb (0 = discard):", v.cost || 0);
-      if (sellInput === null) return;
-      let sellPrice = parseInt(sellInput) || 0;
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) + sellPrice;
-      state.vehicles.splice(idx, 1);
-      renderVehicles();
-      updateRoleInfo();
-      updateRoleInfo();
+      showSellItemModal(v.name, v.cost || 0, function(sellPrice) {
+        if (sellPrice === null) return;
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) + sellPrice;
+        state.vehicles.splice(idx, 1);
+        renderVehicles();
+        updateRoleInfo();
+      });
     };
   }
 
@@ -3690,15 +3839,14 @@ function renderVehicles() {
       let vIdx = parseInt(this.dataset.vidx);
       let uIdx = parseInt(this.dataset.uidx);
       let u = state.vehicles[vIdx].upgrades[uIdx];
-      let sellInput = await customPrompt("Sell price in eb (0 = discard):", u.cost || 0);
-      if (sellInput === null) return;
-      let sellPrice = parseInt(sellInput) || 0;
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) + sellPrice;
-      state.vehicles[vIdx].upgrades.splice(uIdx, 1);
-      renderVehicles();
-      updateRoleInfo();
-      updateRoleInfo();
+      showSellItemModal(u.name, u.cost || 0, function(sellPrice) {
+        if (sellPrice === null) return;
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) + sellPrice;
+        state.vehicles[vIdx].upgrades.splice(uIdx, 1);
+        renderVehicles();
+        updateRoleInfo();
+      });
     };
   }
 
@@ -3734,20 +3882,28 @@ function renderVehicles() {
         if (motoRank > 0 && usedMoto < motoRank) {
           isFree = await customConfirm(`Is this upgrade free (from Nomad Moto ability)?\nYou have used ${usedMoto}/${motoRank} Moto choices.`);
         }
-        let cost = 0;
-        if (!isFree) {
-          let costInput = await customPrompt("Cost in eb (0 = looted):", item.cost || 0);
-          if (costInput === null) return;
-          cost = parseInt(costInput) || 0;
+        if (!isFree && (!item.id || !item.id.startsWith("custom_"))) {
+          showItemPurchaseModal(item, "Vehicle Upgrade", {}, function(res) {
+            if (!res) return;
+            let cost = res.cost;
+            if (!state.vehicles[vIdx].upgrades) state.vehicles[vIdx].upgrades = [];
+            state.vehicles[vIdx].upgrades.push({ id: item.id, name: item.name, cost: cost, isMoto: false, desc: item.desc });
+            let cel = document.getElementById("currency_eb");
+            cel.value = (parseInt(cel.value) || 0) - cost;
+            renderVehicles();
+            updateRoleInfo();
+          });
+        } else {
+          let cost = isFree ? 0 : (item.cost || 0);
+          if (!state.vehicles[vIdx].upgrades) state.vehicles[vIdx].upgrades = [];
+          state.vehicles[vIdx].upgrades.push({ id: item.id, name: item.name, cost: cost, isMoto: isFree, desc: item.desc });
+          if (!isFree) {
+            let cel = document.getElementById("currency_eb");
+            cel.value = (parseInt(cel.value) || 0) - cost;
+          }
+          renderVehicles();
+          updateRoleInfo();
         }
-        if (!state.vehicles[vIdx].upgrades) state.vehicles[vIdx].upgrades = [];
-        state.vehicles[vIdx].upgrades.push({ id: item.id, name: item.name, cost: cost, isMoto: isFree, desc: item.desc });
-        if (!isFree) {
-          let cel = document.getElementById("currency_eb");
-          cel.value = (parseInt(cel.value) || 0) - cost;
-        }
-        renderVehicles();
-        updateRoleInfo();
       });
     };
   }
@@ -3755,74 +3911,177 @@ function renderVehicles() {
 
 function renderGear() {
   let tbody = document.getElementById("gear_body");
+  if (!tbody) return;
   tbody.innerHTML = "";
   let frag = document.createDocumentFragment();
-  let consumableCats = ["Street Drug", "Pharmaceutical", "Additive", "Medical"];
   for (let i = 0; i < state.gear.length; i++) {
     let g = state.gear[i];
-    let isConsumable = consumableCats.indexOf(g.cat) !== -1 || g.ammo;
-    let actionBtns;
-    if (isConsumable) {
-      actionBtns = [
-        el('button', { className: 'btn-action gear-sell', dataset: { idx: i }, style: 'font-size:0.75rem;padding:0.2rem 0.4rem' }, 'Sell'),
-        ' ',
-        el('button', { className: 'btn-action gear-use', dataset: { idx: i }, style: 'font-size:0.75rem;padding:0.2rem 0.4rem' }, 'Use')
-      ];
-    } else {
-      actionBtns = [
-        el('button', { className: 'btn-action gear-remove', dataset: { idx: i }, style: 'font-size:0.75rem;padding:0.2rem 0.4rem' }, 'X')
-      ];
+    renderGearRow(frag, g, i);
+    if (g.slots) {
+      for (let s = 0; s < g.slots; s++) {
+        renderGearSlot(frag, g, i.toString(), s, 0);
+      }
     }
-    let tr = el('tr', {}, [
-      el('td', {}, g.name),
-      el('td', {}, g.cat || '-'),
-      el('td', {}, g.cost + 'eb'),
-      el('td', {}, el('input', { type: 'number', className: 'gear-qty', dataset: { idx: i }, value: g.qty || 1, min: 1, style: 'width:45px' })),
-      el('td', {}, el('small', {}, g.desc || '')),
-      el('td', {}, actionBtns)
-    ]);
-    frag.appendChild(tr);
   }
   tbody.appendChild(frag);
+  attachGearEvents();
+}
+
+function renderGearRow(tbody, g, idx) {
+  let tr = document.createElement("tr");
+  let consumableCats = ["Street Drug", "Pharmaceutical", "Additive", "Medical"];
+  let isConsumable = consumableCats.indexOf(g.cat) !== -1 || g.ammo;
+  let actionBtns;
+  if (isConsumable) {
+    actionBtns = '<button class="btn-action gear-sell" data-idx="' + idx + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">Sell</button> <button class="btn-action gear-use" data-idx="' + idx + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">Use</button>';
+  } else {
+    actionBtns = '<button class="btn-action gear-remove" data-idx="' + idx + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button>';
+  }
+  let descVal = escapeHtml(g.desc || '');
+  tr.innerHTML = '<td>' + g.name + '</td><td>' + (g.cat || "-") + '</td><td>' + g.cost + 'eb</td><td><input type="number" class="gear-qty" data-idx="' + idx + '" value="' + (g.qty || 1) + '" min="1" style="width:70px;min-width:65px"></td><td><textarea class="item-desc-input" data-cat="gear" data-idx="' + idx + '" placeholder="Description" rows="1">' + descVal + '</textarea></td><td>' + actionBtns + '</td>';
+  tbody.appendChild(tr);
+}
+
+function renderGearSlot(tbody, parent, parentPath, slotIdx, depth) {
+  let option = (parent.options && parent.options[slotIdx]) || null;
+  let available = [];
+  let pType = parent.parentType;
+  if (!pType && parent.id) {
+    let itemData = getDataItemById(parent.id);
+    if (itemData && itemData.parentType) pType = itemData.parentType;
+  }
+  if (!pType && (parent.type || parent.cat || parent.name)) {
+    pType = mapTypeToParentType(parent.type || parent.cat || parent.name);
+  }
+  if (pType) {
+    available = getOptionsForParent(pType);
+  }
+  if (available.length === 0) {
+    available = (DATA._index.cyberwareByParent['cybereye'] || [])
+      .concat(DATA._index.cyberwareByParent['cyberaudio'] || [])
+      .concat(DATA._index.cyberwareByParent['cyberarm'] || [])
+      .concat(DATA._index.cyberwareByParent['cyberleg'] || [])
+      .concat(DATA._index.cyberwareByParent['neural_link'] || []);
+  }
+
+  let tr = document.createElement("tr");
+  tr.style.background = "rgba(128,128,128,0.05)";
+  tr.style.fontSize = "0.85rem";
+  if (!option) tr.className = "gear-slot-empty";
+  
+  let currentPath = parentPath + "_" + slotIdx;
+  
+  let selectHtml = '<select class="gear-slot-select" data-path="' + currentPath + '" style="width:50%;font-size:0.8rem;vertical-align:middle">';
+  selectHtml += '<option value="">-- Empty --</option>';
+  for (let oi = 0; oi < available.length; oi++) {
+    let opt = available[oi];
+    let sel = (option && option.id === opt.id) ? ' selected' : '';
+    selectHtml += '<option value="' + opt.id + '"' + sel + '>' + opt.name + ' (' + opt.cost + 'eb)' + '</option>';
+  }
+  
+  let customSel = (option && option.id && option.id.startsWith("custom_")) ? ' selected' : '';
+  if (option && option.id && option.id.startsWith("custom_")) {
+    selectHtml += '<option value="' + option.id + '"' + customSel + '>' + option.name + ' (' + option.cost + 'eb) [Custom]</option>';
+  }
+  selectHtml += '<option value="custom">-- Custom Option --</option>';
+  selectHtml += '</select>';
+
+  let optionDescHtml = '';
+  if (option) {
+    let optDescVal = escapeHtml(option.desc || '');
+    optionDescHtml = ' <textarea class="gear-option-desc-input" data-path="' + currentPath + '" placeholder="Option Description" rows="1" style="width:45%;">' + optDescVal + '</textarea>';
+  }
+  
+  let indent = 1.5 + (depth * 1.5);
+  tr.innerHTML = '<td style="padding-left:' + indent + 'rem;border-top:none" colspan="5">Slot ' + (slotIdx + 1) + ': ' + selectHtml + optionDescHtml + '</td><td style="border-top:none"></td>';
+  tbody.appendChild(tr);
+
+  if (option) {
+    let optBase = getDataItemById(option.id);
+    if (optBase && optBase.slots > 0) {
+      for (let s = 0; s < optBase.slots; s++) {
+        renderGearSlot(tbody, option, currentPath, s, depth + 1);
+      }
+    }
+  }
+}
+
+function getGearOptionByPath(path) {
+  let parts = path.split('_');
+  let rootIdx = parseInt(parts[0]);
+  let obj = state.gear[rootIdx];
+  for (let p = 1; p < parts.length; p++) {
+    let sIdx = parseInt(parts[p]);
+    if (obj && obj.options && obj.options[sIdx]) {
+      obj = obj.options[sIdx];
+    } else {
+      return null;
+    }
+  }
+  return obj;
+}
+
+function attachGearEvents() {
+  let gearDescs = document.querySelectorAll('.item-desc-input[data-cat="gear"]');
+  for (let i = 0; i < gearDescs.length; i++) {
+    autoResizeTextarea(gearDescs[i]);
+    gearDescs[i].oninput = function() {
+      let idx = parseInt(this.dataset.idx);
+      if (state.gear[idx]) state.gear[idx].desc = this.value;
+      autoResizeTextarea(this);
+    };
+  }
+  let gearOptionDescs = document.querySelectorAll('.gear-option-desc-input');
+  for (let i = 0; i < gearOptionDescs.length; i++) {
+    autoResizeTextarea(gearOptionDescs[i]);
+    gearOptionDescs[i].oninput = function() {
+      let path = this.dataset.path;
+      let opt = getGearOptionByPath(path);
+      if (opt) opt.desc = this.value;
+      autoResizeTextarea(this);
+    };
+  }
   let removes = document.querySelectorAll(".gear-remove");
   let qtys = document.querySelectorAll(".gear-qty");
   for (let i = 0; i < removes.length; i++) {
-    removes[i].onclick = async function() {
+    removes[i].onclick = function() {
       let idx = parseInt(this.dataset.idx);
       let g = state.gear[idx];
       let totalCost = (g.cost || 0) * (g.qty || 1);
-      let sellInput = await customPrompt("Sell price in eb (0 = discard):", totalCost);
-      if (sellInput === null) return;
-      let sellPrice = parseInt(sellInput) || 0;
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) + sellPrice;
-      if (g.ammo && state.ammo[g.id]) {
-        state.ammo[g.id].total -= g.ammo * (g.qty || 1);
-        if (state.ammo[g.id].total <= 0) delete state.ammo[g.id];
-      }
-      state.gear.splice(idx, 1);
-      renderGear();
-      renderAmmoTracker();
+      showSellItemModal(g.name, totalCost, function(sellPrice) {
+        if (sellPrice === null) return;
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) + sellPrice;
+        let key = g.ammoKey || g.id;
+        if (g.ammo && state.ammo[key]) {
+          state.ammo[key].total -= g.ammo * (g.qty || 1);
+          if (state.ammo[key].total <= 0) delete state.ammo[key];
+        }
+        state.gear.splice(idx, 1);
+        renderGear();
+        renderAmmoTracker();
+      });
     };
   }
   let gearSells = document.querySelectorAll(".gear-sell");
   for (let i = 0; i < gearSells.length; i++) {
-    gearSells[i].onclick = async function() {
+    gearSells[i].onclick = function() {
       let idx = parseInt(this.dataset.idx);
       let g = state.gear[idx];
       let totalCost = (g.cost || 0) * (g.qty || 1);
-      let sellInput = await customPrompt("Sell price in eb:", totalCost);
-      if (sellInput === null) return;
-      let sellPrice = parseInt(sellInput) || 0;
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) + sellPrice;
-      if (g.ammo && state.ammo[g.id]) {
-        state.ammo[g.id].total -= g.ammo * (g.qty || 1);
-        if (state.ammo[g.id].total <= 0) delete state.ammo[g.id];
-      }
-      state.gear.splice(idx, 1);
-      renderGear();
-      renderAmmoTracker();
+      showSellItemModal(g.name, totalCost, function(sellPrice) {
+        if (sellPrice === null) return;
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) + sellPrice;
+        let key = g.ammoKey || g.id;
+        if (g.ammo && state.ammo[key]) {
+          state.ammo[key].total -= g.ammo * (g.qty || 1);
+          if (state.ammo[key].total <= 0) delete state.ammo[key];
+        }
+        state.gear.splice(idx, 1);
+        renderGear();
+        renderAmmoTracker();
+      });
     };
   }
   let gearUses = document.querySelectorAll(".gear-use");
@@ -3830,9 +4089,10 @@ function renderGear() {
     gearUses[i].onclick = function() {
       let idx = parseInt(this.dataset.idx);
       let g = state.gear[idx];
-      if (g.ammo && state.ammo[g.id]) {
-        state.ammo[g.id].total -= g.ammo * (g.qty || 1);
-        if (state.ammo[g.id].total <= 0) delete state.ammo[g.id];
+      let key = g.ammoKey || g.id;
+      if (g.ammo && state.ammo[key]) {
+        state.ammo[key].total -= g.ammo * (g.qty || 1);
+        if (state.ammo[key].total <= 0) delete state.ammo[key];
       }
       state.gear.splice(idx, 1);
       renderGear();
@@ -3841,18 +4101,113 @@ function renderGear() {
   }
   for (let i = 0; i < qtys.length; i++) {
     qtys[i].onchange = function() {
+      let inputEl = this;
       let idx = parseInt(this.dataset.idx);
       let g = state.gear[idx];
       let oldQty = g.qty || 1;
       let newQty = parseInt(this.value) || 1;
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) - (newQty - oldQty) * (g.cost || 0);
-      if (g.ammo && state.ammo[g.id]) {
-        state.ammo[g.id].total += g.ammo * (newQty - oldQty);
-        if (state.ammo[g.id].total <= 0) delete state.ammo[g.id];
+      let diff = newQty - oldQty;
+
+      if (diff === 0) return;
+
+      if (diff > 0) {
+        showQtyAddModal(g.name, diff, g.cost || 0, function(actualCost) {
+          if (actualCost === null) {
+            inputEl.value = oldQty;
+            return;
+          }
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) - actualCost;
+          g.qty = newQty;
+          let key = g.ammoKey || g.id;
+          if (g.ammo && state.ammo[key]) {
+            state.ammo[key].total += g.ammo * diff;
+          }
+          renderAmmoTracker();
+        });
+      } else {
+        g.qty = newQty;
+        let key = g.ammoKey || g.id;
+        if (g.ammo && state.ammo[key]) {
+          state.ammo[key].total += g.ammo * diff;
+          if (state.ammo[key].total <= 0) delete state.ammo[key];
+        }
+        renderAmmoTracker();
       }
-      g.qty = newQty;
-      renderAmmoTracker();
+    };
+  }
+
+  let gearSelects = document.querySelectorAll(".gear-slot-select");
+  for (let i = 0; i < gearSelects.length; i++) {
+    gearSelects[i].onclick = function(e) { e.stopPropagation(); };
+    gearSelects[i].onchange = function() {
+      let path = this.dataset.path.split('_');
+      let rootIdx = parseInt(path[0]);
+      let optionId = this.value;
+      
+      let parentObj = state.gear[rootIdx];
+      if (!parentObj) return;
+      
+      let currentObj = parentObj;
+      for (let p = 1; p < path.length - 1; p++) {
+        let sIdx = parseInt(path[p]);
+        if (!currentObj.options) currentObj.options = [];
+        if (!currentObj.options[sIdx]) currentObj.options[sIdx] = {};
+        currentObj = currentObj.options[sIdx];
+      }
+      
+      let slotIdx = parseInt(path[path.length - 1]);
+      if (!currentObj.options) currentObj.options = [];
+      
+      let oldOption = currentObj.options[slotIdx] || null;
+      let oldCost = oldOption ? (oldOption.cost || 0) : 0;
+      
+      if (optionId === "custom") {
+        showCustomSlotOptionModal(false, function(customOpt) {
+          if (!customOpt) {
+            gearSelects[i].value = oldOption ? oldOption.id : '';
+            return;
+          }
+          currentObj.options[slotIdx] = customOpt;
+          let diff = (customOpt.cost || 0) - oldCost;
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) - diff;
+          renderGear();
+        });
+        return;
+      } else if (optionId && !optionId.startsWith("custom_")) {
+        let item = getDataItemById(optionId);
+        if (item) {
+          showSlotOptionPurchaseModal(item, false, function(res) {
+            if (!res) { gearSelects[i].value = oldOption ? oldOption.id : ''; return; }
+            let actualCost = res.cost;
+            currentObj.options[slotIdx] = { id: item.id, name: item.name, cost: actualCost, desc: item.desc || '', parentType: item.parentType, slots: item.slots };
+            let diff = actualCost - oldCost;
+            let el = document.getElementById("currency_eb");
+            el.value = (parseInt(el.value) || 0) - diff;
+            renderGear();
+          });
+          return;
+        }
+      } else if (optionId && optionId.startsWith("custom_")) {
+      } else {
+        showSellItemModal(oldOption ? oldOption.name : "Option", oldCost, function(sellPrice) {
+          if (sellPrice === null) { gearSelects[i].value = oldOption ? oldOption.id : ''; return; }
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) + sellPrice;
+          currentObj.options[slotIdx] = null;
+          renderGear();
+        });
+        return;
+      }
+      
+      let newOption = currentObj.options[slotIdx] || null;
+      let newCost = newOption ? (newOption.cost || 0) : 0;
+      let diff = newCost - oldCost;
+      let el = document.getElementById("currency_eb");
+      el.value = (parseInt(el.value) || 0) - diff;
+      
+      renderGear();
     };
   }
 }
@@ -3867,21 +4222,14 @@ function renderAmmoTracker() {
     let id = ammoIds[i];
     let entry = state.ammo[id];
     if (!entry || entry.total <= 0) continue;
-    let tr = el('tr', {}, [
-      el('td', {}, entry.name),
-      el('td', {}, entry.perBundle.toString()),
-      el('td', {}, el('strong', {}, entry.total.toString())),
-      el('td', {}, [
-        el('input', { type: 'number', className: 'ammo-use-qty', dataset: { ammo: id }, value: 1, min: 1, max: entry.total, style: 'width:55px' }),
-        ' ',
-        el('button', { className: 'btn-action ammo-use-btn', dataset: { ammo: id }, style: 'font-size:0.75rem;padding:0.2rem 0.5rem' }, 'Use')
-      ])
-    ]);
+    let tr = document.createElement("tr");
+    tr.innerHTML = '<td>' + entry.name + '</td><td>' + entry.perBundle + '</td><td><strong>' + entry.total + '</strong></td><td><input type="number" class="ammo-use-qty" data-ammo="' + id + '" value="1" min="1" max="' + entry.total + '" style="width:55px"> <button class="btn-action ammo-use-btn" data-ammo="' + id + '" style="font-size:0.75rem;padding:0.2rem 0.5rem">Use</button></td>';
     frag.appendChild(tr);
   }
-  tbody.appendChild(frag);
-  if (tbody.children.length === 0) {
-    tbody.appendChild(el('tr', {}, el('td', { colSpan: 4, style: 'text-align:center;opacity:0.5' }, 'No ammunition purchased. Add ammo from the Gear tab.')));
+  if (frag.children.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;opacity:0.5">No ammunition purchased. Add ammo from the Gear tab.</td></tr>';
+  } else {
+    tbody.appendChild(frag);
   }
   attachAmmoEvents();
 }
@@ -3900,7 +4248,7 @@ function attachAmmoEvents() {
       if (state.ammo[ammoId].total <= 0) {
         delete state.ammo[ammoId];
         for (let j = 0; j < state.gear.length; j++) {
-          if (state.gear[j].id === ammoId) {
+          if (state.gear[j].ammoKey === ammoId || state.gear[j].id === ammoId) {
             state.gear.splice(j, 1);
             break;
           }
@@ -3955,70 +4303,61 @@ function renderLifepathLists() {
   // Friends
   let fc = document.getElementById("lp_friends_container");
   if(fc) {
-    fc.innerHTML = "";
+    let fhtml = "";
     for(let i=0; i<state.lifepath.friends.length; i++) {
-      let sel = el('select', { className: 'lp-friend-sel', dataset: { idx: i }, style: 'flex:1' }, [
-        el('option', { value: '', selected: !state.lifepath.friends[i] ? 'selected' : undefined }, '-- Relationship --'),
-        ...DATA.lifepath.friendRelationships.map(x => el('option', { value: x, selected: state.lifepath.friends[i]===x ? 'selected' : undefined }, x))
-      ]);
-      sel.onchange = function() { state.lifepath.friends[this.dataset.idx] = this.value; };
-      let btn = el('button', { className: 'btn-action remove-lifepath-item', dataset: { type: 'friends', index: i } }, 'X');
-      fc.appendChild(el('div', { style: 'display:flex; gap:0.5rem' }, [sel, btn]));
+       fhtml += `<div style="display:flex; gap:0.5rem">
+          <select class="lp-friend-sel" data-idx="${i}" style="flex:1">
+             <option value="">-- Relationship --</option>
+             ${DATA.lifepath.friendRelationships.map(x => `<option value="${x}" ${state.lifepath.friends[i]===x?'selected':''}>${x}</option>`).join('')}
+          </select>
+          <button class="btn-action" onclick="removeLifepathItem('friends', ${i})">X</button>
+       </div>`;
     }
+    fc.innerHTML = fhtml;
+    let fsels = fc.querySelectorAll('.lp-friend-sel');
+    fsels.forEach(s => s.onchange = function() { state.lifepath.friends[this.dataset.idx] = this.value; });
   }
 
   // Enemies
   let ec = document.getElementById("lp_enemies_container");
   if(ec) {
-    ec.innerHTML = "";
+    let ehtml = "";
     for(let i=0; i<state.lifepath.enemies.length; i++) {
-      let e = state.lifepath.enemies[i];
-      
-      let selWho = el('select', { className: 'lp-enemy-sel', dataset: { idx: i, key: 'who' }, style: 'width:calc(100% - 30px)' }, [
-        el('option', { value: '', selected: !e.who ? 'selected' : undefined }, '-- Who --'),
-        ...DATA.lifepath.enemyTypes.map(x => el('option', { value: x, selected: e.who===x ? 'selected' : undefined }, x))
-      ]);
-      let btn = el('button', { className: 'btn-action remove-lifepath-item', dataset: { type: 'enemies', index: i } }, 'X');
-      
-      let selCause = el('select', { className: 'lp-enemy-sel', dataset: { idx: i, key: 'cause' } }, [
-        el('option', { value: '', selected: !e.cause ? 'selected' : undefined }, '-- Cause --'),
-        ...DATA.lifepath.enemyCauses.map(x => el('option', { value: x, selected: e.cause===x ? 'selected' : undefined }, x))
-      ]);
-      
-      let selForce = el('select', { className: 'lp-enemy-sel', dataset: { idx: i, key: 'force' } }, [
-        el('option', { value: '', selected: !e.force ? 'selected' : undefined }, '-- Forces --'),
-        ...DATA.lifepath.enemyForces.map(x => el('option', { value: x, selected: e.force===x ? 'selected' : undefined }, x))
-      ]);
-      
-      let selRevenge = el('select', { className: 'lp-enemy-sel', dataset: { idx: i, key: 'revenge' } }, [
-        el('option', { value: '', selected: !e.revenge ? 'selected' : undefined }, '-- Revenge --'),
-        ...DATA.lifepath.enemyRevenge.map(x => el('option', { value: x, selected: e.revenge===x ? 'selected' : undefined }, x))
-      ]);
-      
-      [selWho, selCause, selForce, selRevenge].forEach(s => s.onchange = function() { state.lifepath.enemies[this.dataset.idx][this.dataset.key] = this.value; });
-      
-      ec.appendChild(el('div', { style: 'display:flex; flex-direction:column; gap:0.2rem; border-left:2px solid var(--accent); padding-left:0.5rem; margin-bottom:0.5rem' }, [
-        el('div', { style: 'display:flex; justify-content:space-between' }, [selWho, btn]),
-        selCause,
-        selForce,
-        selRevenge
-      ]));
+       let e = state.lifepath.enemies[i];
+       ehtml += `<div style="display:flex; flex-direction:column; gap:0.2rem; border-left:2px solid var(--accent); padding-left:0.5rem; margin-bottom:0.5rem">
+          <div style="display:flex; justify-content:space-between">
+             <select class="lp-enemy-sel" data-idx="${i}" data-key="who" style="width:calc(100% - 30px)">
+               <option value="">-- Who --</option>
+               ${DATA.lifepath.enemyTypes.map(x => `<option value="${x}" ${e.who===x?'selected':''}>${x}</option>`).join('')}
+             </select>
+             <button class="btn-action" onclick="removeLifepathItem('enemies', ${i})">X</button>
+          </div>
+          <select class="lp-enemy-sel" data-idx="${i}" data-key="cause"><option value="">-- Cause --</option>${DATA.lifepath.enemyCauses.map(x => `<option value="${x}" ${e.cause===x?'selected':''}>${x}</option>`).join('')}</select>
+          <select class="lp-enemy-sel" data-idx="${i}" data-key="force"><option value="">-- Forces --</option>${DATA.lifepath.enemyForces.map(x => `<option value="${x}" ${e.force===x?'selected':''}>${x}</option>`).join('')}</select>
+          <select class="lp-enemy-sel" data-idx="${i}" data-key="revenge"><option value="">-- Revenge --</option>${DATA.lifepath.enemyRevenge.map(x => `<option value="${x}" ${e.revenge===x?'selected':''}>${x}</option>`).join('')}</select>
+       </div>`;
     }
+    ec.innerHTML = ehtml;
+    let esels = ec.querySelectorAll('.lp-enemy-sel');
+    esels.forEach(s => s.onchange = function() { state.lifepath.enemies[this.dataset.idx][this.dataset.key] = this.value; });
   }
 
   // Lovers
   let lc = document.getElementById("lp_lovers_container");
   if(lc) {
-    lc.innerHTML = "";
+    let lhtml = "";
     for(let i=0; i<state.lifepath.lovers.length; i++) {
-      let sel = el('select', { className: 'lp-lover-sel', dataset: { idx: i }, style: 'flex:1' }, [
-        el('option', { value: '', selected: !state.lifepath.lovers[i] ? 'selected' : undefined }, '-- What Happened --'),
-        ...DATA.lifepath.loveTragedies.map(x => el('option', { value: x, selected: state.lifepath.lovers[i]===x ? 'selected' : undefined }, x))
-      ]);
-      sel.onchange = function() { state.lifepath.lovers[this.dataset.idx] = this.value; };
-      let btn = el('button', { className: 'btn-action remove-lifepath-item', dataset: { type: 'lovers', index: i } }, 'X');
-      lc.appendChild(el('div', { style: 'display:flex; gap:0.5rem' }, [sel, btn]));
+       lhtml += `<div style="display:flex; gap:0.5rem">
+          <select class="lp-lover-sel" data-idx="${i}" style="flex:1">
+             <option value="">-- What Happened --</option>
+             ${DATA.lifepath.loveTragedies.map(x => `<option value="${x}" ${state.lifepath.lovers[i]===x?'selected':''}>${x}</option>`).join('')}
+          </select>
+          <button class="btn-action" onclick="removeLifepathItem('lovers', ${i})">X</button>
+       </div>`;
     }
+    lc.innerHTML = lhtml;
+    let lsels = lc.querySelectorAll('.lp-lover-sel');
+    lsels.forEach(s => s.onchange = function() { state.lifepath.lovers[this.dataset.idx] = this.value; });
   }
 }
 
@@ -4129,35 +4468,55 @@ function randomRoleLifepath() {
 // ============================================================
 // ADD BUTTONS & ITEM SELECTOR
 // ============================================================
-async function initAddButtons() {
-  document.getElementById("add_weapon_btn").onclick = async function() {
-    showItemSelector("weapon", DATA.weapons, async function(item) {
-      let costInput = await customPrompt("Cost in eb (0 = looted):", item.cost || 0);
-      if (costInput === null) return;
-      let actualCost = parseInt(costInput) || 0;
-      state.weapons.push({ id: item.id, name: item.name, dmg: item.dmg, rof: item.rof, mag: item.mag, type: item.type, rank: 0, cost: actualCost });
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) - actualCost;
-      renderWeapons();
+function initAddButtons() {
+  document.getElementById("add_weapon_btn").onclick = function() {
+    showItemSelector("weapon", DATA.weapons, function(item) {
+      if (item.id && item.id.startsWith("custom_")) {
+        let actualCost = item.cost || 0;
+        state.weapons.push({ id: item.id, name: item.name, dmg: item.dmg, rof: item.rof, mag: item.mag, type: item.type, rank: 0, cost: actualCost, desc: item.desc || '' });
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) - actualCost;
+        renderWeapons();
+      } else {
+        showItemPurchaseModal(item, "Weapon", {}, function(res) {
+          if (!res) return;
+          let actualCost = res.cost;
+          state.weapons.push({ id: item.id, name: item.name, dmg: item.dmg, rof: item.rof, mag: item.mag, type: item.type, rank: 0, cost: actualCost, desc: item.desc || '' });
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) - actualCost;
+          renderWeapons();
+        });
+      }
     }, "type");
   };
-  document.getElementById("add_armor_btn").onclick = async function() {
-    showItemSelector("armor", DATA.armor, async function(item) {
-      let costInput = await customPrompt("Cost in eb (0 = looted):", item.cost || 0);
-      if (costInput === null) return;
-      let actualCost = parseInt(costInput) || 0;
-      state.armor.push({ id: item.id, name: item.name, sp: item.sp, slots: item.slots, enc: item.enc, cost: actualCost });
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) - actualCost;
-      renderArmor();
-      renderHumanity();
+  document.getElementById("add_armor_btn").onclick = function() {
+    showItemSelector("armor", DATA.armor, function(item) {
+      if (item.id && item.id.startsWith("custom_")) {
+        let actualCost = item.cost || 0;
+        state.armor.push({ id: item.id, name: item.name, sp: item.sp, slots: item.slots, enc: item.enc, cost: actualCost, desc: item.desc || '' });
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) - actualCost;
+        renderArmor();
+        renderHumanity();
+      } else {
+        showItemPurchaseModal(item, "Armor", {}, function(res) {
+          if (!res) return;
+          let actualCost = res.cost;
+          state.armor.push({ id: item.id, name: item.name, sp: item.sp, slots: item.slots, enc: item.enc, cost: actualCost, desc: item.desc || '' });
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) - actualCost;
+          renderArmor();
+          renderHumanity();
+        });
+      }
     });
   };
-  document.getElementById("add_cyberware_btn").onclick = async function() {
+  document.getElementById("add_cyberware_btn").onclick = function() {
     let standalone = DATA.cyberware.filter(function(c) { return !c.parentType || c.slots; });
-    showItemSelector("cyberware", standalone, async function(item) {
+    showItemSelector("cyberware", standalone, function(item) {
       let selectedLoc = null;
-      let isPairedPurchase = (item.id === "romanova_cyberlegs" || item.id === "skydrivers");
+      let needLocation = false;
+      let defaultLoc = "Left";
       let bodyPart = item.bodyPart;
       
       if (bodyPart) {
@@ -4181,73 +4540,66 @@ async function initAddButtons() {
           }
         }
         
-        if (item.takesBoth || isPairedPurchase) {
+        if (item.takesBoth) {
           if (hasLeft || hasRight) {
             alert("This item requires both " + bodyPart + "s, but you already have one or more installed. Remove them first.");
             return;
           }
-          if (item.takesBoth && !isPairedPurchase) {
-            selectedLoc = "Both";
-          }
+          selectedLoc = "Both";
         } else if (max === 2) {
           if (hasLeft && hasRight) {
             alert("You already have both " + bodyPart + "s installed. Remove one first.");
             return;
           } else if (!hasLeft && !hasRight) {
-            let locInput = await customPrompt("Select location for this " + bodyPart + ":\n1: Left\n2: Right", "1");
-            if (locInput === null) return;
-            selectedLoc = (locInput.trim() === "2") ? "Right" : "Left";
+            needLocation = true;
+            defaultLoc = "Left";
           } else if (!hasLeft) {
             selectedLoc = "Left";
-            alert("Auto-assigned to Left " + bodyPart + " (Right is already taken).");
           } else if (!hasRight) {
             selectedLoc = "Right";
-            alert("Auto-assigned to Right " + bodyPart + " (Left is already taken).");
           }
         }
       }
-      let costInput = await customPrompt("Cost in eb (0 = looted):", item.cost || 0);
-      if (costInput === null) return;
-      let actualCost = parseInt(costInput) || 0;
-      let actualHc = item.hc || 0;
-      if (actualHc > 0) {
-        let hcInput = await customPrompt("Humanity Cost for " + item.name + "\n(Enter value, or 'r' to roll randomly)", actualHc);
-        if (hcInput !== null) {
-          if (hcInput.toLowerCase().trim() === 'r') {
-            actualHc = rollCyberwareHC(item.hc);
-            alert("Rolled Humanity Cost: " + actualHc);
-          } else {
-            actualHc = parseInt(hcInput) || 0;
+
+      let processCyberwareAdd = function(actualCost, actualHc, loc) {
+        if (loc) selectedLoc = loc;
+        let entry = { id: item.id, name: item.name, type: item.type, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null };
+        if (selectedLoc) entry.location = selectedLoc;
+        if (item.slots) { entry.slots = item.slots; entry.options = []; }
+        
+        let pairedPrefill = { "romanova_cyberlegs": "talon_feet", "skydrivers": "jump_boosters" };
+        let prefillId = pairedPrefill[item.id];
+        if (prefillId) {
+          let prefillData = getDataItemById(prefillId);
+          let leftLeg = { id: item.id, name: item.name, location: "Left", type: item.type, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
+          if (prefillData) {
+            leftLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
           }
+          state.cyberware.push(leftLeg);
+          let rightLeg = { id: item.id, name: item.name, location: "Right", type: item.type, hc: actualHc, cost: 0, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
+          if (prefillData) {
+            rightLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
+          }
+          state.cyberware.push(rightLeg);
+        } else {
+          state.cyberware.push(entry);
         }
-      }
-      let entry = { id: item.id, name: item.name, type: item.type, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null };
-      if (selectedLoc) entry.location = selectedLoc;
-      if (item.slots) { entry.slots = item.slots; entry.options = []; }
-      
-      let pairedPrefill = { "romanova_cyberlegs": "talon_feet", "skydrivers": "jump_boosters" };
-      let prefillId = pairedPrefill[item.id];
-      if (prefillId) {
-        let prefillData = getDataItemById(prefillId);
-        let leftLeg = { id: item.id, name: item.name, location: "Left", type: item.type, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
-        if (prefillData) {
-          leftLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
-        }
-        state.cyberware.push(leftLeg);
-        let rightLeg = { id: item.id, name: item.name, location: "Right", type: item.type, hc: actualHc, cost: 0, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
-        if (prefillData) {
-          rightLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
-        }
-        state.cyberware.push(rightLeg);
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) - actualCost;
+        renderCyberware();
+        renderHumanity();
+        renderStats();
+        renderSkills();
+      };
+
+      if (item.id && item.id.startsWith("custom_")) {
+        processCyberwareAdd(item.cost || 0, item.hc || 0, null);
       } else {
-        state.cyberware.push(entry);
+        showItemPurchaseModal(item, "Cyberware", { needLocation: needLocation, defaultLoc: defaultLoc, bodyPart: bodyPart }, function(res) {
+          if (!res) return;
+          processCyberwareAdd(res.cost, res.hc !== undefined ? res.hc : (item.hc || 0), res.location);
+        });
       }
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) - actualCost;
-      renderCyberware();
-      renderHumanity();
-      renderStats();
-      renderSkills();
     }, "type");
   };
   
@@ -4259,42 +4611,574 @@ async function initAddButtons() {
       if (motoRank > 0 && usedMoto < motoRank) {
         isFree = await customConfirm(`Is this vehicle free (from Nomad Moto ability)?\nYou have used ${usedMoto}/${motoRank} Moto choices.`);
       }
-      let cost = 0;
-      if (!isFree) {
-        let costInput = await customPrompt("Cost in eb (0 = looted):", item.cost || 0);
-        if (costInput === null) return;
-        cost = parseInt(costInput) || 0;
+      if (isFree || (item.id && item.id.startsWith("custom_"))) {
+        let cost = isFree ? 0 : (item.cost || 0);
+        state.vehicles.push({ id: item.id, name: item.name, sdp: item.sdp, seats: item.seats, cost: cost, isMoto: isFree, desc: item.desc, upgrades: [] });
+        if (!isFree) {
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) - cost;
+        }
+        renderVehicles();
+        updateRoleInfo();
+      } else {
+        showItemPurchaseModal(item, "Vehicle", {}, function(res) {
+          if (!res) return;
+          let cost = res.cost;
+          state.vehicles.push({ id: item.id, name: item.name, sdp: item.sdp, seats: item.seats, cost: cost, isMoto: false, desc: item.desc, upgrades: [] });
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) - cost;
+          renderVehicles();
+          updateRoleInfo();
+        });
       }
-      state.vehicles.push({ id: item.id, name: item.name, sdp: item.sdp, seats: item.seats, cost: cost, isMoto: isFree, desc: item.desc, upgrades: [] });
-      if (!isFree) {
-        let el = document.getElementById("currency_eb");
-        el.value = (parseInt(el.value) || 0) - cost;
-      }
-      renderVehicles();
-      updateRoleInfo();
     }, "cat");
   };
 
   document.getElementById("add_gear_btn").onclick = function() {
-    let allGear = DATA.gear.concat(DATA.fashion.map(function(f) { return { id: f.id, name: f.name, cost: f.cost, cat: "Fashion" }; }));
-    showItemSelector("gear", allGear, async function(item) {
-      let costInput = await customPrompt("Cost in eb (0 = looted):", item.cost || 0);
-      if (costInput === null) return;
-      let actualCost = parseInt(costInput) || 0;
-      state.gear.push({ id: item.id, name: item.name, cost: actualCost, cat: item.cat || "Gear", desc: item.desc || "", qty: 1, ammo: item.ammo });
-      let el = document.getElementById("currency_eb");
-      el.value = (parseInt(el.value) || 0) - actualCost;
-      if (item.ammo) {
-        state.ammo[item.id] = state.ammo[item.id] || { id: item.id, name: item.name, perBundle: item.ammo, total: 0 };
-        state.ammo[item.id].total += item.ammo;
+    let allGear = DATA.gear.concat(DATA.fashion.map(function(f) { return { id: f.id, name: f.name, cost: f.cost, cat: "Fashion", slots: f.slots, parentType: f.parentType, desc: f.desc }; }));
+    showItemSelector("gear", allGear, function(item) {
+      if (item.cat === "Ammunition") {
+        showAmmoWeaponTypeModal(item, function(res) {
+          if (!res) return;
+          let gunType = res.gunType;
+          let actualCost = res.cost;
+          let name = item.name + " (" + gunType + ")";
+          let ammoKey = item.id + "_" + gunType.toLowerCase().replace(/[^a-z0-9]/g, '_');
+
+          let gearEntry = { id: item.id, ammoKey: ammoKey, name: name, cost: actualCost, cat: item.cat || "Gear", desc: item.desc || "", qty: 1, ammo: item.ammo, slots: item.slots, parentType: item.parentType };
+          if (item.slots) { gearEntry.options = []; }
+          state.gear.push(gearEntry);
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) - actualCost;
+
+          if (item.ammo) {
+            let perBundle = item.ammo || 10;
+            state.ammo[ammoKey] = state.ammo[ammoKey] || { id: ammoKey, gearId: item.id, name: name, perBundle: perBundle, total: 0 };
+            state.ammo[ammoKey].total += perBundle;
+          }
+          renderGear();
+          renderAmmoTracker();
+        });
+      } else if (item.id && item.id.startsWith("custom_")) {
+        let actualCost = item.cost || 0;
+        let gearEntry = { id: item.id, ammoKey: item.id, name: item.name, cost: actualCost, cat: item.cat || "Gear", desc: item.desc || "", qty: 1, ammo: item.ammo, slots: item.slots, parentType: item.parentType };
+        if (item.slots) { gearEntry.options = []; }
+        state.gear.push(gearEntry);
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) - actualCost;
+        renderGear();
+      } else {
+        showItemPurchaseModal(item, item.cat || "Gear", {}, function(res) {
+          if (!res) return;
+          let actualCost = res.cost;
+          let gearEntry = { id: item.id, ammoKey: item.id, name: item.name, cost: actualCost, cat: item.cat || "Gear", desc: item.desc || "", qty: 1, ammo: item.ammo, slots: item.slots, parentType: item.parentType };
+          if (item.slots) { gearEntry.options = []; }
+          state.gear.push(gearEntry);
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) - actualCost;
+
+          if (item.ammo) {
+            let perBundle = item.ammo || (item.cat === "Grenades" ? 1 : 10);
+            state.ammo[item.id] = state.ammo[item.id] || { id: item.id, gearId: item.id, name: item.name, perBundle: perBundle, total: 0 };
+            state.ammo[item.id].total += perBundle;
+          }
+          renderGear();
+          renderAmmoTracker();
+        });
       }
-      renderGear();
-      renderAmmoTracker();
     }, "cat");
   };
 }
 
-async function showItemSelector(type, items, callback, groupBy) {
+function showQtyAddModal(itemName, addedQty, unitCost, callback) {
+  let defaultTotalCost = (unitCost || 0) * addedQty;
+  let overlay = document.createElement("div");
+  overlay.className = "modal-overlay active";
+  overlay.style.display = "flex";
+  overlay.style.zIndex = "10000";
+
+  let box = document.createElement("div");
+  box.className = "modal-box";
+  box.style.maxWidth = "420px";
+  box.style.width = "90%";
+  box.style.padding = "1.5rem";
+
+  let html = `<h3 style="margin-top:0;margin-bottom:0.75rem;color:var(--accent)">\u2795 Add +${addedQty} ${escapeHtml(itemName)}</h3>`;
+  html += `<p style="font-size:0.85rem;margin-bottom:1rem;color:var(--muted)">Enter total EB cost paid for +${addedQty} items, or select Looted (0eb):</p>`;
+
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Cost in eb (0 = looted)</label>`;
+  html += `<input type="number" id="qty_modal_cost" value="${defaultTotalCost}" min="0" style="width:100%;padding:0.45rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
+
+  html += `<div style="display:flex;justify-content:space-between;gap:0.5rem;margin-top:1.25rem">
+    <button id="qty_modal_cancel" class="btn-action" style="padding:0.45rem 0.8rem">Cancel</button>
+    <div style="display:flex;gap:0.5rem">
+      <button id="qty_modal_looted" class="btn-action" style="padding:0.45rem 0.8rem;background:var(--card-bg)">Looted (0eb)</button>
+      <button id="qty_modal_confirm" class="btn-action" style="background:var(--accent);color:#fff;font-weight:bold;padding:0.45rem 0.8rem">Confirm Cost</button>
+    </div>
+  </div>`;
+
+  box.innerHTML = html;
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  function closeModal() {
+    if (document.body.contains(overlay)) {
+      document.body.removeChild(overlay);
+    }
+  }
+
+  document.getElementById("qty_modal_cancel").onclick = function() {
+    closeModal();
+    callback(null);
+  };
+
+  document.getElementById("qty_modal_looted").onclick = function() {
+    closeModal();
+    callback(0);
+  };
+
+  document.getElementById("qty_modal_confirm").onclick = function() {
+    let cost = parseInt(document.getElementById("qty_modal_cost").value) || 0;
+    closeModal();
+    callback(cost);
+  };
+}
+
+function showSellItemModal(itemName, defaultPrice, callback) {
+  defaultPrice = defaultPrice || 0;
+  let overlay = document.createElement("div");
+  overlay.className = "modal-overlay active";
+  overlay.style.display = "flex";
+  overlay.style.zIndex = "10000";
+
+  let box = document.createElement("div");
+  box.className = "modal-box";
+  box.style.maxWidth = "420px";
+  box.style.width = "90%";
+  box.style.padding = "1.5rem";
+
+  let html = `<h3 style="margin-top:0;margin-bottom:0.75rem;color:var(--accent)">\uD83D\uDDD1\uFE0F Remove / Sell ${escapeHtml(itemName)}</h3>`;
+  html += `<p style="font-size:0.85rem;margin-bottom:1rem;color:var(--muted)">Enter sale value in Eurodollars to refund, or select Discard for 0eb:</p>`;
+
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Sale / Refund Price (eb)</label>`;
+  html += `<input type="number" id="sell_modal_price" value="${defaultPrice}" min="0" style="width:100%;padding:0.45rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
+
+  html += `<div style="display:flex;justify-content:space-between;gap:0.5rem;margin-top:1.25rem">
+    <button id="sell_modal_cancel" class="btn-action" style="padding:0.45rem 0.8rem">Cancel</button>
+    <div style="display:flex;gap:0.5rem">
+      <button id="sell_modal_discard" class="btn-action" style="padding:0.45rem 0.8rem;background:var(--card-bg)">Discard (0eb)</button>
+      <button id="sell_modal_confirm" class="btn-action" style="background:var(--accent);color:#fff;font-weight:bold;padding:0.45rem 0.8rem">Sell for EB</button>
+    </div>
+  </div>`;
+
+  box.innerHTML = html;
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  function closeModal() {
+    if (document.body.contains(overlay)) {
+      document.body.removeChild(overlay);
+    }
+  }
+
+  document.getElementById("sell_modal_cancel").onclick = function() {
+    closeModal();
+    callback(null);
+  };
+
+  document.getElementById("sell_modal_discard").onclick = function() {
+    closeModal();
+    callback(0);
+  };
+
+  document.getElementById("sell_modal_confirm").onclick = function() {
+    let price = parseInt(document.getElementById("sell_modal_price").value) || 0;
+    closeModal();
+    callback(price);
+  };
+}
+
+function showItemPurchaseModal(item, category, opts, callback) {
+  opts = opts || {};
+  let overlay = document.createElement("div");
+  overlay.className = "modal-overlay active";
+  overlay.style.display = "flex";
+  overlay.style.zIndex = "10000";
+
+  let box = document.createElement("div");
+  box.className = "modal-box";
+  box.style.maxWidth = "480px";
+  box.style.width = "90%";
+  box.style.padding = "1.5rem";
+
+  let html = `<h3 style="margin-top:0;margin-bottom:0.75rem;color:var(--accent)">\u2795 Add ${escapeHtml(item.name)}</h3>`;
+  html += `<div style="display:flex;flex-direction:column;gap:0.85rem;">`;
+
+  if (item.desc || item.dmg || item.sp) {
+    let details = [];
+    if (item.dmg) details.push(`Dmg: ${item.dmg}`);
+    if (item.type) details.push(`Type: ${item.type}`);
+    if (item.sp) details.push(`SP: ${item.sp}`);
+    let detailStr = details.length ? ` (${details.join(', ')})` : '';
+    html += `<div style="font-size:0.85rem;color:var(--muted)">${escapeHtml((item.desc || '') + detailStr)}</div>`;
+  }
+
+  if (opts.needLocation) {
+    let locBody = opts.bodyPart || "Location";
+    html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Installed Location *</label>`;
+    html += `<select id="item_pur_location" style="width:100%;padding:0.45rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px">
+      <option value="Left"${opts.defaultLoc === "Left" ? " selected" : ""}>Left ${escapeHtml(locBody)}</option>
+      <option value="Right"${opts.defaultLoc === "Right" ? " selected" : ""}>Right ${escapeHtml(locBody)}</option>
+    </select></div>`;
+  }
+
+  let defaultCost = (item.cost !== undefined) ? item.cost : 0;
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Cost in eb (0 = looted)</label>`;
+  html += `<input type="number" id="item_pur_cost" value="${defaultCost}" min="0" style="width:100%;padding:0.45rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
+
+  let hasHc = (item.hc && item.hc > 0);
+  if (hasHc) {
+    html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Humanity Cost (HC)</label>`;
+    html += `<div style="display:flex;gap:0.5rem">`;
+    html += `<input type="number" id="item_pur_hc" value="${item.hc}" min="0" style="flex:1;padding:0.45rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px">`;
+    html += `<button type="button" id="item_pur_roll_hc" class="btn-action" style="padding:0.45rem 0.8rem;white-space:nowrap;background:var(--card-bg)">\uD83C\uDFB2 Roll HC</button>`;
+    html += `</div></div>`;
+  }
+
+  html += `</div>`;
+
+  html += `<div style="display:flex;justify-content:flex-end;gap:0.5rem;margin-top:1.25rem">
+    <button id="item_pur_cancel" class="btn-action" style="padding:0.45rem 0.9rem">Cancel</button>
+    <button id="item_pur_confirm" class="btn-action" style="background:var(--accent);color:#fff;font-weight:bold;padding:0.45rem 0.9rem">Add to Character</button>
+  </div>`;
+
+  box.innerHTML = html;
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  if (hasHc) {
+    document.getElementById("item_pur_roll_hc").onclick = function() {
+      let rolled = rollCyberwareHC(item.hc);
+      document.getElementById("item_pur_hc").value = rolled;
+    };
+  }
+
+  function closeModal() {
+    if (document.body.contains(overlay)) {
+      document.body.removeChild(overlay);
+    }
+  }
+
+  document.getElementById("item_pur_cancel").onclick = function() {
+    closeModal();
+    callback(null);
+  };
+
+  document.getElementById("item_pur_confirm").onclick = function() {
+    let cost = parseInt(document.getElementById("item_pur_cost").value) || 0;
+    let res = { cost: cost };
+    if (opts.needLocation) {
+      res.location = document.getElementById("item_pur_location").value;
+    }
+    if (hasHc) {
+      res.hc = parseInt(document.getElementById("item_pur_hc").value) || 0;
+    }
+    closeModal();
+    callback(res);
+  };
+}
+
+function showSlotOptionPurchaseModal(item, isCyberware, callback) {
+  let overlay = document.createElement("div");
+  overlay.className = "modal-overlay active";
+  overlay.style.display = "flex";
+  overlay.style.zIndex = "10000";
+
+  let box = document.createElement("div");
+  box.className = "modal-box";
+  box.style.maxWidth = "450px";
+  box.style.width = "90%";
+  box.style.padding = "1.5rem";
+
+  let html = `<h3 style="margin-top:0;margin-bottom:0.75rem;color:var(--accent)">\u2795 Install ${escapeHtml(item.name)}</h3>`;
+  html += `<div style="display:flex;flex-direction:column;gap:0.85rem;">`;
+
+  if (item.desc) {
+    html += `<div style="font-size:0.85rem;color:var(--muted)">${escapeHtml(item.desc)}</div>`;
+  }
+
+  let defaultCost = (item.cost !== undefined) ? item.cost : 0;
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Cost in eb (0 = looted)</label>`;
+  html += `<input type="number" id="slot_opt_cost" value="${defaultCost}" min="0" style="width:100%;padding:0.45rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
+
+  let hasHc = (isCyberware && item.hc && item.hc > 0);
+  if (hasHc) {
+    html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Humanity Cost (HC)</label>`;
+    html += `<div style="display:flex;gap:0.5rem">`;
+    html += `<input type="number" id="slot_opt_hc" value="${item.hc}" min="0" style="flex:1;padding:0.45rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px">`;
+    html += `<button type="button" id="slot_opt_roll_hc" class="btn-action" style="padding:0.45rem 0.8rem;white-space:nowrap;background:var(--card-bg)">\uD83C\uDFB2 Roll HC</button>`;
+    html += `</div></div>`;
+  }
+
+  html += `</div>`;
+
+  html += `<div style="display:flex;justify-content:flex-end;gap:0.5rem;margin-top:1.25rem">
+    <button id="slot_opt_cancel" class="btn-action" style="padding:0.45rem 0.9rem">Cancel</button>
+    <button id="slot_opt_confirm" class="btn-action" style="background:var(--accent);color:#fff;font-weight:bold;padding:0.45rem 0.9rem">Install Option</button>
+  </div>`;
+
+  box.innerHTML = html;
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  if (hasHc) {
+    document.getElementById("slot_opt_roll_hc").onclick = function() {
+      let rolled = rollCyberwareHC(item.hc);
+      document.getElementById("slot_opt_hc").value = rolled;
+    };
+  }
+
+  function closeModal() {
+    if (document.body.contains(overlay)) {
+      document.body.removeChild(overlay);
+    }
+  }
+
+  document.getElementById("slot_opt_cancel").onclick = function() {
+    closeModal();
+    callback(null);
+  };
+
+  document.getElementById("slot_opt_confirm").onclick = function() {
+    let cost = parseInt(document.getElementById("slot_opt_cost").value) || 0;
+    let res = { cost: cost };
+    if (hasHc) {
+      res.hc = parseInt(document.getElementById("slot_opt_hc").value) || 0;
+    }
+    closeModal();
+    callback(res);
+  };
+}
+
+function showAmmoWeaponTypeModal(item, callback) {
+  let overlay = document.createElement("div");
+  overlay.className = "modal-overlay active";
+  overlay.style.display = "flex";
+  overlay.style.zIndex = "10000";
+
+  let box = document.createElement("div");
+  box.className = "modal-box";
+  box.style.maxWidth = "450px";
+  box.style.width = "90%";
+  box.style.padding = "1.5rem";
+
+  let html = `<h3 style="margin-top:0;margin-bottom:0.75rem;color:var(--accent)">\uD83D\uDD2B Configure ${escapeHtml(item.name)}</h3>`;
+  html += `<div style="display:flex;flex-direction:column;gap:0.75rem;">`;
+
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Weapon Type / Category *</label>`;
+  html += `<select id="ammo_weapon_type_select" style="width:100%;padding:0.5rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px;font-size:0.95rem;">`;
+
+  let equippedWeapons = (state.weapons || []).map(function(w) { return w.name || w.type; }).filter(Boolean);
+  let uniqueEquipped = [];
+  for (let i = 0; i < equippedWeapons.length; i++) {
+    if (uniqueEquipped.indexOf(equippedWeapons[i]) === -1) uniqueEquipped.push(equippedWeapons[i]);
+  }
+
+  if (uniqueEquipped.length > 0) {
+    html += `<optgroup label="Your Equipped Weapons">`;
+    for (let i = 0; i < uniqueEquipped.length; i++) {
+      html += `<option value="${escapeHtml(uniqueEquipped[i])}">${escapeHtml(uniqueEquipped[i])}</option>`;
+    }
+    html += `</optgroup>`;
+  }
+
+  let stdTypes = [
+    "Medium Pistol",
+    "Heavy Pistol",
+    "Very Heavy Pistol",
+    "SMG",
+    "Heavy SMG",
+    "Shotgun (Slugs)",
+    "Shotgun (Shells)",
+    "Assault Rifle",
+    "Sniper Rifle",
+    "Bow / Crossbow",
+    "Grenade Launcher",
+    "Rocket Launcher"
+  ];
+
+  html += `<optgroup label="Standard Weapon Categories">`;
+  for (let i = 0; i < stdTypes.length; i++) {
+    html += `<option value="${escapeHtml(stdTypes[i])}">${escapeHtml(stdTypes[i])}</option>`;
+  }
+  html += `</optgroup>`;
+
+  html += `<option value="Other">Other / Custom Weapon...</option>`;
+  html += `</select></div>`;
+
+  html += `<div id="ammo_custom_weapon_div" style="display:none;">
+    <label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Specify Custom Weapon Type:</label>
+    <input type="text" id="ammo_custom_weapon_input" placeholder="e.g. Railgun, Flamethrower..." style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px">
+  </div>`;
+
+  let defaultCost = item.cost || 0;
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Cost in eb (0 = looted)</label><input type="number" id="ammo_cost_input" value="${defaultCost}" min="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
+
+  html += `</div>`;
+
+  html += `<div style="display:flex;justify-content:flex-end;gap:0.5rem;margin-top:1.25rem">
+    <button id="ammo_wt_cancel" class="btn-action" style="padding:0.4rem 0.8rem">Cancel</button>
+    <button id="ammo_wt_save" class="btn-action" style="background:var(--accent);color:#fff;font-weight:bold;padding:0.4rem 0.8rem">Confirm Ammunition</button>
+  </div>`;
+
+  box.innerHTML = html;
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  let selectEl = document.getElementById("ammo_weapon_type_select");
+  let customDiv = document.getElementById("ammo_custom_weapon_div");
+  let customInput = document.getElementById("ammo_custom_weapon_input");
+
+  selectEl.onchange = function() {
+    if (this.value === "Other") {
+      customDiv.style.display = "block";
+      customInput.focus();
+    } else {
+      customDiv.style.display = "none";
+    }
+  };
+
+  function closeModal() {
+    if (document.body.contains(overlay)) {
+      document.body.removeChild(overlay);
+    }
+  }
+
+  document.getElementById("ammo_wt_cancel").onclick = function() {
+    closeModal();
+    callback(null);
+  };
+
+  document.getElementById("ammo_wt_save").onclick = function() {
+    let chosenType = selectEl.value;
+    if (chosenType === "Other") {
+      chosenType = customInput.value.trim() || "General";
+    }
+    let cost = parseInt(document.getElementById("ammo_cost_input").value) || 0;
+    closeModal();
+    callback({ gunType: chosenType, cost: cost });
+  };
+}
+
+function showCustomItemModal(type, callback) {
+  let overlay = document.createElement("div");
+  overlay.className = "modal-overlay active";
+  overlay.style.display = "flex";
+  overlay.style.zIndex = "10000";
+
+  let box = document.createElement("div");
+  box.className = "modal-box";
+  box.style.maxWidth = "550px";
+  box.style.width = "90%";
+  box.style.padding = "1.5rem";
+
+  let title = type.charAt(0).toUpperCase() + type.slice(1);
+  if (type === "vehicleUpgrade") title = "Vehicle Upgrade";
+  let html = `<h2 style="margin-top:0;margin-bottom:1rem;color:var(--accent)">\u270E Create Custom ${title}</h2>`;
+  html += `<div style="display:flex;flex-direction:column;gap:0.75rem;">`;
+
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Name *</label><input type="text" id="custom_modal_name" placeholder="Item Name" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
+
+  if (type === "weapon") {
+    html += `<div style="display:flex;gap:0.5rem"><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Damage Dice</label><input type="text" id="custom_modal_dmg" value="1d6" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Weapon Skill / Type</label><select id="custom_modal_type" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"><option value="Handgun">Handgun</option><option value="Shoulder Arms">Shoulder Arms</option><option value="Heavy Weapons">Heavy Weapons</option><option value="Melee Weapon">Melee Weapon</option><option value="Archery">Archery</option><option value="Autofire">Autofire</option></select></div></div>`;
+  } else if (type === "armor") {
+    html += `<div style="display:flex;gap:0.5rem"><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">SP Value</label><input type="number" id="custom_modal_sp" value="11" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Armor Location</label><select id="custom_modal_slot" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"><option value="Body">Body</option><option value="Head">Head</option><option value="Shield">Shield</option></select></div><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Encumbrance</label><input type="number" id="custom_modal_enc" value="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div></div>`;
+  } else if (type === "cyberware") {
+    html += `<div style="display:flex;gap:0.5rem"><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Category / Type</label><select id="custom_modal_cType" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"><option value="Fashionware">Fashionware</option><option value="Neuralware">Neuralware</option><option value="Cyberoptics">Cyberoptics</option><option value="Cyberaudio">Cyberaudio</option><option value="Internal Cyberware">Internal Cyberware</option><option value="External Cyberware">External Cyberware</option><option value="Cyberarm">Cyberarm</option><option value="Cyberleg">Cyberleg</option><option value="Borgware">Borgware</option></select></div><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Humanity Cost (HC)</label><input type="number" id="custom_modal_hc" value="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Option Slots</label><input type="number" id="custom_modal_slots" value="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div></div>`;
+  } else if (type === "vehicle" || type === "vehicleUpgrade") {
+    if (type === "vehicle") {
+      html += `<div style="display:flex;gap:0.5rem"><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">SDP</label><input type="number" id="custom_modal_sdp" value="25" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Seats</label><input type="number" id="custom_modal_seats" value="2" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div></div>`;
+    }
+  } else {
+    html += `<div style="display:flex;gap:0.5rem"><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Category</label><select id="custom_modal_cat" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"><option value="Gear">Gear</option><option value="Fashion">Fashion</option><option value="Ammunition">Ammunition</option><option value="Grenades">Grenades</option><option value="Electronics">Electronics</option><option value="Medical">Medical</option><option value="Survival">Survival</option><option value="Tools">Tools</option><option value="Weapons">Weapons</option></select></div><div style="flex:1"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Option Slots</label><input type="number" id="custom_modal_slots" value="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div></div>`;
+  }
+
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Cost in eb (0 = looted)</label><input type="number" id="custom_modal_cost" value="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
+
+  html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Description</label><textarea id="custom_modal_desc" placeholder="Item details, stats, effects..." rows="3" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px;resize:vertical"></textarea></div>`;
+
+  html += `</div>`;
+
+  html += `<div style="display:flex;justify-content:flex-end;gap:0.5rem;margin-top:1.25rem">
+    <button id="custom_modal_cancel" class="btn-action" style="padding:0.4rem 0.8rem">Cancel</button>
+    <button id="custom_modal_save" class="btn-action" style="background:var(--accent);color:#fff;font-weight:bold;padding:0.4rem 0.8rem">Save & Add Item</button>
+  </div>`;
+
+  box.innerHTML = html;
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  document.getElementById("custom_modal_name").focus();
+
+  function closeModal() {
+    if (document.body.contains(overlay)) {
+      document.body.removeChild(overlay);
+    }
+  }
+
+  document.getElementById("custom_modal_cancel").onclick = closeModal;
+
+  document.getElementById("custom_modal_save").onclick = function() {
+    let name = document.getElementById("custom_modal_name").value.trim();
+    if (!name) {
+      alert("Please enter an item name.");
+      document.getElementById("custom_modal_name").focus();
+      return;
+    }
+
+    let cost = parseInt(document.getElementById("custom_modal_cost").value) || 0;
+    let desc = document.getElementById("custom_modal_desc").value || "";
+    let itemObj = { id: "custom_" + Date.now(), name: name, cost: cost, desc: desc };
+
+    if (type === "weapon") {
+      itemObj.dmg = document.getElementById("custom_modal_dmg").value || "1d6";
+      itemObj.type = document.getElementById("custom_modal_type").value || "Handgun";
+      itemObj.rof = 1; itemObj.mag = null; itemObj.conceal = "Varies"; itemObj.rank = 0;
+    } else if (type === "armor") {
+      itemObj.sp = parseInt(document.getElementById("custom_modal_sp").value) || 0;
+      itemObj.slots = document.getElementById("custom_modal_slot").value || "Body";
+      itemObj.enc = parseInt(document.getElementById("custom_modal_enc").value) || 0;
+    } else if (type === "cyberware") {
+      let cType = document.getElementById("custom_modal_cType").value || "Fashionware";
+      itemObj.type = cType;
+      itemObj.parentType = mapTypeToParentType(cType);
+      let slots = parseInt(document.getElementById("custom_modal_slots").value) || 0;
+      itemObj.slots = slots > 0 ? slots : undefined;
+      itemObj.bonus = null;
+    } else if (type === "vehicle") {
+      itemObj.sdp = parseInt(document.getElementById("custom_modal_sdp").value) || 25;
+      itemObj.seats = parseInt(document.getElementById("custom_modal_seats").value) || 2;
+      itemObj.upgrades = [];
+    } else if (type === "vehicleUpgrade") {
+    } else {
+      let cat = document.getElementById("custom_modal_cat").value || "Gear";
+      let slots = parseInt(document.getElementById("custom_modal_slots").value) || 0;
+      itemObj.cat = cat;
+      itemObj.qty = 1;
+      itemObj.slots = slots > 0 ? slots : undefined;
+      if (slots > 0) {
+        itemObj.parentType = mapTypeToParentType(cat) || mapTypeToParentType(name);
+      }
+      if (cat.toLowerCase() === "ammunition") itemObj.ammo = 10;
+      if (cat.toLowerCase() === "grenades") itemObj.ammo = 1;
+    }
+
+    closeModal();
+    callback(itemObj);
+  };
+}
+
+function showItemSelector(type, items, callback, groupBy) {
   let overlay = document.createElement("div");
   overlay.className = "modal-overlay active";
   overlay.style.display = "flex";
@@ -4316,37 +5200,9 @@ async function showItemSelector(type, items, callback, groupBy) {
   customBtn.style.color = "#fff";
   customBtn.style.fontWeight = "700";
   customBtn.textContent = "\u270E Custom " + title;
-  customBtn.onclick = async function() {
-    let name = await customPrompt("Enter " + title + " name:");
-    if (!name) return;
-    if (type === "weapon") {
-      let dmg = await customPrompt("Damage dice (e.g. 3d6):") || "1d6";
-      let wType = await customPrompt("Weapon skill (Handgun, Shoulder Arms, Melee, etc.):") || "Handgun";
-      let cost = parseInt(await customPrompt("Cost in eb:") || "0");
-      document.body.removeChild(overlay);
-      callback({ id: "custom_" + Date.now(), name: name, dmg: dmg, type: wType, rof: 1, mag: null, conceal: "Varies", cost: cost, rank: 0 });
-    } else if (type === "armor") {
-      let sp = parseInt(await customPrompt("SP value:") || "0");
-      let slots = await customPrompt("Slots (Body, Head, Shield):") || "Body";
-      let enc = parseInt(await customPrompt("Encumbrance:") || "0");
-      let cost = parseInt(await customPrompt("Cost in eb:") || "0");
-      document.body.removeChild(overlay);
-      callback({ id: "custom_" + Date.now(), name: name, sp: sp, slots: slots, enc: enc, cost: cost });
-    } else if (type === "cyberware") {
-      let cType = await customPrompt("Type (Fashion, Internal, Neuralware, etc.):") || "Fashion";
-      let hc = parseInt(await customPrompt("Humanity Cost:") || "0");
-      let cost = parseInt(await customPrompt("Cost in eb:") || "0");
-      let desc = await customPrompt("Description:") || "";
-      let slots = parseInt(await customPrompt("Option slots (e.g., 4 for Cyberarm, 0 for none):") || "0");
-      document.body.removeChild(overlay);
-      callback({ id: "custom_" + Date.now(), name: name, type: cType, hc: hc, cost: cost, desc: desc, bonus: null, slots: slots > 0 ? slots : undefined });
-    } else {
-      let cost = parseInt(await customPrompt("Cost in eb:") || "0");
-      let cat = await customPrompt("Category (Gear, Fashion, Electronics, Medical, etc.):") || "Gear";
-      let desc = await customPrompt("Description (optional):") || "";
-      document.body.removeChild(overlay);
-      callback({ id: "custom_" + Date.now(), name: name, cost: cost, cat: cat, desc: desc, qty: 1 });
-    }
+  customBtn.onclick = function() {
+    closeModal();
+    showCustomItemModal(type, callback);
   };
   list.appendChild(customBtn);
   if (groupBy) {
@@ -4795,7 +5651,7 @@ function renderCyberdeck() {
   const deckId = state.cyberdeck;
   if (!deckId) {
     dash.classList.add('hidden');
-    document.getElementById('programs_body').appendChild(el('tr', {}, el('td', { colSpan: 7, className: 'text-center' }, 'No Cyberdeck equipped.')));
+    document.getElementById('programs_body').innerHTML = '<tr><td colspan="7" class="text-center">No Cyberdeck equipped.</td></tr>';
     return;
   }
   
@@ -4803,7 +5659,7 @@ function renderCyberdeck() {
   if (!deck) return;
   
   dash.classList.remove('hidden');
-  document.getElementById('deck_name').innerHTML = deck.name + ' <span style="font-size:0.8rem; font-weight:normal; cursor:pointer; color:red; margin-left:1rem;" class="sell-cyberdeck">[Sell]</span>';
+  document.getElementById('deck_name').innerHTML = deck.name + ' <span style="font-size:0.8rem; font-weight:normal; cursor:pointer; color:red; margin-left:1rem;" onclick="removeCyberdeck()">[Sell]</span>';
   
   let used = 0;
   const tbody = document.createDocumentFragment();
@@ -4815,7 +5671,9 @@ function renderCyberdeck() {
     
     const tr = document.createElement('tr');
     const tdName = document.createElement('td');
-    tdName.innerHTML = `<strong>${item.name}</strong><br><span style="font-size:0.75rem;opacity:0.8">${item.desc}</span>`;
+    let pDesc = p.customDesc !== undefined ? p.customDesc : (item.desc || '');
+    let descVal = escapeHtml(pDesc);
+    tdName.innerHTML = `<strong>${item.name}</strong><br><textarea class="program-desc-input" data-instance-id="${p.instanceId}" placeholder="Description" rows="1">${descVal}</textarea>`;
     
     const tdClass = document.createElement('td');
     tdClass.textContent = p.isProg ? item.type : 'Hardware';
@@ -4833,7 +5691,7 @@ function renderCyberdeck() {
     tdRez.textContent = item.rez || '-';
     
     const tdAct = document.createElement('td');
-    tdAct.innerHTML = `<button class="btn-action uninstall-program" data-id="${p.instanceId}" data-cost="${item.cost}">Uninstall</button>`;
+    tdAct.innerHTML = `<button class="btn-action" onclick="removeProgram('${p.instanceId}', ${item.cost})">Uninstall</button>`;
     
     tr.appendChild(tdName);
     tr.appendChild(tdClass);
@@ -4851,9 +5709,19 @@ function renderCyberdeck() {
   const container = document.getElementById('programs_body');
   container.innerHTML = '';
   if (state.programs.length === 0) {
-    container.appendChild(el('tr', {}, el('td', { colSpan: 7, className: 'text-center' }, 'No programs or hardware installed.')));
+    container.innerHTML = '<tr><td colspan="7" class="text-center">No programs or hardware installed.</td></tr>';
   } else {
     container.appendChild(tbody);
+    const progDescs = container.querySelectorAll('.program-desc-input');
+    for (let i = 0; i < progDescs.length; i++) {
+      autoResizeTextarea(progDescs[i]);
+      progDescs[i].oninput = function() {
+        const instId = this.dataset.instanceId;
+        const prog = state.programs.find(p => p.instanceId === instId);
+        if (prog) prog.customDesc = this.value;
+        autoResizeTextarea(this);
+      };
+    }
   }
 }
 
@@ -4881,6 +5749,14 @@ async function removeCyberdeck() {
 
 function showPrintOptions() {
     return new Promise(resolve => {
+        let overlay = document.createElement("div");
+        overlay.className = "modal-overlay active";
+        overlay.style.display = "flex";
+        let box = document.createElement("div");
+        box.className = "modal-box";
+        box.style.maxWidth = "400px";
+        box.innerHTML = '<h2>Print Options</h2><p style="margin-bottom:1rem;color:var(--text-secondary)">Select sections to include in the printout:</p>';
+        
                 let sections = [
             { label: "Identity & Role", selector: "#print-section-identity" },
             { label: "Stats & Health", selector: "#print-section-stats" },
@@ -4894,31 +5770,64 @@ function showPrintOptions() {
             { label: "Skills", selector: "#print-section-skills" }
         ];
         
-        let checkboxes = [];
-        let list = el('div', { style: 'display:flex; flex-direction:column; gap:0.5rem;' }, sections.map(sec => {
-            let cb = el('input', { type: 'checkbox', checked: true, dataset: { selector: sec.selector }, style: 'width:20px; height:20px; -webkit-appearance:checkbox; appearance:checkbox; opacity:1; cursor:pointer; accent-color:var(--primary);' });
-            checkboxes.push(cb);
-            return el('label', { style: 'display:flex; gap:0.5rem; cursor:pointer; align-items:center; font-size:1rem;' }, [cb, " " + sec.label]);
-        }));
+        let list = document.createElement("div");
+        list.style.display = "flex";
+        list.style.flexDirection = "column";
+        list.style.gap = "0.5rem";
         
-        let overlay = el('div', { className: 'modal-overlay active', style: 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center; padding:1rem;' }, [
-            el('div', { className: 'modal-box', style: 'background:#1a1a1a; border:2px solid #ff003c; padding:2rem; max-width:400px; width:100%; display:flex; flex-direction:column;' }, [
-                el('h2', {}, 'Print Options'),
-                el('p', { style: 'margin-bottom:1rem;color:#ccc' }, 'Select sections to include in the printout:'),
-                list,
-                el('div', { style: 'display:flex; gap:1rem; justify-content:flex-end; margin-top:1.5rem;' }, [
-                    el('button', { className: 'btn-action', style: 'background:#333; color:#fff;', onclick: () => { document.body.removeChild(overlay); resolve(null); } }, 'Cancel'),
-                    el('button', { className: 'btn-action', onclick: () => {
-                        let toHide = [];
-                        checkboxes.forEach(cb => {
-                            if (!cb.checked) toHide.push(cb.dataset.selector);
-                        });
-                        document.body.removeChild(overlay);
-                        resolve(toHide);
-                    } }, 'Print')
-                ])
-            ])
-        ]);
+        let checkboxes = [];
+        sections.forEach(sec => {
+            let label = document.createElement("label");
+            label.style.display = "flex";
+            label.style.gap = "0.5rem";
+            label.style.cursor = "pointer";
+            label.style.alignItems = "center";
+            label.style.fontSize = "1rem";
+            let cb = document.createElement("input");
+            cb.type = "checkbox";
+            cb.checked = true;
+            cb.dataset.selector = sec.selector;
+            cb.style.width = "auto";
+            label.appendChild(cb);
+            label.appendChild(document.createTextNode(" " + sec.label));
+            list.appendChild(label);
+            checkboxes.push(cb);
+        });
+        
+        box.appendChild(list);
+        
+        let btnDiv = document.createElement("div");
+        btnDiv.style.display = "flex";
+        btnDiv.style.justifyContent = "flex-end";
+        btnDiv.style.gap = "1rem";
+        btnDiv.style.marginTop = "1.5rem";
+        
+        let cancelBtn = document.createElement("button");
+        cancelBtn.className = "btn-action";
+        cancelBtn.style.background = "#333";
+        cancelBtn.style.color = "#fff";
+        cancelBtn.textContent = "Cancel";
+        cancelBtn.onclick = () => {
+            document.body.removeChild(overlay);
+            resolve(null);
+        };
+        
+        let printBtn = document.createElement("button");
+        printBtn.className = "btn-action";
+        printBtn.textContent = "Print";
+        printBtn.onclick = () => {
+            let toHide = [];
+            checkboxes.forEach(cb => {
+                if (!cb.checked) toHide.push(cb.dataset.selector);
+            });
+            document.body.removeChild(overlay);
+            resolve(toHide);
+        };
+        
+        btnDiv.appendChild(cancelBtn);
+        btnDiv.appendChild(printBtn);
+        box.appendChild(btnDiv);
+        overlay.appendChild(box);
         document.body.appendChild(overlay);
     });
 }
@@ -4936,24 +5845,6 @@ function showPrintOptions() {
 const init = () => {
   initState();
   initRoleSelect();
-  
-  document.getElementById("toggle_creation_mode").addEventListener("change", function(e) {
-    toggleCreationMode(e.target.checked);
-  });
-
-  // Global event delegation for dynamically created elements
-  document.addEventListener("click", function(e) {
-    if (e.target.matches(".remove-lifepath-item")) {
-      removeLifepathItem(e.target.dataset.type, parseInt(e.target.dataset.index));
-    }
-    if (e.target.matches(".sell-cyberdeck")) {
-      removeCyberdeck();
-    }
-    if (e.target.matches(".uninstall-program")) {
-      removeProgram(e.target.dataset.id, parseInt(e.target.dataset.cost));
-    }
-  });
-
   renderStats();
   renderSkills();
   renderHealth();
@@ -4998,6 +5889,9 @@ const initTabs = () => {
       document.getElementById(tabId).classList.add("active");
       this.classList.add("active");
       state.currentTab = tabId;
+      document.querySelectorAll('textarea.item-desc-input, textarea.cyber-option-desc-input, textarea.program-desc-input').forEach(function(el) {
+        if (typeof autoResizeTextarea === 'function') autoResizeTextarea(el);
+      });
     });
   }
 };
@@ -5056,37 +5950,37 @@ const initCharManager = () => {
       modal.style.display = "none";
     }
   });
-  saveBtn.addEventListener("click", async () => {
+  saveBtn.addEventListener("click", () => {
     const name = nameInput.value.trim();
     if (!name) { alert("Enter a name to save."); return; }
     const exists = listCharacters().includes(name);
-    if (exists && !await customConfirm(`Overwrite existing character "${name}"?`)) return;
+    if (exists && !confirm(`Overwrite existing character "${name}"?`)) return;
     saveCharacter(name);
     buildCharList();
     alert(`Character saved as "${name}"`);
   });
-  loadBtn.addEventListener("click", async () => {
+  loadBtn.addEventListener("click", () => {
     const name = nameInput.value.trim();
     if (!name) { alert("Select or enter a character name to load."); return; }
     const data = loadCharacter(name);
     if (!data) { alert(`Character "${name}" not found.`); return; }
-    if (!await customConfirm(`Load "${name}"? Current character data will be lost.`)) return;
+    if (!confirm(`Load "${name}"? Current character data will be lost.`)) return;
     loadCharacterData(data);
     modal.classList.remove("active");
     modal.style.display = "none";
     alert(`Character "${name}" loaded!`);
   });
-  delBtn.addEventListener("click", async () => {
+  delBtn.addEventListener("click", () => {
     const name = nameInput.value.trim();
     if (!name) { alert("Select a character to delete."); return; }
-    if (!await customConfirm(`Delete "${name}"? This cannot be undone.`)) return;
+    if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
     deleteCharacter(name);
     buildCharList();
     nameInput.value = "";
     alert("Character deleted.");
   });
-  newBtn.addEventListener("click", async () => {
-    if (!await customConfirm("Create a new character? Current data will be lost.")) return;
+  newBtn.addEventListener("click", () => {
+    if (!confirm("Create a new character? Current data will be lost.")) return;
     resetCharacter();
     modal.classList.remove("active");
     modal.style.display = "none";
@@ -5117,12 +6011,12 @@ const initExportImport = () => {
  * and the "New" button (which blanks out the character sheet).
  */
 const initNewChar = () => {
-  document.getElementById("randomBtn").addEventListener("click", async () => {
-    if (!await customConfirm("Generate a random character? Current data will be lost.")) return;
+  document.getElementById("randomBtn").addEventListener("click", () => {
+    if (!confirm("Generate a random character? Current data will be lost.")) return;
     generateRandomCharacter();
   });
-  document.getElementById("newCharBtn").addEventListener("click", async () => {
-    if (!await customConfirm("Create a new character? Current data will be lost.")) return;
+  document.getElementById("newCharBtn").addEventListener("click", () => {
+    if (!confirm("Create a new character? Current data will be lost.")) return;
     resetCharacter();
     document.getElementById("char_handle").focus();
   });

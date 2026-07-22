@@ -11,24 +11,6 @@
 const init = () => {
   initState();
   initRoleSelect();
-  
-  document.getElementById("toggle_creation_mode").addEventListener("change", function(e) {
-    toggleCreationMode(e.target.checked);
-  });
-
-  // Global event delegation for dynamically created elements
-  document.addEventListener("click", function(e) {
-    if (e.target.matches(".remove-lifepath-item")) {
-      removeLifepathItem(e.target.dataset.type, parseInt(e.target.dataset.index));
-    }
-    if (e.target.matches(".sell-cyberdeck")) {
-      removeCyberdeck();
-    }
-    if (e.target.matches(".uninstall-program")) {
-      removeProgram(e.target.dataset.id, parseInt(e.target.dataset.cost));
-    }
-  });
-
   renderStats();
   renderSkills();
   renderHealth();
@@ -73,6 +55,9 @@ const initTabs = () => {
       document.getElementById(tabId).classList.add("active");
       this.classList.add("active");
       state.currentTab = tabId;
+      document.querySelectorAll('textarea.item-desc-input, textarea.cyber-option-desc-input, textarea.program-desc-input').forEach(function(el) {
+        if (typeof autoResizeTextarea === 'function') autoResizeTextarea(el);
+      });
     });
   }
 };
@@ -131,37 +116,37 @@ const initCharManager = () => {
       modal.style.display = "none";
     }
   });
-  saveBtn.addEventListener("click", async () => {
+  saveBtn.addEventListener("click", () => {
     const name = nameInput.value.trim();
     if (!name) { alert("Enter a name to save."); return; }
     const exists = listCharacters().includes(name);
-    if (exists && !await customConfirm(`Overwrite existing character "${name}"?`)) return;
+    if (exists && !confirm(`Overwrite existing character "${name}"?`)) return;
     saveCharacter(name);
     buildCharList();
     alert(`Character saved as "${name}"`);
   });
-  loadBtn.addEventListener("click", async () => {
+  loadBtn.addEventListener("click", () => {
     const name = nameInput.value.trim();
     if (!name) { alert("Select or enter a character name to load."); return; }
     const data = loadCharacter(name);
     if (!data) { alert(`Character "${name}" not found.`); return; }
-    if (!await customConfirm(`Load "${name}"? Current character data will be lost.`)) return;
+    if (!confirm(`Load "${name}"? Current character data will be lost.`)) return;
     loadCharacterData(data);
     modal.classList.remove("active");
     modal.style.display = "none";
     alert(`Character "${name}" loaded!`);
   });
-  delBtn.addEventListener("click", async () => {
+  delBtn.addEventListener("click", () => {
     const name = nameInput.value.trim();
     if (!name) { alert("Select a character to delete."); return; }
-    if (!await customConfirm(`Delete "${name}"? This cannot be undone.`)) return;
+    if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
     deleteCharacter(name);
     buildCharList();
     nameInput.value = "";
     alert("Character deleted.");
   });
-  newBtn.addEventListener("click", async () => {
-    if (!await customConfirm("Create a new character? Current data will be lost.")) return;
+  newBtn.addEventListener("click", () => {
+    if (!confirm("Create a new character? Current data will be lost.")) return;
     resetCharacter();
     modal.classList.remove("active");
     modal.style.display = "none";
@@ -192,12 +177,12 @@ const initExportImport = () => {
  * and the "New" button (which blanks out the character sheet).
  */
 const initNewChar = () => {
-  document.getElementById("randomBtn").addEventListener("click", async () => {
-    if (!await customConfirm("Generate a random character? Current data will be lost.")) return;
+  document.getElementById("randomBtn").addEventListener("click", () => {
+    if (!confirm("Generate a random character? Current data will be lost.")) return;
     generateRandomCharacter();
   });
-  document.getElementById("newCharBtn").addEventListener("click", async () => {
-    if (!await customConfirm("Create a new character? Current data will be lost.")) return;
+  document.getElementById("newCharBtn").addEventListener("click", () => {
+    if (!confirm("Create a new character? Current data will be lost.")) return;
     resetCharacter();
     document.getElementById("char_handle").focus();
   });
