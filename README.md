@@ -1,4 +1,4 @@
-# Cyberpunk RED Character Generator (v4.6.2)
+# Cyberpunk RED Character Generator (v4.6.3)
 
 A fully self-contained, highly-optimized interactive character manager for **Cyberpunk RED** by R. Talsorian Games. Create, customize, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. 
 
