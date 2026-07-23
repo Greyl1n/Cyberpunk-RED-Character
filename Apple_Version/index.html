@@ -1227,7 +1227,7 @@ var DATA = {
     { id: "hkv_mgl4", name: "Heckler & Koch MGL-4 Grenade Launcher", type: "Heavy Weapons", dmg: "varies (40mm)", hands: 2, rof: 1, mag: 8, conceal: "No", cost: 2300, desc: "[CRB] Excellent. Explosive." },
     { id: "towa_type9_gl", name: "Towa Mfg Type-9 Grenade Launcher", type: "Heavy Weapons", dmg: "varies (40mm)", hands: 2, rof: 2, mag: 8, conceal: "No", cost: 800, desc: "[CRB] Standard. Explosive." },
     { id: "militech_mini_gl_drum", name: "Militech Mini-Grenade Launcher (Drum)", type: "Heavy Weapons", dmg: "varies (25mm)", hands: 2, rof: 2, mag: 16, conceal: "No", cost: 500, desc: "[CRB] Standard. Explosive." },
-    { id: "militech_cowboy_u55", name: "Militech Cowboy U-55 Grenade Launcher", type: "Heavy Weapons", dmg: "varies (25mm)", hands: 2, rof: 3, mag: 12, conceal: "No", cost: 900, desc: "[CRB] Standard. Explosive." },
+    { id: "militech_cowboy_u55", name: "Militech Cowboy U-55 Grenade Launcher", type: "Heavy Weapons", dmg: "varies (25mm)", hands: 2, rof: 1, mag: 12, conceal: "No", cost: 900, desc: "[CRB] Standard. Explosive." },
     { id: "commercial_gl", name: "Commercial Grenade Launcher", type: "Heavy Weapons", dmg: "varies (40mm)", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 200, desc: "[CRB] Standard. Explosive. Underbarrel attachable to assault rifle." },
     { id: "m205_gl", name: "M-205 Grenade Launcher", type: "Heavy Weapons", dmg: "varies (40mm)", hands: 2, rof: 1, mag: 1, conceal: "No", cost: 500, desc: "[CRB] Excellent. Explosive. Underbarrel attachable." },
     { id: "mortar_60mm", name: "60mm Light Mortar", type: "Heavy Weapons", dmg: "8d6", hands: 2, rof: 2, mag: 1, conceal: "No", cost: 800, desc: "[CRB] Excellent. Explosive. 10m x 10m area. 2 crew for ROF 2." },
@@ -1348,123 +1348,1150 @@ var DATA = {
   // 'slots' tells the app how many sub-options (like optics or audio) can be installed inside it.
   // 'bonus' is an object that the calculations.js file reads to automatically increase your stats!
   cyberware: [
-    { id: "cybereye", name: "Cybereye", type: "Cybereye", hc: 2, cost: 500, desc: "[CRB] Single cybernetic eye.", slots: 3, bodyPart: "eye" },
-    { id: "cyberaudio", name: "Cyberaudio Suite", type: "Cyberaudio", hc: 2, cost: 500, desc: "[CRB] Internal ear comms and audio processing.", slots: 3 },
-    { id: "neural_link", name: "Neural Link", type: "Internal", hc: 7, cost: 500, desc: "[CRB] Chip socket interface. Required for most Neuralware.", slots: 5 },
-        { id: "chipware_socket", name: "Chipware Socket", type: "Internal", hc: 7, cost: 500, desc: "[CRB] Extra skill chip socket.", parentType: "neural_link" },
-    { id: "interface_plugs", name: "Interface Plugs", type: "Neuralware", hc: 7, cost: 500, desc: "[CRB] Allows user to interface with cyberdecks, smartguns, vehicles.", parentType: "neural_link" },
-    { id: "braindance_recorder", name: "Braindance Recorder", type: "Neuralware", hc: 7, cost: 500, desc: "[CRB] Record your experiences to braindance format.", parentType: "neural_link" },
-    { id: "chemical_analyzer", name: "Chemical Analyzer", type: "Neuralware", hc: 7, cost: 500, desc: "[CRB] Analyze chemicals by touching or ingesting.", parentType: "neural_link" },
-    { id: "machine_tech_link", name: "Machine/Tech Link", type: "Neuralware", hc: 7, cost: 500, desc: "[CRB] Interface directly with machines/tech for control.", parentType: "neural_link" },
-    { id: "pain_editor", name: "Pain Editor", type: "Internal", hc: 14, cost: 2000, desc: "[CRB] Disables pain. User ignores penalties due to being Seriously Wounded." },
-    { id: "nanosurgeons", name: "Nanosurgeons", type: "Internal", hc: 3, cost: 1500, desc: "[CRB] Auto-stabilize at 0 HP once per day." },
-    { id: "synth_lungs", name: "Synth Lungs", type: "Internal", hc: 3, cost: 1000, desc: "[CRB] Filter toxins, breathe smoke." },
-    { id: "gills", name: "Gills", type: "Internal", hc: 2, cost: 500, desc: "[CRB] Breathe underwater." },
-    { id: "cyberarm", name: "Cyberarm", type: "Cyberarm", hc: 3, cost: 1000, desc: "[CRB] Basic cybernetic arm.", slots: 4, bodyPart: "arm" },
-    { id: "cyberleg", name: "Cyberleg", type: "Cyberleg", hc: 3, cost: 1000, desc: "[CRB] Basic cybernetic leg.", slots: 3, bodyPart: "leg" },
-    { id: "tactile_boost", name: "Tactile Boost", type: "Neuralware", hc: 7, cost: 100, desc: "[CRB] Enhanced touch, +1 to pick lock/pick pocket.", parentType: "neural_link", bonus: { skills: { pick_lock: 1, pick_pocket: 1 } } },
-    { id: "olfactory_boost", name: "Olfactory Boost", type: "Neuralware", hc: 7, cost: 100, desc: "[CRB] Enhanced smell, +2 to tracking via scent.", parentType: "neural_link", bonus: { skills: { tracking: 2 } } },
-    { id: "subdermal_armor", name: "Subdermal Armor", type: "Internal", hc: 14, cost: 2000, desc: "[CRB] SP 7 to area implanted." },
-    { id: "skin_weave", name: "Skin Weave", type: "Internal", hc: 3, cost: 1500, desc: "[CRB] SP 4 all over." },
-    { id: "pneumatics", name: "Pneumatics", type: "Internal", hc: 3, cost: 2000, desc: "[CRB] +2 to BODY for melee damage." },
-    { id: "hydraulic_rams", name: "Hydraulic Rams", type: "Cyberleg Option", hc: 3, cost: 1500, desc: "[CRB] Cyberleg option, +2 MOVE when jumping.", parentType: "cyberleg" },
-    { id: "big_knucks", name: "Big Knucks", type: "Cyberarm Option", hc: 1, cost: 100, desc: "[CRB] Brass knuckles built into cyberarm.", parentType: "cyberarm" },
-    { id: "popup_weapon", name: "Popup Weapon (Cyberarm)", type: "Cyberarm Option", hc: 2, cost: 500, desc: "[CRB] Hidden weapon in cyberarm.", parentType: "cyberarm" },
-    { id: "implanted_lavatory", name: "Implanted Lavatory", type: "Internal Body", hc: 1, cost: 200, desc: "[CRB] Waste processing implant." },
-    { id: "light_tattoo", name: "Light Tattoo", type: "Fashionware", hc: 0, cost: 200, desc: "[CRB] LED subdermal tattoos.", bonus: { skills: { wardrobe_style: 2 } } },
-    { id: "agency_record", name: "Agency Record", type: "Fashionware", hc: 1, cost: 500, desc: "[CRB] Always-on recording of everything you see/hear." },
-    { id: "buddy_link", name: "Buddy Link", type: "Internal Body", hc: 1, cost: 200, desc: "[CRB] Private short-range comm with your crew." },
-    { id: "bc_budget_chipware", name: "Budget Chipware Socket", type: "Neuralware", hc: 7, cost: 100, desc: "[CRB] A cheap chipware socket.", parentType: "neural_link" },
-    { id: "bc_discount_audio", name: "Discount Cyberaudio Suite", type: "Cyberaudio", hc: 3, cost: 100, desc: "[CRB] An inferior audio suite at an affordable price.", slots: 3, parentType: "cyberaudio" },
-    { id: "bc_explicit_memory", name: "Explicit Memory Stimulator", type: "Chipware", hc: 3, cost: 100, desc: "[CRB] +2 to Concentration Checks to remember information.", parentType: "neural_link", bonus: { skills: { concentration: 2 } } },
-    { id: "bc_extra_jointed", name: "Extra-Jointed Cyberlimb Upgrade", type: "Cyberlimb", hc: 3, cost: 500, desc: "[CRB] Extra points of articulation. +2 Contortionist per limb (max +8 all limbs).", bonus: { skills: { contortionist: 2 } } },
-    { id: "bc_flashbulb", name: "Flashbulb", type: "Cyberarm", hc: 7, cost: 500, desc: "[CRB] Blind your enemies with your arm.", parentType: "cyberarm" },
-    { id: "bc_hardened_cybereye", name: "Hardened Cybereye Casing", type: "Cybereye", hc: 3, cost: 500, desc: "[CRB] Protect your Cybereye against EMP effects.", parentType: "cybereye" },
-    { id: "bc_health_monitor", name: "Heuristic Health Monitor", type: "Fashionware", hc: 0, cost: 500, desc: "[CRB] You're fit and now you can show the world." },
-    { id: "bc_integrated_cyberdeck", name: "Integrated Cyberdeck Upgrade", type: "Cyberarm", hc: 7, cost: 500, desc: "[CRB] An extra option slot for your arm-installed Cyberdeck.", parentType: "cyberarm" },
-    { id: "bc_modular_finger_hand", name: "Modular Finger Cyberhand", type: "Cyberarm Option", hc: 3, cost: 100, desc: "[CRB] A hand for modular Cyberfingers.", parentType: "cyberarm", slots: 5 },
-    { id: "bc_neo_soviet_arm", name: "Neo-Soviet Cyberarm", type: "Cyberarm", hc: 7, cost: 100, desc: "[CRB] Neo-Soviet charm for your Cyberarm.", bodyPart: "arm", slots: 4, parentType: "cyberarm" },
-    { id: "bc_popup_net", name: "Popup Net Launcher", type: "Cyberarm", hc: 7, cost: 500, desc: "[CRB] Shoot nets from your arm.", parentType: "cyberarm" },
-    { id: "bc_popup_shotgun", name: "Popup Shotgun", type: "Cyberarm", hc: 7, cost: 1000, desc: "[CRB] A shotgun in your arm.", parentType: "cyberarm" },
-    { id: "bc_racerbracer", name: "RacerBracer", type: "Internal Body", hc: 7, cost: 500, desc: "[CRB] Immunity to Whiplash Critical Injury." },
-    { id: "bc_reflex_coprocessor", name: "Reflex Co-Processor", type: "Neuralware", hc: 14, cost: 500, desc: "[CRB] Dodge bullets without REF 8.", parentType: "neural_link" },
-    { id: "bc_reinforced_limb", name: "Reinforced Cyberlimb Upgrade", type: "Cyberlimb", hc: 3, cost: 1000, desc: "[CRB] Say goodbye to breaking this limb." },
-    { id: "bc_sponsored_cybereye", name: "Sponsored Cybereye", type: "Cybereye", hc: 7, cost: 50, desc: "[CRB] A cheap Cybereye with Chyron and pop-up ads.", bodyPart: "eye", slots: 3, parentType: "cybereye" },
-    { id: "bc_trauma_nanomatrix", name: "Trauma Response Nanomatrix", type: "Internal Body", hc: 7, cost: 1000, desc: "[CRB] Restore all lost Skinweave or Subdermal Armor SP once/day." },
-    { id: "bc_standard_cyberfinger", name: "Standard Cyberfinger", type: "Cyberfinger", hc: 0, cost: 20, desc: "[CRB] A Cyberfinger with no special features. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
-    { id: "bc_lockpick_cyberfinger", name: "Lockpick Cyberfinger", type: "Cyberfinger", hc: 2, cost: 100, desc: "[CRB] Adjustable lockpick and tensioning tool. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
-    { id: "bc_microphone_cyberfinger", name: "Microphone Cyberfinger", type: "Cyberfinger", hc: 2, cost: 100, desc: "[CRB] Microphone linked to Agent or recording device. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
-    { id: "bc_lighter_cyberfinger", name: "Lighter Cyberfinger", type: "Cyberfinger", hc: 3, cost: 100, desc: "[CRB] Lighter concealed in the tip. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
-    { id: "bc_laser_pointer_cyberfinger", name: "Laser Pointer Cyberfinger", type: "Cyberfinger", hc: 3, cost: 100, desc: "[CRB] Laser pointer. 4+ can force DV13 Resist Torture/Drugs. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
-    { id: "bc_wirecutter_cyberfinger", name: "Wirecutter/Scissor Cyberfingers", type: "Cyberfinger", hc: 3, cost: 100, desc: "[CRB] Retractable blades, also a Poor Quality Light Melee Weapon. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
-    { id: "bc_homing_tracer_cyberfinger", name: "Homing Tracer Cyberfinger", type: "Cyberfinger", hc: 3, cost: 500, desc: "[CRB] Points toward linked tracer within 1 mile. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
-    { id: "bc_mini_air_cyberfinger", name: "Mini Air Supply Cyberfinger", type: "Cyberfinger", hc: 2, cost: 500, desc: "[CRB] 10 min air supply, 1 hr to refill. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
-    { id: "bc_one_shot_cyberfinger", name: "One Shot Special Cyberfinger", type: "Cyberfinger", hc: 7, cost: 100, desc: "[CRB] Single-shot Exotic Heavy Pistol concealed in finger. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
-    { id: "bc_spray_paint_cyberfinger", name: "Spray Paint Cyberfinger", type: "Cyberfinger", hc: 3, cost: 100, desc: "[CRB] Spray can concealed within the Cyberfinger. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
-    { id: "bc_squirt_cyberfinger", name: "Squirt Cyberfinger", type: "Cyberfinger", hc: 3, cost: 100, desc: "[CRB] Dispenses liquids like sanitizer or perfume. Requires Modular Finger Cyberhand.", parentType: "bc_modular_finger_hand" },
-    { id: "chemskin", name: "Chemskin", type: "Fashionware", hc: 1, cost: 500, desc: "[CRB] Change skin color.", bonus: { skills: { personal_grooming: 2 } } },
-    { id: "techhair", name: "Techhair", type: "Fashionware", hc: 1, cost: 500, desc: "[CRB] Programmable hair.", bonus: { skills: { personal_grooming: 2 } } },
-    { id: "kerenzikov", name: "Kerenzikov", type: "Neuralware", hc: 7, cost: 1000, desc: "[CRB] Boosted reflexes. +2 to Initiative.", parentType: "neural_link" },
-    { id: "sandevistan", name: "Sandevistan", type: "Neuralware", hc: 7, cost: 1000, desc: "[CRB] Activate for +3 to Initiative for 1 min (Action, 1hr cooldown).", parentType: "neural_link" },
-    { id: "image_enhance", name: "Image Enhance", type: "Cybereye Option", hc: 1, cost: 500, desc: "[CRB] Enhanced vision processing.", parentType: "cybereye", bonus: { skills: { perception: 2, lip_reading: 2, conceal_reveal_object: 2 } } },
-    { id: "targeting_scope", name: "Targeting Scope", type: "Cybereye Option", hc: 1, cost: 500, desc: "[CRB] +1 to Aimed Shot checks. Requires paired Cybereyes.", parentType: "cybereye" },
-    { id: "teleoptics", name: "TeleOptics", type: "Cybereye Option", hc: 1, cost: 500, desc: "[CRB] +1 to checks vs targets 51m/yds+.", parentType: "cybereye" },
-    { id: "low_light_cybereye", name: "Low Light/IR/UV Cybereye", type: "Cybereye Option", hc: 1, cost: 500, desc: "[CRB] Negate darkness/smoke/fog penalties. Requires Cybereye.", parentType: "cybereye" },
-    { id: "amplified_hearing", name: "Amplified Hearing", type: "Cyberaudio Option", hc: 1, cost: 500, desc: "[CRB] Enhanced hearing. Requires Cyberaudio.", parentType: "cyberaudio", bonus: { skills: { perception: 2 } } },
-    { id: "voice_stress_analyzer", name: "Voice Stress Analyzer", type: "Cyberaudio Option", hc: 1, cost: 500, desc: "[CRB] Detect lies. Requires Cyberaudio.", parentType: "cyberaudio", bonus: { skills: { human_perception: 2, interrogation: 2 } } },
-    { id: "audiovox", name: "AudioVox", type: "Cyberaudio Option", hc: 1, cost: 500, desc: "[CRB] Voice modulator. Requires Cyberaudio.", parentType: "cyberaudio", bonus: { skills: { acting: 2, play_instrument: 2 } } },
-    { id: "enhanced_antibodies", name: "Enhanced Antibodies", type: "Internal Body", hc: 3, cost: 1500, desc: "[CRB] Heal 2x BODY HP per day when resting." },
-    { id: "grafted_muscle_bone_lace", name: "Grafted Muscle and Bone Lace", type: "Internal Body", hc: 7, cost: 5000, desc: "[CRB] +2 BODY (max 10).", bonus: { stats: { body: 2 } } },
-    { id: "toxin_binders", name: "Toxin Binders", type: "Internal Body", hc: 3, cost: 1500, desc: "[CRB] Filters bloodborne toxins.", bonus: { skills: { resist_torture_drugs: 2 } } },
-    { id: "nasal_filters", name: "Nasal Filters", type: "Internal Body", hc: 2, cost: 500, desc: "[CRB] Immune to inhaled toxins and gases." },
-    { id: "radar_sonar_implant", name: "Radar/Sonar Implant", type: "Internal Body", hc: 3, cost: 2000, desc: "[CRB] Detect moving objects within 50m/yds (not through cover)." },
-    { id: "medscanner", name: "Medscanner", type: "Cyberarm Option", hc: 1, cost: 500, desc: "[CRB] Medical diagnostic scanner in cyberarm.", parentType: "cyberarm", bonus: { skills: { first_aid: 2, paramedic: 2 } } },
-    { id: "techscanner_cyberarm", name: "Techscanner", type: "Cyberarm Option", hc: 1, cost: 500, desc: "[CRB] Technical diagnostic scanner in cyberarm.", parentType: "cyberarm", bonus: { skills: { basic_tech: 2, cybertech: 2, land_vehicle_tech: 2, sea_vehicle_tech: 2, air_vehicle_tech: 2, electronics_security_tech: 2, weaponstech: 2 } } },
-    { id: "superchrome_covering", name: "Superchrome Covering", type: "Cyberarm Option", hc: 1, cost: 500, desc: "[CRB] Mirror-chrome finish. +2 Wardrobe & Style.", parentType: "cyberarm", bonus: { skills: { wardrobe_style: 2 } } },
-    { id: "skate_foot", name: "Skate Foot", type: "Cyberleg Option", hc: 1, cost: 500, desc: "[CRB] +6m/yds movement when using Run Action.", parentType: "cyberleg" },
-    { id: "quick_change_mount", name: "Quick Change Mount", type: "Cyberarm", hc: 7, cost: 100, desc: "[CRB] Remove/install a Cyberarm as an Action." },
-    { id: "rippers", name: "Rippers", type: "Cyberarm Option", hc: 3, cost: 500, desc: "[CRB] Retractable carbo-glass claws. Medium Melee Weapon.", parentType: "cyberarm" },
-    { id: "wolvers", name: "Wolvers", type: "Cyberarm Option", hc: 3, cost: 500, desc: "[CRB] Large forearm blades. Heavy Melee Weapon.", parentType: "cyberarm" },
-    { id: "scratchers", name: "Scratchers", type: "Cyberarm Option", hc: 1, cost: 100, desc: "[CRB] Retractable carbo-glass fingernails. Light Melee Weapon.", parentType: "cyberarm" },
-    { id: "bodyweight_autoinjector", name: "Bodyweight AutoInjector", type: "Internal Body", hc: 3, cost: 100, desc: "[CRB] Load one dose of Street Drug. Inject as Action. With Biomonitor, auto-inject on Initiative/Critical Injury/Wound State." },
-    { id: "pursuitech_gas_jet", name: "Pursuit Security Inc. Gas Jet", type: "Cyberarm Option", hc: 7, cost: 500, desc: "[CRB] Aerosol gas launcher (3 doses). Acts as 1H Exotic Shotgun. Applies loaded substance. Requires Cyberarm, 2 Option Slots.", parentType: "cyberarm" },
-    { id: "appetite_controller", name: "Appetite Controller", type: "Internal Body", hc: 7, cost: 500, desc: "[CRB] Manage hunger via Biomonitor. Ignore HL from long-term environmental stress. Starvation still fatal after 7 days. Requires Biomonitor." },
-    { id: "cyberpillow", name: "Cyberpillow", type: "Cyberarm Option", hc: 0, cost: 100, desc: "[CRB] Pop-out pillow for napping. Requires Cyberarm.", parentType: "cyberarm" },
-    { id: "external_vidscreen", name: "External Vidscreen", type: "External Body", hc: 7, cost: 100, desc: "[CRB] Subcutaneous flexible screen. Turns body part into display for linked Agent or Memory Chip." },
-    { id: "holo_projector_palm", name: "Holo Projector Palm", type: "Cyberarm Option", hc: 2, cost: 100, desc: "[CRB] Hologram projector in palm. Can be installed in a meat arm.", parentType: "cyberarm" },
-    { id: "kill_display", name: "Kill Display", type: "Fashionware", hc: 0, cost: 100, desc: "[CRB] Subdermal 'KILLS: #' display. Self-reported via Agent.", bonus: { skills: { wardrobe_style: 2 } } },
-    { id: "leads_turn_on_show_off_nails", name: "Lead's Turn-On-Show-Off Nails", type: "Fashionware", hc: 0, cost: 100, desc: "[CRB] Programmable lighted fingernails. Works on meat or cyberware hands.", bonus: { skills: { wardrobe_style: 2 } } },
-    { id: "mood_eye", name: "Mood Eye", type: "Fashionware", hc: 0, cost: 100, desc: "[CRB] Eye color changes with mood (red=anger, blue=sadness, etc.). Requires Neural Link.", parentType: "neural_link" },
-    { id: "neutongue", name: "NeuTongue", type: "Internal Body", hc: 7, cost: 100, desc: "[CRB] Cybernetic tongue. Add virtual seasoning to food via linked Agent." },
-    { id: "perfectfit_cyberfoot", name: "PerfectFit Cyberfoot", type: "Cyberleg Option", hc: 2, cost: 100, desc: "[CRB] Adjustable foot size/shape. Eliminates penalty from ill-fitting footwear. Can be installed in a meat leg.", parentType: "cyberleg" },
-    { id: "talon_feet", name: "Talon Feet", type: "Cyberleg Option", hc: 3, cost: 500, desc: "[CRB] Retractable foot talons. Light Melee Weapon (1d6). Requires Cyberlegs.", parentType: "cyberleg" },
-    { id: "jump_boosters", name: "Jump Boosters", type: "Cyberleg Option", hc: 3, cost: 500, desc: "[CRB] Hydraulic leg boosters. +3d6 dmg vs cover with leg attacks. Requires Cyberlegs.", parentType: "cyberleg" },
-    { id: "personalpak_kibblewarmer", name: "PersonalPak KibbleWarmer", type: "Cyberarm Option", hc: 3, cost: 100, desc: "[CRB] Rotisserie oven in forearm. Warms PersonalPak Kibble cylinders. Requires Cyberarm.", parentType: "cyberarm" },
-    { id: "pursuitech_personal_shredder", name: "Pursuit Security Inc. Personal Shredder", type: "Cyberarm Option", hc: 3, cost: 100, desc: "[CRB] Cross-cut shredder in cyberarm with internal reservoir. Requires Cyberarm.", parentType: "cyberarm" },
-    { id: "sponsored_covering", name: "Sponsored Covering", type: "Cyberlimb Option", hc: 0, cost: 50, desc: "[CRB] Illuminated ad on cyberlimb. Pays 20eb/month. Does not take an Option Slot. Requires Cyberarm or Cyberleg." },
-
-    { id: "cyberscanner_integrated", name: "Cyberscanner, Integrated", type: "Cyberarm Option", hc: 7, cost: 500, desc: "[CRB] Cyberscanner installed in a Cyberarm. Requires 2 Option Slots.", parentType: "cyberarm" },
-    { id: "chainripp", name: "ChainRipp", type: "Cyberarm Option", hc: 14, cost: 500, desc: "[CRB] Retractable chainsaw in wrist. Can be revved into Excellent Quality Very Heavy Melee Weapon. Takes 4 Option Slots.", parentType: "cyberarm" },
-    { id: "gang_jazzler", name: "Cybermatrix Gang Jazzler", type: "Cyberarm Option", hc: 7, cost: 500, desc: "[CRB] Electrode needle in arm. On successful Choke, force DV13 Resist Torture/Drugs or Unconscious 1 min.", parentType: "cyberarm" },
-    { id: "bug_eye", name: "Cyclops International Bug Eye", type: "Borgware", hc: 14, cost: 500, desc: "[CRB] Oversized Cybereye. Contains 5 slots for Cybereye Options.", slots: 5, parentType: "cybereye", bodyPart: "eye", takesBoth: true },
-    { id: "deathtrance", name: "DeathTrance", type: "Neuralware", hc: 3, cost: 500, desc: "[CRB] Slow vitals to appear dead. DV17-21 to detect. -4 to all Actions while active.", parentType: "neural_link" },
-    { id: "monovision", name: "Kiroshi MonoVision", type: "Borgware", hc: 14, cost: 500, desc: "[CRB] Single wide-angle cyberoptic visor. Contains 3 slots. Options count as paired.", slots: 3, parentType: "cybereye", bodyPart: "eye", takesBoth: true },
-    { id: "optishield", name: "Kiroshi OptiShield", type: "External Body", hc: 7, cost: 500, desc: "[CRB] Retractable Anti-Dazzle mirrorshades built into brow. Immune to flashblindness." },
-    { id: "watch_man", name: "Psiberstuff Watch-Man", type: "Cyberarm Option", hc: 3, cost: 100, desc: "[CRB] Agent built into cyberarm with flip-up screen.", parentType: "cyberarm" },
-    { id: "poser_chip", name: "Poser Chip", type: "Chipware", hc: 14, cost: 500, desc: "[CRB] +4 to Acting to impersonate persona. +5 if roleplayed. Famous persona: 500eb. Private: 1000eb.", parentType: "neural_link" },
-    { id: "arc_thrower", name: "Radline Blitzkrieg Arc-Thrower Cyberarm", type: "Cyberarm", hc: 14, cost: 1000, desc: "[CRB] 0 Option slots. No hand. Exotic Shotgun (Heavy Weapons), 4d6 Shell fire, 32 charges. Cannot Crit or ablate armor.", bodyPart: "arm" },
-    { id: "microwaldo", name: "Raven Microcybernetics MicroWaldo", type: "Cyberarm Option", hc: 7, cost: 1000, desc: "[CRB] +1 to Surgery Skill. Neuralware and Cyberarm Option.", parentType: "cyberarm", bonus: { skills: { surgery: 1 } } },
-    { id: "fleshweave", name: "Sycust Fleshweave", type: "External Body", hc: 7, cost: 1000, desc: "[CRB] Skinweave. Body and Head SP7. Self-repairs to full after 10 min without strenuous activity." },
-    { id: "romanova_cyberlegs", name: "Wyzard Technologies Romanova Cyberlegs", type: "Cyberleg", hc: 14, cost: 1000, desc: "[CRB] Paired Cyberlegs. 3 Option Slots each. Pre-installed Talon Feet.", bodyPart: "leg", slots: 3, parentType: "cyberleg", takesBoth: true },
-    { id: "faceplate_mount", name: "Quick Change Faceplate Mount", type: "Internal Body", hc: 14, cost: 1000, desc: "[CRB] Replace meat face with mounting. Comes with 1 personalized Faceplate. Additional: 100eb." },
-    { id: "quick_digits", name: "Rocklin Augmentics Quick Digits", type: "Cyberarm Option", hc: 3, cost: 250, desc: "[CRB] Cyberhand.", bonus: { skills: { conceal_reveal_object: 1, contortionist: 1, first_aid: 1, forgery: 1, paramedic: 1, pick_lock: 1, pick_pocket: 1 } }, parentType: "cyberarm" },
-    { id: "skydrivers", name: "Rocklin Augmentics Skydrivers", type: "Cyberleg", hc: 14, cost: 1000, desc: "[CRB] Paired Cyberlegs. 2 Option Slots each. Pre-installed Jump Boosters. +3d6 dmg vs cover with leg attacks.", bodyPart: "leg", slots: 2, parentType: "cyberleg", takesBoth: true },
-    { id: "cyberspine", name: "Sycust Cyberspine", type: "Internal Body", hc: 7, cost: 1000, desc: "[CRB] Requires 3 Option Slots. Immune to Spinal Injury. Hardened. +1 Contortionist. Can house Cybersnake.", bonus: { skills: { contortionist: 1 } } },
-    { id: "cyberconductor_integrated", name: "Zetatech CyberConductor, Integrated", type: "Borgware", hc: 14, cost: 1000, desc: "[CRB] FBC only. All cyberdecks connected. Switch between them with no HP damage. Requires 3 Option Slots." },
-    { id: "hello_cutie_mono_paw", name: "Hello Cutie Mono-Paw", type: "Cyberarm Option", hc: 7, cost: 500, desc: "[CRB] Retractable cat claws. Excellent Quality Medium Melee, 1d6, ignores armor SP<11. Cannot hold items while active.", parentType: "cyberarm" },
-    { id: "sparkle_ize", name: "Hello Cutie Sparkle-ize", type: "Cybereye Option", hc: 3, cost: 250, desc: "[CRB] Big-eyes look. Flashlight built in. Paired: DV15 Resist or Damaged Eye for 1 min. Requires 2 Option Slots.", parentType: "cybereye" },
-    { id: "dynalar_xtradex_glove", name: "Dynalar Xtra-Dex Smart Glove", type: "Cyberarm Option", hc: 0, cost: 1000, desc: "[CRB] 2 Option Slots. Counts as Modular Finger Cyberhand (up to 5 Cyberfingers). Requires Interface Plugs.", parentType: "cyberarm" }
-  ],
+  {
+    "id": "cybereye",
+    "name": "Cybereye",
+    "type": "Cybereye",
+    "hc": 7,
+    "cost": 100,
+    "desc": "[CRB] Single cybernetic eye.",
+    "slots": 3,
+    "bodyPart": "eye"
+  },
+  {
+    "id": "cyberaudio",
+    "name": "Cyberaudio Suite",
+    "type": "Cyberaudio",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] Internal ear comms and audio processing.",
+    "slots": 3
+  },
+  {
+    "id": "neural_link",
+    "name": "Neural Link",
+    "type": "Internal",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] Chip socket interface. Required for most Neuralware.",
+    "slots": 5
+  },
+  {
+    "id": "chipware_socket",
+    "name": "Chipware Socket",
+    "type": "Internal",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] Extra skill chip socket.",
+    "parentType": "neural_link"
+  },
+  {
+    "id": "interface_plugs",
+    "name": "Interface Plugs",
+    "type": "Neuralware",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] Allows user to interface with cyberdecks, smartguns, vehicles.",
+    "parentType": "neural_link"
+  },
+  {
+    "id": "braindance_recorder",
+    "name": "Braindance Recorder",
+    "type": "Neuralware",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] Record your experiences to braindance format.",
+    "parentType": "neural_link"
+  },
+  {
+    "id": "chemical_analyzer",
+    "name": "Chemical Analyzer",
+    "type": "Neuralware",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] Analyze chemicals by touching or ingesting.",
+    "parentType": "neural_link"
+  },
+  {
+    "id": "machine_tech_link",
+    "name": "Machine/Tech Link",
+    "type": "Neuralware",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] Interface directly with machines/tech for control.",
+    "parentType": "neural_link"
+  },
+  {
+    "id": "pain_editor",
+    "name": "Pain Editor",
+    "type": "Internal",
+    "hc": 14,
+    "cost": 1000,
+    "desc": "[CRB] Disables pain. User ignores penalties due to being Seriously Wounded."
+  },
+  {
+    "id": "nanosurgeons",
+    "name": "Nanosurgeons",
+    "type": "Internal",
+    "hc": 3,
+    "cost": 1500,
+    "desc": "[CRB] Auto-stabilize at 0 HP once per day."
+  },
+  {
+    "id": "synth_lungs",
+    "name": "Synth Lungs",
+    "type": "Internal",
+    "hc": 3,
+    "cost": 1000,
+    "desc": "[CRB] Filter toxins, breathe smoke."
+  },
+  {
+    "id": "gills",
+    "name": "Gills",
+    "type": "Internal",
+    "hc": 2,
+    "cost": 1000,
+    "desc": "[CRB] Breathe underwater."
+  },
+  {
+    "id": "cyberarm",
+    "name": "Cyberarm",
+    "type": "Cyberarm",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] Basic cybernetic arm.",
+    "slots": 4,
+    "bodyPart": "arm"
+  },
+  {
+    "id": "cyberleg",
+    "name": "Cyberleg",
+    "type": "Cyberleg",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] Basic cybernetic leg.",
+    "slots": 3,
+    "bodyPart": "leg"
+  },
+  {
+    "id": "tactile_boost",
+    "name": "Tactile Boost",
+    "type": "Neuralware",
+    "hc": 7,
+    "cost": 100,
+    "desc": "[CRB] Enhanced touch, +1 to pick lock/pick pocket.",
+    "parentType": "neural_link",
+    "bonus": {
+      "skills": {
+        "pick_lock": 1,
+        "pick_pocket": 1
+      }
+    }
+  },
+  {
+    "id": "olfactory_boost",
+    "name": "Olfactory Boost",
+    "type": "Neuralware",
+    "hc": 7,
+    "cost": 100,
+    "desc": "[CRB] Enhanced smell, +2 to tracking via scent.",
+    "parentType": "neural_link",
+    "bonus": {
+      "skills": {
+        "tracking": 2
+      }
+    }
+  },
+  {
+    "id": "subdermal_armor",
+    "name": "Subdermal Armor",
+    "type": "Internal",
+    "hc": 14,
+    "cost": 1000,
+    "desc": "[CRB] SP 7 to area implanted."
+  },
+  {
+    "id": "skin_weave",
+    "name": "Skin Weave",
+    "type": "Internal",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] SP 4 all over."
+  },
+  {
+    "id": "pneumatics",
+    "name": "Pneumatics",
+    "type": "Internal",
+    "hc": 3,
+    "cost": 500,
+    "desc": "[CRB] +2 to BODY for melee damage."
+  },
+  {
+    "id": "hydraulic_rams",
+    "name": "Hydraulic Rams",
+    "type": "Cyberleg Option",
+    "hc": 3,
+    "cost": 500,
+    "desc": "[CRB] Cyberleg option, +2 MOVE when jumping.",
+    "parentType": "cyberleg"
+  },
+  {
+    "id": "big_knucks",
+    "name": "Big Knucks",
+    "type": "Cyberarm Option",
+    "hc": 3,
+    "cost": 100,
+    "desc": "[CRB] Brass knuckles built into cyberarm.",
+    "parentType": "cyberarm"
+  },
+  {
+    "id": "popup_weapon",
+    "name": "Popup Weapon (Cyberarm)",
+    "type": "Cyberarm Option",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] Hidden weapon in cyberarm.",
+    "parentType": "cyberarm"
+  },
+  {
+    "id": "implanted_lavatory",
+    "name": "Implanted Lavatory",
+    "type": "Internal Body",
+    "hc": 3,
+    "cost": 100,
+    "desc": "[CRB] Waste processing implant."
+  },
+  {
+    "id": "light_tattoo",
+    "name": "Light Tattoo",
+    "type": "Fashionware",
+    "hc": 2,
+    "cost": 100,
+    "desc": "[CRB] LED subdermal tattoos.",
+    "bonus": {
+      "skills": {
+        "wardrobe_style": 2
+      }
+    }
+  },
+  {
+    "id": "agency_record",
+    "name": "Agency Record",
+    "type": "Fashionware",
+    "hc": 3,
+    "cost": 100,
+    "desc": "[CRB] Always-on recording of everything you see/hear."
+  },
+  {
+    "id": "buddy_link",
+    "name": "Buddy Link",
+    "type": "Internal Body",
+    "hc": 3,
+    "cost": 100,
+    "desc": "[CRB] Private short-range comm with your crew."
+  },
+  {
+    "id": "bc_budget_chipware",
+    "name": "Budget Chipware Socket",
+    "type": "Neuralware",
+    "hc": 7,
+    "cost": 100,
+    "desc": "[CRB] A cheap chipware socket.",
+    "parentType": "neural_link"
+  },
+  {
+    "id": "bc_discount_audio",
+    "name": "Discount Cyberaudio Suite",
+    "type": "Cyberaudio",
+    "hc": 7,
+    "cost": 100,
+    "desc": "[CRB] An inferior audio suite at an affordable price.",
+    "slots": 3,
+    "parentType": "cyberaudio"
+  },
+  {
+    "id": "bc_explicit_memory",
+    "name": "Explicit Memory Stimulator",
+    "type": "Chipware",
+    "hc": 3,
+    "cost": 100,
+    "desc": "[CRB] +2 to Concentration Checks to remember information.",
+    "parentType": "neural_link",
+    "bonus": {
+      "skills": {
+        "concentration": 2
+      }
+    }
+  },
+  {
+    "id": "bc_extra_jointed",
+    "name": "Extra-Jointed Cyberlimb Upgrade",
+    "type": "Cyberlimb",
+    "hc": 3,
+    "cost": 500,
+    "desc": "[CRB] Extra points of articulation. +2 Contortionist per limb (max +8 all limbs).",
+    "bonus": {
+      "skills": {
+        "contortionist": 2
+      }
+    }
+  },
+  {
+    "id": "bc_flashbulb",
+    "name": "Flashbulb",
+    "type": "Cyberarm",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] Blind your enemies with your arm.",
+    "parentType": "cyberarm"
+  },
+  {
+    "id": "bc_hardened_cybereye",
+    "name": "Hardened Cybereye Casing",
+    "type": "Cybereye",
+    "hc": 3,
+    "cost": 500,
+    "desc": "[CRB] Protect your Cybereye against EMP effects.",
+    "parentType": "cybereye"
+  },
+  {
+    "id": "bc_health_monitor",
+    "name": "Heuristic Health Monitor",
+    "type": "Fashionware",
+    "hc": 0,
+    "cost": 500,
+    "desc": "[CRB] You're fit and now you can show the world."
+  },
+  {
+    "id": "bc_integrated_cyberdeck",
+    "name": "Integrated Cyberdeck Upgrade",
+    "type": "Cyberarm",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] An extra option slot for your arm-installed Cyberdeck.",
+    "parentType": "cyberarm"
+  },
+  {
+    "id": "bc_modular_finger_hand",
+    "name": "Modular Finger Cyberhand",
+    "type": "Cyberarm Option",
+    "hc": 3,
+    "cost": 100,
+    "desc": "[CRB] A hand for modular Cyberfingers.",
+    "parentType": "cyberarm",
+    "slots": 5
+  },
+  {
+    "id": "bc_neo_soviet_arm",
+    "name": "Neo-Soviet Cyberarm",
+    "type": "Cyberarm",
+    "hc": 7,
+    "cost": 100,
+    "desc": "[CRB] Neo-Soviet charm for your Cyberarm.",
+    "bodyPart": "arm",
+    "slots": 4,
+    "parentType": "cyberarm"
+  },
+  {
+    "id": "bc_popup_net",
+    "name": "Popup Net Launcher",
+    "type": "Cyberarm",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] Shoot nets from your arm.",
+    "parentType": "cyberarm"
+  },
+  {
+    "id": "bc_popup_shotgun",
+    "name": "Popup Shotgun",
+    "type": "Cyberarm",
+    "hc": 7,
+    "cost": 1000,
+    "desc": "[CRB] A shotgun in your arm.",
+    "parentType": "cyberarm"
+  },
+  {
+    "id": "bc_racerbracer",
+    "name": "RacerBracer",
+    "type": "Internal Body",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] Immunity to Whiplash Critical Injury."
+  },
+  {
+    "id": "bc_reflex_coprocessor",
+    "name": "Reflex Co-Processor",
+    "type": "Neuralware",
+    "hc": 14,
+    "cost": 500,
+    "desc": "[CRB] Dodge bullets without REF 8.",
+    "parentType": "neural_link"
+  },
+  {
+    "id": "bc_reinforced_limb",
+    "name": "Reinforced Cyberlimb Upgrade",
+    "type": "Cyberlimb",
+    "hc": 3,
+    "cost": 1000,
+    "desc": "[CRB] Say goodbye to breaking this limb."
+  },
+  {
+    "id": "bc_sponsored_cybereye",
+    "name": "Sponsored Cybereye",
+    "type": "Cybereye",
+    "hc": 7,
+    "cost": 50,
+    "desc": "[CRB] A cheap Cybereye with Chyron and pop-up ads.",
+    "bodyPart": "eye",
+    "slots": 3,
+    "parentType": "cybereye"
+  },
+  {
+    "id": "bc_trauma_nanomatrix",
+    "name": "Trauma Response Nanomatrix",
+    "type": "Internal Body",
+    "hc": 7,
+    "cost": 1000,
+    "desc": "[CRB] Restore all lost Skinweave or Subdermal Armor SP once/day."
+  },
+  {
+    "id": "bc_standard_cyberfinger",
+    "name": "Standard Cyberfinger",
+    "type": "Cyberfinger",
+    "hc": 0,
+    "cost": 20,
+    "desc": "[CRB] A Cyberfinger with no special features. Requires Modular Finger Cyberhand.",
+    "parentType": "bc_modular_finger_hand"
+  },
+  {
+    "id": "bc_lockpick_cyberfinger",
+    "name": "Lockpick Cyberfinger",
+    "type": "Cyberfinger",
+    "hc": 2,
+    "cost": 100,
+    "desc": "[CRB] Adjustable lockpick and tensioning tool. Requires Modular Finger Cyberhand.",
+    "parentType": "bc_modular_finger_hand"
+  },
+  {
+    "id": "bc_microphone_cyberfinger",
+    "name": "Microphone Cyberfinger",
+    "type": "Cyberfinger",
+    "hc": 2,
+    "cost": 100,
+    "desc": "[CRB] Microphone linked to Agent or recording device. Requires Modular Finger Cyberhand.",
+    "parentType": "bc_modular_finger_hand"
+  },
+  {
+    "id": "bc_lighter_cyberfinger",
+    "name": "Lighter Cyberfinger",
+    "type": "Cyberfinger",
+    "hc": 3,
+    "cost": 100,
+    "desc": "[CRB] Lighter concealed in the tip. Requires Modular Finger Cyberhand.",
+    "parentType": "bc_modular_finger_hand"
+  },
+  {
+    "id": "bc_laser_pointer_cyberfinger",
+    "name": "Laser Pointer Cyberfinger",
+    "type": "Cyberfinger",
+    "hc": 3,
+    "cost": 100,
+    "desc": "[CRB] Laser pointer. 4+ can force DV13 Resist Torture/Drugs. Requires Modular Finger Cyberhand.",
+    "parentType": "bc_modular_finger_hand"
+  },
+  {
+    "id": "bc_wirecutter_cyberfinger",
+    "name": "Wirecutter/Scissor Cyberfingers",
+    "type": "Cyberfinger",
+    "hc": 3,
+    "cost": 100,
+    "desc": "[CRB] Retractable blades, also a Poor Quality Light Melee Weapon. Requires Modular Finger Cyberhand.",
+    "parentType": "bc_modular_finger_hand"
+  },
+  {
+    "id": "bc_homing_tracer_cyberfinger",
+    "name": "Homing Tracer Cyberfinger",
+    "type": "Cyberfinger",
+    "hc": 3,
+    "cost": 500,
+    "desc": "[CRB] Points toward linked tracer within 1 mile. Requires Modular Finger Cyberhand.",
+    "parentType": "bc_modular_finger_hand"
+  },
+  {
+    "id": "bc_mini_air_cyberfinger",
+    "name": "Mini Air Supply Cyberfinger",
+    "type": "Cyberfinger",
+    "hc": 2,
+    "cost": 500,
+    "desc": "[CRB] 10 min air supply, 1 hr to refill. Requires Modular Finger Cyberhand.",
+    "parentType": "bc_modular_finger_hand"
+  },
+  {
+    "id": "bc_one_shot_cyberfinger",
+    "name": "One Shot Special Cyberfinger",
+    "type": "Cyberfinger",
+    "hc": 7,
+    "cost": 100,
+    "desc": "[CRB] Single-shot Exotic Heavy Pistol concealed in finger. Requires Modular Finger Cyberhand.",
+    "parentType": "bc_modular_finger_hand"
+  },
+  {
+    "id": "bc_spray_paint_cyberfinger",
+    "name": "Spray Paint Cyberfinger",
+    "type": "Cyberfinger",
+    "hc": 3,
+    "cost": 100,
+    "desc": "[CRB] Spray can concealed within the Cyberfinger. Requires Modular Finger Cyberhand.",
+    "parentType": "bc_modular_finger_hand"
+  },
+  {
+    "id": "bc_squirt_cyberfinger",
+    "name": "Squirt Cyberfinger",
+    "type": "Cyberfinger",
+    "hc": 3,
+    "cost": 100,
+    "desc": "[CRB] Dispenses liquids like sanitizer or perfume. Requires Modular Finger Cyberhand.",
+    "parentType": "bc_modular_finger_hand"
+  },
+  {
+    "id": "chemskin",
+    "name": "Chemskin",
+    "type": "Fashionware",
+    "hc": 2,
+    "cost": 100,
+    "desc": "[CRB] Change skin color.",
+    "bonus": {
+      "skills": {
+        "personal_grooming": 2
+      }
+    }
+  },
+  {
+    "id": "techhair",
+    "name": "Techhair",
+    "type": "Fashionware",
+    "hc": 2,
+    "cost": 100,
+    "desc": "[CRB] Programmable hair.",
+    "bonus": {
+      "skills": {
+        "personal_grooming": 2
+      }
+    }
+  },
+  {
+    "id": "kerenzikov",
+    "name": "Kerenzikov",
+    "type": "Neuralware",
+    "hc": 14,
+    "cost": 500,
+    "desc": "[CRB] Boosted reflexes. +2 to Initiative.",
+    "parentType": "neural_link"
+  },
+  {
+    "id": "sandevistan",
+    "name": "Sandevistan",
+    "type": "Neuralware",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] Activate for +3 to Initiative for 1 min (Action, 1hr cooldown).",
+    "parentType": "neural_link"
+  },
+  {
+    "id": "image_enhance",
+    "name": "Image Enhance",
+    "type": "Cybereye Option",
+    "hc": 2,
+    "cost": 500,
+    "desc": "[CRB] Enhanced vision processing.",
+    "parentType": "cybereye",
+    "bonus": {
+      "skills": {
+        "perception": 2,
+        "lip_reading": 2,
+        "conceal_reveal_object": 2
+      }
+    }
+  },
+  {
+    "id": "targeting_scope",
+    "name": "Targeting Scope",
+    "type": "Cybereye Option",
+    "hc": 3,
+    "cost": 500,
+    "desc": "[CRB] +1 to Aimed Shot checks. Requires paired Cybereyes.",
+    "parentType": "cybereye"
+  },
+  {
+    "id": "teleoptics",
+    "name": "TeleOptics",
+    "type": "Cybereye Option",
+    "hc": 3,
+    "cost": 500,
+    "desc": "[CRB] +1 to checks vs targets 51m/yds+.",
+    "parentType": "cybereye"
+  },
+  {
+    "id": "low_light_cybereye",
+    "name": "Low Light/IR/UV Cybereye",
+    "type": "Cybereye Option",
+    "hc": 3,
+    "cost": 500,
+    "desc": "[CRB] Negate darkness/smoke/fog penalties. Requires Cybereye.",
+    "parentType": "cybereye"
+  },
+  {
+    "id": "amplified_hearing",
+    "name": "Amplified Hearing",
+    "type": "Cyberaudio Option",
+    "hc": 3,
+    "cost": 100,
+    "desc": "[CRB] Enhanced hearing. Requires Cyberaudio.",
+    "parentType": "cyberaudio",
+    "bonus": {
+      "skills": {
+        "perception": 2
+      }
+    }
+  },
+  {
+    "id": "voice_stress_analyzer",
+    "name": "Voice Stress Analyzer",
+    "type": "Cyberaudio Option",
+    "hc": 3,
+    "cost": 500,
+    "desc": "[CRB] Detect lies. Requires Cyberaudio.",
+    "parentType": "cyberaudio",
+    "bonus": {
+      "skills": {
+        "human_perception": 2,
+        "interrogation": 2
+      }
+    }
+  },
+  {
+    "id": "audiovox",
+    "name": "AudioVox",
+    "type": "Cyberaudio Option",
+    "hc": 3,
+    "cost": 500,
+    "desc": "[CRB] Voice modulator. Requires Cyberaudio.",
+    "parentType": "cyberaudio",
+    "bonus": {
+      "skills": {
+        "acting": 2,
+        "play_instrument": 2
+      }
+    }
+  },
+  {
+    "id": "enhanced_antibodies",
+    "name": "Enhanced Antibodies",
+    "type": "Internal Body",
+    "hc": 3,
+    "cost": 500,
+    "desc": "[CRB] Heal 2x BODY HP per day when resting."
+  },
+  {
+    "id": "grafted_muscle_bone_lace",
+    "name": "Grafted Muscle and Bone Lace",
+    "type": "Internal Body",
+    "hc": 14,
+    "cost": 1000,
+    "desc": "[CRB] +2 BODY (max 10).",
+    "bonus": {
+      "stats": {
+        "body": 2
+      }
+    }
+  },
+  {
+    "id": "toxin_binders",
+    "name": "Toxin Binders",
+    "type": "Internal Body",
+    "hc": 3,
+    "cost": 100,
+    "desc": "[CRB] Filters bloodborne toxins.",
+    "bonus": {
+      "skills": {
+        "resist_torture_drugs": 2
+      }
+    }
+  },
+  {
+    "id": "nasal_filters",
+    "name": "Nasal Filters",
+    "type": "Internal Body",
+    "hc": 2,
+    "cost": 100,
+    "desc": "[CRB] Immune to inhaled toxins and gases."
+  },
+  {
+    "id": "radar_sonar_implant",
+    "name": "Radar/Sonar Implant",
+    "type": "Internal Body",
+    "hc": 7,
+    "cost": 1000,
+    "desc": "[CRB] Detect moving objects within 50m/yds (not through cover)."
+  },
+  {
+    "id": "medscanner",
+    "name": "Medscanner",
+    "type": "Cyberarm Option",
+    "hc": 3,
+    "cost": 500,
+    "desc": "[CRB] Medical diagnostic scanner in cyberarm.",
+    "parentType": "cyberarm",
+    "bonus": {
+      "skills": {
+        "first_aid": 2,
+        "paramedic": 2
+      }
+    }
+  },
+  {
+    "id": "techscanner_cyberarm",
+    "name": "Techscanner",
+    "type": "Cyberarm Option",
+    "hc": 3,
+    "cost": 500,
+    "desc": "[CRB] Technical diagnostic scanner in cyberarm.",
+    "parentType": "cyberarm",
+    "bonus": {
+      "skills": {
+        "basic_tech": 2,
+        "cybertech": 2,
+        "land_vehicle_tech": 2,
+        "sea_vehicle_tech": 2,
+        "air_vehicle_tech": 2,
+        "electronics_security_tech": 2,
+        "weaponstech": 2
+      }
+    }
+  },
+  {
+    "id": "superchrome_covering",
+    "name": "Superchrome Covering",
+    "type": "Cyberarm Option",
+    "hc": 2,
+    "cost": 500,
+    "desc": "[CRB] Mirror-chrome finish. +2 Wardrobe & Style.",
+    "parentType": "cyberarm",
+    "bonus": {
+      "skills": {
+        "wardrobe_style": 2
+      }
+    }
+  },
+  {
+    "id": "skate_foot",
+    "name": "Skate Foot",
+    "type": "Cyberleg Option",
+    "hc": 3,
+    "cost": 500,
+    "desc": "[CRB] +6m/yds movement when using Run Action.",
+    "parentType": "cyberleg"
+  },
+  {
+    "id": "quick_change_mount",
+    "name": "Quick Change Mount",
+    "type": "Cyberarm",
+    "hc": 7,
+    "cost": 100,
+    "desc": "[CRB] Remove/install a Cyberarm as an Action."
+  },
+  {
+    "id": "rippers",
+    "name": "Rippers",
+    "type": "Cyberarm Option",
+    "hc": 3,
+    "cost": 500,
+    "desc": "[CRB] Retractable carbo-glass claws. Medium Melee Weapon.",
+    "parentType": "cyberarm"
+  },
+  {
+    "id": "wolvers",
+    "name": "Wolvers",
+    "type": "Cyberarm Option",
+    "hc": 3,
+    "cost": 500,
+    "desc": "[CRB] Large forearm blades. Heavy Melee Weapon.",
+    "parentType": "cyberarm"
+  },
+  {
+    "id": "scratchers",
+    "name": "Scratchers",
+    "type": "Cyberarm Option",
+    "hc": 2,
+    "cost": 100,
+    "desc": "[CRB] Retractable carbo-glass fingernails. Light Melee Weapon.",
+    "parentType": "cyberarm"
+  },
+  {
+    "id": "bodyweight_autoinjector",
+    "name": "Bodyweight AutoInjector",
+    "type": "Internal Body",
+    "hc": 3,
+    "cost": 100,
+    "desc": "[CRB] Load one dose of Street Drug. Inject as Action. With Biomonitor, auto-inject on Initiative/Critical Injury/Wound State."
+  },
+  {
+    "id": "pursuitech_gas_jet",
+    "name": "Pursuit Security Inc. Gas Jet",
+    "type": "Cyberarm Option",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] Aerosol gas launcher (3 doses). Acts as 1H Exotic Shotgun. Applies loaded substance. Requires Cyberarm, 2 Option Slots.",
+    "parentType": "cyberarm"
+  },
+  {
+    "id": "appetite_controller",
+    "name": "Appetite Controller",
+    "type": "Internal Body",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] Manage hunger via Biomonitor. Ignore HL from long-term environmental stress. Starvation still fatal after 7 days. Requires Biomonitor."
+  },
+  {
+    "id": "cyberpillow",
+    "name": "Cyberpillow",
+    "type": "Cyberarm Option",
+    "hc": 0,
+    "cost": 100,
+    "desc": "[CRB] Pop-out pillow for napping. Requires Cyberarm.",
+    "parentType": "cyberarm"
+  },
+  {
+    "id": "external_vidscreen",
+    "name": "External Vidscreen",
+    "type": "External Body",
+    "hc": 7,
+    "cost": 100,
+    "desc": "[CRB] Subcutaneous flexible screen. Turns body part into display for linked Agent or Memory Chip."
+  },
+  {
+    "id": "holo_projector_palm",
+    "name": "Holo Projector Palm",
+    "type": "Cyberarm Option",
+    "hc": 2,
+    "cost": 100,
+    "desc": "[CRB] Hologram projector in palm. Can be installed in a meat arm.",
+    "parentType": "cyberarm"
+  },
+  {
+    "id": "kill_display",
+    "name": "Kill Display",
+    "type": "Fashionware",
+    "hc": 0,
+    "cost": 100,
+    "desc": "[CRB] Subdermal 'KILLS: #' display. Self-reported via Agent.",
+    "bonus": {
+      "skills": {
+        "wardrobe_style": 2
+      }
+    }
+  },
+  {
+    "id": "leads_turn_on_show_off_nails",
+    "name": "Lead's Turn-On-Show-Off Nails",
+    "type": "Fashionware",
+    "hc": 0,
+    "cost": 100,
+    "desc": "[CRB] Programmable lighted fingernails. Works on meat or cyberware hands.",
+    "bonus": {
+      "skills": {
+        "wardrobe_style": 2
+      }
+    }
+  },
+  {
+    "id": "mood_eye",
+    "name": "Mood Eye",
+    "type": "Fashionware",
+    "hc": 0,
+    "cost": 100,
+    "desc": "[CRB] Eye color changes with mood (red=anger, blue=sadness, etc.). Requires Neural Link.",
+    "parentType": "neural_link"
+  },
+  {
+    "id": "neutongue",
+    "name": "NeuTongue",
+    "type": "Internal Body",
+    "hc": 7,
+    "cost": 100,
+    "desc": "[CRB] Cybernetic tongue. Add virtual seasoning to food via linked Agent."
+  },
+  {
+    "id": "perfectfit_cyberfoot",
+    "name": "PerfectFit Cyberfoot",
+    "type": "Cyberleg Option",
+    "hc": 2,
+    "cost": 100,
+    "desc": "[CRB] Adjustable foot size/shape. Eliminates penalty from ill-fitting footwear. Can be installed in a meat leg.",
+    "parentType": "cyberleg"
+  },
+  {
+    "id": "talon_feet",
+    "name": "Talon Feet",
+    "type": "Cyberleg Option",
+    "hc": 3,
+    "cost": 500,
+    "desc": "[CRB] Retractable foot talons. Light Melee Weapon (1d6). Requires Cyberlegs.",
+    "parentType": "cyberleg"
+  },
+  {
+    "id": "jump_boosters",
+    "name": "Jump Boosters",
+    "type": "Cyberleg Option",
+    "hc": 3,
+    "cost": 500,
+    "desc": "[CRB] Hydraulic leg boosters. +3d6 dmg vs cover with leg attacks. Requires Cyberlegs.",
+    "parentType": "cyberleg"
+  },
+  {
+    "id": "personalpak_kibblewarmer",
+    "name": "PersonalPak KibbleWarmer",
+    "type": "Cyberarm Option",
+    "hc": 3,
+    "cost": 100,
+    "desc": "[CRB] Rotisserie oven in forearm. Warms PersonalPak Kibble cylinders. Requires Cyberarm.",
+    "parentType": "cyberarm"
+  },
+  {
+    "id": "pursuitech_personal_shredder",
+    "name": "Pursuit Security Inc. Personal Shredder",
+    "type": "Cyberarm Option",
+    "hc": 3,
+    "cost": 100,
+    "desc": "[CRB] Cross-cut shredder in cyberarm with internal reservoir. Requires Cyberarm.",
+    "parentType": "cyberarm"
+  },
+  {
+    "id": "sponsored_covering",
+    "name": "Sponsored Covering",
+    "type": "Cyberlimb Option",
+    "hc": 0,
+    "cost": 50,
+    "desc": "[CRB] Illuminated ad on cyberlimb. Pays 20eb/month. Does not take an Option Slot. Requires Cyberarm or Cyberleg."
+  },
+  {
+    "id": "cyberscanner_integrated",
+    "name": "Cyberscanner, Integrated",
+    "type": "Cyberarm Option",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] Cyberscanner installed in a Cyberarm. Requires 2 Option Slots.",
+    "parentType": "cyberarm"
+  },
+  {
+    "id": "chainripp",
+    "name": "ChainRipp",
+    "type": "Cyberarm Option",
+    "hc": 14,
+    "cost": 500,
+    "desc": "[CRB] Retractable chainsaw in wrist. Can be revved into Excellent Quality Very Heavy Melee Weapon. Takes 4 Option Slots.",
+    "parentType": "cyberarm"
+  },
+  {
+    "id": "gang_jazzler",
+    "name": "Cybermatrix Gang Jazzler",
+    "type": "Cyberarm Option",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] Electrode needle in arm. On successful Choke, force DV13 Resist Torture/Drugs or Unconscious 1 min.",
+    "parentType": "cyberarm"
+  },
+  {
+    "id": "bug_eye",
+    "name": "Cyclops International Bug Eye",
+    "type": "Borgware",
+    "hc": 14,
+    "cost": 500,
+    "desc": "[CRB] Oversized Cybereye. Contains 5 slots for Cybereye Options.",
+    "slots": 5,
+    "parentType": "cybereye",
+    "bodyPart": "eye",
+    "takesBoth": true
+  },
+  {
+    "id": "deathtrance",
+    "name": "DeathTrance",
+    "type": "Neuralware",
+    "hc": 3,
+    "cost": 500,
+    "desc": "[CRB] Slow vitals to appear dead. DV17-21 to detect. -4 to all Actions while active.",
+    "parentType": "neural_link"
+  },
+  {
+    "id": "monovision",
+    "name": "Kiroshi MonoVision",
+    "type": "Borgware",
+    "hc": 14,
+    "cost": 500,
+    "desc": "[CRB] Single wide-angle cyberoptic visor. Contains 3 slots. Options count as paired.",
+    "slots": 3,
+    "parentType": "cybereye",
+    "bodyPart": "eye",
+    "takesBoth": true
+  },
+  {
+    "id": "optishield",
+    "name": "Kiroshi OptiShield",
+    "type": "External Body",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] Retractable Anti-Dazzle mirrorshades built into brow. Immune to flashblindness."
+  },
+  {
+    "id": "watch_man",
+    "name": "Psiberstuff Watch-Man",
+    "type": "Cyberarm Option",
+    "hc": 3,
+    "cost": 100,
+    "desc": "[CRB] Agent built into cyberarm with flip-up screen.",
+    "parentType": "cyberarm"
+  },
+  {
+    "id": "poser_chip",
+    "name": "Poser Chip",
+    "type": "Chipware",
+    "hc": 14,
+    "cost": 500,
+    "desc": "[CRB] +4 to Acting to impersonate persona. +5 if roleplayed. Famous persona: 500eb. Private: 1000eb.",
+    "parentType": "neural_link"
+  },
+  {
+    "id": "arc_thrower",
+    "name": "Radline Blitzkrieg Arc-Thrower Cyberarm",
+    "type": "Cyberarm",
+    "hc": 14,
+    "cost": 1000,
+    "desc": "[CRB] 0 Option slots. No hand. Exotic Shotgun (Heavy Weapons), 4d6 Shell fire, 32 charges. Cannot Crit or ablate armor.",
+    "bodyPart": "arm"
+  },
+  {
+    "id": "microwaldo",
+    "name": "Raven Microcybernetics MicroWaldo",
+    "type": "Cyberarm Option",
+    "hc": 7,
+    "cost": 1000,
+    "desc": "[CRB] +1 to Surgery Skill. Neuralware and Cyberarm Option.",
+    "parentType": "cyberarm",
+    "bonus": {
+      "skills": {
+        "surgery": 1
+      }
+    }
+  },
+  {
+    "id": "fleshweave",
+    "name": "Sycust Fleshweave",
+    "type": "External Body",
+    "hc": 7,
+    "cost": 1000,
+    "desc": "[CRB] Skinweave. Body and Head SP7. Self-repairs to full after 10 min without strenuous activity."
+  },
+  {
+    "id": "romanova_cyberlegs",
+    "name": "Wyzard Technologies Romanova Cyberlegs",
+    "type": "Cyberleg",
+    "hc": 14,
+    "cost": 1000,
+    "desc": "[CRB] Paired Cyberlegs. 3 Option Slots each. Pre-installed Talon Feet.",
+    "bodyPart": "leg",
+    "slots": 3,
+    "parentType": "cyberleg",
+    "takesBoth": true
+  },
+  {
+    "id": "faceplate_mount",
+    "name": "Quick Change Faceplate Mount",
+    "type": "Internal Body",
+    "hc": 14,
+    "cost": 1000,
+    "desc": "[CRB] Replace meat face with mounting. Comes with 1 personalized Faceplate. Additional: 100eb."
+  },
+  {
+    "id": "quick_digits",
+    "name": "Rocklin Augmentics Quick Digits",
+    "type": "Cyberarm Option",
+    "hc": 3,
+    "cost": 250,
+    "desc": "[CRB] Cyberhand.",
+    "bonus": {
+      "skills": {
+        "conceal_reveal_object": 1,
+        "contortionist": 1,
+        "first_aid": 1,
+        "forgery": 1,
+        "paramedic": 1,
+        "pick_lock": 1,
+        "pick_pocket": 1
+      }
+    },
+    "parentType": "cyberarm"
+  },
+  {
+    "id": "skydrivers",
+    "name": "Rocklin Augmentics Skydrivers",
+    "type": "Cyberleg",
+    "hc": 14,
+    "cost": 1000,
+    "desc": "[CRB] Paired Cyberlegs. 2 Option Slots each. Pre-installed Jump Boosters. +3d6 dmg vs cover with leg attacks.",
+    "bodyPart": "leg",
+    "slots": 2,
+    "parentType": "cyberleg",
+    "takesBoth": true
+  },
+  {
+    "id": "cyberspine",
+    "name": "Sycust Cyberspine",
+    "type": "Internal Body",
+    "hc": 7,
+    "cost": 1000,
+    "desc": "[CRB] Requires 3 Option Slots. Immune to Spinal Injury. Hardened. +1 Contortionist. Can house Cybersnake.",
+    "bonus": {
+      "skills": {
+        "contortionist": 1
+      }
+    }
+  },
+  {
+    "id": "cyberconductor_integrated",
+    "name": "Zetatech CyberConductor, Integrated",
+    "type": "Borgware",
+    "hc": 14,
+    "cost": 1000,
+    "desc": "[CRB] FBC only. All cyberdecks connected. Switch between them with no HP damage. Requires 3 Option Slots."
+  },
+  {
+    "id": "hello_cutie_mono_paw",
+    "name": "Hello Cutie Mono-Paw",
+    "type": "Cyberarm Option",
+    "hc": 7,
+    "cost": 500,
+    "desc": "[CRB] Retractable cat claws. Excellent Quality Medium Melee, 1d6, ignores armor SP<11. Cannot hold items while active.",
+    "parentType": "cyberarm"
+  },
+  {
+    "id": "sparkle_ize",
+    "name": "Hello Cutie Sparkle-ize",
+    "type": "Cybereye Option",
+    "hc": 3,
+    "cost": 250,
+    "desc": "[CRB] Big-eyes look. Flashlight built in. Paired: DV15 Resist or Damaged Eye for 1 min. Requires 2 Option Slots.",
+    "parentType": "cybereye"
+  },
+  {
+    "id": "dynalar_xtradex_glove",
+    "name": "Dynalar Xtra-Dex Smart Glove",
+    "type": "Cyberarm Option",
+    "hc": 0,
+    "cost": 1000,
+    "desc": "[CRB] 2 Option Slots. Counts as Modular Finger Cyberhand (up to 5 Cyberfingers). Requires Interface Plugs.",
+    "parentType": "cyberarm"
+  }
+],
 
   // ----------------------------------------------------------
   // GEAR - All purchasable items
@@ -2576,6 +3603,16 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
+function ensureLootedDesc(desc, isLooted) {
+  let d = desc || '';
+  if (isLooted) {
+    if (!d.toLowerCase().includes('[looted]')) {
+      d = (d.trim() ? d.trim() + ' ' : '') + '[Looted]';
+    }
+  }
+  return d;
+}
+
 function autoResizeTextarea(el) {
   if (!el) return;
   el.style.height = 'auto';
@@ -3257,6 +4294,11 @@ function renderWeapons() {
 
   for (let i = 0; i < state.weapons.length; i++) {
     let w = state.weapons[i];
+    let isLooted = (w.isLooted || w.cost === 0 || (w.desc && w.desc.toLowerCase().includes('[looted]')));
+    if (isLooted) {
+      w.isLooted = true;
+      w.desc = ensureLootedDesc(w.desc, true);
+    }
     let tr = document.createElement("tr");
     let isGrenade = /grenade|molotov|smoke_pellet/.test(w.id);
     let actionBtns;
@@ -3341,6 +4383,11 @@ function renderArmor() {
   let headSP = 0;
   for (let i = 0; i < state.armor.length; i++) {
     let a = state.armor[i];
+    let isLooted = (a.isLooted || a.cost === 0 || (a.desc && a.desc.toLowerCase().includes('[looted]')));
+    if (isLooted) {
+      a.isLooted = true;
+      a.desc = ensureLootedDesc(a.desc, true);
+    }
     let tr = document.createElement("tr");
     let descVal = escapeHtml(a.desc || '');
     tr.innerHTML = '<td>' + a.name + '</td><td><input type="number" class="armor-sp-input" data-idx="' + i + '" value="' + a.sp + '" min="0" max="99" style="width:60px;text-align:center;padding:0.25rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></td><td>' + a.slots + '</td><td>' + a.enc + '</td><td><textarea class="item-desc-input" data-cat="armor" data-idx="' + i + '" placeholder="Description" rows="1">' + descVal + '</textarea></td><td><button class="btn-action armor-remove" data-idx="' + i + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button></td>';
@@ -3428,6 +4475,11 @@ function renderCyberware() {
 }
 
 function renderCyberwareRow(tbody, c, idx) {
+  let isLooted = (c.isLooted || c.cost === 0 || (c.desc && c.desc.toLowerCase().includes('[looted]')));
+  if (isLooted) {
+    c.isLooted = true;
+    c.desc = ensureLootedDesc(c.desc, true);
+  }
   let tr = document.createElement("tr");
   let bonusHtml = formatCyberBonus(c.bonus);
   let displayName = c.name;
@@ -3444,7 +4496,8 @@ function mapTypeToParentType(typeStr) {
   let t = typeStr.toLowerCase().trim();
   if (t.includes("optic") || t.includes("eye")) return "cybereye";
   if (t.includes("audio") || t.includes("ear")) return "cyberaudio";
-  if (t.includes("arm") || t.includes("hand")) return "cyberarm";
+  if (t.includes("finger") || t.includes("modular finger")) return "bc_modular_finger_hand";
+  if (t.includes("arm") || t.includes("hand") || t.includes("glove")) return "cyberarm";
   if (t.includes("leg") || t.includes("foot")) return "cyberleg";
   if (t.includes("neural") || t.includes("chip")) return "neural_link";
   if (t.includes("internal")) return "internal";
@@ -3454,32 +4507,46 @@ function mapTypeToParentType(typeStr) {
   return null;
 }
 
-function renderCyberwareSlot(tbody, parent, parentPath, slotIdx, depth) {
-  let option = (parent.options && parent.options[slotIdx]) || null;
-  let available = [];
+function getOptionsForParentItem(parent) {
+  if (!parent) return [];
   
+  // 1. Check if parent.id has direct options (e.g. 'bc_modular_finger_hand')
+  if (parent.id) {
+    let directOpts = getOptionsForParent(parent.id);
+    if (directOpts && directOpts.length > 0) return directOpts;
+  }
+  
+  // 2. Check explicit parent.parentType (e.g. 'cybereye' for smart glasses)
   let pType = parent.parentType;
   if (!pType && parent.id) {
-    let parentDataItem = getDataItemById(parent.id);
-    if (parentDataItem && parentDataItem.parentType) pType = parentDataItem.parentType;
+    let dataItem = getDataItemById(parent.id);
+    if (dataItem && dataItem.parentType) pType = dataItem.parentType;
   }
+  
+  // 3. Fallback to mapping type/cat/name
   if (!pType && parent.type) {
     pType = mapTypeToParentType(parent.type);
   }
+  if (!pType && (parent.cat || parent.name)) {
+    pType = mapTypeToParentType(parent.cat || parent.name);
+  }
   
   if (pType) {
-    available = getOptionsForParent(pType);
+    let typeOpts = getOptionsForParent(pType);
+    if (typeOpts && typeOpts.length > 0) return typeOpts;
   }
-  if (available.length === 0 && parent.id) {
-    available = getOptionsForParent(parent.id);
-  }
-  if (available.length === 0) {
-    available = (DATA._index.cyberwareByParent['cybereye'] || [])
-      .concat(DATA._index.cyberwareByParent['cyberaudio'] || [])
-      .concat(DATA._index.cyberwareByParent['cyberarm'] || [])
-      .concat(DATA._index.cyberwareByParent['cyberleg'] || [])
-      .concat(DATA._index.cyberwareByParent['neural_link'] || []);
-  }
+  
+  // 4. Ultimate fallback for generic/unrecognized custom items
+  return (DATA._index.cyberwareByParent['cybereye'] || [])
+    .concat(DATA._index.cyberwareByParent['cyberaudio'] || [])
+    .concat(DATA._index.cyberwareByParent['cyberarm'] || [])
+    .concat(DATA._index.cyberwareByParent['cyberleg'] || [])
+    .concat(DATA._index.cyberwareByParent['neural_link'] || []);
+}
+
+function renderCyberwareSlot(tbody, parent, parentPath, slotIdx, depth) {
+  let option = (parent.options && parent.options[slotIdx]) || null;
+  let available = getOptionsForParentItem(parent);
   let tr = document.createElement("tr");
   tr.style.background = "rgba(128,128,128,0.05)";
   tr.style.fontSize = "0.85rem";
@@ -3742,15 +4809,26 @@ function showCustomSlotOptionModal(isCyberware, callback) {
   };
 }
 
-function rollCyberwareHC(avgHc) {
-  if (!avgHc) return 0;
+function rollCyberwareHC(hc) {
+  if (!hc) return 0;
   function r() { return Math.floor(Math.random() * 6) + 1; }
-  if (avgHc === 14 || avgHc === 4) return r() + r() + r() + r();
-  if (avgHc === 7) return r() + r();
-  if (avgHc === 3) return r();
-  if (avgHc === 2) return Math.ceil(r() / 2);
-  if (avgHc === 1) return 1;
-  return avgHc;
+  if (typeof hc === 'string') {
+    let s = hc.toLowerCase().trim();
+    if (s === '4d6') return r() + r() + r() + r();
+    if (s === '3d6') return r() + r() + r();
+    if (s === '2d6') return r() + r();
+    if (s === '1d6') return r();
+    if (s === '1d6/2' || s === '1d3') return Math.ceil(r() / 2);
+    let p = parseInt(s);
+    if (!isNaN(p)) hc = p;
+  }
+  if (hc >= 14) return r() + r() + r() + r();
+  if (hc >= 10) return r() + r() + r();
+  if (hc >= 7) return r() + r();
+  if (hc >= 3) return r();
+  if (hc === 2) return Math.ceil(r() / 2);
+  if (hc === 1) return 1;
+  return hc;
 }
 
 function getDataItemById(id) {
@@ -3914,20 +4992,58 @@ function renderGear() {
   if (!tbody) return;
   tbody.innerHTML = "";
   let frag = document.createDocumentFragment();
+
+  let paidItems = [];
+  let lootedItems = [];
+
   for (let i = 0; i < state.gear.length; i++) {
     let g = state.gear[i];
-    renderGearRow(frag, g, i);
+    let isLooted = (g.isLooted || g.cost === 0 || (g.desc && g.desc.toLowerCase().includes('[looted]')));
+    if (isLooted) {
+      g.isLooted = true;
+      g.desc = ensureLootedDesc(g.desc, true);
+      lootedItems.push({ item: g, idx: i });
+    } else {
+      paidItems.push({ item: g, idx: i });
+    }
+  }
+
+  for (let k = 0; k < paidItems.length; k++) {
+    let g = paidItems[k].item;
+    let i = paidItems[k].idx;
+    renderGearRow(frag, g, i, false);
     if (g.slots) {
       for (let s = 0; s < g.slots; s++) {
         renderGearSlot(frag, g, i.toString(), s, 0);
       }
     }
   }
+
+  if (lootedItems.length > 0) {
+    let headerTr = document.createElement("tr");
+    headerTr.style.background = "rgba(255, 0, 60, 0.12)";
+    headerTr.style.borderTop = "2px solid var(--accent)";
+    headerTr.style.borderBottom = "1px solid var(--accent)";
+    headerTr.innerHTML = '<td colspan="6" style="padding:0.45rem 0.75rem; font-weight:bold; color:var(--accent); font-size:0.85rem; letter-spacing:0.03em;">\uD83C\uDFF4\u200D\u2620\uFE0F Looted Gear (0eb)</td>';
+    frag.appendChild(headerTr);
+
+    for (let k = 0; k < lootedItems.length; k++) {
+      let g = lootedItems[k].item;
+      let i = lootedItems[k].idx;
+      renderGearRow(frag, g, i, true);
+      if (g.slots) {
+        for (let s = 0; s < g.slots; s++) {
+          renderGearSlot(frag, g, i.toString(), s, 0);
+        }
+      }
+    }
+  }
+
   tbody.appendChild(frag);
   attachGearEvents();
 }
 
-function renderGearRow(tbody, g, idx) {
+function renderGearRow(tbody, g, idx, isLootedSection) {
   let tr = document.createElement("tr");
   let consumableCats = ["Street Drug", "Pharmaceutical", "Additive", "Medical"];
   let isConsumable = consumableCats.indexOf(g.cat) !== -1 || g.ammo;
@@ -3938,31 +5054,17 @@ function renderGearRow(tbody, g, idx) {
     actionBtns = '<button class="btn-action gear-remove" data-idx="' + idx + '" style="font-size:0.75rem;padding:0.2rem 0.4rem">X</button>';
   }
   let descVal = escapeHtml(g.desc || '');
-  tr.innerHTML = '<td>' + g.name + '</td><td>' + (g.cat || "-") + '</td><td>' + g.cost + 'eb</td><td><input type="number" class="gear-qty" data-idx="' + idx + '" value="' + (g.qty || 1) + '" min="1" style="width:70px;min-width:65px"></td><td><textarea class="item-desc-input" data-cat="gear" data-idx="' + idx + '" placeholder="Description" rows="1">' + descVal + '</textarea></td><td>' + actionBtns + '</td>';
+  let displayName = escapeHtml(g.name);
+  if (isLootedSection || g.isLooted || g.cost === 0) {
+    displayName += ' <span style="font-size:0.7rem; padding:0.1rem 0.35rem; border-radius:3px; background:rgba(255, 0, 60, 0.15); color:var(--accent); border:1px solid var(--accent); margin-left:0.35rem; vertical-align:middle;">Looted</span>';
+  }
+  tr.innerHTML = '<td>' + displayName + '</td><td>' + (g.cat || "-") + '</td><td>' + (g.cost || 0) + 'eb</td><td><input type="number" class="gear-qty" data-idx="' + idx + '" value="' + (g.qty || 1) + '" min="1" style="width:70px;min-width:65px"></td><td><textarea class="item-desc-input" data-cat="gear" data-idx="' + idx + '" placeholder="Description" rows="1">' + descVal + '</textarea></td><td>' + actionBtns + '</td>';
   tbody.appendChild(tr);
 }
 
 function renderGearSlot(tbody, parent, parentPath, slotIdx, depth) {
   let option = (parent.options && parent.options[slotIdx]) || null;
-  let available = [];
-  let pType = parent.parentType;
-  if (!pType && parent.id) {
-    let itemData = getDataItemById(parent.id);
-    if (itemData && itemData.parentType) pType = itemData.parentType;
-  }
-  if (!pType && (parent.type || parent.cat || parent.name)) {
-    pType = mapTypeToParentType(parent.type || parent.cat || parent.name);
-  }
-  if (pType) {
-    available = getOptionsForParent(pType);
-  }
-  if (available.length === 0) {
-    available = (DATA._index.cyberwareByParent['cybereye'] || [])
-      .concat(DATA._index.cyberwareByParent['cyberaudio'] || [])
-      .concat(DATA._index.cyberwareByParent['cyberarm'] || [])
-      .concat(DATA._index.cyberwareByParent['cyberleg'] || [])
-      .concat(DATA._index.cyberwareByParent['neural_link'] || []);
-  }
+  let available = getOptionsForParentItem(parent);
 
   let tr = document.createElement("tr");
   tr.style.background = "rgba(128,128,128,0.05)";
@@ -4118,11 +5220,46 @@ function attachGearEvents() {
           }
           let el = document.getElementById("currency_eb");
           el.value = (parseInt(el.value) || 0) - actualCost;
+
+          let isItemPaid = (!g.isLooted && (g.cost || 0) > 0);
+          if (isItemPaid && actualCost === 0) {
+            inputEl.value = oldQty;
+            let existingLooted = state.gear.find(x => x.id === g.id && (x.isLooted || x.cost === 0));
+            if (existingLooted) {
+              existingLooted.qty = (existingLooted.qty || 1) + diff;
+            } else {
+              let lootedDesc = ensureLootedDesc(g.desc, true);
+              let lootedEntry = {
+                id: g.id,
+                ammoKey: g.ammoKey || g.id,
+                name: g.name,
+                cost: 0,
+                isLooted: true,
+                cat: g.cat,
+                desc: lootedDesc,
+                qty: diff,
+                ammo: g.ammo,
+                slots: g.slots,
+                parentType: g.parentType
+              };
+              if (g.slots) { lootedEntry.options = []; }
+              state.gear.push(lootedEntry);
+            }
+            let key = g.ammoKey || g.id;
+            if (g.ammo && state.ammo[key]) {
+              state.ammo[key].total += g.ammo * diff;
+            }
+            renderGear();
+            renderAmmoTracker();
+            return;
+          }
+
           g.qty = newQty;
           let key = g.ammoKey || g.id;
           if (g.ammo && state.ammo[key]) {
             state.ammo[key].total += g.ammo * diff;
           }
+          renderGear();
           renderAmmoTracker();
         });
       } else {
@@ -4473,7 +5610,9 @@ function initAddButtons() {
     showItemSelector("weapon", DATA.weapons, function(item) {
       if (item.id && item.id.startsWith("custom_")) {
         let actualCost = item.cost || 0;
-        state.weapons.push({ id: item.id, name: item.name, dmg: item.dmg, rof: item.rof, mag: item.mag, type: item.type, rank: 0, cost: actualCost, desc: item.desc || '' });
+        let isLooted = (actualCost === 0);
+        let desc = ensureLootedDesc(item.desc || '', isLooted);
+        state.weapons.push({ id: item.id, name: item.name, dmg: item.dmg, rof: item.rof, mag: item.mag, type: item.type, rank: 0, cost: actualCost, isLooted: isLooted, desc: desc });
         let el = document.getElementById("currency_eb");
         el.value = (parseInt(el.value) || 0) - actualCost;
         renderWeapons();
@@ -4481,7 +5620,9 @@ function initAddButtons() {
         showItemPurchaseModal(item, "Weapon", {}, function(res) {
           if (!res) return;
           let actualCost = res.cost;
-          state.weapons.push({ id: item.id, name: item.name, dmg: item.dmg, rof: item.rof, mag: item.mag, type: item.type, rank: 0, cost: actualCost, desc: item.desc || '' });
+          let isLooted = (actualCost === 0);
+          let desc = ensureLootedDesc(item.desc || '', isLooted);
+          state.weapons.push({ id: item.id, name: item.name, dmg: item.dmg, rof: item.rof, mag: item.mag, type: item.type, rank: 0, cost: actualCost, isLooted: isLooted, desc: desc });
           let el = document.getElementById("currency_eb");
           el.value = (parseInt(el.value) || 0) - actualCost;
           renderWeapons();
@@ -4493,7 +5634,9 @@ function initAddButtons() {
     showItemSelector("armor", DATA.armor, function(item) {
       if (item.id && item.id.startsWith("custom_")) {
         let actualCost = item.cost || 0;
-        state.armor.push({ id: item.id, name: item.name, sp: item.sp, slots: item.slots, enc: item.enc, cost: actualCost, desc: item.desc || '' });
+        let isLooted = (actualCost === 0);
+        let desc = ensureLootedDesc(item.desc || '', isLooted);
+        state.armor.push({ id: item.id, name: item.name, sp: item.sp, slots: item.slots, enc: item.enc, cost: actualCost, isLooted: isLooted, desc: desc });
         let el = document.getElementById("currency_eb");
         el.value = (parseInt(el.value) || 0) - actualCost;
         renderArmor();
@@ -4502,7 +5645,9 @@ function initAddButtons() {
         showItemPurchaseModal(item, "Armor", {}, function(res) {
           if (!res) return;
           let actualCost = res.cost;
-          state.armor.push({ id: item.id, name: item.name, sp: item.sp, slots: item.slots, enc: item.enc, cost: actualCost, desc: item.desc || '' });
+          let isLooted = (actualCost === 0);
+          let desc = ensureLootedDesc(item.desc || '', isLooted);
+          state.armor.push({ id: item.id, name: item.name, sp: item.sp, slots: item.slots, enc: item.enc, cost: actualCost, isLooted: isLooted, desc: desc });
           let el = document.getElementById("currency_eb");
           el.value = (parseInt(el.value) || 0) - actualCost;
           renderArmor();
@@ -4563,7 +5708,9 @@ function initAddButtons() {
 
       let processCyberwareAdd = function(actualCost, actualHc, loc) {
         if (loc) selectedLoc = loc;
-        let entry = { id: item.id, name: item.name, type: item.type, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null };
+        let isLooted = (actualCost === 0);
+        let desc = ensureLootedDesc(item.desc || '', isLooted);
+        let entry = { id: item.id, name: item.name, type: item.type, hc: actualHc, cost: actualCost, isLooted: isLooted, desc: desc, bonus: item.bonus || null };
         if (selectedLoc) entry.location = selectedLoc;
         if (item.slots) { entry.slots = item.slots; entry.options = []; }
         
@@ -4571,12 +5718,12 @@ function initAddButtons() {
         let prefillId = pairedPrefill[item.id];
         if (prefillId) {
           let prefillData = getDataItemById(prefillId);
-          let leftLeg = { id: item.id, name: item.name, location: "Left", type: item.type, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
+          let leftLeg = { id: item.id, name: item.name, location: "Left", type: item.type, hc: actualHc, cost: actualCost, isLooted: isLooted, desc: desc, bonus: item.bonus || null, slots: item.slots, options: [] };
           if (prefillData) {
             leftLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
           }
           state.cyberware.push(leftLeg);
-          let rightLeg = { id: item.id, name: item.name, location: "Right", type: item.type, hc: actualHc, cost: 0, desc: item.desc || '', bonus: item.bonus || null, slots: item.slots, options: [] };
+          let rightLeg = { id: item.id, name: item.name, location: "Right", type: item.type, hc: actualHc, cost: 0, isLooted: true, desc: ensureLootedDesc(item.desc || '', true), bonus: item.bonus || null, slots: item.slots, options: [] };
           if (prefillData) {
             rightLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
           }
@@ -4613,7 +5760,9 @@ function initAddButtons() {
       }
       if (isFree || (item.id && item.id.startsWith("custom_"))) {
         let cost = isFree ? 0 : (item.cost || 0);
-        state.vehicles.push({ id: item.id, name: item.name, sdp: item.sdp, seats: item.seats, cost: cost, isMoto: isFree, desc: item.desc, upgrades: [] });
+        let isLooted = (cost === 0);
+        let desc = ensureLootedDesc(item.desc || '', isLooted);
+        state.vehicles.push({ id: item.id, name: item.name, sdp: item.sdp, seats: item.seats, cost: cost, isMoto: isFree, isLooted: isLooted, desc: desc, upgrades: [] });
         if (!isFree) {
           let el = document.getElementById("currency_eb");
           el.value = (parseInt(el.value) || 0) - cost;
@@ -4624,7 +5773,9 @@ function initAddButtons() {
         showItemPurchaseModal(item, "Vehicle", {}, function(res) {
           if (!res) return;
           let cost = res.cost;
-          state.vehicles.push({ id: item.id, name: item.name, sdp: item.sdp, seats: item.seats, cost: cost, isMoto: false, desc: item.desc, upgrades: [] });
+          let isLooted = (cost === 0);
+          let desc = ensureLootedDesc(item.desc || '', isLooted);
+          state.vehicles.push({ id: item.id, name: item.name, sdp: item.sdp, seats: item.seats, cost: cost, isMoto: false, isLooted: isLooted, desc: desc, upgrades: [] });
           let el = document.getElementById("currency_eb");
           el.value = (parseInt(el.value) || 0) - cost;
           renderVehicles();
@@ -4642,10 +5793,12 @@ function initAddButtons() {
           if (!res) return;
           let gunType = res.gunType;
           let actualCost = res.cost;
+          let isLooted = (actualCost === 0);
+          let desc = ensureLootedDesc(item.desc || "", isLooted);
           let name = item.name + " (" + gunType + ")";
           let ammoKey = item.id + "_" + gunType.toLowerCase().replace(/[^a-z0-9]/g, '_');
 
-          let gearEntry = { id: item.id, ammoKey: ammoKey, name: name, cost: actualCost, cat: item.cat || "Gear", desc: item.desc || "", qty: 1, ammo: item.ammo, slots: item.slots, parentType: item.parentType };
+          let gearEntry = { id: item.id, ammoKey: ammoKey, name: name, cost: actualCost, isLooted: isLooted, cat: item.cat || "Gear", desc: desc, qty: 1, ammo: item.ammo, slots: item.slots, parentType: item.parentType };
           if (item.slots) { gearEntry.options = []; }
           state.gear.push(gearEntry);
           let el = document.getElementById("currency_eb");
@@ -4661,7 +5814,9 @@ function initAddButtons() {
         });
       } else if (item.id && item.id.startsWith("custom_")) {
         let actualCost = item.cost || 0;
-        let gearEntry = { id: item.id, ammoKey: item.id, name: item.name, cost: actualCost, cat: item.cat || "Gear", desc: item.desc || "", qty: 1, ammo: item.ammo, slots: item.slots, parentType: item.parentType };
+        let isLooted = (actualCost === 0);
+        let desc = ensureLootedDesc(item.desc || "", isLooted);
+        let gearEntry = { id: item.id, ammoKey: item.id, name: item.name, cost: actualCost, isLooted: isLooted, cat: item.cat || "Gear", desc: desc, qty: 1, ammo: item.ammo, slots: item.slots, parentType: item.parentType };
         if (item.slots) { gearEntry.options = []; }
         state.gear.push(gearEntry);
         let el = document.getElementById("currency_eb");
@@ -4671,7 +5826,9 @@ function initAddButtons() {
         showItemPurchaseModal(item, item.cat || "Gear", {}, function(res) {
           if (!res) return;
           let actualCost = res.cost;
-          let gearEntry = { id: item.id, ammoKey: item.id, name: item.name, cost: actualCost, cat: item.cat || "Gear", desc: item.desc || "", qty: 1, ammo: item.ammo, slots: item.slots, parentType: item.parentType };
+          let isLooted = (actualCost === 0);
+          let desc = ensureLootedDesc(item.desc || "", isLooted);
+          let gearEntry = { id: item.id, ammoKey: item.id, name: item.name, cost: actualCost, isLooted: isLooted, cat: item.cat || "Gear", desc: desc, qty: 1, ammo: item.ammo, slots: item.slots, parentType: item.parentType };
           if (item.slots) { gearEntry.options = []; }
           state.gear.push(gearEntry);
           let el = document.getElementById("currency_eb");
@@ -5138,7 +6295,9 @@ function showCustomItemModal(type, callback) {
 
     let cost = parseInt(document.getElementById("custom_modal_cost").value) || 0;
     let desc = document.getElementById("custom_modal_desc").value || "";
-    let itemObj = { id: "custom_" + Date.now(), name: name, cost: cost, desc: desc };
+    let isLooted = (cost === 0);
+    desc = ensureLootedDesc(desc, isLooted);
+    let itemObj = { id: "custom_" + Date.now(), name: name, cost: cost, isLooted: isLooted, desc: desc };
 
     if (type === "weapon") {
       itemObj.dmg = document.getElementById("custom_modal_dmg").value || "1d6";
