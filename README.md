@@ -8,7 +8,7 @@ The project also includes a dedicated **Apple-Optimized Edition** (`Apple_Versio
 
 ---
 
-## 🚀 What's New in v4.6.2
+## 🚀 What's New in v4.6.3
 
 Version **4.6.2** incorporates extensive playtester feedback and complete UI refinements:
 
