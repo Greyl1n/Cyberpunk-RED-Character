@@ -10,7 +10,7 @@ The project also includes a dedicated **Apple-Optimized Edition** (`Apple_Versio
 
 ## 🚀 What's New in v4.6.3
 
-Version **4.6.2** incorporates extensive playtester feedback and complete UI refinements:
+Version **4.6.3** incorporates extensive playtester feedback and complete UI refinements:
 
 * **Tab-Persistent In-Page DOM Modals:** Replaced all browser `prompt()` dialogs with styled, non-blocking in-page DOM modals for catalog item additions, slot option installations, custom items, and item sales/removals. Switching browser tabs to copy stats or names no longer interrupts or resets your work.
 * **Editable Armor SP (Abrasion Tracking):** Armor Stopping Power (SP) is now an editable field directly on the character sheet. Track combat damage and armor degradation on the fly with real-time recalculations for Total Body SP and Head SP.
