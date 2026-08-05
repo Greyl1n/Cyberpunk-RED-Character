@@ -106,3 +106,5 @@ Cyberpunk_Character_v4/
 * **NonCommercial (NC):** Only noncommercial use of this work is permitted.
 
 *Disclaimer: This is an unofficial, fan-made character manager for Cyberpunk RED. Cyberpunk RED is a tabletop roleplaying game created by R. Talsorian Games. All game text and mechanics are property of their respective owners.*
+<!--START_SECTION:buy-me-a-coffee-->
+<!--END_SECTION:buy-me-a-coffe-->
