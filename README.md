@@ -37,7 +37,7 @@ Version **5.0.0** introduces the **Game Master (GM) Command Center**, transformi
 ## 🛠️ Complete Character Manager Features
 
 - **Stats & Point-Buy**: 62-point Complete Package system enforcing min 2 / max 8 limits.
-- **10 Core Roles**: Full rank-by-rank descriptions for Rockerboy, Solo, Netrunner, Tech, Medtech, Media, Exec, Lawman, Courier, and Nomad, plus multiclassing (secondary role unlock at primary Rank 4).
+- **10 Core Roles**: Full rank-by-rank descriptions for Rockerboy, Solo, Netrunner, Tech, Medtech, Media, Exec, Lawman, Fixer, and Nomad, plus multiclassing (secondary role unlock at primary Rank 4).
 - **Interactive Role Mechanics**:
   - **Exec**: Create and manage Team Members.
   - **Nomad**: Track Moto vehicles and family upgrades.
