@@ -1,110 +1,109 @@
-# Cyberpunk RED Character Generator (v4.6.3)
+# Cyberpunk RED Character Manager & Game Master Command Center (v5.0.0)
 
-A fully self-contained, highly-optimized interactive character manager for **Cyberpunk RED** by R. Talsorian Games. Create, customize, save, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing. 
+> **A fully self-contained, offline-first web application for Cyberpunk RED tabletop RPG players and Game Masters.**
 
-**No server, no build tools, no internet required.** Just open the single monolith `index.html` file in any modern web browser.
-
-The project also includes a dedicated **Apple-Optimized Edition** (`Apple_Version/index.html`) specifically tailored for Safari on iOS/iPadOS, fixing WebKit-specific flexbox printing quirks, native checkbox styling, and touch inputs.
-
----
-
-## 🚀 What's New in v4.6.3
-
-Version **4.6.3** incorporates extensive playtester feedback and complete UI refinements:
-
-* **Tab-Persistent In-Page DOM Modals:** Replaced all browser `prompt()` dialogs with styled, non-blocking in-page DOM modals for catalog item additions, slot option installations, custom items, and item sales/removals. Switching browser tabs to copy stats or names no longer interrupts or resets your work.
-* **Editable Armor SP (Abrasion Tracking):** Armor Stopping Power (SP) is now an editable field directly on the character sheet. Track combat damage and armor degradation on the fly with real-time recalculations for Total Body SP and Head SP.
-* **Looted & Purchased Quantity Management:** Easily increase item quantities for free when looted in combat (0eb) or at listed EB cost with the `➕ Add Quantity` modal. Reducing item quantities (consuming/using items) updates stock without unwanted EB refunds.
-* **Categorised Ammunition & Weapon Mapping:** Select specific weapon types for ammo with equipped weapon dropdowns and combined EB cost fields in a unified popup.
-* **Grenade & Explosive Bundles:** Grenades and explosive consumables are now purchased and tracked in individual 1-unit bundles instead of 10-packs.
-* **Custom Slot Options for Cyberware & Gear:** Custom cyberware automatically links parent categories (`cybereye`, `cyberarm`, `cyberleg`, `cyberaudio`, `neural_link`, etc.) to expose appropriate slot options dynamically.
-* **Dynamic QTY Input Width:** Expanded quantity input boxes to gracefully display multi-digit amounts without truncation.
+![Version](https://img.shields.io/badge/version-5.0.0-ff0055.svg)
+![License](https://img.shields.io/badge/license-CC--BY--NC--4.0-blue.svg)
+![Cyberpunk RED](https://img.shields.io/badge/game-Cyberpunk%20RED-00f3ff.svg)
 
 ---
 
-## 🌟 Core Features
+## 🎲 What's New in Version 5.0.0?
 
-* **10 Stats Point-Buy System:** 62 points, min 2 / max 8, with automated stat point tracking.
-* **All 10 Roles Integrated:** Rank-by-rank ability descriptions and deeply integrated mechanical trackers for:
-  * **Exec:** Team Members & auto-rolled stats.
-  * **Nomad:** Family Vehicles & Upgrades tracking.
-  * **Lawman:** Backup stats and response times.
-  * **Netrunner:** Interface abilities and Cyberdeck program tracking.
-  * **Medtech:** Pharmaceuticals and Cryo-tank management.
-* **Multiclass Support:** Take a secondary role once your primary role reaches Rank 4.
-* **86 Skills:** Grouped by linked stat with instant search, rank inputs, base totals, and item bonuses.
-* **140+ Weapons:** Mapped accurately to Cyberpunk RED skills, including *Black Chrome* selections.
-* **Dynamic Cyberware Tracking:** Automatically handles humanity loss, maximum humanity reduction, and custom slot constraints (e.g., 7 slots for a Cyberarm).
-* **Smart Selective Printing:** Selectively exclude empty sections of your character sheet before printing. The app restructures the DOM layout for clean 1-to-2 page physical printouts.
-* **Full Lifepath Generation:** Generic and Role-specific Lifepaths with a single-click randomizer.
-* **Custom Eurobuck Management:** Quick accounting for payouts, bribes, loot, and custom transactions.
-* **JSON Export/Import:** Easily save, backup, or transfer your characters across devices.
-* **Netrunner Dark Theme:** Sleek dark-mode aesthetic with vibrant cyberpunk accent styling and high contrast.
+Version **5.0.0** introduces the **Game Master (GM) Command Center**, transforming the app into an all-in-one encounter runner and multi-sheet manager alongside its complete character creator.
 
----
-
-## 📱 Apple / Safari Optimized Version
-
-If you are using Safari on macOS, iOS (iPhone), or iPadOS (iPad), use `Apple_Version/index.html`. This edition provides:
-* WebKit-specific print fixes so borders and background cards print cleanly.
-* Touch-optimized number steppers and checkbox styling.
-* Full feature parity with the main release.
+### 🌟 Game Master Command Center Features
+- **Side-by-Side Dynamic Sheet Field (1–5 Sheets)**: Load up to 5 character sheets simultaneously. The display field automatically scales responsive columns (`--gm-sheet-count`) based on the number of active cards.
+- **On-Card Quick Controls**:
+  - **HP Vitals Bar**: Color-coded percentage health bar with instant `-10`, `-5`, `-1`, `+1`, `+5`, `+10` HP adjustment buttons.
+  - **Armor SP Steppers**: Track Head SP and Body SP abrasion directly on preview cards.
+  - **Stat & Weapon Summaries**: Core 10 STAT grid, equipped weapons, and top 4 calculated skill bases.
+- **Interactive Sheet Popup Modal**: Click `⚡ Open Interactive Sheet Modal` on any card to open a full popup with live tabs:
+  - **❤️ Vitals & Stats**: Edit identity, role, rank, current/max HP, and core STATs with live preview updates.
+  - **⚔️ Combat & Weapons**: Interactive weapon table with **🎲 Roll Attack** (1d10 + REF + Skill rank + exploding critical explosion / fumble calculation) and **💥 Roll Damage** (Xd6 sum and individual dice results).
+  - **🎯 Skills & Rolls**: Searchable database of 70+ skills (including subskills like *Language: Streetslang*) with instant **🎲 Check** roll buttons.
+  - **🎒 Armor & Gear**: Head/Body SP adjustment and full cyberware/gear lists.
+  - **📝 GM Encounters & Session Notes**: Textarea for session notes + **💾 Export Updated JSON** download button.
+- **Automatic Session Persistence**:
+  - Active GM Screen sheets automatically persist to browser `localStorage` (`cpr_gm_active_session`) on any edit. Reopening or refreshing the page restores all active cards and notes.
+  - Clicking **`🗑️ Clear All`** purges the saved session so opening the app anew boots into an empty GM Screen.
+- **Per-Card Sheet Updating (`🔄 Update`)**: Update any card slot from a fresh `.json` file or re-sync from local storage while preserving GM encounter notes.
+- **Global Session Export/Import (`💾 Session`)**: Save all active GM sheets into a single combined session file (`Cyberpunk_GM_Session.json`) to reload anytime.
+- **Title-Cased Random Street Handles**: Character generator produces clean title-cased street names (e.g. *Karma Tiger*, *Flux Fox*, *Creed Eagle*).
+- **Navbar Layout Refinement**: `🎲 GM Screen` tab is positioned on the far right of the navigation bar with `margin-left: auto` and a distinct red theme.
 
 ---
 
-## 🛠️ How to Use (For Players)
+## 🛠️ Complete Character Manager Features
 
-1. Download `index.html` from the repository (or `Apple_Version/index.html` if using an Apple device).
-2. Double-click to open it in Chrome, Firefox, Edge, Safari, or any modern web browser.
-3. Start building your Edgerunner!
+- **Stats & Point-Buy**: 62-point Complete Package system enforcing min 2 / max 8 limits.
+- **10 Core Roles**: Full rank-by-rank descriptions for Rockerboy, Solo, Netrunner, Tech, Medtech, Media, Exec, Lawman, Courier, and Nomad, plus multiclassing (secondary role unlock at primary Rank 4).
+- **Interactive Role Mechanics**:
+  - **Exec**: Create and manage Team Members.
+  - **Nomad**: Track Moto vehicles and family upgrades.
+  - **Lawman**: Backup call stats and response times.
+  - **Netrunner**: Interface abilities, cyberdeck slotting, and program memory.
+  - **Medtech**: Pharmaceuticals and therapy trackers.
+- **86 Skills**: Grouped by linked stat with search, ranks, IP cost calculations, and item bonus inputs.
+- **Weapons & Armor Catalog**: 140+ Cyberpunk RED weapons mapped accurately to skill checks, including Black Chrome items. Track armor SP abrasion for Head and Body armor.
+- **Gear & Cyberware**: Track inventory, Looted (0eb) vs Purchased items, currency (`eb`), ammunition, and cyberware humanity loss calculations.
+- **Lifepath Generator**: Full generic and role-specific Lifepath rolling.
+- **Print & Export**: One-click JSON backup export/import and smart selective print stylesheet.
 
 ---
 
-## 💻 Developer Setup & Build Instructions
+## 🏗️ Project Architecture & Build Instructions
 
-To keep the application modular while delivering a zero-dependency single-file HTML app, source files are organized into modular directories:
+The project uses a clean source modular structure that compiles into single-file monolith HTML builds for offline portability.
 
+### Directory Structure
 ```
-Cyberpunk_Character_v4/
-├── index_js.html          # HTML structure & templates
-├── css/                   # Stylesheets & themes
-│   ├── base.css           # Core styling tokens & layout rules
-│   └── theme-dark.css     # Dark theme styles
-├── js/                    # Modular JavaScript files
-│   ├── state.js           # State management & persistence
-│   ├── data.js            # Game databases (weapons, armor, cyberware, vehicles)
-│   ├── ui.js              # DOM rendering, event listeners, & modals
-│   └── main.js            # App initialization
-└── build.js               # Bundler script
+Cyberpunk_Character_v5/
+├── index_js.html          # HTML template for standard build
+├── index.html             # Compiled standard single-file monolith
+├── build.js               # Node.js concatenation compiler script
+├── css/
+│   └── base.css           # Core styling tokens, dark theme & GM layout rules
+├── js/
+│   ├── data.js            # STATS, Roles, Skills, Weapons, Armor & Cyberware database
+│   ├── calculations.js    # Derived statistics, hits max, humanity, IP calculations
+│   ├── storage.js         # LocalStorage character manager (Save/Load/Delete)
+│   ├── export.js          # JSON export and import handlers
+│   ├── ui.js             # UI rendering, tab navigation & event handlers
+│   ├── gm.js             # GM Command Center state, cards, modal & session persistence
+│   └── main.js           # Boot sequence initialization
+├── Apple_Version/         # Optimized standalone build mirror for Safari & iOS devices
+│   ├── index_js.html
+│   ├── index.html
+│   ├── build.js
+│   ├── css/
+│   └── js/
+└── README.md
 ```
 
-### Compiling Changes
-1. Ensure [Node.js](https://nodejs.org) (v16+) is installed.
-2. Edit source files in `js/`, `css/`, or `index_js.html`.
-3. Run the build script in the terminal:
-   ```bash
-   node build.js
-   ```
-4. The script will bundle all CSS, JavaScript, and HTML templates into a compiled `index.html` monolith in the root directory.
-5. *(Optional)* To build the Apple-optimized version, run `node build.js` inside the `Apple_Version/` directory.
+### Monolith Build Command
+
+To compile changes made in `js/`, `css/`, or `index_js.html` into the single-file `index.html` monolith:
+
+```bash
+# Build standard root monolith
+node build.js
+
+# Build Apple/iOS monolith
+cd Apple_Version
+node build.js
+```
 
 ---
 
-## 📚 Source Material & Reference
+## 💻 How to Run
 
-* **Cyberpunk RED Core Rulebook** (v1.24) by R. Talsorian Games
-* **Black Chrome** (v1.0) & **Black Chrome+**
-* DLCs & Expansions: *Hornet's Pharmacy*, *Must Have Cyberware Deals*, *Toggle's Temple*, *Woodchipper's Garage*, *12 Days of Cybermas / REDmas / Gearmas / Gunmas*
+1. Simply open **`index.html`** in any modern desktop or mobile web browser (Chrome, Firefox, Edge, Safari).
+2. **No web server, build tools, or internet connection required.**
 
 ---
 
-## 📜 License & Legal
+## 📜 License & Copyrights
 
-**Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)**
-
-* **Attribution (BY):** Credit must be given to the creator.
-* **NonCommercial (NC):** Only noncommercial use of this work is permitted.
-
-*Disclaimer: This is an unofficial, fan-made character manager for Cyberpunk RED. Cyberpunk RED is a tabletop roleplaying game created by R. Talsorian Games. All game text and mechanics are property of their respective owners.*
-<!--START_SECTION:buy-me-a-coffee-->
-<!--END_SECTION:buy-me-a-coffe-->
+- **Game Design & Content**: Cyberpunk RED © R. Talsorian Games. All game text and mechanics are property of their respective owners.
+- **Codebase License**: Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0).

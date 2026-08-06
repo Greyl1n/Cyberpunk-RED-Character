@@ -31,6 +31,7 @@ const init = () => {
   initPrint();
   initSkillSearch();
   initCurrency();
+  if (typeof initGMScreen === "function") initGMScreen();
   setDefaultValues();
 };
 

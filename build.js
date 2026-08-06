@@ -14,6 +14,7 @@ js += fs.readFileSync('js/calculations.js', 'utf8') + '\n';
 js += fs.readFileSync('js/storage.js', 'utf8') + '\n';
 js += fs.readFileSync('js/export.js', 'utf8') + '\n';
 js += fs.readFileSync('js/ui.js', 'utf8') + '\n';
+js += fs.readFileSync('js/gm.js', 'utf8') + '\n';
 js += fs.readFileSync('js/main.js', 'utf8') + '\n';
 
 

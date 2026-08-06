@@ -3077,8 +3077,11 @@ function generateRandomCharacter() {
   updateSecondaryRoleOptions();
   document.getElementById("role_ability_rank").value = "4";
   let prefixes = ["Blitz","Cipher","Dash","Echo","Flux","Ghost","Havoc","Jinx","Karma","Locke","Morph","Nyx","Onyx","Pixel","Quake","Reef","Shade","Trigger","Vex","Whisper","Zero","Ace","Byte","Creed","Dust","Ember","Fuse","Grim","Hex","Ice"];
-  let suffixes = ["dog","cat","wolf","fox","hawk","rat","viper","shark","raven","panther","tiger","bear","owl","eagle","hound","jackal","coyote","lynx","striker","runner"];
-  document.getElementById("char_handle").value = prefixes[Math.floor(Math.random()*prefixes.length)]+" "+suffixes[Math.floor(Math.random()*suffixes.length)];
+  let suffixes = ["Dog","Cat","Wolf","Fox","Hawk","Rat","Viper","Shark","Raven","Panther","Tiger","Bear","Owl","Eagle","Hound","Jackal","Coyote","Lynx","Striker","Runner"];
+  let randomPrefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+  let randomSuffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+  randomSuffix = randomSuffix.charAt(0).toUpperCase() + randomSuffix.slice(1);
+  document.getElementById("char_handle").value = randomPrefix + " " + randomSuffix;
   document.getElementById("char_age").value = String(18+Math.floor(Math.random()*20));
   let pts = STAT_POINTS_TOTAL;
   let st = {};

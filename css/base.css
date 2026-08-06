@@ -340,3 +340,362 @@ textarea.item-desc-input, textarea.cyber-option-desc-input, textarea.program-des
   box-shadow: 0 0 10px var(--primary);
   transform: scale(1.1);
 }
+
+/* GAME MASTER (GM) SCREEN STYLES (v5.0.0) */
+.gm-tab-btn {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+  border-left: 2px solid rgba(239, 68, 68, 0.4) !important;
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #f87171 !important;
+  font-weight: 700 !important;
+  border-radius: 6px 6px 0 0 !important;
+}
+.gm-tab-btn.active, .gm-tab-btn:hover {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5) !important;
+}
+
+.gm-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  box-shadow: inset 0 0 15px rgba(0, 243, 255, 0.05);
+}
+
+.gm-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.gm-badge {
+  background: var(--primary);
+  color: #000;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.gm-sheets-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--gm-sheet-count, 1), minmax(0, 1fr));
+  gap: 0.75rem;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 1024px) {
+  .gm-sheets-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+.gm-sheet-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+  overflow: hidden;
+}
+
+.gm-sheet-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+}
+
+.gm-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.4rem;
+}
+
+.gm-card-handle {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  color: var(--primary);
+  margin: 0;
+  text-shadow: 0 0 5px var(--primary);
+  line-height: 1.2;
+}
+
+.gm-card-role-badge {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.gm-card-actions {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.gm-card-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+}
+
+.gm-card-btn:hover {
+  background: var(--primary);
+  color: #000;
+}
+
+.gm-remove-btn:hover {
+  background: #ef4444 !important;
+  color: #fff !important;
+}
+
+.gm-card-vitals {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.gm-hp-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.gm-hp-bar-bg {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.gm-hp-bar-fill {
+  height: 100%;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.gm-quick-steppers {
+  display: flex;
+  gap: 0.25rem;
+  margin-top: 0.2rem;
+}
+
+.gm-step-btn {
+  flex: 1;
+  font-size: 0.7rem;
+  padding: 0.2rem;
+  background: var(--tab-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 3px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.gm-step-btn:hover {
+  background: var(--primary);
+  color: #000;
+}
+
+.gm-card-armor-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+}
+
+.gm-armor-box {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.3rem 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gm-armor-label {
+  font-size: 0.7rem;
+  opacity: 0.8;
+  font-weight: 600;
+}
+
+.gm-armor-val {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.gm-mini-steppers {
+  display: flex;
+  gap: 2px;
+}
+
+.gm-mini-steppers button {
+  width: 18px;
+  height: 18px;
+  font-size: 0.75rem;
+  padding: 0;
+  line-height: 1;
+  background: var(--tab-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.gm-mini-steppers button:hover {
+  background: var(--primary);
+  color: #000;
+}
+
+.gm-card-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.2rem;
+  text-align: center;
+}
+
+.gm-stat-cell {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+  padding: 0.2rem 0.1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.gm-stat-cell span {
+  font-size: 0.65rem;
+  opacity: 0.7;
+}
+
+.gm-stat-cell strong {
+  font-size: 0.85rem;
+  color: var(--primary);
+}
+
+.gm-card-sec-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--primary);
+  letter-spacing: 0.05em;
+  margin-top: 0.2rem;
+}
+
+.gm-card-sec-box {
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.78rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.gm-card-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gm-sub-badge {
+  font-size: 0.65rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+}
+
+.gm-card-footer-btn {
+  margin-top: auto;
+  width: 100%;
+  padding: 0.4rem;
+  background: var(--primary);
+  color: #000;
+  border: none;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.gm-card-footer-btn:hover {
+  background: var(--primary-hover);
+  box-shadow: 0 0 10px var(--primary);
+}
+
+.gm-empty-card {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 3rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: var(--text-secondary);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.gm-modal-tabs {
+  display: flex;
+  gap: 0.3rem;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+}
+
+.gm-modal-tab-btn {
+  padding: 0.4rem 0.8rem;
+  background: var(--tab-bg);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.gm-modal-tab-btn.active {
+  background: var(--primary);
+  color: #000;
+  font-weight: 700;
+}
+
+.gm-roll-result-banner {
+  background: rgba(0, 243, 255, 0.1);
+  border: 1px solid var(--primary);
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  text-align: center;
+  animation: fadeIn 0.3s ease;
+}
+
