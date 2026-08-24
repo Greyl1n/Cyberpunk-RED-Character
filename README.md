@@ -1,10 +1,52 @@
-# Cyberpunk RED Character Manager & Game Master Command Center (v5.0.0)
+# Cyberpunk RED Character Manager & Game Master Command Center (v5.1.2)
 
 > **A fully self-contained, offline-first web application for Cyberpunk RED tabletop RPG players and Game Masters.**
 
-![Version](https://img.shields.io/badge/version-5.0.0-ff0055.svg)
+![Version](https://img.shields.io/badge/version-5.1.2-ff0055.svg)
 ![License](https://img.shields.io/badge/license-CC--BY--NC--4.0-blue.svg)
 ![Cyberpunk RED](https://img.shields.io/badge/game-Cyberpunk%20RED-00f3ff.svg)
+
+---
+
+## 💻 What's New in Version 5.1.2?
+
+Version **5.1.2** introduces a complete audit of all **Cyberdecks, Programs, Black ICE, Demons, and Cyberdeck Hardware** in accordance with the official Cyberpunk RED Core Rulebook (CRB) and *Midnight with the Upload* DLC:
+
+- **📝 Full Rulebook Descriptions & Source Citations**: Fixed duplicate `desc` property keys in data structures, restoring complete official descriptions with source tags (`[CRB]`, `[DLC]`).
+- **🧩 Expanded Program & Hardware Catalog**:
+  - **Programs & ICE**: 31 options across Boosters (*Eraser*, *See-Ya*, *Speedy Gonzalvez*, *Targeting System*, *Worm*), Defenders (*Armor*, *Flak*, *Shield*), Attackers (*Banhammer*, *DeckKRASH*, *Hellbolt*, *Nervescrub*, *Poison Flatline*, *Superglue*, *Sword*, *Vrizzbolt*), Anti-Personnel Black ICE (*Asp*, *Giant*, *Hellhound*, *Kraken*, *Liche*, *Raven*, *Scorpion*, *Skunk*, *Wisp*), Anti-Program Black ICE (*Dragon*, *Killer*, *Sabertooth*), and Demons (*Imp*, *Efreet*, *Succubus*).
+  - **Hardware**: 16 options including *Backup Drive*, *DNA Lock*, *Hardened Circuitry*, *Insulated Wiring*, *KRASH Barrier*, *Range Upgrade*, *Aerie*, *Bushido Accelerator*, *Combat Recorder*, *Defense Sequencer*, *Feline Instinct*, *Hangry Hangry Dragon*, *Perfume Shoppe*, *Smithy*, *Snaketrap*, and *Swamp Mist*.
+- **⚡ Accurate Slot Calculations & Enforcers**: Correct slot costs for Cyberdecks (5, 7, 9 slots), Programs (1 or 2 slots), and Hardware (1, 2, or 3 slots) are strictly enforced in UI dropdowns and installation checks.
+
+---
+
+## 🎲 What's New in Version 5.1.1?
+
+Version **5.1.1** updates the **Random Character Generator** to follow official Cyberpunk RED starting creation rules:
+
+- **💰 2550 eb Creation Budget**: Randomly generated characters buy weapons, armor, cyberware, and essential gear out of a official 2550 eb creation budget.
+- **🔫 500 eb Weapon Limit**: Purchased weapons are restricted to Standard/Cheap weapons costing **500 eb or less**.
+- **💻 Netrunner Cyberdeck & Software Guarantee**: Generated Netrunners automatically receive the cheapest Cyberdeck (100 eb) and 1–2 software programs.
+- **💵 Cash Deposit**: Any unspent starting budget balance is deposited into the character's Eurobucks (`currency_eb`).
+
+---
+
+## 🎨 What's New in Version 5.1.0?
+
+Version **5.1.0** introduces **Customizable Color Schemes & Theme Customizer**, allowing players and Game Masters to personalize their UI with curated cyberpunk color presets or custom color pickers:
+
+- **🎨 8 Preset Cyberpunk Color Palettes**:
+  - **Cyber Cyan** (Default: Neon Cyan & Red Accent)
+  - **Arasaka Red** (Crimson Main & Cyan Accent)
+  - **Netrunner Yellow** (Cyber Yellow & Hot Pink Accent)
+  - **Matrix Green** (Terminal Green & Cyan Accent)
+  - **Tech Purple** (Neon Purple & Pink Accent)
+  - **Edgerunner Orange** (Blaze Orange & Yellow Accent)
+  - **Trauma Blue** (Cobalt Blue & Emergency Red Accent)
+  - **Ghost White** (Ghost White & Cyan Accent)
+- **🎛️ Custom Main & Accent Color Pickers**: Adjust main interface elements (headers, borders, buttons, focus rings, title glows) and accent highlights (badges, stat point bars, accent glows) using native color pickers (`<input type="color">`), hex code inputs, or quick color swatches.
+- **💾 Automatic Persistence**: Selected themes save automatically to browser `localStorage` (`cpr_theme_settings`) and load instantly on boot before rendering (no visual screen flicker).
+- **🔄 One-Click Reset**: Easily reset back to default Cyber Cyan anytime.
 
 ---
 
@@ -37,7 +79,7 @@ Version **5.0.0** introduces the **Game Master (GM) Command Center**, transformi
 ## 🛠️ Complete Character Manager Features
 
 - **Stats & Point-Buy**: 62-point Complete Package system enforcing min 2 / max 8 limits.
-- **10 Core Roles**: Full rank-by-rank descriptions for Rockerboy, Solo, Netrunner, Tech, Medtech, Media, Exec, Lawman, Fixer, and Nomad, plus multiclassing (secondary role unlock at primary Rank 4).
+- **10 Core Roles**: Full rank-by-rank descriptions for Rockerboy, Solo, Netrunner, Tech, Medtech, Media, Exec, Lawman, Courier, and Nomad, plus multiclassing (secondary role unlock at primary Rank 4).
 - **Interactive Role Mechanics**:
   - **Exec**: Create and manage Team Members.
   - **Nomad**: Track Moto vehicles and family upgrades.

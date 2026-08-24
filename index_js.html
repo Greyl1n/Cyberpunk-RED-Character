@@ -14,14 +14,53 @@
 <link href="css/base.css" rel="stylesheet">
 <link id="theme" href="css/theme-dark.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+(function(){
+  try {
+    var raw = localStorage.getItem('cpr_theme_settings');
+    if (raw) {
+      var t = JSON.parse(raw);
+      if (t && t.primary && t.accent) {
+        var root = document.documentElement;
+        var p = t.primary, a = t.accent;
+        function toRgb(h){
+          var c = h.replace('#','').trim();
+          if(c.length===3) c=c.split('').map(function(x){return x+x;}).join('');
+          if(c.length!==6) return '0, 243, 255';
+          var n = parseInt(c,16);
+          return ((n>>16)&255)+', '+((n>>8)&255)+', '+(n&255);
+        }
+        var pRgb = toRgb(p), aRgb = toRgb(a);
+        root.style.setProperty('--primary', p);
+        root.style.setProperty('--primary-rgb', pRgb);
+        root.style.setProperty('--primary-hover', p);
+        root.style.setProperty('--border', p);
+        root.style.setProperty('--text-secondary', p);
+        root.style.setProperty('--btn-text', p);
+        root.style.setProperty('--header-text', p);
+        root.style.setProperty('--focus-ring', p);
+        root.style.setProperty('--btn-bg', 'rgba('+pRgb+', 0.12)');
+        root.style.setProperty('--btn-hover', 'rgba('+pRgb+', 0.28)');
+        root.style.setProperty('--input-bg', 'rgba('+pRgb+', 0.06)');
+        root.style.setProperty('--glow-primary', '0 0 8px rgba('+pRgb+', 0.6), 0 0 16px rgba('+pRgb+', 0.4)');
+        root.style.setProperty('--accent', a);
+        root.style.setProperty('--accent-rgb', aRgb);
+        root.style.setProperty('--accent-light', 'rgba('+aRgb+', 0.15)');
+        root.style.setProperty('--glow-accent', '0 0 8px rgba('+aRgb+', 0.6), 0 0 16px rgba('+aRgb+', 0.4)');
+      }
+    }
+  } catch(e){}
+})();
+</script>
 </head>
 <!-- ===== BODY / HEADER ===== -->
 <body>
 <div class="scanline-overlay"></div>
 <input type="checkbox" id="dismissWelcome" style="display:none">
 <header>
-<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v5.0.0</span></div></div>
+<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px var(--accent))">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v5.1.2</span></div></div>
 <div class="header-actions">
+<button id="themeBtn" class="btn-action" title="Color Scheme & Theme Settings">&#127912; Theme</button>
 <button id="charactersBtn" class="btn-action">&#128194; Characters</button>
 <button id="importBtn" class="btn-action">&#128229; Import</button>
 <input id="importFile" type="file" accept=".json" style="display:none">
@@ -46,8 +85,11 @@
 <div id="welcomeOverlay" class="welcome-overlay">
 <div class="welcome-card" style="max-width:600px">
 <h1 class="welcome-title">&#9881; Cyberpunk RED Generator</h1>
-<p class="welcome-subtitle">Interactive Character &amp; GM Command Center — Version 5.0.0</p>
+<p class="welcome-subtitle">Interactive Character &amp; GM Command Center — Version 5.1.2</p>
 <div class="welcome-tabs" style="display:flex;flex-direction:column;gap:0.6rem;margin:1rem 0">
+<div class="welcome-tab"><strong>💻 Cyberdeck &amp; Program Audit (v5.1.2)</strong> — Fixed description overwrites, restored full rulebook text, expanded 31 Programs/Black ICE/Demons &amp; 16 Hardware options, and verified exact slot calculations.</div>
+<div class="welcome-tab"><strong>🎲 Rules-Compliant Random Budget (v5.1.1)</strong> — Random character generator equips weapons (&le;500eb), armor, cyberware, and gear out of a 2550 eb creation budget. Netrunners automatically receive the cheapest Cyberdeck + software programs.</div>
+<div class="welcome-tab"><strong>🎨 Custom Color Schemes (v5.1.0)</strong> — Personalise your UI with 8 preset color themes (Cyber Cyan, Arasaka Red, Netrunner Yellow, Matrix Green, etc.) or custom Main &amp; Accent color pickers, saved automatically across sessions.</div>
 <div class="welcome-tab"><strong>🎲 GM Command Center (v5.0.0)</strong> — Load up to 5 character sheets side-by-side with dynamic scaling, interactive sheet modals, live 1d10/d6 dice rolling, and session auto-save.</div>
 <div class="welcome-tab"><strong><img src="src/icons/character.jpg" class="tab-icon" style="box-shadow:none; border-color:transparent"> Complete Character Creation</strong> — Point-buy stats, 86 skills, role abilities, humanity loss tracking, and instant Lifepath generator.</div>
 <div class="welcome-tab"><strong><img src="src/icons/gear.jpg" class="tab-icon" style="box-shadow:none; border-color:transparent"> Gear &amp; Cyberware Manager</strong> — Weapons, armor SP abrasion tracking, cyberware slot installation, ammunition tracker, and currency management.</div>
@@ -301,11 +343,18 @@
 </section>
 <section id="tab-about" class="tab-panel">
 <div class="section-card">
-<h2 class="section-title">About Cyberpunk RED Generator (v5.0.0)</h2>
+<h2 class="section-title">About Cyberpunk RED Generator (v5.1.2)</h2>
 <p style="margin-bottom:0.8rem;line-height:1.7">A fully self-contained, highly-optimised interactive character manager and Game Master command center for <strong>Cyberpunk RED</strong> by R. Talsorian Games. Create, customise, save, run GM encounters, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing.</p>
-<p style="margin-bottom:0.8rem;line-height:1.7"><strong>Welcome to Version 5.0.0!</strong> This major release introduces the <strong>🎲 Game Master (GM) Command Center</strong>, enabling GMs to load up to 5 exported character sheets side-by-side with dynamic column scaling, quick HP/SP steppers, full interactive sheet modals with d10 check and attack rolling, d6 damage rolling, and automatic session persistence across browser sessions.</p>
-<h3 style="margin:1rem 0 0.4rem">v5.0.0 Key Features</h3>
+<p style="margin-bottom:0.8rem;line-height:1.7"><strong>Welcome to Version 5.1.2!</strong> This update performs a complete audit of all Cyberdecks, Programs, Black ICE, Demons, and Cyberdeck Hardware in accordance with the official Cyberpunk RED Core Rulebook (CRB) and <em>Midnight with the Upload</em> DLC: fixing description overwrites, restoring full rulebook text, expanding to 31 Programs/ICE/Demons and 16 Hardware items, and enforcing accurate slot limits.</p>
+<h3 style="margin:1rem 0 0.4rem">v5.1.2 Key Features</h3>
 <ul style="line-height:1.8;padding-left:1.2rem">
+<li><strong>💻 Complete Cyberdeck, Program &amp; Hardware Audit</strong>: Resolved duplicate description property keys, restoring full official rulebook descriptions with source citations ([CRB], [DLC]).</li>
+<li><strong>🧩 Expanded Programs, Black ICE, Demons &amp; Hardware</strong>: Added missing programs (<em>Eraser</em>, <em>DeckKRASH</em>, <em>Hellbolt</em>, <em>Nervescrub</em>, <em>Poison Flatline</em>, <em>Superglue</em>, <em>Wisp</em>, <em>Imp</em>, <em>Efreet</em>, <em>Succubus</em>) and hardware options (<em>DNA Lock</em>, <em>Hardened Circuitry</em>, <em>KRASH Barrier</em>, <em>Defense Sequencer</em>, <em>Aerie</em>, <em>Bushido Accelerator</em>, etc.).</li>
+<li><strong>⚡ Accurate Slot Verification &amp; Calculations</strong>: Slot capacity for Cyberdecks (5, 7, 9 slots), Programs (1 or 2 slots), and Hardware (1, 2, or 3 slots) is enforced strictly during installation and rendering.</li>
+<li><strong>🎲 Rules-Compliant 2550 eb Starting Budget</strong>: Random character generator purchases weapons (&le;500eb limit), body/head armor, cyberware, and essential gear from 2550 eb starting funds, depositing unspent cash in Eurobucks.</li>
+<li><strong>💻 Netrunner Starting Cyberdeck &amp; Software</strong>: Generated Netrunners automatically receive the cheapest Cyberdeck (100 eb) and 1–2 software programs.</li>
+<li><strong>🎨 Customizable Color Schemes &amp; Themes</strong>: Switch between 8 curated preset palettes (Cyber Cyan, Arasaka Red, Netrunner Yellow, Matrix Green, Tech Purple, Edgerunner Orange, Trauma Blue, Ghost White) or pick custom Main &amp; Accent colors with quick swatches.</li>
+<li><strong>💾 Persistent Theme Loading</strong>: Theme preferences save automatically to <code>localStorage</code> and load instantly on boot before rendering without screen flicker.</li>
 <li><strong>🎲 GM Command Center</strong>: Load up to 5 character sheets side-by-side with dynamic responsive scaling (1 to 5 columns).</li>
 <li><strong>⚡ Interactive GM Popup Modal</strong>: Click any sheet card to open a tabbed modal featuring live Vitals &amp; STAT editing, Combat attack &amp; damage rolling, searchable Skills &amp; Check rolls (+1d10 critical explosion/fumble calculation), Armor &amp; Gear overview, and GM Encounter Notes.</li>
 <li><strong>💾 Automatic Session Persistence</strong>: Active GM Screen sheets automatically persist to local storage across browser refreshes until cleared with <code>🗑️ Clear All</code>.</li>
@@ -418,6 +467,65 @@ This license requires that reusers give credit to the creator. It allows reusers
     </div>
     <div id="gmModalBody" style="overflow-y:auto; flex:1; padding-right:0.25rem;"></div>
   </div>
+</div>
+
+<!-- ===== MODAL: COLOR SCHEME & THEME CUSTOMIZER ===== -->
+<div id="themeModal" class="modal-overlay">
+<div class="modal-box" style="max-width:540px; width:92%">
+<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid var(--primary); padding-bottom:0.5rem; margin-bottom:1rem">
+  <h2 style="margin:0; font-size:1.2rem; font-family:'Orbitron',sans-serif; color:var(--primary)">🎨 Color Scheme Customizer</h2>
+  <button id="themeCloseBtn" class="btn-action">✕ Close</button>
+</div>
+
+<p style="font-size:0.85rem; margin-bottom:0.75rem; color:var(--text)">Choose a preset cyberpunk color palette or customize your main and accent colors. Your chosen scheme is automatically saved and loaded when you open the app.</p>
+
+<h3 style="font-size:0.95rem; margin-bottom:0.3rem; color:var(--primary)">Preset Color Palettes</h3>
+<div id="themePresetGrid" class="theme-preset-grid"></div>
+
+<h3 style="font-size:0.95rem; margin-bottom:0.4rem; color:var(--primary)">Custom Color Scheme</h3>
+<div class="theme-custom-pickers">
+  <div class="theme-picker-group">
+    <label for="themePrimaryPicker">Main Color (Headers, Borders, Buttons)</label>
+    <div class="theme-color-input-row">
+      <input type="color" id="themePrimaryPicker" value="#00f3ff">
+      <input type="text" id="themePrimaryHex" value="#00F3FF" maxlength="7">
+    </div>
+    <div class="theme-swatches">
+      <span class="theme-swatch-dot" data-target="primary" data-color="#00f3ff" style="background:#00f3ff" title="Cyan"></span>
+      <span class="theme-swatch-dot" data-target="primary" data-color="#ff003c" style="background:#ff003c" title="Red"></span>
+      <span class="theme-swatch-dot" data-target="primary" data-color="#facc15" style="background:#facc15" title="Yellow"></span>
+      <span class="theme-swatch-dot" data-target="primary" data-color="#00ff66" style="background:#00ff66" title="Green"></span>
+      <span class="theme-swatch-dot" data-target="primary" data-color="#bf5af2" style="background:#bf5af2" title="Purple"></span>
+      <span class="theme-swatch-dot" data-target="primary" data-color="#ff7700" style="background:#ff7700" title="Orange"></span>
+      <span class="theme-swatch-dot" data-target="primary" data-color="#3b82f6" style="background:#3b82f6" title="Blue"></span>
+      <span class="theme-swatch-dot" data-target="primary" data-color="#e2e8f0" style="background:#e2e8f0" title="White"></span>
+    </div>
+  </div>
+
+  <div class="theme-picker-group">
+    <label for="themeAccentPicker">Accent Color (Badges, Highlights, Stat Bar)</label>
+    <div class="theme-color-input-row">
+      <input type="color" id="themeAccentPicker" value="#ff003c">
+      <input type="text" id="themeAccentHex" value="#FF003C" maxlength="7">
+    </div>
+    <div class="theme-swatches">
+      <span class="theme-swatch-dot" data-target="accent" data-color="#ff003c" style="background:#ff003c" title="Red"></span>
+      <span class="theme-swatch-dot" data-target="accent" data-color="#00f3ff" style="background:#00f3ff" title="Cyan"></span>
+      <span class="theme-swatch-dot" data-target="accent" data-color="#ff0055" style="background:#ff0055" title="Pink"></span>
+      <span class="theme-swatch-dot" data-target="accent" data-color="#facc15" style="background:#facc15" title="Yellow"></span>
+      <span class="theme-swatch-dot" data-target="accent" data-color="#00ff66" style="background:#00ff66" title="Green"></span>
+      <span class="theme-swatch-dot" data-target="accent" data-color="#ff8000" style="background:#ff8000" title="Orange"></span>
+      <span class="theme-swatch-dot" data-target="accent" data-color="#ef4444" style="background:#ef4444" title="Crimson"></span>
+      <span class="theme-swatch-dot" data-target="accent" data-color="#ffffff" style="background:#ffffff" title="White"></span>
+    </div>
+  </div>
+</div>
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem">
+  <button id="themeResetBtn" class="btn-action">🔄 Reset Default (Cyber Cyan)</button>
+  <button onclick="document.getElementById('themeModal').classList.remove('active');document.getElementById('themeModal').style.display='none'" class="btn-save">Done</button>
+</div>
+</div>
 </div>
 
 <!-- ============================================================

@@ -3290,35 +3290,20 @@ function initCyberdeck() {
 
   const selProg = document.getElementById('sel_program');
   if (selProg) {
-    let html = '';
-    const progs = DATA.programs || [];
-    const groups = {
-      'Boosters': progs.filter(p => p.type === 'Booster'),
-      'Defenders': progs.filter(p => p.type === 'Defender'),
-      'Attackers': progs.filter(p => p.type === 'Attacker'),
-      'Black ICE': progs.filter(p => p.type === 'Black ICE'),
-      'Demons': progs.filter(p => p.type === 'Demon')
-    };
-
-    for (const [groupName, groupItems] of Object.entries(groups)) {
-      if (groupItems.length > 0) {
-        html += `<optgroup label="${groupName}">`;
-        for (const p of groupItems) {
-          html += `<option value="p_${p.id}">${p.name} (${p.cost}eb) - ${p.slots} Slot(s)</option>`;
-        }
-        html += `</optgroup>`;
+    let progOpts = '<optgroup label="Programs">';
+    if (DATA.programs) {
+      for (const p of DATA.programs) {
+        progOpts += `<option value="p_${p.id}">${p.name} (${p.cost}eb) - ${p.slots} Slot(s)</option>`;
       }
     }
-
-    if (DATA.hardware && DATA.hardware.length > 0) {
-      html += `<optgroup label="Hardware">`;
+    progOpts += '</optgroup><optgroup label="Hardware">';
+    if (DATA.hardware) {
       for (const h of DATA.hardware) {
-        html += `<option value="h_${h.id}">${h.name} (${h.cost}eb) - ${h.slots} Slot(s)</option>`;
+        progOpts += `<option value="h_${h.id}">${h.name} (${h.cost}eb) - ${h.slots} Slot(s)</option>`;
       }
-      html += `</optgroup>`;
     }
-
-    selProg.innerHTML = html;
+    progOpts += '</optgroup>';
+    selProg.innerHTML = progOpts;
 
     document.getElementById('btn_install_program').addEventListener('click', () => {
       if (!state.cyberdeck) { alert('Equip a Cyberdeck first!'); return; }
@@ -3334,18 +3319,18 @@ function initCyberdeck() {
       const deck = DATA._index.deckById[state.cyberdeck];
       let used = 0;
       for (const p of state.programs) {
-        const pItem = (p && typeof p === 'object' && p.isProg) ? DATA._index.programById[p.id] : DATA._index.hardwareById[p.id];
+        const pItem = p.isProg ? DATA._index.programById[p.id] : DATA._index.hardwareById[p.id];
         if (pItem) used += pItem.slots;
       }
       
       if (used + item.slots > deck.slots) {
-        alert(`Not enough slots in Cyberdeck! Item requires ${item.slots} slot(s), but only ${deck.slots - used} slot(s) remain.`);
+        alert('Not enough slots in Cyberdeck!');
         return;
       }
       
       if (!deductCurrency(item.cost)) return;
       
-      state.programs.push({ id: item.id, isProg: isProg, instanceId: Date.now() + "_" + Math.random().toString().slice(2) });
+      state.programs.push({ id: item.id, isProg: isProg, instanceId: Date.now() + Math.random().toString() });
       renderCyberdeck();
     });
   }
@@ -3368,22 +3353,10 @@ function renderCyberdeck() {
   dash.classList.remove('hidden');
   document.getElementById('deck_name').innerHTML = deck.name + ' <span style="font-size:0.8rem; font-weight:normal; cursor:pointer; color:red; margin-left:1rem;" onclick="removeCyberdeck()">[Sell]</span>';
   
-  // Normalize string program IDs if present
-  if (Array.isArray(state.programs)) {
-    for (let i = 0; i < state.programs.length; i++) {
-      let p = state.programs[i];
-      if (typeof p === 'string') {
-        let isProg = !!(DATA._index && DATA._index.programById && DATA._index.programById[p]);
-        state.programs[i] = { id: p, isProg: isProg, instanceId: Date.now() + "_" + Math.random().toString().slice(2) };
-      }
-    }
-  }
-
   let used = 0;
   const tbody = document.createDocumentFragment();
   
   for (const p of state.programs) {
-    if (!p || !p.id) continue;
     const item = p.isProg ? DATA._index.programById[p.id] : DATA._index.hardwareById[p.id];
     if (!item) continue;
     used += item.slots;
@@ -3401,13 +3374,13 @@ function renderCyberdeck() {
     tdSlots.textContent = item.slots;
     
     const tdAtk = document.createElement('td');
-    tdAtk.textContent = item.atk !== undefined ? item.atk : '-';
+    tdAtk.textContent = item.atk || '-';
     
     const tdDef = document.createElement('td');
-    tdDef.textContent = item.def !== undefined ? item.def : '-';
+    tdDef.textContent = item.def || '-';
     
     const tdRez = document.createElement('td');
-    tdRez.textContent = item.rez !== undefined ? item.rez : '-';
+    tdRez.textContent = item.rez || '-';
     
     const tdAct = document.createElement('td');
     tdAct.innerHTML = `<button class="btn-action" onclick="removeProgram('${p.instanceId}', ${item.cost})">Uninstall</button>`;

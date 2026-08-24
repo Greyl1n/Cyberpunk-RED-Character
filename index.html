@@ -382,7 +382,7 @@ textarea.item-desc-input, textarea.cyber-option-desc-input, textarea.program-des
   border: 1px solid var(--border);
   border-radius: 8px;
   margin-bottom: 1rem;
-  box-shadow: inset 0 0 15px rgba(0, 243, 255, 0.05);
+  box-shadow: inset 0 0 15px var(--btn-bg);
 }
 
 .gm-header-actions {
@@ -431,7 +431,7 @@ textarea.item-desc-input, textarea.cyber-option-desc-input, textarea.program-des
 
 .gm-sheet-card:hover {
   border-color: var(--primary);
-  box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+  box-shadow: var(--glow-primary);
 }
 
 .gm-card-header {
@@ -704,7 +704,7 @@ textarea.item-desc-input, textarea.cyber-option-desc-input, textarea.program-des
 }
 
 .gm-roll-result-banner {
-  background: rgba(0, 243, 255, 0.1);
+  background: var(--btn-bg);
   border: 1px solid var(--primary);
   padding: 0.75rem;
   border-radius: 6px;
@@ -712,6 +712,127 @@ textarea.item-desc-input, textarea.cyber-option-desc-input, textarea.program-des
   text-align: center;
   animation: fadeIn 0.3s ease;
 }
+
+/* THEME & COLOR SCHEME CUSTOMIZER STYLES (v5.1.0) */
+.theme-preset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+.theme-preset-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.3rem;
+  background: var(--stat-row-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+  transition: all 0.2s ease;
+}
+.theme-preset-btn:hover, .theme-preset-btn.active {
+  border-color: var(--primary);
+  background: var(--btn-bg);
+  box-shadow: var(--glow-primary);
+  transform: translateY(-2px);
+}
+.theme-preset-preview {
+  display: flex;
+  width: 40px;
+  height: 18px;
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.theme-preset-preview .swatch-main {
+  width: 65%;
+  height: 100%;
+}
+.theme-preset-preview .swatch-accent {
+  width: 35%;
+  height: 100%;
+}
+.theme-custom-pickers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  padding: 0.8rem;
+  background: var(--stat-row-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+@media (max-width: 480px) {
+  .theme-custom-pickers {
+    grid-template-columns: 1fr;
+  }
+}
+.theme-picker-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.theme-picker-group label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.theme-color-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.theme-color-input-row input[type="color"] {
+  width: 36px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  background: transparent;
+}
+.theme-color-input-row input[type="text"] {
+  flex: 1;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+.theme-swatches {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  margin-top: 0.2rem;
+}
+.theme-swatch-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.4);
+  transition: transform 0.15s, border-color 0.15s;
+}
+.theme-swatch-dot:hover {
+  transform: scale(1.25);
+  border-color: #fff;
+}
+.theme-preview-card {
+  padding: 0.75rem;
+  border-radius: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--primary);
+  box-shadow: var(--glow-primary);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 
 
 </style>
@@ -723,8 +844,10 @@ textarea.item-desc-input, textarea.cyber-option-desc-input, textarea.program-des
   --text-secondary: #0ea5e9;
   --border: #0284c7;
   --primary: #00f3ff;
+  --primary-rgb: 0, 243, 255;
   --primary-hover: #00d2ff;
   --accent: #ff003c;
+  --accent-rgb: 255, 0, 60;
   --accent-light: rgba(255, 0, 60, 0.15);
   --tab-bg: #06101e;
   --tab-active: #0b1a30;
@@ -797,14 +920,53 @@ select option { color: var(--primary); background: #000; }
 
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+(function(){
+  try {
+    var raw = localStorage.getItem('cpr_theme_settings');
+    if (raw) {
+      var t = JSON.parse(raw);
+      if (t && t.primary && t.accent) {
+        var root = document.documentElement;
+        var p = t.primary, a = t.accent;
+        function toRgb(h){
+          var c = h.replace('#','').trim();
+          if(c.length===3) c=c.split('').map(function(x){return x+x;}).join('');
+          if(c.length!==6) return '0, 243, 255';
+          var n = parseInt(c,16);
+          return ((n>>16)&255)+', '+((n>>8)&255)+', '+(n&255);
+        }
+        var pRgb = toRgb(p), aRgb = toRgb(a);
+        root.style.setProperty('--primary', p);
+        root.style.setProperty('--primary-rgb', pRgb);
+        root.style.setProperty('--primary-hover', p);
+        root.style.setProperty('--border', p);
+        root.style.setProperty('--text-secondary', p);
+        root.style.setProperty('--btn-text', p);
+        root.style.setProperty('--header-text', p);
+        root.style.setProperty('--focus-ring', p);
+        root.style.setProperty('--btn-bg', 'rgba('+pRgb+', 0.12)');
+        root.style.setProperty('--btn-hover', 'rgba('+pRgb+', 0.28)');
+        root.style.setProperty('--input-bg', 'rgba('+pRgb+', 0.06)');
+        root.style.setProperty('--glow-primary', '0 0 8px rgba('+pRgb+', 0.6), 0 0 16px rgba('+pRgb+', 0.4)');
+        root.style.setProperty('--accent', a);
+        root.style.setProperty('--accent-rgb', aRgb);
+        root.style.setProperty('--accent-light', 'rgba('+aRgb+', 0.15)');
+        root.style.setProperty('--glow-accent', '0 0 8px rgba('+aRgb+', 0.6), 0 0 16px rgba('+aRgb+', 0.4)');
+      }
+    }
+  } catch(e){}
+})();
+</script>
 </head>
 <!-- ===== BODY / HEADER ===== -->
 <body>
 <div class="scanline-overlay"></div>
 <input type="checkbox" id="dismissWelcome" style="display:none">
 <header>
-<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px #ff6040)">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v5.0.0</span></div></div>
+<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px var(--accent))">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v5.1.2</span></div></div>
 <div class="header-actions">
+<button id="themeBtn" class="btn-action" title="Color Scheme & Theme Settings">&#127912; Theme</button>
 <button id="charactersBtn" class="btn-action">&#128194; Characters</button>
 <button id="importBtn" class="btn-action">&#128229; Import</button>
 <input id="importFile" type="file" accept=".json" style="display:none">
@@ -829,8 +991,11 @@ select option { color: var(--primary); background: #000; }
 <div id="welcomeOverlay" class="welcome-overlay">
 <div class="welcome-card" style="max-width:600px">
 <h1 class="welcome-title">&#9881; Cyberpunk RED Generator</h1>
-<p class="welcome-subtitle">Interactive Character &amp; GM Command Center — Version 5.0.0</p>
+<p class="welcome-subtitle">Interactive Character &amp; GM Command Center — Version 5.1.2</p>
 <div class="welcome-tabs" style="display:flex;flex-direction:column;gap:0.6rem;margin:1rem 0">
+<div class="welcome-tab"><strong>💻 Cyberdeck &amp; Program Audit (v5.1.2)</strong> — Fixed description overwrites, restored full rulebook text, expanded 31 Programs/Black ICE/Demons &amp; 16 Hardware options, and verified exact slot calculations.</div>
+<div class="welcome-tab"><strong>🎲 Rules-Compliant Random Budget (v5.1.1)</strong> — Random character generator equips weapons (&le;500eb), armor, cyberware, and gear out of a 2550 eb creation budget. Netrunners automatically receive the cheapest Cyberdeck + software programs.</div>
+<div class="welcome-tab"><strong>🎨 Custom Color Schemes (v5.1.0)</strong> — Personalise your UI with 8 preset color themes (Cyber Cyan, Arasaka Red, Netrunner Yellow, Matrix Green, etc.) or custom Main &amp; Accent color pickers, saved automatically across sessions.</div>
 <div class="welcome-tab"><strong>🎲 GM Command Center (v5.0.0)</strong> — Load up to 5 character sheets side-by-side with dynamic scaling, interactive sheet modals, live 1d10/d6 dice rolling, and session auto-save.</div>
 <div class="welcome-tab"><strong><img src="src/icons/character.jpg" class="tab-icon" style="box-shadow:none; border-color:transparent"> Complete Character Creation</strong> — Point-buy stats, 86 skills, role abilities, humanity loss tracking, and instant Lifepath generator.</div>
 <div class="welcome-tab"><strong><img src="src/icons/gear.jpg" class="tab-icon" style="box-shadow:none; border-color:transparent"> Gear &amp; Cyberware Manager</strong> — Weapons, armor SP abrasion tracking, cyberware slot installation, ammunition tracker, and currency management.</div>
@@ -1084,11 +1249,18 @@ select option { color: var(--primary); background: #000; }
 </section>
 <section id="tab-about" class="tab-panel">
 <div class="section-card">
-<h2 class="section-title">About Cyberpunk RED Generator (v5.0.0)</h2>
+<h2 class="section-title">About Cyberpunk RED Generator (v5.1.2)</h2>
 <p style="margin-bottom:0.8rem;line-height:1.7">A fully self-contained, highly-optimised interactive character manager and Game Master command center for <strong>Cyberpunk RED</strong> by R. Talsorian Games. Create, customise, save, run GM encounters, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing.</p>
-<p style="margin-bottom:0.8rem;line-height:1.7"><strong>Welcome to Version 5.0.0!</strong> This major release introduces the <strong>🎲 Game Master (GM) Command Center</strong>, enabling GMs to load up to 5 exported character sheets side-by-side with dynamic column scaling, quick HP/SP steppers, full interactive sheet modals with d10 check and attack rolling, d6 damage rolling, and automatic session persistence across browser sessions.</p>
-<h3 style="margin:1rem 0 0.4rem">v5.0.0 Key Features</h3>
+<p style="margin-bottom:0.8rem;line-height:1.7"><strong>Welcome to Version 5.1.2!</strong> This update performs a complete audit of all Cyberdecks, Programs, Black ICE, Demons, and Cyberdeck Hardware in accordance with the official Cyberpunk RED Core Rulebook (CRB) and <em>Midnight with the Upload</em> DLC: fixing description overwrites, restoring full rulebook text, expanding to 31 Programs/ICE/Demons and 16 Hardware items, and enforcing accurate slot limits.</p>
+<h3 style="margin:1rem 0 0.4rem">v5.1.2 Key Features</h3>
 <ul style="line-height:1.8;padding-left:1.2rem">
+<li><strong>💻 Complete Cyberdeck, Program &amp; Hardware Audit</strong>: Resolved duplicate description property keys, restoring full official rulebook descriptions with source citations ([CRB], [DLC]).</li>
+<li><strong>🧩 Expanded Programs, Black ICE, Demons &amp; Hardware</strong>: Added missing programs (<em>Eraser</em>, <em>DeckKRASH</em>, <em>Hellbolt</em>, <em>Nervescrub</em>, <em>Poison Flatline</em>, <em>Superglue</em>, <em>Wisp</em>, <em>Imp</em>, <em>Efreet</em>, <em>Succubus</em>) and hardware options (<em>DNA Lock</em>, <em>Hardened Circuitry</em>, <em>KRASH Barrier</em>, <em>Defense Sequencer</em>, <em>Aerie</em>, <em>Bushido Accelerator</em>, etc.).</li>
+<li><strong>⚡ Accurate Slot Verification &amp; Calculations</strong>: Slot capacity for Cyberdecks (5, 7, 9 slots), Programs (1 or 2 slots), and Hardware (1, 2, or 3 slots) is enforced strictly during installation and rendering.</li>
+<li><strong>🎲 Rules-Compliant 2550 eb Starting Budget</strong>: Random character generator purchases weapons (&le;500eb limit), body/head armor, cyberware, and essential gear from 2550 eb starting funds, depositing unspent cash in Eurobucks.</li>
+<li><strong>💻 Netrunner Starting Cyberdeck &amp; Software</strong>: Generated Netrunners automatically receive the cheapest Cyberdeck (100 eb) and 1–2 software programs.</li>
+<li><strong>🎨 Customizable Color Schemes &amp; Themes</strong>: Switch between 8 curated preset palettes (Cyber Cyan, Arasaka Red, Netrunner Yellow, Matrix Green, Tech Purple, Edgerunner Orange, Trauma Blue, Ghost White) or pick custom Main &amp; Accent colors with quick swatches.</li>
+<li><strong>💾 Persistent Theme Loading</strong>: Theme preferences save automatically to <code>localStorage</code> and load instantly on boot before rendering without screen flicker.</li>
 <li><strong>🎲 GM Command Center</strong>: Load up to 5 character sheets side-by-side with dynamic responsive scaling (1 to 5 columns).</li>
 <li><strong>⚡ Interactive GM Popup Modal</strong>: Click any sheet card to open a tabbed modal featuring live Vitals &amp; STAT editing, Combat attack &amp; damage rolling, searchable Skills &amp; Check rolls (+1d10 critical explosion/fumble calculation), Armor &amp; Gear overview, and GM Encounter Notes.</li>
 <li><strong>💾 Automatic Session Persistence</strong>: Active GM Screen sheets automatically persist to local storage across browser refreshes until cleared with <code>🗑️ Clear All</code>.</li>
@@ -1201,6 +1373,65 @@ This license requires that reusers give credit to the creator. It allows reusers
     </div>
     <div id="gmModalBody" style="overflow-y:auto; flex:1; padding-right:0.25rem;"></div>
   </div>
+</div>
+
+<!-- ===== MODAL: COLOR SCHEME & THEME CUSTOMIZER ===== -->
+<div id="themeModal" class="modal-overlay">
+<div class="modal-box" style="max-width:540px; width:92%">
+<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid var(--primary); padding-bottom:0.5rem; margin-bottom:1rem">
+  <h2 style="margin:0; font-size:1.2rem; font-family:'Orbitron',sans-serif; color:var(--primary)">🎨 Color Scheme Customizer</h2>
+  <button id="themeCloseBtn" class="btn-action">✕ Close</button>
+</div>
+
+<p style="font-size:0.85rem; margin-bottom:0.75rem; color:var(--text)">Choose a preset cyberpunk color palette or customize your main and accent colors. Your chosen scheme is automatically saved and loaded when you open the app.</p>
+
+<h3 style="font-size:0.95rem; margin-bottom:0.3rem; color:var(--primary)">Preset Color Palettes</h3>
+<div id="themePresetGrid" class="theme-preset-grid"></div>
+
+<h3 style="font-size:0.95rem; margin-bottom:0.4rem; color:var(--primary)">Custom Color Scheme</h3>
+<div class="theme-custom-pickers">
+  <div class="theme-picker-group">
+    <label for="themePrimaryPicker">Main Color (Headers, Borders, Buttons)</label>
+    <div class="theme-color-input-row">
+      <input type="color" id="themePrimaryPicker" value="#00f3ff">
+      <input type="text" id="themePrimaryHex" value="#00F3FF" maxlength="7">
+    </div>
+    <div class="theme-swatches">
+      <span class="theme-swatch-dot" data-target="primary" data-color="#00f3ff" style="background:#00f3ff" title="Cyan"></span>
+      <span class="theme-swatch-dot" data-target="primary" data-color="#ff003c" style="background:#ff003c" title="Red"></span>
+      <span class="theme-swatch-dot" data-target="primary" data-color="#facc15" style="background:#facc15" title="Yellow"></span>
+      <span class="theme-swatch-dot" data-target="primary" data-color="#00ff66" style="background:#00ff66" title="Green"></span>
+      <span class="theme-swatch-dot" data-target="primary" data-color="#bf5af2" style="background:#bf5af2" title="Purple"></span>
+      <span class="theme-swatch-dot" data-target="primary" data-color="#ff7700" style="background:#ff7700" title="Orange"></span>
+      <span class="theme-swatch-dot" data-target="primary" data-color="#3b82f6" style="background:#3b82f6" title="Blue"></span>
+      <span class="theme-swatch-dot" data-target="primary" data-color="#e2e8f0" style="background:#e2e8f0" title="White"></span>
+    </div>
+  </div>
+
+  <div class="theme-picker-group">
+    <label for="themeAccentPicker">Accent Color (Badges, Highlights, Stat Bar)</label>
+    <div class="theme-color-input-row">
+      <input type="color" id="themeAccentPicker" value="#ff003c">
+      <input type="text" id="themeAccentHex" value="#FF003C" maxlength="7">
+    </div>
+    <div class="theme-swatches">
+      <span class="theme-swatch-dot" data-target="accent" data-color="#ff003c" style="background:#ff003c" title="Red"></span>
+      <span class="theme-swatch-dot" data-target="accent" data-color="#00f3ff" style="background:#00f3ff" title="Cyan"></span>
+      <span class="theme-swatch-dot" data-target="accent" data-color="#ff0055" style="background:#ff0055" title="Pink"></span>
+      <span class="theme-swatch-dot" data-target="accent" data-color="#facc15" style="background:#facc15" title="Yellow"></span>
+      <span class="theme-swatch-dot" data-target="accent" data-color="#00ff66" style="background:#00ff66" title="Green"></span>
+      <span class="theme-swatch-dot" data-target="accent" data-color="#ff8000" style="background:#ff8000" title="Orange"></span>
+      <span class="theme-swatch-dot" data-target="accent" data-color="#ef4444" style="background:#ef4444" title="Crimson"></span>
+      <span class="theme-swatch-dot" data-target="accent" data-color="#ffffff" style="background:#ffffff" title="White"></span>
+    </div>
+  </div>
+</div>
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem">
+  <button id="themeResetBtn" class="btn-action">🔄 Reset Default (Cyber Cyan)</button>
+  <button onclick="document.getElementById('themeModal').classList.remove('active');document.getElementById('themeModal').style.display='none'" class="btn-save">Done</button>
+</div>
+</div>
 </div>
 
 <!-- ============================================================
@@ -3248,52 +3479,98 @@ var DATA = {
     ]
   },
   cyberdecks: [
-    { id: 'poor_cyberdeck', name: 'Poor Quality Cyberdeck', cost: 100, slots: 5, desc: 'A cheap, stripped-down deck.', desc: "[CRB]" },
-    { id: 'standard_cyberdeck', name: 'Standard Quality Cyberdeck', cost: 500, slots: 7, desc: 'A standard deck used by most Netrunners.', desc: "[CRB]" },
-    { id: 'excellent_cyberdeck', name: 'Excellent Quality Cyberdeck', cost: 1000, slots: 9, desc: 'A top-of-the-line deck.', desc: "[CRB]" },
-    { id: 'kirama_advanced', name: 'Kirama Advanced Deck', cost: 1000, slots: 9, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'kirama_entry', name: 'Kirama Entry Deck', cost: 100, slots: 5, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'kirama_training', name: 'Kirama Training Deck', cost: 100, slots: 5, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'microtech_assault', name: 'Microtech Assault', cost: 1000, slots: 9, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'microtech_scout', name: 'Microtech Scout', cost: 500, slots: 7, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'microtech_warrior', name: 'Microtech Warrior', cost: 500, slots: 7, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'raven_hummingbird', name: 'Raven Microcybernetics Hummingbird', cost: 500, slots: 7, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'raven_kestrel2', name: 'Raven Microcybernetics Kestrel 2', cost: 1000, slots: 9, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'raven_phoenix', name: 'Raven Microcybernetics Phoenix', cost: 1000, slots: 9, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'sgi_kerberos', name: 'SGI Technologies Kerberos', cost: 1000, slots: 9, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'sgi_verdant_knight', name: 'SGI Technologies Verdant Knight', cost: 500, slots: 7, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'sgi_warlocks_book', name: 'SGI Technologies Warlock\'s Book', cost: 500, slots: 7, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'zetatech_kaliya', name: 'Zetatech Kaliya', cost: 1000, slots: 9, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'zetatech_micromate', name: 'Zetatech MicroMate', cost: 100, slots: 5, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'zetatech_parraline6000', name: 'Zetatech Parraline 6000', cost: 500, slots: 7, desc: 'Manufacturer Model', desc: "[CRB]" }
+    { id: 'poor_cyberdeck', name: 'Poor Quality Cyberdeck', cost: 100, slots: 5, desc: '[CRB] A cheap, stripped-down cyberdeck with 5 Option Slots for Programs or Hardware.' },
+    { id: 'standard_cyberdeck', name: 'Standard Quality Cyberdeck', cost: 500, slots: 7, desc: '[CRB] A standard cyberdeck used by most Netrunners with 7 Option Slots for Programs or Hardware.' },
+    { id: 'excellent_cyberdeck', name: 'Excellent Quality Cyberdeck', cost: 1000, slots: 9, desc: '[CRB] A top-of-the-line cyberdeck with 9 Option Slots for Programs or Hardware.' },
+    
+    // Kirama Models
+    { id: 'kirama_training', name: 'Kirama Training Deck', cost: 20, slots: 5, desc: '[DLC] 5 Program-only slots. Must be within 2m of access point. Takes double brain damage.' },
+    { id: 'kirama_entry', name: 'Kirama Entry Deck', cost: 100, slots: 5, desc: '[DLC] 5 Program-only slots. Max 1 of each Class. Unsafe Jack Out treated as safe Jack Out.' },
+    { id: 'kirama_advanced', name: 'Kirama Advanced Deck', cost: 500, slots: 5, desc: '[DLC] 5 Option Slots for Programs or Hardware. Any unsafe Jack Out is considered instead to be a safe Jack Out.' },
+
+    // Microtech Models
+    { id: 'microtech_scout', name: 'Microtech Scout', cost: 500, slots: 5, desc: '[DLC] 5 Option Slots for Programs or Hardware. Free Pathfinder Interface Ability once immediately after Jacking In.' },
+    { id: 'microtech_assault', name: 'Microtech Assault', cost: 500, slots: 9, desc: '[DLC] 4 Program slots (Black ICE only) and 5 Hardware-only slots.' },
+    { id: 'microtech_warrior', name: 'Microtech Warrior', cost: 1000, slots: 7, desc: '[DLC] 7 Program-only slots. Immediately after Jacking In, activate an installed Armor Program without a NET Action.' },
+
+    // Raven Microcybernetics Models
+    { id: 'raven_hummingbird', name: 'Raven Microcyb Hummingbird', cost: 1000, slots: 2, desc: '[DLC] 2 Hardware-only slots. User gains +1 additional NET Action every turn while jacked in.' },
+    { id: 'raven_kestrel2', name: 'Raven Microcyb Kestrel 2', cost: 1000, slots: 7, desc: '[DLC] 7 Program-only slots. Activate up to 2 installed Speedy Gonzalvez Programs immediately after Jacking In without a NET Action.' },
+    { id: 'raven_phoenix', name: 'Raven Microcyb Phoenix', cost: 1000, slots: 6, desc: '[DLC] 6 Option Slots for Programs or Hardware. When safely Jacking Out, any destroyed programs are restored to full working order.' },
+
+    // SGI Technologies Models
+    { id: 'sgi_verdant_knight', name: 'SGI Technologies Verdant Knight', cost: 500, slots: 9, desc: '[DLC] 9 Program-only slots. Only Sword and Shield Programs may be installed.' },
+    { id: 'sgi_warlocks_book', name: 'SGI Technologies Warlock\'s Book', cost: 500, slots: 9, desc: '[DLC] 9 Option Slots for Programs or Hardware. No Attacker or Black ICE Programs may be installed.' },
+    { id: 'sgi_kerberos', name: 'SGI Technologies Kerberos', cost: 1000, slots: 11, desc: '[DLC] 6 Program slots (Hellhound Black ICE only) and 5 Hardware-only slots.' },
+
+    // Zetatech Models
+    { id: 'zetatech_micromate', name: 'Zetatech MicroMate', cost: 500, slots: 9, desc: '[DLC] 9 Option Slots for Programs or Hardware. No Defender Programs may be installed. Brain damage taken is doubled.' },
+    { id: 'zetatech_parraline6000', name: 'Zetatech Parraline 6000', cost: 500, slots: 9, desc: '[DLC] 3 Program-only slots and 6 Hardware-only slots.' },
+    { id: 'zetatech_kaliya', name: 'Zetatech Kaliya', cost: 500, slots: 9, desc: '[DLC] 3 Program slots (Flak only) and 6 Option Slots. No Defenders other than Flak and no Black ICE other than Asp may be installed.' }
   ],
   programs: [
-    { id: 'armor_prog', name: 'Armor', type: 'Defender', cost: 50, slots: 1, desc: 'Lowers all meat damage taken by 4. Brain damage is unaffected.', desc: "[CRB]" },
-    { id: 'flak_prog', name: 'Flak', type: 'Defender', cost: 50, slots: 1, desc: 'Reduces attacker\'s ATK check by 4.', desc: "[CRB]" },
-    { id: 'shield_prog', name: 'Shield', type: 'Defender', cost: 50, slots: 1, desc: 'Stops the first non-Black ICE attack that hits you.', desc: "[CRB]" },
-    { id: 'banhammer_prog', name: 'Banhammer', type: 'Attacker', cost: 50, slots: 1, atk: 1, desc: 'Deals 1d6 Brain Damage to a Netrunner. Can\'t target Black ICE.', desc: "[CRB]" },
-    { id: 'sword_prog', name: 'Sword', type: 'Attacker', cost: 50, slots: 1, atk: 1, desc: 'Deals 2d6 meat damage. Lowers target\'s max HP by 1.', desc: "[CRB]" },
-    { id: 'vrizzbol_prog', name: 'Vrizzbol', type: 'Attacker', cost: 50, slots: 1, atk: 1, desc: 'Deals 1d6 meat damage. Lowers target\'s ATK check by 1 for 1 hour.', desc: "[CRB]" },
-    { id: 'see_ya_prog', name: 'See-Ya', type: 'Booster', cost: 50, slots: 1, desc: '+2 to Pathfinder Checks.', desc: "[CRB]" },
-    { id: 'speedy_gonzalvez_prog', name: 'Speedy Gonzalvez', type: 'Booster', cost: 50, slots: 1, desc: '+2 to Speed Checks.', desc: "[CRB]" },
-    { id: 'worm_prog', name: 'Worm', type: 'Booster', cost: 50, slots: 1, desc: '+2 to Backdoor Checks.', desc: "[CRB]" },
-    { id: 'hellhound_ice', name: 'Hellhound', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 20, desc: 'Anti-Personnel. 2d6 brain damage. On successful attack, target\'s Cyberdeck catches fire.', desc: "[CRB]" },
-    { id: 'kraken_ice', name: 'Kraken', type: 'Black ICE', cost: 1000, slots: 2, atk: 8, def: 6, rez: 30, desc: 'Anti-Personnel. 3d6 brain damage.', desc: "[CRB]" },
-    { id: 'liche_ice', name: 'Liche', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 15, desc: 'Anti-Personnel. 1d6 brain damage. Lowers Netrunner INT/REF/DEX.', desc: "[CRB]" },
-    { id: 'poison_flatline_ice', name: 'Poison Flatline', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 15, desc: 'Anti-Personnel. 2d6 brain damage. Destroys 1 non-Black ICE program.', desc: "[CRB]" },
-    { id: 'raven_ice', name: 'Raven', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 15, desc: 'Anti-Personnel. 1d6 brain damage. Unjacks Netrunner.', desc: "[CRB]" },
-    { id: 'scorpion_ice', name: 'Scorpion', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 15, desc: 'Anti-Personnel. 1d6 brain damage. Lowers movement speed.', desc: "[CRB]" },
-    { id: 'skunk_ice', name: 'Skunk', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 15, desc: 'Anti-Personnel. 1d6 brain damage. Target takes -2 to all checks.', desc: "[CRB]" },
-    { id: 'asp_ice', name: 'Asp', type: 'Black ICE', cost: 100, slots: 1, atk: 4, def: 4, rez: 15, desc: 'Anti-Program. Destroy 1 installed Defender program.', desc: "[CRB]" },
-    { id: 'giant_ice', name: 'Giant', type: 'Black ICE', cost: 1000, slots: 2, atk: 8, def: 6, rez: 30, desc: 'Anti-Program. Destroy 2 installed non-Black ICE programs.', desc: "[CRB]" },
-    { id: 'killer_ice', name: 'Killer', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 15, desc: 'Anti-Program. Destroy 1 installed non-Black ICE program.', desc: "[CRB]" },
-    { id: 'sabertooth_ice', name: 'Sabertooth', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 20, desc: 'Anti-Program. Destroy 1 installed non-Black ICE program.', desc: "[CRB]" },
-    { id: 'dragon_ice', name: 'Dragon', type: 'Black ICE', cost: 1000, slots: 2, atk: 6, def: 6, rez: 30, desc: 'Anti-Demon/Black ICE. Deals 3d6 Damage to Demons/Black ICE.', desc: "[CRB]" }
+    // Boosters
+    { id: 'eraser_prog', name: 'Eraser', type: 'Booster', cost: 20, slots: 1, desc: '[CRB] Increases all Cloak Checks by +2 as long as this Program remains Rezzed.' },
+    { id: 'see_ya_prog', name: 'See-Ya', type: 'Booster', cost: 20, slots: 1, desc: '[CRB] Increases all Pathfinder Checks by +2 as long as this Program remains Rezzed.' },
+    { id: 'speedy_gonzalvez_prog', name: 'Speedy Gonzalvez', type: 'Booster', cost: 100, slots: 1, desc: '[CRB] Increases your Speed by +2 as long as this Program remains Rezzed.' },
+    { id: 'targeting_system_prog', name: 'Targeting System', type: 'Booster', cost: 50, slots: 1, desc: '[CRB] Adds +1 to all Program Attack Checks as long as this Program remains Rezzed.' },
+    { id: 'worm_prog', name: 'Worm', type: 'Booster', cost: 50, slots: 1, desc: '[CRB] Increases all Backdoor Checks by +2 as long as this Program remains Rezzed.' },
+
+    // Defenders
+    { id: 'armor_prog', name: 'Armor', type: 'Defender', cost: 50, slots: 1, desc: '[CRB] Lowers all brain damage received by 4 while Rezzed. Max 1 copy running at a time; 1 use per Netrun.' },
+    { id: 'flak_prog', name: 'Flak', type: 'Defender', cost: 50, slots: 1, desc: '[CRB] Reduces ATK of all Non-Black ICE Attacker Programs run against you to 0 while Rezzed. Max 1 copy running at a time; 1 use per Netrun.' },
+    { id: 'shield_prog', name: 'Shield', type: 'Defender', cost: 20, slots: 1, desc: '[CRB] Stops first successful Non-Black ICE Program Effect from dealing brain damage, then Derezzes itself. Max 1 copy running at a time; 1 use per Netrun.' },
+
+    // Attackers
+    { id: 'banhammer_prog', name: 'Banhammer', type: 'Attacker', cost: 50, slots: 1, atk: 1, desc: '[CRB] Anti-Program. Deals 3d6 REZ to a Non-Black ICE Program, or 2d6 REZ to a Black ICE Program.' },
+    { id: 'deckkrash_prog', name: 'DeckKRASH', type: 'Attacker', cost: 100, slots: 1, atk: 0, desc: '[CRB] Anti-Personnel. Enemy Netrunner is forcibly and unsafely Jacked Out, taking damage from all encountered Black ICE.' },
+    { id: 'hellbolt_prog', name: 'Hellbolt', type: 'Attacker', cost: 100, slots: 1, atk: 2, desc: '[CRB] Anti-Personnel. Deals 2d6 brain damage. Unless insulated, Cyberdeck catches fire (2 HP damage/turn).' },
+    { id: 'nervescrub_prog', name: 'Nervescrub', type: 'Attacker', cost: 100, slots: 1, atk: 0, desc: '[CRB] Anti-Personnel. Lowers target Netrunner\'s INT, REF, and DEX by 1d6 for 1 hour (min 1).' },
+    { id: 'poison_flatline_prog', name: 'Poison Flatline', type: 'Attacker', cost: 100, slots: 1, atk: 0, desc: '[CRB] Anti-Personnel. Destroys 1 random Non-Black ICE Program installed on target Netrunner\'s deck.' },
+    { id: 'superglue_prog', name: 'Superglue', type: 'Attacker', cost: 100, slots: 1, atk: 2, desc: '[CRB] Anti-Personnel. Target Netrunner cannot progress deeper or Jack Out safely for 1d6 Rounds. 1 use per Netrun.' },
+    { id: 'sword_prog', name: 'Sword', type: 'Attacker', cost: 50, slots: 1, atk: 1, desc: '[CRB] Anti-Program. Deals 3d6 REZ to a Black ICE Program, or 2d6 REZ to a Non-Black ICE Program.' },
+    { id: 'vrizzbolt_prog', name: 'Vrizzbolt', type: 'Attacker', cost: 50, slots: 1, atk: 1, desc: '[CRB] Anti-Personnel. Deals 1d6 brain damage and reduces target Netrunner\'s NET Actions on their next turn by 1 (min 2).' },
+
+    // Black ICE (Anti-Personnel)
+    { id: 'asp_ice', name: 'Asp', type: 'Black ICE', cost: 100, slots: 1, per: 4, spd: 6, atk: 2, def: 2, rez: 15, desc: '[CRB] Anti-Personnel Black ICE. Destroys 1 random Program installed on enemy Netrunner\'s deck.' },
+    { id: 'giant_ice', name: 'Giant', type: 'Black ICE', cost: 1000, slots: 2, per: 2, spd: 2, atk: 8, def: 4, rez: 25, desc: '[CRB] Anti-Personnel Black ICE. Deals 3d6 brain damage and forcibly, unsafely Jacks Out target Netrunner.' },
+    { id: 'hellhound_ice', name: 'Hellhound', type: 'Black ICE', cost: 500, slots: 2, per: 6, spd: 6, atk: 6, def: 2, rez: 20, desc: '[CRB] Anti-Personnel Black ICE. Deals 2d6 brain damage and sets target\'s Cyberdeck on fire (2 HP damage/turn).' },
+    { id: 'kraken_ice', name: 'Kraken', type: 'Black ICE', cost: 1000, slots: 2, per: 6, spd: 2, atk: 8, def: 4, rez: 30, desc: '[CRB] Anti-Personnel Black ICE. Deals 3d6 brain damage. Prevents target from progressing deeper or Jacking Out safely for 1 turn.' },
+    { id: 'liche_ice', name: 'Liche', type: 'Black ICE', cost: 500, slots: 2, per: 8, spd: 2, atk: 6, def: 2, rez: 25, desc: '[CRB] Anti-Personnel Black ICE. Lowers target Netrunner\'s INT, REF, and DEX by 1d6 for 1 hour (min 1).' },
+    { id: 'raven_ice', name: 'Raven', type: 'Black ICE', cost: 50, slots: 1, per: 6, spd: 4, atk: 4, def: 2, rez: 15, desc: '[CRB] Anti-Personnel Black ICE. Derezzes 1 random Rezzed Defender Program, then deals 1d6 brain damage.' },
+    { id: 'scorpion_ice', name: 'Scorpion', type: 'Black ICE', cost: 100, slots: 1, per: 2, spd: 6, atk: 2, def: 2, rez: 15, desc: '[CRB] Anti-Personnel Black ICE. Lowers target Netrunner\'s MOVE by 1d6 for 1 hour (min 1).' },
+    { id: 'skunk_ice', name: 'Skunk', type: 'Black ICE', cost: 500, slots: 2, per: 2, spd: 4, atk: 4, def: 2, rez: 10, desc: '[CRB] Anti-Personnel Black ICE. Target makes all Slide Checks at -2 until Skunk is Derezzed.' },
+    { id: 'wisp_ice', name: 'Wisp', type: 'Black ICE', cost: 50, slots: 1, per: 4, spd: 4, atk: 4, def: 2, rez: 15, desc: '[CRB] Anti-Personnel Black ICE. Deals 1d6 brain damage and reduces target\'s NET Actions on next turn by 1 (min 2).' },
+
+    // Black ICE (Anti-Program)
+    { id: 'dragon_ice', name: 'Dragon', type: 'Black ICE', cost: 1000, slots: 2, per: 6, spd: 4, atk: 6, def: 6, rez: 30, desc: '[CRB] Anti-Program Black ICE. Deals 6d6 damage to a Program. If damage Derezzes it, it is Destroyed instead.' },
+    { id: 'killer_ice', name: 'Killer', type: 'Black ICE', cost: 500, slots: 2, per: 4, spd: 8, atk: 6, def: 2, rez: 20, desc: '[CRB] Anti-Program Black ICE. Deals 4d6 damage to a Program. If damage Derezzes it, it is Destroyed instead.' },
+    { id: 'sabertooth_ice', name: 'Sabertooth', type: 'Black ICE', cost: 1000, slots: 2, per: 8, spd: 6, atk: 6, def: 2, rez: 25, desc: '[CRB] Anti-Program Black ICE. Deals 6d6 damage to a Program. If damage Derezzes it, it is Destroyed instead.' },
+
+    // Demons
+    { id: 'imp_demon', name: 'Imp', type: 'Demon', cost: 500, slots: 2, per: 4, spd: 4, atk: 4, def: 4, rez: 10, actions: 2, desc: '[CRB] Basic System Demon. 2 NET Actions/turn. Controls system architecture nodes and defenses.' },
+    { id: 'efreet_demon', name: 'Efreet', type: 'Demon', cost: 1000, slots: 2, per: 6, spd: 6, atk: 6, def: 6, rez: 20, actions: 3, desc: '[CRB] Advanced System Demon. 3 NET Actions/turn. Heavy security control and counter-hacking.' },
+    { id: 'succubus_demon', name: 'Succubus', type: 'Demon', cost: 1000, slots: 2, per: 6, spd: 6, atk: 6, def: 6, rez: 20, actions: 3, desc: '[CRB] Advanced System Demon. 3 NET Actions/turn. Specialized architecture defense and node control.' }
   ],
   hardware: [
-    { id: "backup_drive", name: "Backup Drive", cost: 100, slots: 1, desc: "[CRB] Store one destroyed program for later recovery." },
-    { id: "insulated_wiring", name: "Insulated Wiring", cost: 100, slots: 1, desc: "[CRB] Protects deck from catching fire." },
-    { id: "range_upgrade", name: "Range Upgrade", cost: 500, slots: 1, desc: "[CRB] Increases Jack In range to 8m/yds." }
+    { id: 'backup_drive', name: 'Backup Drive', cost: 100, slots: 2, desc: '[CRB] Saves destroyed non-Black ICE programs. Netrunner can reinstall saved programs as a Meat Action. Takes 2 Hardware Option Slots.' },
+    { id: 'dna_lock', name: 'DNA Lock', cost: 100, slots: 2, desc: '[CRB] Biometric lock. Locked deck requires biometric key or DV17 Electronics/Security Tech Check. Takes 2 Hardware Option Slots.' },
+    { id: 'hardened_circuitry', name: 'Hardened Circuitry', cost: 100, slots: 1, desc: '[CRB] Cyberdeck cannot be rendered inoperable or destroyed by EMP effects or Non-Black ICE Program effects.' },
+    { id: 'insulated_wiring', name: 'Insulated Wiring', cost: 100, slots: 1, desc: '[CRB] Cyberdeck cannot catch fire or cause user\'s clothing to catch fire from Program effects.' },
+    { id: 'krash_barrier', name: 'KRASH Barrier', cost: 100, slots: 2, desc: '[CRB] Cyberdeck is immune to Program Effects that force the Netrunner to Jack Out. Takes 2 Hardware Option Slots.' },
+    { id: 'range_upgrade', name: 'Range Upgrade', cost: 100, slots: 1, desc: '[CRB] Connect to an access point from up to 8m away.' },
+
+    // Midnight Upload Hardware
+    { id: 'aerie', name: 'Aerie', cost: 500, slots: 2, desc: '[DLC] Installed Raven Black ICE destroys random Defender Program on attack hit instead of derezzing. Takes 2 Slots.' },
+    { id: 'bushido_accelerator', name: 'Bushido Accelerator', cost: 500, slots: 3, desc: '[DLC] Increases Speed (SPD) of all Killer Black ICE on deck by +2. Takes 3 Hardware Option Slots.' },
+    { id: 'combat_recorder', name: 'Combat Recorder', cost: 500, slots: 1, desc: '[DLC] Auto-records when another Netrunner fails a Death Save in same NET Architecture. Recordings worth 50eb.' },
+    { id: 'defense_sequencer', name: 'Defense Sequencer', cost: 500, slots: 2, desc: '[DLC] Auto-rezzes unused Armor Program when active Armor is derezzed/destroyed without NET Action. Takes 2 Slots.' },
+    { id: 'feline_instinct', name: 'Feline Instinct', cost: 500, slots: 2, desc: '[DLC] When Sabertooth Black ICE destroys a program, its damage increases by +1d6 until Jack Out. Takes 2 Slots.' },
+    { id: 'hangry_hangry_dragon', name: 'Hangry Hangry Dragon', cost: 500, slots: 1, desc: '[DLC] When Dragon Black ICE destroys a program, its REZ is restored to maximum.' },
+    { id: 'perfume_shoppe', name: 'Perfume Shoppe', cost: 500, slots: 2, desc: '[DLC] Skunk Black ICE Programs take up 1 Program Slot in deck instead of 2. Takes 2 Hardware Option Slots.' },
+    { id: 'smithy', name: 'Smithy', cost: 500, slots: 1, desc: '[DLC] As a Meat Action, convert all installed Sword Programs into Banhammer Programs and vice versa.' },
+    { id: 'snaketrap', name: 'Snaketrap', cost: 500, slots: 1, desc: '[DLC] Prevents first Black ICE or Program effect during a netrun that would destroy a Program at random.' },
+    { id: 'swamp_mist', name: 'Swamp Mist', cost: 500, slots: 2, desc: '[DLC] Upgrades Wisp Black ICE into enhanced format. Takes 2 Hardware Option Slots.' }
   ]
 };
 
@@ -3771,6 +4048,33 @@ const listCharacters = () => {
   chars.sort();
   return chars;
 };
+
+/**
+ * saveThemeSettings(theme)
+ * Saves user theme preferences (primary, accent, preset name) to localStorage.
+ */
+const saveThemeSettings = (theme) => {
+  try {
+    localStorage.setItem("cpr_theme_settings", JSON.stringify(theme));
+  } catch (e) {
+    console.error("Failed to save theme settings:", e);
+  }
+};
+
+/**
+ * loadThemeSettings()
+ * Retrieves saved user theme preferences from localStorage.
+ */
+const loadThemeSettings = () => {
+  try {
+    const raw = localStorage.getItem("cpr_theme_settings");
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (e) {
+    return null;
+  }
+};
+
 
 // EXPORT/IMPORT AND PRINTING
 // ============================================================
@@ -7085,13 +7389,101 @@ function generateRandomCharacter() {
     }
   }
   randomLifepath();
-  let w=DATA.weapons[Math.floor(Math.random()*DATA.weapons.length)];
-  state.weapons.push({id:w.id,name:w.name,dmg:w.dmg,rof:w.rof||1,mag:w.mag,type:w.type,rank:0,cost:w.cost||0});
-  let ap = DATA.armor.filter(function(x) { return x.slots === "Body"; });
-  let a = ap[Math.floor(Math.random()*ap.length)] || DATA.armor[0];
-  state.armor.push({id:a.id,name:a.name,sp:a.sp,slots:a.slots,enc:a.enc,cost:a.cost||0});
-  let gIds=["agent","flashlight","rope","duct_tape","first_aid_kit"];
-  for (let g=0;g<gIds.length;g++) { let gi=DATA.gear.find(function(x){return x.id===gIds[g];}); if (gi) state.gear.push({id:gi.id,name:gi.name,cost:gi.cost,cat:gi.cat||"Gear",qty:1}); }
+  
+  // Reset equipment inventory
+  state.weapons = [];
+  state.armor = [];
+  state.gear = [];
+  state.cyberware = [];
+  state.cyberdeck = null;
+  state.programs = [];
+
+  let budget = 2550;
+
+  // 1. Netrunner rule: Must buy cheapest Cyberdeck and at least one software program
+  if (role.id === "netrunner" || (role.name && role.name.toLowerCase() === "netrunner")) {
+    if (DATA.cyberdecks && DATA.cyberdecks.length > 0) {
+      let sortedDecks = [...DATA.cyberdecks].sort((a, b) => (a.cost || 0) - (b.cost || 0));
+      let deck = sortedDecks[0];
+      if (deck && (deck.cost || 0) <= budget) {
+        state.cyberdeck = deck.id;
+        budget -= (deck.cost || 0);
+      }
+    }
+    if (DATA.programs && DATA.programs.length > 0) {
+      let cheapProgs = DATA.programs.filter(p => (p.cost || 0) <= budget);
+      if (cheapProgs.length > 0) {
+        let count = Math.min(cheapProgs.length, Math.floor(Math.random() * 2) + 1);
+        for (let i = 0; i < count; i++) {
+          let p = cheapProgs[Math.floor(Math.random() * cheapProgs.length)];
+          if (p && (p.cost || 0) <= budget && !state.programs.includes(p.id)) {
+            state.programs.push(p.id);
+            budget -= (p.cost || 0);
+          }
+        }
+      }
+    }
+  }
+
+  // 2. Buy Weapons (Must NOT cost more than 500 eb each!)
+  if (DATA.weapons && DATA.weapons.length > 0) {
+    let eligible = DATA.weapons.filter(w => (w.cost || 0) <= 500 && (w.cost || 0) <= budget);
+    if (eligible.length > 0) {
+      let w1 = eligible[Math.floor(Math.random() * eligible.length)];
+      state.weapons.push({ id: w1.id, name: w1.name, dmg: w1.dmg, rof: w1.rof || 1, mag: w1.mag, type: w1.type, rank: 0, cost: w1.cost || 0 });
+      budget -= (w1.cost || 0);
+
+      let remainingW = DATA.weapons.filter(w => (w.cost || 0) <= 500 && (w.cost || 0) <= budget && w.id !== w1.id);
+      if (Math.random() < 0.5 && remainingW.length > 0) {
+        let w2 = remainingW[Math.floor(Math.random() * remainingW.length)];
+        state.weapons.push({ id: w2.id, name: w2.name, dmg: w2.dmg, rof: w2.rof || 1, mag: w2.mag, type: w2.type, rank: 0, cost: w2.cost || 0 });
+        budget -= (w2.cost || 0);
+      }
+    }
+  }
+
+  // 3. Buy Armor (Body armor & optional Head armor)
+  if (DATA.armor && DATA.armor.length > 0) {
+    let bodyArmors = DATA.armor.filter(a => a.slots === "Body" && (a.cost || 0) <= budget);
+    if (bodyArmors.length > 0) {
+      let a1 = bodyArmors[Math.floor(Math.random() * bodyArmors.length)];
+      state.armor.push({ id: a1.id, name: a1.name, sp: a1.sp, slots: a1.slots, enc: a1.enc, cost: a1.cost || 0 });
+      budget -= (a1.cost || 0);
+    }
+    let headArmors = DATA.armor.filter(a => a.slots === "Head" && (a.cost || 0) <= budget);
+    if (Math.random() < 0.5 && headArmors.length > 0) {
+      let a2 = headArmors[Math.floor(Math.random() * headArmors.length)];
+      state.armor.push({ id: a2.id, name: a2.name, sp: a2.sp, slots: a2.slots, enc: a2.enc, cost: a2.cost || 0 });
+      budget -= (a2.cost || 0);
+    }
+  }
+
+  // 4. Buy Cyberware (if budget allows)
+  if (DATA.cyberware && DATA.cyberware.length > 0) {
+    let affordableCyber = DATA.cyberware.filter(c => (c.cost || 0) <= budget && (c.cost || 0) > 0);
+    if (affordableCyber.length > 0 && Math.random() < 0.7) {
+      let cw = affordableCyber[Math.floor(Math.random() * affordableCyber.length)];
+      state.cyberware.push({ id: cw.id, name: cw.name, slots: cw.slots || 1, type: cw.type || "Option", cost: cw.cost || 0, installed: true });
+      budget -= (cw.cost || 0);
+    }
+  }
+
+  // 5. Buy Essential Gear
+  if (DATA.gear && DATA.gear.length > 0) {
+    let gIds = ["agent", "flashlight", "rope", "duct_tape", "first_aid_kit"];
+    for (let g of gIds) {
+      let gi = DATA.gear.find(x => x.id === g);
+      if (gi && (gi.cost || 0) <= budget) {
+        state.gear.push({ id: gi.id, name: gi.name, cost: gi.cost, cat: gi.cat || "Gear", qty: 1 });
+        budget -= (gi.cost || 0);
+      }
+    }
+  }
+
+  // 6. Deposit remaining unspent starting budget into Eurobucks
+  let ebInput = document.getElementById("currency_eb");
+  if (ebInput) ebInput.value = Math.max(0, budget);
+
   document.getElementById("hp_current").value = calcHitsMax(state.stats.body || 2, state.stats.will || 2);
   
   try { renderStats(); } catch(e) {}
@@ -7100,6 +7492,7 @@ function generateRandomCharacter() {
   try { renderArmor(); } catch(e) {}
   try { renderCyberware(); } catch(e) {}
   try { renderGear(); } catch(e) {}
+  try { renderCyberdeck(); } catch(e) {}
   try { renderVehicles(); } catch(e) {}
   try { renderAmmoTracker(); } catch(e) {}
   
@@ -7158,20 +7551,35 @@ function initCyberdeck() {
 
   const selProg = document.getElementById('sel_program');
   if (selProg) {
-    let progOpts = '<optgroup label="Programs">';
-    if (DATA.programs) {
-      for (const p of DATA.programs) {
-        progOpts += `<option value="p_${p.id}">${p.name} (${p.cost}eb) - ${p.slots} Slot(s)</option>`;
+    let html = '';
+    const progs = DATA.programs || [];
+    const groups = {
+      'Boosters': progs.filter(p => p.type === 'Booster'),
+      'Defenders': progs.filter(p => p.type === 'Defender'),
+      'Attackers': progs.filter(p => p.type === 'Attacker'),
+      'Black ICE': progs.filter(p => p.type === 'Black ICE'),
+      'Demons': progs.filter(p => p.type === 'Demon')
+    };
+
+    for (const [groupName, groupItems] of Object.entries(groups)) {
+      if (groupItems.length > 0) {
+        html += `<optgroup label="${groupName}">`;
+        for (const p of groupItems) {
+          html += `<option value="p_${p.id}">${p.name} (${p.cost}eb) - ${p.slots} Slot(s)</option>`;
+        }
+        html += `</optgroup>`;
       }
     }
-    progOpts += '</optgroup><optgroup label="Hardware">';
-    if (DATA.hardware) {
+
+    if (DATA.hardware && DATA.hardware.length > 0) {
+      html += `<optgroup label="Hardware">`;
       for (const h of DATA.hardware) {
-        progOpts += `<option value="h_${h.id}">${h.name} (${h.cost}eb) - ${h.slots} Slot(s)</option>`;
+        html += `<option value="h_${h.id}">${h.name} (${h.cost}eb) - ${h.slots} Slot(s)</option>`;
       }
+      html += `</optgroup>`;
     }
-    progOpts += '</optgroup>';
-    selProg.innerHTML = progOpts;
+
+    selProg.innerHTML = html;
 
     document.getElementById('btn_install_program').addEventListener('click', () => {
       if (!state.cyberdeck) { alert('Equip a Cyberdeck first!'); return; }
@@ -7187,18 +7595,18 @@ function initCyberdeck() {
       const deck = DATA._index.deckById[state.cyberdeck];
       let used = 0;
       for (const p of state.programs) {
-        const pItem = p.isProg ? DATA._index.programById[p.id] : DATA._index.hardwareById[p.id];
+        const pItem = (p && typeof p === 'object' && p.isProg) ? DATA._index.programById[p.id] : DATA._index.hardwareById[p.id];
         if (pItem) used += pItem.slots;
       }
       
       if (used + item.slots > deck.slots) {
-        alert('Not enough slots in Cyberdeck!');
+        alert(`Not enough slots in Cyberdeck! Item requires ${item.slots} slot(s), but only ${deck.slots - used} slot(s) remain.`);
         return;
       }
       
       if (!deductCurrency(item.cost)) return;
       
-      state.programs.push({ id: item.id, isProg: isProg, instanceId: Date.now() + Math.random().toString() });
+      state.programs.push({ id: item.id, isProg: isProg, instanceId: Date.now() + "_" + Math.random().toString().slice(2) });
       renderCyberdeck();
     });
   }
@@ -7221,10 +7629,22 @@ function renderCyberdeck() {
   dash.classList.remove('hidden');
   document.getElementById('deck_name').innerHTML = deck.name + ' <span style="font-size:0.8rem; font-weight:normal; cursor:pointer; color:red; margin-left:1rem;" onclick="removeCyberdeck()">[Sell]</span>';
   
+  // Normalize string program IDs if present
+  if (Array.isArray(state.programs)) {
+    for (let i = 0; i < state.programs.length; i++) {
+      let p = state.programs[i];
+      if (typeof p === 'string') {
+        let isProg = !!(DATA._index && DATA._index.programById && DATA._index.programById[p]);
+        state.programs[i] = { id: p, isProg: isProg, instanceId: Date.now() + "_" + Math.random().toString().slice(2) };
+      }
+    }
+  }
+
   let used = 0;
   const tbody = document.createDocumentFragment();
   
   for (const p of state.programs) {
+    if (!p || !p.id) continue;
     const item = p.isProg ? DATA._index.programById[p.id] : DATA._index.hardwareById[p.id];
     if (!item) continue;
     used += item.slots;
@@ -7242,13 +7662,13 @@ function renderCyberdeck() {
     tdSlots.textContent = item.slots;
     
     const tdAtk = document.createElement('td');
-    tdAtk.textContent = item.atk || '-';
+    tdAtk.textContent = item.atk !== undefined ? item.atk : '-';
     
     const tdDef = document.createElement('td');
-    tdDef.textContent = item.def || '-';
+    tdDef.textContent = item.def !== undefined ? item.def : '-';
     
     const tdRez = document.createElement('td');
-    tdRez.textContent = item.rez || '-';
+    tdRez.textContent = item.rez !== undefined ? item.rez : '-';
     
     const tdAct = document.createElement('td');
     tdAct.innerHTML = `<button class="btn-action" onclick="removeProgram('${p.instanceId}', ${item.cost})">Uninstall</button>`;
@@ -7393,7 +7813,219 @@ function showPrintOptions() {
 }
 
 // ============================================================
-// GAME MASTER (GM) SCREEN & MULTI-SHEET MANAGEMENT (v5.0.0)
+// THEME & COLOR SCHEME CUSTOMIZER (v5.1.0)
+// ============================================================
+
+const THEME_PRESETS = {
+  cyan: { key: "cyan", name: "Cyber Cyan", primary: "#00f3ff", accent: "#ff003c" },
+  red: { key: "red", name: "Arasaka Red", primary: "#ff003c", accent: "#00f3ff" },
+  yellow: { key: "yellow", name: "Netrunner Yellow", primary: "#facc15", accent: "#ff0055" },
+  green: { key: "green", name: "Matrix Green", primary: "#00ff66", accent: "#00f3ff" },
+  purple: { key: "purple", name: "Tech Purple", primary: "#bf5af2", accent: "#ff0080" },
+  orange: { key: "orange", name: "Edgerunner Orange", primary: "#ff7700", accent: "#facc15" },
+  blue: { key: "blue", name: "Trauma Blue", primary: "#3b82f6", accent: "#ef4444" },
+  white: { key: "white", name: "Ghost White", primary: "#e2e8f0", accent: "#00f3ff" }
+};
+
+function hexToRgbString(hex) {
+  if (!hex) return "0, 243, 255";
+  let c = hex.replace("#", "").trim();
+  if (c.length === 3) c = c.split("").map(x => x + x).join("");
+  if (c.length !== 6) return "0, 243, 255";
+  const num = parseInt(c, 16);
+  const r = (num >> 16) & 255;
+  const g = (num >> 8) & 255;
+  const b = num & 255;
+  return `${r}, ${g}, ${b}`;
+}
+
+function applyTheme(primaryHex, accentHex, presetKey = "custom", save = true) {
+  const p = primaryHex || "#00f3ff";
+  const a = accentHex || "#ff003c";
+  const pRgb = hexToRgbString(p);
+  const aRgb = hexToRgbString(a);
+
+  const root = document.documentElement;
+  root.style.setProperty("--primary", p);
+  root.style.setProperty("--primary-rgb", pRgb);
+  root.style.setProperty("--primary-hover", p);
+  root.style.setProperty("--border", p);
+  root.style.setProperty("--text-secondary", p);
+  root.style.setProperty("--btn-text", p);
+  root.style.setProperty("--header-text", p);
+  root.style.setProperty("--focus-ring", p);
+  root.style.setProperty("--btn-bg", `rgba(${pRgb}, 0.12)`);
+  root.style.setProperty("--btn-hover", `rgba(${pRgb}, 0.28)`);
+  root.style.setProperty("--input-bg", `rgba(${pRgb}, 0.06)`);
+  root.style.setProperty("--glow-primary", `0 0 8px rgba(${pRgb}, 0.6), 0 0 16px rgba(${pRgb}, 0.4)`);
+
+  root.style.setProperty("--accent", a);
+  root.style.setProperty("--accent-rgb", aRgb);
+  root.style.setProperty("--accent-light", `rgba(${aRgb}, 0.15)`);
+  root.style.setProperty("--glow-accent", `0 0 8px rgba(${aRgb}, 0.6), 0 0 16px rgba(${aRgb}, 0.4)`);
+
+  if (save && typeof saveThemeSettings === "function") {
+    saveThemeSettings({ primary: p, accent: a, preset: presetKey });
+  }
+}
+
+function initThemeCustomizer() {
+  const themeBtn = document.getElementById("themeBtn");
+  const modal = document.getElementById("themeModal");
+  const closeBtn = document.getElementById("themeCloseBtn");
+  const resetBtn = document.getElementById("themeResetBtn");
+  const presetGrid = document.getElementById("themePresetGrid");
+
+  const primaryPicker = document.getElementById("themePrimaryPicker");
+  const primaryHex = document.getElementById("themePrimaryHex");
+  const accentPicker = document.getElementById("themeAccentPicker");
+  const accentHex = document.getElementById("themeAccentHex");
+
+  if (!modal) return;
+
+  // Load initial theme from storage or apply default
+  const saved = typeof loadThemeSettings === "function" ? loadThemeSettings() : null;
+  if (saved && saved.primary && saved.accent) {
+    applyTheme(saved.primary, saved.accent, saved.preset || "custom", false);
+  } else {
+    applyTheme("#00f3ff", "#ff003c", "cyan", false);
+  }
+
+  const updateControlsUI = (p, a, currentPreset) => {
+    if (primaryPicker) primaryPicker.value = p;
+    if (primaryHex) primaryHex.value = p.toUpperCase();
+    if (accentPicker) accentPicker.value = a;
+    if (accentHex) accentHex.value = a.toUpperCase();
+
+    if (presetGrid) {
+      const btns = presetGrid.querySelectorAll(".theme-preset-btn");
+      btns.forEach(b => {
+        if (b.dataset.preset === currentPreset) b.classList.add("active");
+        else b.classList.remove("active");
+      });
+    }
+  };
+
+  // Build Presets UI
+  if (presetGrid) {
+    presetGrid.innerHTML = "";
+    Object.keys(THEME_PRESETS).forEach(key => {
+      const item = THEME_PRESETS[key];
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "theme-preset-btn";
+      btn.dataset.preset = key;
+      btn.innerHTML = `
+        <div class="theme-preset-preview">
+          <div class="swatch-main" style="background:${item.primary}"></div>
+          <div class="swatch-accent" style="background:${item.accent}"></div>
+        </div>
+        <span>${item.name}</span>
+      `;
+      btn.addEventListener("click", () => {
+        applyTheme(item.primary, item.accent, key, true);
+        updateControlsUI(item.primary, item.accent, key);
+      });
+      presetGrid.appendChild(btn);
+    });
+  }
+
+  // Bind Color Inputs
+  if (primaryPicker && primaryHex) {
+    primaryPicker.addEventListener("input", (e) => {
+      const color = e.target.value;
+      primaryHex.value = color.toUpperCase();
+      applyTheme(color, accentPicker.value, "custom", true);
+      updateControlsUI(color, accentPicker.value, "custom");
+    });
+    primaryHex.addEventListener("change", (e) => {
+      let color = e.target.value.trim();
+      if (!color.startsWith("#")) color = "#" + color;
+      if (/^#[0-9A-F]{6}$/i.test(color)) {
+        primaryPicker.value = color;
+        applyTheme(color, accentPicker.value, "custom", true);
+        updateControlsUI(color, accentPicker.value, "custom");
+      }
+    });
+  }
+
+  if (accentPicker && accentHex) {
+    accentPicker.addEventListener("input", (e) => {
+      const color = e.target.value;
+      accentHex.value = color.toUpperCase();
+      applyTheme(primaryPicker.value, color, "custom", true);
+      updateControlsUI(primaryPicker.value, color, "custom");
+    });
+    accentHex.addEventListener("change", (e) => {
+      let color = e.target.value.trim();
+      if (!color.startsWith("#")) color = "#" + color;
+      if (/^#[0-9A-F]{6}$/i.test(color)) {
+        accentPicker.value = color;
+        applyTheme(primaryPicker.value, color, "custom", true);
+        updateControlsUI(primaryPicker.value, color, "custom");
+      }
+    });
+  }
+
+  // Bind Swatch Dot Clicks
+  document.querySelectorAll(".theme-swatch-dot").forEach(dot => {
+    dot.addEventListener("click", () => {
+      const target = dot.dataset.target; // "primary" or "accent"
+      const color = dot.dataset.color;
+      if (target === "primary") {
+        primaryPicker.value = color;
+        primaryHex.value = color.toUpperCase();
+        applyTheme(color, accentPicker.value, "custom", true);
+        updateControlsUI(color, accentPicker.value, "custom");
+      } else if (target === "accent") {
+        accentPicker.value = color;
+        accentHex.value = color.toUpperCase();
+        applyTheme(primaryPicker.value, color, "custom", true);
+        updateControlsUI(primaryPicker.value, color, "custom");
+      }
+    });
+  });
+
+  // Reset Button
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      const def = THEME_PRESETS.cyan;
+      applyTheme(def.primary, def.accent, "cyan", true);
+      updateControlsUI(def.primary, def.accent, "cyan");
+    });
+  }
+
+  // Open/Close Modal
+  if (themeBtn) {
+    themeBtn.addEventListener("click", () => {
+      const curr = typeof loadThemeSettings === "function" ? loadThemeSettings() : null;
+      const p = (curr && curr.primary) || "#00f3ff";
+      const a = (curr && curr.accent) || "#ff003c";
+      const pr = (curr && curr.preset) || "cyan";
+      updateControlsUI(p, a, pr);
+      modal.classList.add("active");
+      modal.style.display = "flex";
+    });
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => {
+      modal.classList.remove("active");
+      modal.style.display = "none";
+    });
+  }
+
+  window.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.remove("active");
+      modal.style.display = "none";
+    }
+  });
+}
+
+
+// ============================================================
+// GAME MASTER (GM) SCREEN & MULTI-SHEET MANAGEMENT (v5.1.2)
 // ============================================================
 
 /**
@@ -8376,7 +9008,7 @@ function exportGMSessionFile() {
     return;
   }
   const data = {
-    _gmSessionVersion: "5.0.0",
+    _gmSessionVersion: "5.1.2",
     savedAt: new Date().toISOString(),
     sheets: gmState.loadedSheets
   };
@@ -8574,6 +9206,7 @@ const init = () => {
   initPrint();
   initSkillSearch();
   initCurrency();
+  if (typeof initThemeCustomizer === "function") initThemeCustomizer();
   if (typeof initGMScreen === "function") initGMScreen();
   setDefaultValues();
 };

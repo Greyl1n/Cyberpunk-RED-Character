@@ -1,5 +1,5 @@
 // ============================================================
-// GAME MASTER (GM) SCREEN & MULTI-SHEET MANAGEMENT (v5.0.0)
+// GAME MASTER (GM) SCREEN & MULTI-SHEET MANAGEMENT (v5.1.2)
 // ============================================================
 
 /**
@@ -982,7 +982,7 @@ function exportGMSessionFile() {
     return;
   }
   const data = {
-    _gmSessionVersion: "5.0.0",
+    _gmSessionVersion: "5.1.2",
     savedAt: new Date().toISOString(),
     sheets: gmState.loadedSheets
   };

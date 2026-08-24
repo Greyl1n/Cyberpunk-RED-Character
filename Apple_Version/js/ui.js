@@ -3128,13 +3128,101 @@ function generateRandomCharacter() {
     }
   }
   randomLifepath();
-  let w=DATA.weapons[Math.floor(Math.random()*DATA.weapons.length)];
-  state.weapons.push({id:w.id,name:w.name,dmg:w.dmg,rof:w.rof||1,mag:w.mag,type:w.type,rank:0,cost:w.cost||0});
-  let ap = DATA.armor.filter(function(x) { return x.slots === "Body"; });
-  let a = ap[Math.floor(Math.random()*ap.length)] || DATA.armor[0];
-  state.armor.push({id:a.id,name:a.name,sp:a.sp,slots:a.slots,enc:a.enc,cost:a.cost||0});
-  let gIds=["agent","flashlight","rope","duct_tape","first_aid_kit"];
-  for (let g=0;g<gIds.length;g++) { let gi=DATA.gear.find(function(x){return x.id===gIds[g];}); if (gi) state.gear.push({id:gi.id,name:gi.name,cost:gi.cost,cat:gi.cat||"Gear",qty:1}); }
+  
+  // Reset equipment inventory
+  state.weapons = [];
+  state.armor = [];
+  state.gear = [];
+  state.cyberware = [];
+  state.cyberdeck = null;
+  state.programs = [];
+
+  let budget = 2550;
+
+  // 1. Netrunner rule: Must buy cheapest Cyberdeck and at least one software program
+  if (role.id === "netrunner" || (role.name && role.name.toLowerCase() === "netrunner")) {
+    if (DATA.cyberdecks && DATA.cyberdecks.length > 0) {
+      let sortedDecks = [...DATA.cyberdecks].sort((a, b) => (a.cost || 0) - (b.cost || 0));
+      let deck = sortedDecks[0];
+      if (deck && (deck.cost || 0) <= budget) {
+        state.cyberdeck = deck.id;
+        budget -= (deck.cost || 0);
+      }
+    }
+    if (DATA.programs && DATA.programs.length > 0) {
+      let cheapProgs = DATA.programs.filter(p => (p.cost || 0) <= budget);
+      if (cheapProgs.length > 0) {
+        let count = Math.min(cheapProgs.length, Math.floor(Math.random() * 2) + 1);
+        for (let i = 0; i < count; i++) {
+          let p = cheapProgs[Math.floor(Math.random() * cheapProgs.length)];
+          if (p && (p.cost || 0) <= budget && !state.programs.includes(p.id)) {
+            state.programs.push(p.id);
+            budget -= (p.cost || 0);
+          }
+        }
+      }
+    }
+  }
+
+  // 2. Buy Weapons (Must NOT cost more than 500 eb each!)
+  if (DATA.weapons && DATA.weapons.length > 0) {
+    let eligible = DATA.weapons.filter(w => (w.cost || 0) <= 500 && (w.cost || 0) <= budget);
+    if (eligible.length > 0) {
+      let w1 = eligible[Math.floor(Math.random() * eligible.length)];
+      state.weapons.push({ id: w1.id, name: w1.name, dmg: w1.dmg, rof: w1.rof || 1, mag: w1.mag, type: w1.type, rank: 0, cost: w1.cost || 0 });
+      budget -= (w1.cost || 0);
+
+      let remainingW = DATA.weapons.filter(w => (w.cost || 0) <= 500 && (w.cost || 0) <= budget && w.id !== w1.id);
+      if (Math.random() < 0.5 && remainingW.length > 0) {
+        let w2 = remainingW[Math.floor(Math.random() * remainingW.length)];
+        state.weapons.push({ id: w2.id, name: w2.name, dmg: w2.dmg, rof: w2.rof || 1, mag: w2.mag, type: w2.type, rank: 0, cost: w2.cost || 0 });
+        budget -= (w2.cost || 0);
+      }
+    }
+  }
+
+  // 3. Buy Armor (Body armor & optional Head armor)
+  if (DATA.armor && DATA.armor.length > 0) {
+    let bodyArmors = DATA.armor.filter(a => a.slots === "Body" && (a.cost || 0) <= budget);
+    if (bodyArmors.length > 0) {
+      let a1 = bodyArmors[Math.floor(Math.random() * bodyArmors.length)];
+      state.armor.push({ id: a1.id, name: a1.name, sp: a1.sp, slots: a1.slots, enc: a1.enc, cost: a1.cost || 0 });
+      budget -= (a1.cost || 0);
+    }
+    let headArmors = DATA.armor.filter(a => a.slots === "Head" && (a.cost || 0) <= budget);
+    if (Math.random() < 0.5 && headArmors.length > 0) {
+      let a2 = headArmors[Math.floor(Math.random() * headArmors.length)];
+      state.armor.push({ id: a2.id, name: a2.name, sp: a2.sp, slots: a2.slots, enc: a2.enc, cost: a2.cost || 0 });
+      budget -= (a2.cost || 0);
+    }
+  }
+
+  // 4. Buy Cyberware (if budget allows)
+  if (DATA.cyberware && DATA.cyberware.length > 0) {
+    let affordableCyber = DATA.cyberware.filter(c => (c.cost || 0) <= budget && (c.cost || 0) > 0);
+    if (affordableCyber.length > 0 && Math.random() < 0.7) {
+      let cw = affordableCyber[Math.floor(Math.random() * affordableCyber.length)];
+      state.cyberware.push({ id: cw.id, name: cw.name, slots: cw.slots || 1, type: cw.type || "Option", cost: cw.cost || 0, installed: true });
+      budget -= (cw.cost || 0);
+    }
+  }
+
+  // 5. Buy Essential Gear
+  if (DATA.gear && DATA.gear.length > 0) {
+    let gIds = ["agent", "flashlight", "rope", "duct_tape", "first_aid_kit"];
+    for (let g of gIds) {
+      let gi = DATA.gear.find(x => x.id === g);
+      if (gi && (gi.cost || 0) <= budget) {
+        state.gear.push({ id: gi.id, name: gi.name, cost: gi.cost, cat: gi.cat || "Gear", qty: 1 });
+        budget -= (gi.cost || 0);
+      }
+    }
+  }
+
+  // 6. Deposit remaining unspent starting budget into Eurobucks
+  let ebInput = document.getElementById("currency_eb");
+  if (ebInput) ebInput.value = Math.max(0, budget);
+
   document.getElementById("hp_current").value = calcHitsMax(state.stats.body || 2, state.stats.will || 2);
   
   try { renderStats(); } catch(e) {}
@@ -3143,6 +3231,7 @@ function generateRandomCharacter() {
   try { renderArmor(); } catch(e) {}
   try { renderCyberware(); } catch(e) {}
   try { renderGear(); } catch(e) {}
+  try { renderCyberdeck(); } catch(e) {}
   try { renderVehicles(); } catch(e) {}
   try { renderAmmoTracker(); } catch(e) {}
   
@@ -3201,20 +3290,35 @@ function initCyberdeck() {
 
   const selProg = document.getElementById('sel_program');
   if (selProg) {
-    let progOpts = '<optgroup label="Programs">';
-    if (DATA.programs) {
-      for (const p of DATA.programs) {
-        progOpts += `<option value="p_${p.id}">${p.name} (${p.cost}eb) - ${p.slots} Slot(s)</option>`;
+    let html = '';
+    const progs = DATA.programs || [];
+    const groups = {
+      'Boosters': progs.filter(p => p.type === 'Booster'),
+      'Defenders': progs.filter(p => p.type === 'Defender'),
+      'Attackers': progs.filter(p => p.type === 'Attacker'),
+      'Black ICE': progs.filter(p => p.type === 'Black ICE'),
+      'Demons': progs.filter(p => p.type === 'Demon')
+    };
+
+    for (const [groupName, groupItems] of Object.entries(groups)) {
+      if (groupItems.length > 0) {
+        html += `<optgroup label="${groupName}">`;
+        for (const p of groupItems) {
+          html += `<option value="p_${p.id}">${p.name} (${p.cost}eb) - ${p.slots} Slot(s)</option>`;
+        }
+        html += `</optgroup>`;
       }
     }
-    progOpts += '</optgroup><optgroup label="Hardware">';
-    if (DATA.hardware) {
+
+    if (DATA.hardware && DATA.hardware.length > 0) {
+      html += `<optgroup label="Hardware">`;
       for (const h of DATA.hardware) {
-        progOpts += `<option value="h_${h.id}">${h.name} (${h.cost}eb) - ${h.slots} Slot(s)</option>`;
+        html += `<option value="h_${h.id}">${h.name} (${h.cost}eb) - ${h.slots} Slot(s)</option>`;
       }
+      html += `</optgroup>`;
     }
-    progOpts += '</optgroup>';
-    selProg.innerHTML = progOpts;
+
+    selProg.innerHTML = html;
 
     document.getElementById('btn_install_program').addEventListener('click', () => {
       if (!state.cyberdeck) { alert('Equip a Cyberdeck first!'); return; }
@@ -3230,18 +3334,18 @@ function initCyberdeck() {
       const deck = DATA._index.deckById[state.cyberdeck];
       let used = 0;
       for (const p of state.programs) {
-        const pItem = p.isProg ? DATA._index.programById[p.id] : DATA._index.hardwareById[p.id];
+        const pItem = (p && typeof p === 'object' && p.isProg) ? DATA._index.programById[p.id] : DATA._index.hardwareById[p.id];
         if (pItem) used += pItem.slots;
       }
       
       if (used + item.slots > deck.slots) {
-        alert('Not enough slots in Cyberdeck!');
+        alert(`Not enough slots in Cyberdeck! Item requires ${item.slots} slot(s), but only ${deck.slots - used} slot(s) remain.`);
         return;
       }
       
       if (!deductCurrency(item.cost)) return;
       
-      state.programs.push({ id: item.id, isProg: isProg, instanceId: Date.now() + Math.random().toString() });
+      state.programs.push({ id: item.id, isProg: isProg, instanceId: Date.now() + "_" + Math.random().toString().slice(2) });
       renderCyberdeck();
     });
   }
@@ -3264,10 +3368,22 @@ function renderCyberdeck() {
   dash.classList.remove('hidden');
   document.getElementById('deck_name').innerHTML = deck.name + ' <span style="font-size:0.8rem; font-weight:normal; cursor:pointer; color:red; margin-left:1rem;" onclick="removeCyberdeck()">[Sell]</span>';
   
+  // Normalize string program IDs if present
+  if (Array.isArray(state.programs)) {
+    for (let i = 0; i < state.programs.length; i++) {
+      let p = state.programs[i];
+      if (typeof p === 'string') {
+        let isProg = !!(DATA._index && DATA._index.programById && DATA._index.programById[p]);
+        state.programs[i] = { id: p, isProg: isProg, instanceId: Date.now() + "_" + Math.random().toString().slice(2) };
+      }
+    }
+  }
+
   let used = 0;
   const tbody = document.createDocumentFragment();
   
   for (const p of state.programs) {
+    if (!p || !p.id) continue;
     const item = p.isProg ? DATA._index.programById[p.id] : DATA._index.hardwareById[p.id];
     if (!item) continue;
     used += item.slots;
@@ -3285,13 +3401,13 @@ function renderCyberdeck() {
     tdSlots.textContent = item.slots;
     
     const tdAtk = document.createElement('td');
-    tdAtk.textContent = item.atk || '-';
+    tdAtk.textContent = item.atk !== undefined ? item.atk : '-';
     
     const tdDef = document.createElement('td');
-    tdDef.textContent = item.def || '-';
+    tdDef.textContent = item.def !== undefined ? item.def : '-';
     
     const tdRez = document.createElement('td');
-    tdRez.textContent = item.rez || '-';
+    tdRez.textContent = item.rez !== undefined ? item.rez : '-';
     
     const tdAct = document.createElement('td');
     tdAct.innerHTML = `<button class="btn-action" onclick="removeProgram('${p.instanceId}', ${item.cost})">Uninstall</button>`;
@@ -3434,3 +3550,215 @@ function showPrintOptions() {
         document.body.appendChild(overlay);
     });
 }
+
+// ============================================================
+// THEME & COLOR SCHEME CUSTOMIZER (v5.1.0)
+// ============================================================
+
+const THEME_PRESETS = {
+  cyan: { key: "cyan", name: "Cyber Cyan", primary: "#00f3ff", accent: "#ff003c" },
+  red: { key: "red", name: "Arasaka Red", primary: "#ff003c", accent: "#00f3ff" },
+  yellow: { key: "yellow", name: "Netrunner Yellow", primary: "#facc15", accent: "#ff0055" },
+  green: { key: "green", name: "Matrix Green", primary: "#00ff66", accent: "#00f3ff" },
+  purple: { key: "purple", name: "Tech Purple", primary: "#bf5af2", accent: "#ff0080" },
+  orange: { key: "orange", name: "Edgerunner Orange", primary: "#ff7700", accent: "#facc15" },
+  blue: { key: "blue", name: "Trauma Blue", primary: "#3b82f6", accent: "#ef4444" },
+  white: { key: "white", name: "Ghost White", primary: "#e2e8f0", accent: "#00f3ff" }
+};
+
+function hexToRgbString(hex) {
+  if (!hex) return "0, 243, 255";
+  let c = hex.replace("#", "").trim();
+  if (c.length === 3) c = c.split("").map(x => x + x).join("");
+  if (c.length !== 6) return "0, 243, 255";
+  const num = parseInt(c, 16);
+  const r = (num >> 16) & 255;
+  const g = (num >> 8) & 255;
+  const b = num & 255;
+  return `${r}, ${g}, ${b}`;
+}
+
+function applyTheme(primaryHex, accentHex, presetKey = "custom", save = true) {
+  const p = primaryHex || "#00f3ff";
+  const a = accentHex || "#ff003c";
+  const pRgb = hexToRgbString(p);
+  const aRgb = hexToRgbString(a);
+
+  const root = document.documentElement;
+  root.style.setProperty("--primary", p);
+  root.style.setProperty("--primary-rgb", pRgb);
+  root.style.setProperty("--primary-hover", p);
+  root.style.setProperty("--border", p);
+  root.style.setProperty("--text-secondary", p);
+  root.style.setProperty("--btn-text", p);
+  root.style.setProperty("--header-text", p);
+  root.style.setProperty("--focus-ring", p);
+  root.style.setProperty("--btn-bg", `rgba(${pRgb}, 0.12)`);
+  root.style.setProperty("--btn-hover", `rgba(${pRgb}, 0.28)`);
+  root.style.setProperty("--input-bg", `rgba(${pRgb}, 0.06)`);
+  root.style.setProperty("--glow-primary", `0 0 8px rgba(${pRgb}, 0.6), 0 0 16px rgba(${pRgb}, 0.4)`);
+
+  root.style.setProperty("--accent", a);
+  root.style.setProperty("--accent-rgb", aRgb);
+  root.style.setProperty("--accent-light", `rgba(${aRgb}, 0.15)`);
+  root.style.setProperty("--glow-accent", `0 0 8px rgba(${aRgb}, 0.6), 0 0 16px rgba(${aRgb}, 0.4)`);
+
+  if (save && typeof saveThemeSettings === "function") {
+    saveThemeSettings({ primary: p, accent: a, preset: presetKey });
+  }
+}
+
+function initThemeCustomizer() {
+  const themeBtn = document.getElementById("themeBtn");
+  const modal = document.getElementById("themeModal");
+  const closeBtn = document.getElementById("themeCloseBtn");
+  const resetBtn = document.getElementById("themeResetBtn");
+  const presetGrid = document.getElementById("themePresetGrid");
+
+  const primaryPicker = document.getElementById("themePrimaryPicker");
+  const primaryHex = document.getElementById("themePrimaryHex");
+  const accentPicker = document.getElementById("themeAccentPicker");
+  const accentHex = document.getElementById("themeAccentHex");
+
+  if (!modal) return;
+
+  // Load initial theme from storage or apply default
+  const saved = typeof loadThemeSettings === "function" ? loadThemeSettings() : null;
+  if (saved && saved.primary && saved.accent) {
+    applyTheme(saved.primary, saved.accent, saved.preset || "custom", false);
+  } else {
+    applyTheme("#00f3ff", "#ff003c", "cyan", false);
+  }
+
+  const updateControlsUI = (p, a, currentPreset) => {
+    if (primaryPicker) primaryPicker.value = p;
+    if (primaryHex) primaryHex.value = p.toUpperCase();
+    if (accentPicker) accentPicker.value = a;
+    if (accentHex) accentHex.value = a.toUpperCase();
+
+    if (presetGrid) {
+      const btns = presetGrid.querySelectorAll(".theme-preset-btn");
+      btns.forEach(b => {
+        if (b.dataset.preset === currentPreset) b.classList.add("active");
+        else b.classList.remove("active");
+      });
+    }
+  };
+
+  // Build Presets UI
+  if (presetGrid) {
+    presetGrid.innerHTML = "";
+    Object.keys(THEME_PRESETS).forEach(key => {
+      const item = THEME_PRESETS[key];
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "theme-preset-btn";
+      btn.dataset.preset = key;
+      btn.innerHTML = `
+        <div class="theme-preset-preview">
+          <div class="swatch-main" style="background:${item.primary}"></div>
+          <div class="swatch-accent" style="background:${item.accent}"></div>
+        </div>
+        <span>${item.name}</span>
+      `;
+      btn.addEventListener("click", () => {
+        applyTheme(item.primary, item.accent, key, true);
+        updateControlsUI(item.primary, item.accent, key);
+      });
+      presetGrid.appendChild(btn);
+    });
+  }
+
+  // Bind Color Inputs
+  if (primaryPicker && primaryHex) {
+    primaryPicker.addEventListener("input", (e) => {
+      const color = e.target.value;
+      primaryHex.value = color.toUpperCase();
+      applyTheme(color, accentPicker.value, "custom", true);
+      updateControlsUI(color, accentPicker.value, "custom");
+    });
+    primaryHex.addEventListener("change", (e) => {
+      let color = e.target.value.trim();
+      if (!color.startsWith("#")) color = "#" + color;
+      if (/^#[0-9A-F]{6}$/i.test(color)) {
+        primaryPicker.value = color;
+        applyTheme(color, accentPicker.value, "custom", true);
+        updateControlsUI(color, accentPicker.value, "custom");
+      }
+    });
+  }
+
+  if (accentPicker && accentHex) {
+    accentPicker.addEventListener("input", (e) => {
+      const color = e.target.value;
+      accentHex.value = color.toUpperCase();
+      applyTheme(primaryPicker.value, color, "custom", true);
+      updateControlsUI(primaryPicker.value, color, "custom");
+    });
+    accentHex.addEventListener("change", (e) => {
+      let color = e.target.value.trim();
+      if (!color.startsWith("#")) color = "#" + color;
+      if (/^#[0-9A-F]{6}$/i.test(color)) {
+        accentPicker.value = color;
+        applyTheme(primaryPicker.value, color, "custom", true);
+        updateControlsUI(primaryPicker.value, color, "custom");
+      }
+    });
+  }
+
+  // Bind Swatch Dot Clicks
+  document.querySelectorAll(".theme-swatch-dot").forEach(dot => {
+    dot.addEventListener("click", () => {
+      const target = dot.dataset.target; // "primary" or "accent"
+      const color = dot.dataset.color;
+      if (target === "primary") {
+        primaryPicker.value = color;
+        primaryHex.value = color.toUpperCase();
+        applyTheme(color, accentPicker.value, "custom", true);
+        updateControlsUI(color, accentPicker.value, "custom");
+      } else if (target === "accent") {
+        accentPicker.value = color;
+        accentHex.value = color.toUpperCase();
+        applyTheme(primaryPicker.value, color, "custom", true);
+        updateControlsUI(primaryPicker.value, color, "custom");
+      }
+    });
+  });
+
+  // Reset Button
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      const def = THEME_PRESETS.cyan;
+      applyTheme(def.primary, def.accent, "cyan", true);
+      updateControlsUI(def.primary, def.accent, "cyan");
+    });
+  }
+
+  // Open/Close Modal
+  if (themeBtn) {
+    themeBtn.addEventListener("click", () => {
+      const curr = typeof loadThemeSettings === "function" ? loadThemeSettings() : null;
+      const p = (curr && curr.primary) || "#00f3ff";
+      const a = (curr && curr.accent) || "#ff003c";
+      const pr = (curr && curr.preset) || "cyan";
+      updateControlsUI(p, a, pr);
+      modal.classList.add("active");
+      modal.style.display = "flex";
+    });
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => {
+      modal.classList.remove("active");
+      modal.style.display = "none";
+    });
+  }
+
+  window.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.remove("active");
+      modal.style.display = "none";
+    }
+  });
+}
+

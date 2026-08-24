@@ -2038,52 +2038,98 @@ var DATA = {
     ]
   },
   cyberdecks: [
-    { id: 'poor_cyberdeck', name: 'Poor Quality Cyberdeck', cost: 100, slots: 5, desc: 'A cheap, stripped-down deck.', desc: "[CRB]" },
-    { id: 'standard_cyberdeck', name: 'Standard Quality Cyberdeck', cost: 500, slots: 7, desc: 'A standard deck used by most Netrunners.', desc: "[CRB]" },
-    { id: 'excellent_cyberdeck', name: 'Excellent Quality Cyberdeck', cost: 1000, slots: 9, desc: 'A top-of-the-line deck.', desc: "[CRB]" },
-    { id: 'kirama_advanced', name: 'Kirama Advanced Deck', cost: 1000, slots: 9, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'kirama_entry', name: 'Kirama Entry Deck', cost: 100, slots: 5, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'kirama_training', name: 'Kirama Training Deck', cost: 100, slots: 5, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'microtech_assault', name: 'Microtech Assault', cost: 1000, slots: 9, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'microtech_scout', name: 'Microtech Scout', cost: 500, slots: 7, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'microtech_warrior', name: 'Microtech Warrior', cost: 500, slots: 7, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'raven_hummingbird', name: 'Raven Microcybernetics Hummingbird', cost: 500, slots: 7, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'raven_kestrel2', name: 'Raven Microcybernetics Kestrel 2', cost: 1000, slots: 9, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'raven_phoenix', name: 'Raven Microcybernetics Phoenix', cost: 1000, slots: 9, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'sgi_kerberos', name: 'SGI Technologies Kerberos', cost: 1000, slots: 9, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'sgi_verdant_knight', name: 'SGI Technologies Verdant Knight', cost: 500, slots: 7, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'sgi_warlocks_book', name: 'SGI Technologies Warlock\'s Book', cost: 500, slots: 7, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'zetatech_kaliya', name: 'Zetatech Kaliya', cost: 1000, slots: 9, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'zetatech_micromate', name: 'Zetatech MicroMate', cost: 100, slots: 5, desc: 'Manufacturer Model', desc: "[CRB]" },
-    { id: 'zetatech_parraline6000', name: 'Zetatech Parraline 6000', cost: 500, slots: 7, desc: 'Manufacturer Model', desc: "[CRB]" }
+    { id: 'poor_cyberdeck', name: 'Poor Quality Cyberdeck', cost: 100, slots: 5, desc: '[CRB] A cheap, stripped-down cyberdeck with 5 Option Slots for Programs or Hardware.' },
+    { id: 'standard_cyberdeck', name: 'Standard Quality Cyberdeck', cost: 500, slots: 7, desc: '[CRB] A standard cyberdeck used by most Netrunners with 7 Option Slots for Programs or Hardware.' },
+    { id: 'excellent_cyberdeck', name: 'Excellent Quality Cyberdeck', cost: 1000, slots: 9, desc: '[CRB] A top-of-the-line cyberdeck with 9 Option Slots for Programs or Hardware.' },
+    
+    // Kirama Models
+    { id: 'kirama_training', name: 'Kirama Training Deck', cost: 20, slots: 5, desc: '[DLC] 5 Program-only slots. Must be within 2m of access point. Takes double brain damage.' },
+    { id: 'kirama_entry', name: 'Kirama Entry Deck', cost: 100, slots: 5, desc: '[DLC] 5 Program-only slots. Max 1 of each Class. Unsafe Jack Out treated as safe Jack Out.' },
+    { id: 'kirama_advanced', name: 'Kirama Advanced Deck', cost: 500, slots: 5, desc: '[DLC] 5 Option Slots for Programs or Hardware. Any unsafe Jack Out is considered instead to be a safe Jack Out.' },
+
+    // Microtech Models
+    { id: 'microtech_scout', name: 'Microtech Scout', cost: 500, slots: 5, desc: '[DLC] 5 Option Slots for Programs or Hardware. Free Pathfinder Interface Ability once immediately after Jacking In.' },
+    { id: 'microtech_assault', name: 'Microtech Assault', cost: 500, slots: 9, desc: '[DLC] 4 Program slots (Black ICE only) and 5 Hardware-only slots.' },
+    { id: 'microtech_warrior', name: 'Microtech Warrior', cost: 1000, slots: 7, desc: '[DLC] 7 Program-only slots. Immediately after Jacking In, activate an installed Armor Program without a NET Action.' },
+
+    // Raven Microcybernetics Models
+    { id: 'raven_hummingbird', name: 'Raven Microcyb Hummingbird', cost: 1000, slots: 2, desc: '[DLC] 2 Hardware-only slots. User gains +1 additional NET Action every turn while jacked in.' },
+    { id: 'raven_kestrel2', name: 'Raven Microcyb Kestrel 2', cost: 1000, slots: 7, desc: '[DLC] 7 Program-only slots. Activate up to 2 installed Speedy Gonzalvez Programs immediately after Jacking In without a NET Action.' },
+    { id: 'raven_phoenix', name: 'Raven Microcyb Phoenix', cost: 1000, slots: 6, desc: '[DLC] 6 Option Slots for Programs or Hardware. When safely Jacking Out, any destroyed programs are restored to full working order.' },
+
+    // SGI Technologies Models
+    { id: 'sgi_verdant_knight', name: 'SGI Technologies Verdant Knight', cost: 500, slots: 9, desc: '[DLC] 9 Program-only slots. Only Sword and Shield Programs may be installed.' },
+    { id: 'sgi_warlocks_book', name: 'SGI Technologies Warlock\'s Book', cost: 500, slots: 9, desc: '[DLC] 9 Option Slots for Programs or Hardware. No Attacker or Black ICE Programs may be installed.' },
+    { id: 'sgi_kerberos', name: 'SGI Technologies Kerberos', cost: 1000, slots: 11, desc: '[DLC] 6 Program slots (Hellhound Black ICE only) and 5 Hardware-only slots.' },
+
+    // Zetatech Models
+    { id: 'zetatech_micromate', name: 'Zetatech MicroMate', cost: 500, slots: 9, desc: '[DLC] 9 Option Slots for Programs or Hardware. No Defender Programs may be installed. Brain damage taken is doubled.' },
+    { id: 'zetatech_parraline6000', name: 'Zetatech Parraline 6000', cost: 500, slots: 9, desc: '[DLC] 3 Program-only slots and 6 Hardware-only slots.' },
+    { id: 'zetatech_kaliya', name: 'Zetatech Kaliya', cost: 500, slots: 9, desc: '[DLC] 3 Program slots (Flak only) and 6 Option Slots. No Defenders other than Flak and no Black ICE other than Asp may be installed.' }
   ],
   programs: [
-    { id: 'armor_prog', name: 'Armor', type: 'Defender', cost: 50, slots: 1, desc: 'Lowers all meat damage taken by 4. Brain damage is unaffected.', desc: "[CRB]" },
-    { id: 'flak_prog', name: 'Flak', type: 'Defender', cost: 50, slots: 1, desc: 'Reduces attacker\'s ATK check by 4.', desc: "[CRB]" },
-    { id: 'shield_prog', name: 'Shield', type: 'Defender', cost: 50, slots: 1, desc: 'Stops the first non-Black ICE attack that hits you.', desc: "[CRB]" },
-    { id: 'banhammer_prog', name: 'Banhammer', type: 'Attacker', cost: 50, slots: 1, atk: 1, desc: 'Deals 1d6 Brain Damage to a Netrunner. Can\'t target Black ICE.', desc: "[CRB]" },
-    { id: 'sword_prog', name: 'Sword', type: 'Attacker', cost: 50, slots: 1, atk: 1, desc: 'Deals 2d6 meat damage. Lowers target\'s max HP by 1.', desc: "[CRB]" },
-    { id: 'vrizzbol_prog', name: 'Vrizzbol', type: 'Attacker', cost: 50, slots: 1, atk: 1, desc: 'Deals 1d6 meat damage. Lowers target\'s ATK check by 1 for 1 hour.', desc: "[CRB]" },
-    { id: 'see_ya_prog', name: 'See-Ya', type: 'Booster', cost: 50, slots: 1, desc: '+2 to Pathfinder Checks.', desc: "[CRB]" },
-    { id: 'speedy_gonzalvez_prog', name: 'Speedy Gonzalvez', type: 'Booster', cost: 50, slots: 1, desc: '+2 to Speed Checks.', desc: "[CRB]" },
-    { id: 'worm_prog', name: 'Worm', type: 'Booster', cost: 50, slots: 1, desc: '+2 to Backdoor Checks.', desc: "[CRB]" },
-    { id: 'hellhound_ice', name: 'Hellhound', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 20, desc: 'Anti-Personnel. 2d6 brain damage. On successful attack, target\'s Cyberdeck catches fire.', desc: "[CRB]" },
-    { id: 'kraken_ice', name: 'Kraken', type: 'Black ICE', cost: 1000, slots: 2, atk: 8, def: 6, rez: 30, desc: 'Anti-Personnel. 3d6 brain damage.', desc: "[CRB]" },
-    { id: 'liche_ice', name: 'Liche', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 15, desc: 'Anti-Personnel. 1d6 brain damage. Lowers Netrunner INT/REF/DEX.', desc: "[CRB]" },
-    { id: 'poison_flatline_ice', name: 'Poison Flatline', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 15, desc: 'Anti-Personnel. 2d6 brain damage. Destroys 1 non-Black ICE program.', desc: "[CRB]" },
-    { id: 'raven_ice', name: 'Raven', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 15, desc: 'Anti-Personnel. 1d6 brain damage. Unjacks Netrunner.', desc: "[CRB]" },
-    { id: 'scorpion_ice', name: 'Scorpion', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 15, desc: 'Anti-Personnel. 1d6 brain damage. Lowers movement speed.', desc: "[CRB]" },
-    { id: 'skunk_ice', name: 'Skunk', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 15, desc: 'Anti-Personnel. 1d6 brain damage. Target takes -2 to all checks.', desc: "[CRB]" },
-    { id: 'asp_ice', name: 'Asp', type: 'Black ICE', cost: 100, slots: 1, atk: 4, def: 4, rez: 15, desc: 'Anti-Program. Destroy 1 installed Defender program.', desc: "[CRB]" },
-    { id: 'giant_ice', name: 'Giant', type: 'Black ICE', cost: 1000, slots: 2, atk: 8, def: 6, rez: 30, desc: 'Anti-Program. Destroy 2 installed non-Black ICE programs.', desc: "[CRB]" },
-    { id: 'killer_ice', name: 'Killer', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 15, desc: 'Anti-Program. Destroy 1 installed non-Black ICE program.', desc: "[CRB]" },
-    { id: 'sabertooth_ice', name: 'Sabertooth', type: 'Black ICE', cost: 500, slots: 2, atk: 6, def: 6, rez: 20, desc: 'Anti-Program. Destroy 1 installed non-Black ICE program.', desc: "[CRB]" },
-    { id: 'dragon_ice', name: 'Dragon', type: 'Black ICE', cost: 1000, slots: 2, atk: 6, def: 6, rez: 30, desc: 'Anti-Demon/Black ICE. Deals 3d6 Damage to Demons/Black ICE.', desc: "[CRB]" }
+    // Boosters
+    { id: 'eraser_prog', name: 'Eraser', type: 'Booster', cost: 20, slots: 1, desc: '[CRB] Increases all Cloak Checks by +2 as long as this Program remains Rezzed.' },
+    { id: 'see_ya_prog', name: 'See-Ya', type: 'Booster', cost: 20, slots: 1, desc: '[CRB] Increases all Pathfinder Checks by +2 as long as this Program remains Rezzed.' },
+    { id: 'speedy_gonzalvez_prog', name: 'Speedy Gonzalvez', type: 'Booster', cost: 100, slots: 1, desc: '[CRB] Increases your Speed by +2 as long as this Program remains Rezzed.' },
+    { id: 'targeting_system_prog', name: 'Targeting System', type: 'Booster', cost: 50, slots: 1, desc: '[CRB] Adds +1 to all Program Attack Checks as long as this Program remains Rezzed.' },
+    { id: 'worm_prog', name: 'Worm', type: 'Booster', cost: 50, slots: 1, desc: '[CRB] Increases all Backdoor Checks by +2 as long as this Program remains Rezzed.' },
+
+    // Defenders
+    { id: 'armor_prog', name: 'Armor', type: 'Defender', cost: 50, slots: 1, desc: '[CRB] Lowers all brain damage received by 4 while Rezzed. Max 1 copy running at a time; 1 use per Netrun.' },
+    { id: 'flak_prog', name: 'Flak', type: 'Defender', cost: 50, slots: 1, desc: '[CRB] Reduces ATK of all Non-Black ICE Attacker Programs run against you to 0 while Rezzed. Max 1 copy running at a time; 1 use per Netrun.' },
+    { id: 'shield_prog', name: 'Shield', type: 'Defender', cost: 20, slots: 1, desc: '[CRB] Stops first successful Non-Black ICE Program Effect from dealing brain damage, then Derezzes itself. Max 1 copy running at a time; 1 use per Netrun.' },
+
+    // Attackers
+    { id: 'banhammer_prog', name: 'Banhammer', type: 'Attacker', cost: 50, slots: 1, atk: 1, desc: '[CRB] Anti-Program. Deals 3d6 REZ to a Non-Black ICE Program, or 2d6 REZ to a Black ICE Program.' },
+    { id: 'deckkrash_prog', name: 'DeckKRASH', type: 'Attacker', cost: 100, slots: 1, atk: 0, desc: '[CRB] Anti-Personnel. Enemy Netrunner is forcibly and unsafely Jacked Out, taking damage from all encountered Black ICE.' },
+    { id: 'hellbolt_prog', name: 'Hellbolt', type: 'Attacker', cost: 100, slots: 1, atk: 2, desc: '[CRB] Anti-Personnel. Deals 2d6 brain damage. Unless insulated, Cyberdeck catches fire (2 HP damage/turn).' },
+    { id: 'nervescrub_prog', name: 'Nervescrub', type: 'Attacker', cost: 100, slots: 1, atk: 0, desc: '[CRB] Anti-Personnel. Lowers target Netrunner\'s INT, REF, and DEX by 1d6 for 1 hour (min 1).' },
+    { id: 'poison_flatline_prog', name: 'Poison Flatline', type: 'Attacker', cost: 100, slots: 1, atk: 0, desc: '[CRB] Anti-Personnel. Destroys 1 random Non-Black ICE Program installed on target Netrunner\'s deck.' },
+    { id: 'superglue_prog', name: 'Superglue', type: 'Attacker', cost: 100, slots: 1, atk: 2, desc: '[CRB] Anti-Personnel. Target Netrunner cannot progress deeper or Jack Out safely for 1d6 Rounds. 1 use per Netrun.' },
+    { id: 'sword_prog', name: 'Sword', type: 'Attacker', cost: 50, slots: 1, atk: 1, desc: '[CRB] Anti-Program. Deals 3d6 REZ to a Black ICE Program, or 2d6 REZ to a Non-Black ICE Program.' },
+    { id: 'vrizzbolt_prog', name: 'Vrizzbolt', type: 'Attacker', cost: 50, slots: 1, atk: 1, desc: '[CRB] Anti-Personnel. Deals 1d6 brain damage and reduces target Netrunner\'s NET Actions on their next turn by 1 (min 2).' },
+
+    // Black ICE (Anti-Personnel)
+    { id: 'asp_ice', name: 'Asp', type: 'Black ICE', cost: 100, slots: 1, per: 4, spd: 6, atk: 2, def: 2, rez: 15, desc: '[CRB] Anti-Personnel Black ICE. Destroys 1 random Program installed on enemy Netrunner\'s deck.' },
+    { id: 'giant_ice', name: 'Giant', type: 'Black ICE', cost: 1000, slots: 2, per: 2, spd: 2, atk: 8, def: 4, rez: 25, desc: '[CRB] Anti-Personnel Black ICE. Deals 3d6 brain damage and forcibly, unsafely Jacks Out target Netrunner.' },
+    { id: 'hellhound_ice', name: 'Hellhound', type: 'Black ICE', cost: 500, slots: 2, per: 6, spd: 6, atk: 6, def: 2, rez: 20, desc: '[CRB] Anti-Personnel Black ICE. Deals 2d6 brain damage and sets target\'s Cyberdeck on fire (2 HP damage/turn).' },
+    { id: 'kraken_ice', name: 'Kraken', type: 'Black ICE', cost: 1000, slots: 2, per: 6, spd: 2, atk: 8, def: 4, rez: 30, desc: '[CRB] Anti-Personnel Black ICE. Deals 3d6 brain damage. Prevents target from progressing deeper or Jacking Out safely for 1 turn.' },
+    { id: 'liche_ice', name: 'Liche', type: 'Black ICE', cost: 500, slots: 2, per: 8, spd: 2, atk: 6, def: 2, rez: 25, desc: '[CRB] Anti-Personnel Black ICE. Lowers target Netrunner\'s INT, REF, and DEX by 1d6 for 1 hour (min 1).' },
+    { id: 'raven_ice', name: 'Raven', type: 'Black ICE', cost: 50, slots: 1, per: 6, spd: 4, atk: 4, def: 2, rez: 15, desc: '[CRB] Anti-Personnel Black ICE. Derezzes 1 random Rezzed Defender Program, then deals 1d6 brain damage.' },
+    { id: 'scorpion_ice', name: 'Scorpion', type: 'Black ICE', cost: 100, slots: 1, per: 2, spd: 6, atk: 2, def: 2, rez: 15, desc: '[CRB] Anti-Personnel Black ICE. Lowers target Netrunner\'s MOVE by 1d6 for 1 hour (min 1).' },
+    { id: 'skunk_ice', name: 'Skunk', type: 'Black ICE', cost: 500, slots: 2, per: 2, spd: 4, atk: 4, def: 2, rez: 10, desc: '[CRB] Anti-Personnel Black ICE. Target makes all Slide Checks at -2 until Skunk is Derezzed.' },
+    { id: 'wisp_ice', name: 'Wisp', type: 'Black ICE', cost: 50, slots: 1, per: 4, spd: 4, atk: 4, def: 2, rez: 15, desc: '[CRB] Anti-Personnel Black ICE. Deals 1d6 brain damage and reduces target\'s NET Actions on next turn by 1 (min 2).' },
+
+    // Black ICE (Anti-Program)
+    { id: 'dragon_ice', name: 'Dragon', type: 'Black ICE', cost: 1000, slots: 2, per: 6, spd: 4, atk: 6, def: 6, rez: 30, desc: '[CRB] Anti-Program Black ICE. Deals 6d6 damage to a Program. If damage Derezzes it, it is Destroyed instead.' },
+    { id: 'killer_ice', name: 'Killer', type: 'Black ICE', cost: 500, slots: 2, per: 4, spd: 8, atk: 6, def: 2, rez: 20, desc: '[CRB] Anti-Program Black ICE. Deals 4d6 damage to a Program. If damage Derezzes it, it is Destroyed instead.' },
+    { id: 'sabertooth_ice', name: 'Sabertooth', type: 'Black ICE', cost: 1000, slots: 2, per: 8, spd: 6, atk: 6, def: 2, rez: 25, desc: '[CRB] Anti-Program Black ICE. Deals 6d6 damage to a Program. If damage Derezzes it, it is Destroyed instead.' },
+
+    // Demons
+    { id: 'imp_demon', name: 'Imp', type: 'Demon', cost: 500, slots: 2, per: 4, spd: 4, atk: 4, def: 4, rez: 10, actions: 2, desc: '[CRB] Basic System Demon. 2 NET Actions/turn. Controls system architecture nodes and defenses.' },
+    { id: 'efreet_demon', name: 'Efreet', type: 'Demon', cost: 1000, slots: 2, per: 6, spd: 6, atk: 6, def: 6, rez: 20, actions: 3, desc: '[CRB] Advanced System Demon. 3 NET Actions/turn. Heavy security control and counter-hacking.' },
+    { id: 'succubus_demon', name: 'Succubus', type: 'Demon', cost: 1000, slots: 2, per: 6, spd: 6, atk: 6, def: 6, rez: 20, actions: 3, desc: '[CRB] Advanced System Demon. 3 NET Actions/turn. Specialized architecture defense and node control.' }
   ],
   hardware: [
-    { id: "backup_drive", name: "Backup Drive", cost: 100, slots: 1, desc: "[CRB] Store one destroyed program for later recovery." },
-    { id: "insulated_wiring", name: "Insulated Wiring", cost: 100, slots: 1, desc: "[CRB] Protects deck from catching fire." },
-    { id: "range_upgrade", name: "Range Upgrade", cost: 500, slots: 1, desc: "[CRB] Increases Jack In range to 8m/yds." }
+    { id: 'backup_drive', name: 'Backup Drive', cost: 100, slots: 2, desc: '[CRB] Saves destroyed non-Black ICE programs. Netrunner can reinstall saved programs as a Meat Action. Takes 2 Hardware Option Slots.' },
+    { id: 'dna_lock', name: 'DNA Lock', cost: 100, slots: 2, desc: '[CRB] Biometric lock. Locked deck requires biometric key or DV17 Electronics/Security Tech Check. Takes 2 Hardware Option Slots.' },
+    { id: 'hardened_circuitry', name: 'Hardened Circuitry', cost: 100, slots: 1, desc: '[CRB] Cyberdeck cannot be rendered inoperable or destroyed by EMP effects or Non-Black ICE Program effects.' },
+    { id: 'insulated_wiring', name: 'Insulated Wiring', cost: 100, slots: 1, desc: '[CRB] Cyberdeck cannot catch fire or cause user\'s clothing to catch fire from Program effects.' },
+    { id: 'krash_barrier', name: 'KRASH Barrier', cost: 100, slots: 2, desc: '[CRB] Cyberdeck is immune to Program Effects that force the Netrunner to Jack Out. Takes 2 Hardware Option Slots.' },
+    { id: 'range_upgrade', name: 'Range Upgrade', cost: 100, slots: 1, desc: '[CRB] Connect to an access point from up to 8m away.' },
+
+    // Midnight Upload Hardware
+    { id: 'aerie', name: 'Aerie', cost: 500, slots: 2, desc: '[DLC] Installed Raven Black ICE destroys random Defender Program on attack hit instead of derezzing. Takes 2 Slots.' },
+    { id: 'bushido_accelerator', name: 'Bushido Accelerator', cost: 500, slots: 3, desc: '[DLC] Increases Speed (SPD) of all Killer Black ICE on deck by +2. Takes 3 Hardware Option Slots.' },
+    { id: 'combat_recorder', name: 'Combat Recorder', cost: 500, slots: 1, desc: '[DLC] Auto-records when another Netrunner fails a Death Save in same NET Architecture. Recordings worth 50eb.' },
+    { id: 'defense_sequencer', name: 'Defense Sequencer', cost: 500, slots: 2, desc: '[DLC] Auto-rezzes unused Armor Program when active Armor is derezzed/destroyed without NET Action. Takes 2 Slots.' },
+    { id: 'feline_instinct', name: 'Feline Instinct', cost: 500, slots: 2, desc: '[DLC] When Sabertooth Black ICE destroys a program, its damage increases by +1d6 until Jack Out. Takes 2 Slots.' },
+    { id: 'hangry_hangry_dragon', name: 'Hangry Hangry Dragon', cost: 500, slots: 1, desc: '[DLC] When Dragon Black ICE destroys a program, its REZ is restored to maximum.' },
+    { id: 'perfume_shoppe', name: 'Perfume Shoppe', cost: 500, slots: 2, desc: '[DLC] Skunk Black ICE Programs take up 1 Program Slot in deck instead of 2. Takes 2 Hardware Option Slots.' },
+    { id: 'smithy', name: 'Smithy', cost: 500, slots: 1, desc: '[DLC] As a Meat Action, convert all installed Sword Programs into Banhammer Programs and vice versa.' },
+    { id: 'snaketrap', name: 'Snaketrap', cost: 500, slots: 1, desc: '[DLC] Prevents first Black ICE or Program effect during a netrun that would destroy a Program at random.' },
+    { id: 'swamp_mist', name: 'Swamp Mist', cost: 500, slots: 2, desc: '[DLC] Upgrades Wisp Black ICE into enhanced format. Takes 2 Hardware Option Slots.' }
   ]
 };
 
