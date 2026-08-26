@@ -199,6 +199,25 @@ textarea.item-desc-input, textarea.cyber-option-desc-input, textarea.program-des
   body.printing * { text-shadow: none !important; box-shadow: none !important; }
   body.printing .scanline-overlay { display: none !important; }
   
+  .exec-row.selected,
+  body.printing .exec-row.selected {
+    background-color: #b3f0ff !important;
+    color: #000000 !important;
+    font-weight: bold !important;
+    outline: 2px solid #0088cc !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .exec-row.selected td:first-child::after,
+  body.printing .exec-row.selected td:first-child::after {
+    content: " ✔ (SELECTED)";
+    font-weight: bold;
+    color: #006699 !important;
+    font-size: 0.75rem;
+    margin-left: 4px;
+  }
+  
   body.printing .tabs-nav,
   body.printing .header-actions,
   body.printing .modal-overlay,
@@ -368,7 +387,7 @@ textarea.item-desc-input, textarea.cyber-option-desc-input, textarea.program-des
   border: 1px solid var(--border);
   border-radius: 8px;
   margin-bottom: 1rem;
-  box-shadow: inset 0 0 15px rgba(0, 243, 255, 0.05);
+  box-shadow: inset 0 0 15px var(--btn-bg);
 }
 
 .gm-header-actions {
@@ -417,7 +436,7 @@ textarea.item-desc-input, textarea.cyber-option-desc-input, textarea.program-des
 
 .gm-sheet-card:hover {
   border-color: var(--primary);
-  box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+  box-shadow: var(--glow-primary);
 }
 
 .gm-card-header {
@@ -690,7 +709,7 @@ textarea.item-desc-input, textarea.cyber-option-desc-input, textarea.program-des
 }
 
 .gm-roll-result-banner {
-  background: rgba(0, 243, 255, 0.1);
+  background: var(--btn-bg);
   border: 1px solid var(--primary);
   padding: 0.75rem;
   border-radius: 6px;
@@ -698,4 +717,125 @@ textarea.item-desc-input, textarea.cyber-option-desc-input, textarea.program-des
   text-align: center;
   animation: fadeIn 0.3s ease;
 }
+
+/* THEME & COLOR SCHEME CUSTOMIZER STYLES (v5.1.0) */
+.theme-preset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+.theme-preset-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.3rem;
+  background: var(--stat-row-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+  transition: all 0.2s ease;
+}
+.theme-preset-btn:hover, .theme-preset-btn.active {
+  border-color: var(--primary);
+  background: var(--btn-bg);
+  box-shadow: var(--glow-primary);
+  transform: translateY(-2px);
+}
+.theme-preset-preview {
+  display: flex;
+  width: 40px;
+  height: 18px;
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.theme-preset-preview .swatch-main {
+  width: 65%;
+  height: 100%;
+}
+.theme-preset-preview .swatch-accent {
+  width: 35%;
+  height: 100%;
+}
+.theme-custom-pickers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  padding: 0.8rem;
+  background: var(--stat-row-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+@media (max-width: 480px) {
+  .theme-custom-pickers {
+    grid-template-columns: 1fr;
+  }
+}
+.theme-picker-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.theme-picker-group label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.theme-color-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.theme-color-input-row input[type="color"] {
+  width: 36px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  background: transparent;
+}
+.theme-color-input-row input[type="text"] {
+  flex: 1;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+.theme-swatches {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  margin-top: 0.2rem;
+}
+.theme-swatch-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.4);
+  transition: transform 0.15s, border-color 0.15s;
+}
+.theme-swatch-dot:hover {
+  transform: scale(1.25);
+  border-color: #fff;
+}
+.theme-preview-card {
+  padding: 0.75rem;
+  border-radius: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--primary);
+  box-shadow: var(--glow-primary);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 

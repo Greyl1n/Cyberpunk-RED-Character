@@ -1,10 +1,20 @@
-# Cyberpunk RED Character Manager & Game Master Command Center (v5.1.2)
+# Cyberpunk RED Character Manager & Game Master Command Center (v5.1.3)
 
 > **A fully self-contained, offline-first web application for Cyberpunk RED tabletop RPG players and Game Masters.**
 
-![Version](https://img.shields.io/badge/version-5.1.2-ff0055.svg)
+![Version](https://img.shields.io/badge/version-5.1.3-ff0055.svg)
 ![License](https://img.shields.io/badge/license-CC--BY--NC--4.0-blue.svg)
 ![Cyberpunk RED](https://img.shields.io/badge/game-Cyberpunk%20RED-00f3ff.svg)
+
+---
+
+## 🦾 What's New in Version 5.1.3?
+
+Version **5.1.3** revisits Cyberware installation logic: enforcing parent cyberware prerequisites for option items and introducing a dedicated uninstalled cyberware inventory:
+
+- **🔒 Parent Cyberware Requirement Enforcement**: Cyberware options (e.g. *Teleoptics*, *Popup Grenade Launcher*, *Subdermal Pocket*, *Interface Plugs*) cannot be installed without an installed foundation parent cyberware (*Cybereye*, *Cyberarm*, *Cyberleg*, *Cyberaudio Suite*, *Neural Link*). Installation checks verify parent presence and available option slots.
+- **📦 Uninstalled Cyberware Inventory Box**: Added a new UI box `📦 Uninstalled Cyberware Inventory` to manage cyberware owned by the character but not currently installed, equipped with **`⚡ Install`**, **`💰 Sell`**, and **`🗑️ Delete`** controls.
+- **⚙️ Interactive Install & Uninstall Workflows**: Uninstalling installed cyberware or option slots gives players the choice to move items to uninstalled inventory or sell them for Eurobucks.
 
 ---
 

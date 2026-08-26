@@ -199,6 +199,25 @@ textarea.item-desc-input, textarea.cyber-option-desc-input, textarea.program-des
   body.printing * { text-shadow: none !important; box-shadow: none !important; }
   body.printing .scanline-overlay { display: none !important; }
   
+  .exec-row.selected,
+  body.printing .exec-row.selected {
+    background-color: #b3f0ff !important;
+    color: #000000 !important;
+    font-weight: bold !important;
+    outline: 2px solid #0088cc !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .exec-row.selected td:first-child::after,
+  body.printing .exec-row.selected td:first-child::after {
+    content: " ✔ (SELECTED)";
+    font-weight: bold;
+    color: #006699 !important;
+    font-size: 0.75rem;
+    margin-left: 4px;
+  }
+  
   body.printing .tabs-nav,
   body.printing .header-actions,
   body.printing .modal-overlay,

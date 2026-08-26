@@ -58,7 +58,7 @@
 <div class="scanline-overlay"></div>
 <input type="checkbox" id="dismissWelcome" style="display:none">
 <header>
-<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px var(--accent))">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v5.1.2</span></div></div>
+<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px var(--accent))">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v5.1.3</span></div></div>
 <div class="header-actions">
 <button id="themeBtn" class="btn-action" title="Color Scheme & Theme Settings">&#127912; Theme</button>
 <button id="charactersBtn" class="btn-action">&#128194; Characters</button>
@@ -85,8 +85,9 @@
 <div id="welcomeOverlay" class="welcome-overlay">
 <div class="welcome-card" style="max-width:600px">
 <h1 class="welcome-title">&#9881; Cyberpunk RED Generator</h1>
-<p class="welcome-subtitle">Interactive Character &amp; GM Command Center — Version 5.1.2</p>
+<p class="welcome-subtitle">Interactive Character &amp; GM Command Center — Version 5.1.3</p>
 <div class="welcome-tabs" style="display:flex;flex-direction:column;gap:0.6rem;margin:1rem 0">
+<div class="welcome-tab"><strong>🦾 Cyberware Parent Requirements &amp; Inventory (v5.1.3)</strong> — Enforces parent cyberware prerequisites for options (eyes, arms, legs, neural link) and introduces a 📦 Uninstalled Cyberware Inventory box to store uninstalled items.</div>
 <div class="welcome-tab"><strong>💻 Cyberdeck &amp; Program Audit (v5.1.2)</strong> — Fixed description overwrites, restored full rulebook text, expanded 31 Programs/Black ICE/Demons &amp; 16 Hardware options, and verified exact slot calculations.</div>
 <div class="welcome-tab"><strong>🎲 Rules-Compliant Random Budget (v5.1.1)</strong> — Random character generator equips weapons (&le;500eb), armor, cyberware, and gear out of a 2550 eb creation budget. Netrunners automatically receive the cheapest Cyberdeck + software programs.</div>
 <div class="welcome-tab"><strong>🎨 Custom Color Schemes (v5.1.0)</strong> — Personalise your UI with 8 preset color themes (Cyber Cyan, Arasaka Red, Netrunner Yellow, Matrix Green, etc.) or custom Main &amp; Accent color pickers, saved automatically across sessions.</div>
@@ -238,9 +239,22 @@
 <div class="flex-header"><h2 class="section-title">Cyberware</h2><button id="add_cyberware_btn" class="btn-action">+ Add Cyberware</button></div>
 <div class="table-responsive">
 <table class="premium-table">
-<thead><tr><th>Cyberware</th><th>Type</th><th>HC</th><th>Cost</th><th>Bonuses</th><th>Description</th><th></th></tr></thead>
+<thead><tr><th>Cyberware (Installed)</th><th>Type</th><th>HC</th><th>Cost</th><th>Bonuses</th><th>Description</th><th></th></tr></thead>
 <tbody id="cyberware_body"></tbody>
 </table>
+</div>
+<div class="mt-1" style="border-top:1px solid var(--border);padding-top:0.75rem;margin-top:1rem">
+  <div class="flex-header" style="margin-bottom:0.4rem">
+    <h3 style="font-size:0.95rem;margin:0;color:var(--primary);font-family:'Orbitron',sans-serif">📦 Uninstalled Cyberware Inventory</h3>
+    <span id="uninstalled_cw_count" class="gm-badge" style="font-size:0.75rem">0 Items</span>
+  </div>
+  <p style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:0.5rem">Cyberware owned by character but not currently installed in the body or parent cyberware.</p>
+  <div class="table-responsive">
+    <table class="premium-table" style="font-size:0.85rem">
+      <thead><tr><th>Item</th><th>Type</th><th>Cost</th><th>Description</th><th>Actions</th></tr></thead>
+      <tbody id="uninstalled_cyberware_body"></tbody>
+    </table>
+  </div>
 </div>
 </div>
 <div class="section-card">
@@ -343,13 +357,16 @@
 </section>
 <section id="tab-about" class="tab-panel">
 <div class="section-card">
-<h2 class="section-title">About Cyberpunk RED Generator (v5.1.2)</h2>
+<h2 class="section-title">About Cyberpunk RED Generator (v5.1.3)</h2>
 <p style="margin-bottom:0.8rem;line-height:1.7">A fully self-contained, highly-optimised interactive character manager and Game Master command center for <strong>Cyberpunk RED</strong> by R. Talsorian Games. Create, customise, save, run GM encounters, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing.</p>
-<p style="margin-bottom:0.8rem;line-height:1.7"><strong>Welcome to Version 5.1.2!</strong> This update performs a complete audit of all Cyberdecks, Programs, Black ICE, Demons, and Cyberdeck Hardware in accordance with the official Cyberpunk RED Core Rulebook (CRB) and <em>Midnight with the Upload</em> DLC: fixing description overwrites, restoring full rulebook text, expanding to 31 Programs/ICE/Demons and 16 Hardware items, and enforcing accurate slot limits.</p>
-<h3 style="margin:1rem 0 0.4rem">v5.1.2 Key Features</h3>
+<p style="margin-bottom:0.8rem;line-height:1.7"><strong>Welcome to Version 5.1.3!</strong> This update revisits Cyberware installation logic: enforcing parent cyberware prerequisites for option items (e.g. Cybereyes, Cyberarms, Cyberlegs, Cyberaudio Suites, Neural Links), preventing orphaned option installations, and adding a <strong>📦 Uninstalled Cyberware Inventory</strong> box to manage owned uninstalled cyberware items.</p>
+<h3 style="margin:1rem 0 0.4rem">v5.1.3 Key Features</h3>
 <ul style="line-height:1.8;padding-left:1.2rem">
+<li><strong>🦾 Parent Cyberware Requirement Enforcement</strong>: Cyberware options (<em>Teleoptics</em>, <em>Popup Grenade Launcher</em>, <em>Subdermal Pocket</em>, <em>Interface Plugs</em>, etc.) strictly require their respective parent cyberware (*Cybereye*, *Cyberarm*, *Neural Link*, etc.) to be installed beforehand.</li>
+<li><strong>📦 Uninstalled Cyberware Inventory Box</strong>: Dedicated UI container to store uninstalled cyberware owned by the character with <strong>⚡ Install</strong>, <strong>💰 Sell</strong>, and <strong>🗑️ Delete</strong> controls.</li>
+<li><strong>⚙️ Interactive Install &amp; Uninstall Workflows</strong>: Easily move installed items to uninstalled inventory when unequipped or install directly from inventory into open slots.</li>
 <li><strong>💻 Complete Cyberdeck, Program &amp; Hardware Audit</strong>: Resolved duplicate description property keys, restoring full official rulebook descriptions with source citations ([CRB], [DLC]).</li>
-<li><strong>🧩 Expanded Programs, Black ICE, Demons &amp; Hardware</strong>: Added missing programs (<em>Eraser</em>, <em>DeckKRASH</em>, <em>Hellbolt</em>, <em>Nervescrub</em>, <em>Poison Flatline</em>, <em>Superglue</em>, <em>Wisp</em>, <em>Imp</em>, <em>Efreet</em>, <em>Succubus</em>) and hardware options (<em>DNA Lock</em>, <em>Hardened Circuitry</em>, <em>KRASH Barrier</em>, <em>Defense Sequencer</em>, <em>Aerie</em>, <em>Bushido Accelerator</em>, etc.).</li>
+<li><strong>🧩 Expanded Programs, Black ICE, Demons &amp; Hardware</strong>: 31 Programs/Black ICE/Demons and 16 Hardware options.</li>
 <li><strong>⚡ Accurate Slot Verification &amp; Calculations</strong>: Slot capacity for Cyberdecks (5, 7, 9 slots), Programs (1 or 2 slots), and Hardware (1, 2, or 3 slots) is enforced strictly during installation and rendering.</li>
 <li><strong>🎲 Rules-Compliant 2550 eb Starting Budget</strong>: Random character generator purchases weapons (&le;500eb limit), body/head armor, cyberware, and essential gear from 2550 eb starting funds, depositing unspent cash in Eurobucks.</li>
 <li><strong>💻 Netrunner Starting Cyberdeck &amp; Software</strong>: Generated Netrunners automatically receive the cheapest Cyberdeck (100 eb) and 1–2 software programs.</li>

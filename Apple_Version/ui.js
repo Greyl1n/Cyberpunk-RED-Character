@@ -14,10 +14,12 @@ let state = {
   weapons: [],
   armor: [],
   cyberware: [],
+  uninstalledCyberware: [],
   gear: [],
   vehicles: [],
   ammo: {},
   roleSubRanks: {},
+  execSelections: {},
   lifepath: { friends: [], enemies: [], lovers: [] },
   roleLifepath: {},
   currentTab: "tab-character"
@@ -340,10 +342,50 @@ function updateRoleInfo() {
       '</div>' +
       '<div style="text-align:right; margin-top:4px; font-size:0.75rem; color:' + ((veh + upg) === mRank ? 'var(--accent)' : 'var(--text)') + ';">Total Allocated: ' + (veh + upg) + ' / ' + mRank + '</div>' +
       '</div>';
-  }
+    }
   }
   info.innerHTML = html;
   attachRoleSubSkillEvents();
+  attachExecTeamEvents();
+}
+
+function attachExecTeamEvents() {
+  let roleInfo = document.getElementById("role_info");
+  if (!roleInfo) return;
+
+  if (!state.execSelections) state.execSelections = {};
+
+  let tables = roleInfo.querySelectorAll("table");
+  tables.forEach((table, tIdx) => {
+    let rows = table.querySelectorAll(".exec-row");
+    rows.forEach((row, rIdx) => {
+      let key = tIdx + "_" + rIdx;
+
+      if (state.execSelections[key]) {
+        row.classList.add("selected");
+      } else {
+        row.classList.remove("selected");
+      }
+
+      row.onclick = function(e) {
+        let isAlreadySelected = row.classList.contains("selected");
+
+        rows.forEach((r, idx) => {
+          r.classList.remove("selected");
+          delete state.execSelections[tIdx + "_" + idx];
+        });
+
+        if (!isAlreadySelected) {
+          row.classList.add("selected");
+          state.execSelections[key] = true;
+        }
+
+        if (typeof autoSaveCharacter === "function") {
+          autoSaveCharacter();
+        }
+      };
+    });
+  });
 }
 
 // ============================================================
@@ -898,21 +940,354 @@ function renderArmor() {
  */
 function renderCyberware() {
   let tbody = document.getElementById("cyberware_body");
-  tbody.innerHTML = "";
-  let frag = document.createDocumentFragment();
-  for (let i = 0; i < state.cyberware.length; i++) {
-    let c = state.cyberware[i];
-    if (c.slots) {
-      renderCyberwareRow(frag, c, i, true);
-      for (let s = 0; s < c.slots; s++) {
-        renderCyberwareSlot(frag, c, i.toString(), s, 0);
+  if (tbody) {
+    tbody.innerHTML = "";
+    let frag = document.createDocumentFragment();
+    for (let i = 0; i < state.cyberware.length; i++) {
+      let c = state.cyberware[i];
+      if (c.slots) {
+        renderCyberwareRow(frag, c, i, true);
+        for (let s = 0; s < c.slots; s++) {
+          renderCyberwareSlot(frag, c, i.toString(), s, 0);
+        }
+      } else {
+        renderCyberwareRow(frag, c, i, false);
       }
-    } else {
-      renderCyberwareRow(frag, c, i, false);
+    }
+    tbody.appendChild(frag);
+    attachCyberwareEvents();
+  }
+  renderUninstalledCyberware();
+}
+
+function getFriendlyParentName(parentType) {
+  if (!parentType) return 'Parent Cyberware';
+  const names = {
+    'cybereye': 'Cybereye',
+    'cyberarm': 'Cyberarm',
+    'cyberleg': 'Cyberleg',
+    'cyberaudio': 'Cyberaudio Suite',
+    'neural_link': 'Neural Link',
+    'bc_modular_finger_hand': 'Modular Finger Cyberhand'
+  };
+  return names[parentType.toLowerCase()] || parentType;
+}
+
+function getParentTypeForFoundationItem(item) {
+  if (!item) return null;
+  if (item.id === 'neural_link') return 'neural_link';
+  if (item.id === 'cybereye' || item.id === 'bc_sponsored_cybereye' || item.id === 'monovision' || item.id === 'bug_eye') return 'cybereye';
+  if (item.id === 'cyberarm' || item.id === 'bc_neo_soviet_arm') return 'cyberarm';
+  if (item.id === 'cyberleg' || item.id === 'skydrivers' || item.id === 'romanova_cyberlegs') return 'cyberleg';
+  if (item.id === 'cyberaudio' || item.id === 'bc_discount_audio') return 'cyberaudio';
+  if (item.id === 'bc_modular_finger_hand') return 'bc_modular_finger_hand';
+  if (item.parentType) return item.parentType;
+  return null;
+}
+
+function checkParentCyberwareInstalled(item) {
+  if (!item) return { ok: false, reason: "Invalid item", parentName: "Parent Cyberware" };
+
+  let reqParentType = item.parentType;
+  if (!reqParentType && item.type) {
+    let mapped = mapTypeToParentType(item.type);
+    if (mapped && !item.slots && !['internal', 'external', 'fashionware', 'borgware'].includes(mapped)) {
+      reqParentType = mapped;
     }
   }
+
+  if (!reqParentType) {
+    return { ok: true, isStandalone: true };
+  }
+
+  let friendlyParentName = getFriendlyParentName(reqParentType);
+  let installedParents = [];
+
+  for (let i = 0; i < state.cyberware.length; i++) {
+    let c = state.cyberware[i];
+    if (!c) continue;
+    let pType = getParentTypeForFoundationItem(c);
+    if (pType === reqParentType || c.id === reqParentType) {
+      let totalSlots = c.slots || (getDataItemById(c.id) ? getDataItemById(c.id).slots : 0) || 0;
+      let usedSlots = 0;
+      if (Array.isArray(c.options)) {
+        for (let s = 0; s < c.options.length; s++) {
+          if (c.options[s] && c.options[s].id) usedSlots++;
+        }
+      }
+      installedParents.push({ index: i, item: c, totalSlots: totalSlots, usedSlots: usedSlots, openSlots: totalSlots - usedSlots });
+    }
+  }
+
+  if (installedParents.length === 0) {
+    return {
+      ok: false,
+      reason: `Required parent cyberware '${friendlyParentName}' is not installed. You must install a ${friendlyParentName} first.`,
+      parentName: friendlyParentName,
+      installedParents: []
+    };
+  }
+
+  let availableParent = installedParents.find(p => p.openSlots > 0);
+  if (!availableParent) {
+    return {
+      ok: false,
+      reason: `All installed '${friendlyParentName}' cyberware have no empty option slots available.`,
+      parentName: friendlyParentName,
+      installedParents: installedParents
+    };
+  }
+
+  let firstOpenSlot = 0;
+  if (!availableParent.item.options) availableParent.item.options = [];
+  while (availableParent.item.options[firstOpenSlot] && availableParent.item.options[firstOpenSlot].id) {
+    firstOpenSlot++;
+  }
+
+  return {
+    ok: true,
+    isStandalone: false,
+    parentName: friendlyParentName,
+    targetParent: availableParent.item,
+    targetParentIndex: availableParent.index,
+    firstOpenSlotIndex: firstOpenSlot,
+    installedParents: installedParents
+  };
+}
+
+function showCyberwareRemoveModal(itemName, defaultPrice, callback) {
+  defaultPrice = defaultPrice || 0;
+  let overlay = document.createElement("div");
+  overlay.className = "modal-overlay active";
+  overlay.style.display = "flex";
+  overlay.style.zIndex = "10000";
+
+  let box = document.createElement("div");
+  box.className = "modal-box";
+  box.style.maxWidth = "440px";
+  box.style.width = "92%";
+  box.style.padding = "1.5rem";
+
+  let html = `<h3 style="margin-top:0;margin-bottom:0.75rem;color:var(--primary)">⚙️ Uninstall / Remove ${escapeHtml(itemName)}</h3>`;
+  html += `<p style="font-size:0.85rem;margin-bottom:1rem;color:var(--text)">Choose whether to move this item to your <strong>Uninstalled Cyberware Inventory</strong> or sell it for Eurobucks:</p>`;
+
+  html += `<div style="margin-bottom:1rem"><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Sale / Refund Price (eb)</label>`;
+  html += `<input type="number" id="cw_sell_modal_price" value="${defaultPrice}" min="0" style="width:100%;padding:0.45rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
+
+  html += `<div style="display:flex;flex-direction:column;gap:0.5rem">
+    <button id="cw_modal_inventory" class="btn-action" style="background:var(--primary);color:#000;font-weight:bold;padding:0.5rem">📦 Move to Uninstalled Inventory</button>
+    <div style="display:flex;justify-content:space-between;gap:0.5rem;margin-top:0.25rem">
+      <button id="cw_modal_cancel" class="btn-action" style="padding:0.45rem 0.8rem">Cancel</button>
+      <div style="display:flex;gap:0.5rem">
+        <button id="cw_modal_discard" class="btn-action" style="padding:0.45rem 0.8rem;background:var(--card-bg)">Discard (0eb)</button>
+        <button id="cw_modal_sell" class="btn-action" style="background:var(--accent);color:#fff;font-weight:bold;padding:0.45rem 0.8rem">Sell for EB</button>
+      </div>
+    </div>
+  </div>`;
+
+  box.innerHTML = html;
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  function closeModal() {
+    if (document.body.contains(overlay)) {
+      document.body.removeChild(overlay);
+    }
+  }
+
+  document.getElementById("cw_modal_inventory").onclick = function() {
+    closeModal();
+    callback('inventory', 0);
+  };
+  document.getElementById("cw_modal_sell").onclick = function() {
+    let p = parseInt(document.getElementById("cw_sell_modal_price").value) || 0;
+    closeModal();
+    callback('sell', p);
+  };
+  document.getElementById("cw_modal_discard").onclick = function() {
+    closeModal();
+    callback('discard', 0);
+  };
+  document.getElementById("cw_modal_cancel").onclick = function() {
+    closeModal();
+    callback('cancel', null);
+  };
+}
+
+function renderUninstalledCyberware() {
+  let tbody = document.getElementById("uninstalled_cyberware_body");
+  let countBadge = document.getElementById("uninstalled_cw_count");
+  if (!state.uninstalledCyberware) state.uninstalledCyberware = [];
+  
+  if (countBadge) {
+    countBadge.textContent = state.uninstalledCyberware.length + (state.uninstalledCyberware.length === 1 ? " Item" : " Items");
+  }
+  
+  if (!tbody) return;
+  tbody.innerHTML = "";
+  
+  if (state.uninstalledCyberware.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center" style="color:var(--text-secondary)">No uninstalled cyberware in inventory.</td></tr>';
+    return;
+  }
+
+  let frag = document.createDocumentFragment();
+  for (let i = 0; i < state.uninstalledCyberware.length; i++) {
+    let item = state.uninstalledCyberware[i];
+    let tr = document.createElement("tr");
+    let descVal = escapeHtml(item.desc || '');
+    
+    let typeDisplay = item.type || (item.parentType ? getFriendlyParentName(item.parentType) + ' Option' : 'Cyberware');
+    let locationStr = item.location ? ` (${item.location})` : '';
+
+    tr.innerHTML = `
+      <td><strong>${escapeHtml(item.name)}</strong>${locationStr}</td>
+      <td>${escapeHtml(typeDisplay)}</td>
+      <td>${item.cost || 0}eb</td>
+      <td><textarea class="item-desc-input" data-cat="uninstalled_cw" data-idx="${i}" placeholder="Description" rows="1">${descVal}</textarea></td>
+      <td style="white-space:nowrap">
+        <button class="btn-action btn-install-uninstalled" data-idx="${i}" style="font-size:0.75rem;padding:0.2rem 0.45rem;background:var(--primary);color:#000;font-weight:bold;margin-right:0.2rem">⚡ Install</button>
+        <button class="btn-action btn-sell-uninstalled" data-idx="${i}" style="font-size:0.75rem;padding:0.2rem 0.45rem;margin-right:0.2rem">💰 Sell</button>
+        <button class="btn-action btn-delete-uninstalled" data-idx="${i}" style="font-size:0.75rem;padding:0.2rem 0.45rem;background:var(--card-bg)">🗑️</button>
+      </td>
+    `;
+    frag.appendChild(tr);
+  }
   tbody.appendChild(frag);
-  attachCyberwareEvents();
+  attachUninstalledCyberwareEvents();
+}
+
+function attachUninstalledCyberwareEvents() {
+  let descs = document.querySelectorAll('.item-desc-input[data-cat="uninstalled_cw"]');
+  for (let i = 0; i < descs.length; i++) {
+    autoResizeTextarea(descs[i]);
+    descs[i].oninput = function() {
+      let idx = parseInt(this.dataset.idx);
+      if (state.uninstalledCyberware[idx]) state.uninstalledCyberware[idx].desc = this.value;
+      autoResizeTextarea(this);
+    };
+  }
+
+  let installBtns = document.querySelectorAll('.btn-install-uninstalled');
+  for (let i = 0; i < installBtns.length; i++) {
+    installBtns[i].onclick = async function() {
+      let idx = parseInt(this.dataset.idx);
+      let item = state.uninstalledCyberware[idx];
+      if (!item) return;
+
+      let check = checkParentCyberwareInstalled(item);
+      if (!check.ok) {
+        alert(`Cannot install '${item.name}'!\n\n${check.reason}`);
+        return;
+      }
+
+      if (check.isStandalone) {
+        let selectedLoc = item.location || null;
+        let needLocation = false;
+        let defaultLoc = "Left";
+        let bodyPart = item.bodyPart;
+
+        if (bodyPart) {
+          let limits = { eye: 2, arm: 2, leg: 2 };
+          let max = limits[bodyPart] || 99;
+          let hasLeft = false;
+          let hasRight = false;
+          
+          for (let k = 0; k < state.cyberware.length; k++) {
+            let dataItem = getDataItemById(state.cyberware[k].id);
+            if (dataItem && dataItem.bodyPart === bodyPart) {
+              let loc = state.cyberware[k].location;
+              if (loc === "Left") hasLeft = true;
+              else if (loc === "Right") hasRight = true;
+              else if (loc === "Both" || dataItem.takesBoth) { hasLeft = true; hasRight = true; }
+            }
+          }
+          
+          if (max === 2 && !selectedLoc) {
+            if (hasLeft && hasRight) {
+              alert(`You already have both ${bodyPart}s installed. Uninstall one first.`);
+              return;
+            } else if (!hasLeft && !hasRight) {
+              needLocation = true;
+              defaultLoc = "Left";
+            } else if (!hasLeft) {
+              selectedLoc = "Left";
+            } else if (!hasRight) {
+              selectedLoc = "Right";
+            }
+          }
+        }
+
+        if (needLocation) {
+          showItemPurchaseModal(item, "Install Cyberware", { needLocation: true, defaultLoc: defaultLoc, bodyPart: bodyPart, hideCost: true }, function(res) {
+            if (!res) return;
+            item.location = res.location;
+            state.uninstalledCyberware.splice(idx, 1);
+            item.installed = true;
+            state.cyberware.push(item);
+            renderCyberware();
+            renderHumanity();
+            renderStats();
+            renderSkills();
+          });
+        } else {
+          state.uninstalledCyberware.splice(idx, 1);
+          item.installed = true;
+          if (selectedLoc) item.location = selectedLoc;
+          state.cyberware.push(item);
+          renderCyberware();
+          renderHumanity();
+          renderStats();
+          renderSkills();
+        }
+      } else {
+        let parentObj = check.targetParent;
+        let slotIdx = check.firstOpenSlotIndex;
+        if (!parentObj.options) parentObj.options = [];
+        parentObj.options[slotIdx] = {
+          id: item.id,
+          name: item.name,
+          type: item.type,
+          hc: item.hc || 0,
+          cost: item.cost || 0,
+          desc: item.desc || '',
+          bonus: item.bonus || null,
+          parentType: item.parentType,
+          slots: item.slots
+        };
+        state.uninstalledCyberware.splice(idx, 1);
+        renderCyberware();
+        renderHumanity();
+        renderStats();
+        renderSkills();
+      }
+    };
+  }
+
+  let sellBtns = document.querySelectorAll('.btn-sell-uninstalled');
+  for (let i = 0; i < sellBtns.length; i++) {
+    sellBtns[i].onclick = function() {
+      let idx = parseInt(this.dataset.idx);
+      let item = state.uninstalledCyberware[idx];
+      if (!item) return;
+      showSellItemModal(item.name, item.cost || 0, function(sellPrice) {
+        if (sellPrice === null) return;
+        let el = document.getElementById("currency_eb");
+        el.value = (parseInt(el.value) || 0) + sellPrice;
+        state.uninstalledCyberware.splice(idx, 1);
+        renderCyberware();
+      });
+    };
+  }
+
+  let deleteBtns = document.querySelectorAll('.btn-delete-uninstalled');
+  for (let i = 0; i < deleteBtns.length; i++) {
+    deleteBtns[i].onclick = function() {
+      let idx = parseInt(this.dataset.idx);
+      state.uninstalledCyberware.splice(idx, 1);
+      renderCyberware();
+    };
+  }
 }
 
 function renderCyberwareRow(tbody, c, idx) {
@@ -951,20 +1326,17 @@ function mapTypeToParentType(typeStr) {
 function getOptionsForParentItem(parent) {
   if (!parent) return [];
   
-  // 1. Check if parent.id has direct options (e.g. 'bc_modular_finger_hand')
   if (parent.id) {
     let directOpts = getOptionsForParent(parent.id);
     if (directOpts && directOpts.length > 0) return directOpts;
   }
   
-  // 2. Check explicit parent.parentType (e.g. 'cybereye' for smart glasses)
   let pType = parent.parentType;
   if (!pType && parent.id) {
     let dataItem = getDataItemById(parent.id);
     if (dataItem && dataItem.parentType) pType = dataItem.parentType;
   }
   
-  // 3. Fallback to mapping type/cat/name
   if (!pType && parent.type) {
     pType = mapTypeToParentType(parent.type);
   }
@@ -977,7 +1349,6 @@ function getOptionsForParentItem(parent) {
     if (typeOpts && typeOpts.length > 0) return typeOpts;
   }
   
-  // 4. Ultimate fallback for generic/unrecognized custom items
   return (DATA._index.cyberwareByParent['cybereye'] || [])
     .concat(DATA._index.cyberwareByParent['cyberaudio'] || [])
     .concat(DATA._index.cyberwareByParent['cyberarm'] || [])
@@ -1003,7 +1374,6 @@ function renderCyberwareSlot(tbody, parent, parentPath, slotIdx, depth) {
     selectHtml += '<option value="' + opt.id + '"' + sel + '>' + opt.name + ' (' + opt.cost + 'eb, ' + (opt.hc || 0) + 'HC)' + '</option>';
   }
   
-  // Custom option if it's already selected as custom or to allow selecting custom
   let customSel = (option && option.id && option.id.startsWith("custom_")) ? ' selected' : '';
   if (option && option.id && option.id.startsWith("custom_")) {
     selectHtml += '<option value="' + option.id + '"' + customSel + '>' + option.name + ' (' + option.cost + 'eb, ' + (option.hc || 0) + 'HC) [Custom]</option>';
@@ -1075,11 +1445,27 @@ function attachCyberwareEvents() {
     removes[i].onclick = function() {
       let idx = parseInt(this.dataset.idx);
       let c = state.cyberware[idx];
-      showSellItemModal(c.name, c.cost || 0, function(sellPrice) {
-        if (sellPrice === null) return;
-        let el = document.getElementById("currency_eb");
-        el.value = (parseInt(el.value) || 0) + sellPrice;
-        state.cyberware.splice(idx, 1);
+      showCyberwareRemoveModal(c.name, c.cost || 0, function(action, price) {
+        if (action === 'cancel') return;
+        if (action === 'inventory') {
+          if (!state.uninstalledCyberware) state.uninstalledCyberware = [];
+          state.uninstalledCyberware.push(c);
+          if (Array.isArray(c.options)) {
+            for (let opt of c.options) {
+              if (opt && opt.id) {
+                state.uninstalledCyberware.push(opt);
+              }
+            }
+            c.options = [];
+          }
+          state.cyberware.splice(idx, 1);
+        } else if (action === 'sell') {
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) + (price || 0);
+          state.cyberware.splice(idx, 1);
+        } else if (action === 'discard') {
+          state.cyberware.splice(idx, 1);
+        }
         renderCyberware();
         renderHumanity();
         renderStats();
@@ -1147,11 +1533,19 @@ function attachCyberwareEvents() {
         }
       } else if (optionId && optionId.startsWith("custom_")) {
       } else {
-        showSellItemModal(oldOption ? oldOption.name : "Option", oldCost, function(sellPrice) {
-          if (sellPrice === null) { selects[i].value = oldOption ? oldOption.id : ''; return; }
-          let el = document.getElementById("currency_eb");
-          el.value = (parseInt(el.value) || 0) + sellPrice;
-          currentObj.options[slotIdx] = null;
+        showCyberwareRemoveModal(oldOption ? oldOption.name : "Option", oldCost, function(action, price) {
+          if (action === 'cancel') { selects[i].value = oldOption ? oldOption.id : ''; return; }
+          if (action === 'inventory') {
+            if (!state.uninstalledCyberware) state.uninstalledCyberware = [];
+            state.uninstalledCyberware.push(oldOption);
+            currentObj.options[slotIdx] = null;
+          } else if (action === 'sell') {
+            let el = document.getElementById("currency_eb");
+            el.value = (parseInt(el.value) || 0) + (price || 0);
+            currentObj.options[slotIdx] = null;
+          } else if (action === 'discard') {
+            currentObj.options[slotIdx] = null;
+          }
           renderCyberware();
           renderHumanity();
           renderStats();
@@ -2098,94 +2492,131 @@ function initAddButtons() {
     });
   };
   document.getElementById("add_cyberware_btn").onclick = function() {
-    let standalone = DATA.cyberware.filter(function(c) { return !c.parentType || c.slots; });
-    showItemSelector("cyberware", standalone, function(item) {
-      let selectedLoc = null;
-      let needLocation = false;
-      let defaultLoc = "Left";
-      let bodyPart = item.bodyPart;
-      
-      if (bodyPart) {
-        let limits = { eye: 2, arm: 2, leg: 2 };
-        let max = limits[bodyPart] || 99;
-        let hasLeft = false;
-        let hasRight = false;
-        
-        for (let i = 0; i < state.cyberware.length; i++) {
-          let dataItem = getDataItemById(state.cyberware[i].id);
-          if (dataItem && dataItem.bodyPart === bodyPart) {
-            let loc = state.cyberware[i].location;
-            if (!loc) {
-              if (!hasLeft) { loc = "Left"; state.cyberware[i].location = "Left"; }
-              else if (!hasRight) { loc = "Right"; state.cyberware[i].location = "Right"; }
-              else { loc = "Both"; }
-            }
-            if (loc === "Left") hasLeft = true;
-            else if (loc === "Right") hasRight = true;
-            else if (loc === "Both" || dataItem.takesBoth) { hasLeft = true; hasRight = true; }
-          }
+    showItemSelector("cyberware", DATA.cyberware, function(item) {
+      let check = checkParentCyberwareInstalled(item);
+      if (!check.ok) {
+        let storeInInventory = confirm(`Cannot install '${item.name}'!\n\n${check.reason}\n\nWould you like to purchase and store '${item.name}' in your Uninstalled Cyberware Inventory instead?`);
+        if (storeInInventory) {
+          showItemPurchaseModal(item, "Cyberware Inventory", {}, function(purchRes) {
+            if (!purchRes) return;
+            let actualCost = purchRes.cost;
+            let isLooted = (actualCost === 0);
+            let desc = ensureLootedDesc(item.desc || '', isLooted);
+            let entry = { id: item.id, name: item.name, type: item.type, hc: purchRes.hc !== undefined ? purchRes.hc : (item.hc || 0), cost: actualCost, isLooted: isLooted, desc: desc, bonus: item.bonus || null, parentType: item.parentType, slots: item.slots };
+            if (!state.uninstalledCyberware) state.uninstalledCyberware = [];
+            state.uninstalledCyberware.push(entry);
+            let el = document.getElementById("currency_eb");
+            el.value = (parseInt(el.value) || 0) - actualCost;
+            renderCyberware();
+          });
         }
-        
-        if (item.takesBoth) {
-          if (hasLeft || hasRight) {
-            alert("This item requires both " + bodyPart + "s, but you already have one or more installed. Remove them first.");
-            return;
-          }
-          selectedLoc = "Both";
-        } else if (max === 2) {
-          if (hasLeft && hasRight) {
-            alert("You already have both " + bodyPart + "s installed. Remove one first.");
-            return;
-          } else if (!hasLeft && !hasRight) {
-            needLocation = true;
-            defaultLoc = "Left";
-          } else if (!hasLeft) {
-            selectedLoc = "Left";
-          } else if (!hasRight) {
-            selectedLoc = "Right";
-          }
-        }
+        return;
       }
 
-      let processCyberwareAdd = function(actualCost, actualHc, loc) {
-        if (loc) selectedLoc = loc;
-        let isLooted = (actualCost === 0);
-        let desc = ensureLootedDesc(item.desc || '', isLooted);
-        let entry = { id: item.id, name: item.name, type: item.type, hc: actualHc, cost: actualCost, isLooted: isLooted, desc: desc, bonus: item.bonus || null };
-        if (selectedLoc) entry.location = selectedLoc;
-        if (item.slots) { entry.slots = item.slots; entry.options = []; }
+      if (check.isStandalone) {
+        let selectedLoc = null;
+        let needLocation = false;
+        let defaultLoc = "Left";
+        let bodyPart = item.bodyPart;
         
-        let pairedPrefill = { "romanova_cyberlegs": "talon_feet", "skydrivers": "jump_boosters" };
-        let prefillId = pairedPrefill[item.id];
-        if (prefillId) {
-          let prefillData = getDataItemById(prefillId);
-          let leftLeg = { id: item.id, name: item.name, location: "Left", type: item.type, hc: actualHc, cost: actualCost, isLooted: isLooted, desc: desc, bonus: item.bonus || null, slots: item.slots, options: [] };
-          if (prefillData) {
-            leftLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
+        if (bodyPart) {
+          let limits = { eye: 2, arm: 2, leg: 2 };
+          let max = limits[bodyPart] || 99;
+          let hasLeft = false;
+          let hasRight = false;
+          
+          for (let i = 0; i < state.cyberware.length; i++) {
+            let dataItem = getDataItemById(state.cyberware[i].id);
+            if (dataItem && dataItem.bodyPart === bodyPart) {
+              let loc = state.cyberware[i].location;
+              if (!loc) {
+                if (!hasLeft) { loc = "Left"; state.cyberware[i].location = "Left"; }
+                else if (!hasRight) { loc = "Right"; state.cyberware[i].location = "Right"; }
+                else { loc = "Both"; }
+              }
+              if (loc === "Left") hasLeft = true;
+              else if (loc === "Right") hasRight = true;
+              else if (loc === "Both" || dataItem.takesBoth) { hasLeft = true; hasRight = true; }
+            }
           }
-          state.cyberware.push(leftLeg);
-          let rightLeg = { id: item.id, name: item.name, location: "Right", type: item.type, hc: actualHc, cost: 0, isLooted: true, desc: ensureLootedDesc(item.desc || '', true), bonus: item.bonus || null, slots: item.slots, options: [] };
-          if (prefillData) {
-            rightLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
+          
+          if (item.takesBoth) {
+            if (hasLeft || hasRight) {
+              alert("This item requires both " + bodyPart + "s, but you already have one or more installed. Remove them first.");
+              return;
+            }
+            selectedLoc = "Both";
+          } else if (max === 2) {
+            if (hasLeft && hasRight) {
+              alert("You already have both " + bodyPart + "s installed. Remove one first.");
+              return;
+            } else if (!hasLeft && !hasRight) {
+              needLocation = true;
+              defaultLoc = "Left";
+            } else if (!hasLeft) {
+              selectedLoc = "Left";
+            } else if (!hasRight) {
+              selectedLoc = "Right";
+            }
           }
-          state.cyberware.push(rightLeg);
-        } else {
-          state.cyberware.push(entry);
         }
-        let el = document.getElementById("currency_eb");
-        el.value = (parseInt(el.value) || 0) - actualCost;
-        renderCyberware();
-        renderHumanity();
-        renderStats();
-        renderSkills();
-      };
 
-      if (item.id && item.id.startsWith("custom_")) {
-        processCyberwareAdd(item.cost || 0, item.hc || 0, null);
+        let processCyberwareAdd = function(actualCost, actualHc, loc) {
+          if (loc) selectedLoc = loc;
+          let isLooted = (actualCost === 0);
+          let desc = ensureLootedDesc(item.desc || '', isLooted);
+          let entry = { id: item.id, name: item.name, type: item.type, hc: actualHc, cost: actualCost, isLooted: isLooted, desc: desc, bonus: item.bonus || null };
+          if (selectedLoc) entry.location = selectedLoc;
+          if (item.slots) { entry.slots = item.slots; entry.options = []; }
+          
+          let pairedPrefill = { "romanova_cyberlegs": "talon_feet", "skydrivers": "jump_boosters" };
+          let prefillId = pairedPrefill[item.id];
+          if (prefillId) {
+            let prefillData = getDataItemById(prefillId);
+            let leftLeg = { id: item.id, name: item.name, location: "Left", type: item.type, hc: actualHc, cost: actualCost, isLooted: isLooted, desc: desc, bonus: item.bonus || null, slots: item.slots, options: [] };
+            if (prefillData) {
+              leftLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
+            }
+            state.cyberware.push(leftLeg);
+            let rightLeg = { id: item.id, name: item.name, location: "Right", type: item.type, hc: actualHc, cost: 0, isLooted: true, desc: ensureLootedDesc(item.desc || '', true), bonus: item.bonus || null, slots: item.slots, options: [] };
+            if (prefillData) {
+              rightLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
+            }
+            state.cyberware.push(rightLeg);
+          } else {
+            state.cyberware.push(entry);
+          }
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) - actualCost;
+          renderCyberware();
+          renderHumanity();
+          renderStats();
+          renderSkills();
+        };
+
+        if (item.id && item.id.startsWith("custom_")) {
+          processCyberwareAdd(item.cost || 0, item.hc || 0, null);
+        } else {
+          showItemPurchaseModal(item, "Cyberware", { needLocation: needLocation, defaultLoc: defaultLoc, bodyPart: bodyPart }, function(res) {
+            if (!res) return;
+            processCyberwareAdd(res.cost, res.hc !== undefined ? res.hc : (item.hc || 0), res.location);
+          });
+        }
       } else {
-        showItemPurchaseModal(item, "Cyberware", { needLocation: needLocation, defaultLoc: defaultLoc, bodyPart: bodyPart }, function(res) {
+        showItemPurchaseModal(item, "Install Option Cyberware", {}, function(res) {
           if (!res) return;
-          processCyberwareAdd(res.cost, res.hc !== undefined ? res.hc : (item.hc || 0), res.location);
+          let actualCost = res.cost;
+          let actualHc = res.hc !== undefined ? res.hc : (item.hc || 0);
+          let parentObj = check.targetParent;
+          let slotIdx = check.firstOpenSlotIndex;
+          if (!parentObj.options) parentObj.options = [];
+          parentObj.options[slotIdx] = { id: item.id, name: item.name, type: item.type, hc: actualHc, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, parentType: item.parentType, slots: item.slots };
+          let el = document.getElementById("currency_eb");
+          el.value = (parseInt(el.value) || 0) - actualCost;
+          renderCyberware();
+          renderHumanity();
+          renderStats();
+          renderSkills();
         });
       }
     }, "type");
@@ -2915,9 +3346,11 @@ function getCharacterData() {
     weapons: JSON.parse(JSON.stringify(state.weapons)),
     armor: JSON.parse(JSON.stringify(state.armor)),
     cyberware: JSON.parse(JSON.stringify(state.cyberware)),
+    uninstalledCyberware: JSON.parse(JSON.stringify(state.uninstalledCyberware || [])),
     gear: JSON.parse(JSON.stringify(state.gear)),
     ammo: JSON.parse(JSON.stringify(state.ammo)),
     roleSubRanks: JSON.parse(JSON.stringify(state.roleSubRanks)),
+    execSelections: JSON.parse(JSON.stringify(state.execSelections || {})),
     subSkillNames: JSON.parse(JSON.stringify(state.subSkillNames || {})),
     hpCurrent: parseInt(document.getElementById("hp_current").value) || 0,
     currency: parseInt(document.getElementById("currency_eb").value) || 0,
@@ -2969,10 +3402,12 @@ function loadCharacterData(data) {
   state.weapons = data.weapons || [];
   state.armor = data.armor || [];
   state.cyberware = data.cyberware || [];
+  state.uninstalledCyberware = data.uninstalledCyberware || [];
   state.gear = data.gear || [];
   state.vehicles = data.vehicles || [];
   state.ammo = data.ammo || {};
   state.roleSubRanks = data.roleSubRanks || {};
+  state.execSelections = data.execSelections || {};
   state.subSkillNames = data.subSkillNames || {};
   document.getElementById("hp_current").value = data.hpCurrent || 0;
   document.getElementById("currency_eb").value = data.currency || 0;
@@ -3036,7 +3471,9 @@ function resetCharacter() {
   renderRoleLifepath();
   state.skillRanks = {};
   state.skillItem = {};
-    state.subSkillNames = {};
+  state.roleSubRanks = {};
+  state.execSelections = {};
+  state.subSkillNames = {};
   state.weapons = [];
   state.armor = [];
   state.cyberware = [];
@@ -3197,13 +3634,61 @@ function generateRandomCharacter() {
     }
   }
 
-  // 4. Buy Cyberware (if budget allows)
-  if (DATA.cyberware && DATA.cyberware.length > 0) {
-    let affordableCyber = DATA.cyberware.filter(c => (c.cost || 0) <= budget && (c.cost || 0) > 0);
-    if (affordableCyber.length > 0 && Math.random() < 0.7) {
-      let cw = affordableCyber[Math.floor(Math.random() * affordableCyber.length)];
-      state.cyberware.push({ id: cw.id, name: cw.name, slots: cw.slots || 1, type: cw.type || "Option", cost: cw.cost || 0, installed: true });
-      budget -= (cw.cost || 0);
+  // 4. Buy Cyberware (strictly foundation items first, then options into installed parents if budget allows)
+  if (DATA.cyberware && DATA.cyberware.length > 0 && budget > 0) {
+    let foundationItems = DATA.cyberware.filter(c => (!c.parentType || c.slots) && (c.cost || 0) <= budget && (c.cost || 0) > 0);
+    if (foundationItems.length > 0 && Math.random() < 0.8) {
+      let count = Math.min(foundationItems.length, Math.floor(Math.random() * 2) + 1);
+      for (let i = 0; i < count; i++) {
+        let f = foundationItems[Math.floor(Math.random() * foundationItems.length)];
+        if (f && (f.cost || 0) <= budget) {
+          let entry = { id: f.id, name: f.name, type: f.type || "Cyberware", hc: f.hc || 0, cost: f.cost || 0, desc: f.desc || '', bonus: f.bonus || null, installed: true };
+          if (f.slots) { entry.slots = f.slots; entry.options = []; }
+          if (f.bodyPart === 'arm' || f.bodyPart === 'leg' || f.bodyPart === 'eye') {
+            entry.location = (i === 1) ? 'Right' : 'Left';
+          }
+          
+          let pairedPrefill = { "romanova_cyberlegs": "talon_feet", "skydrivers": "jump_boosters" };
+          let prefillId = pairedPrefill[f.id];
+          if (prefillId) {
+            let prefillData = getDataItemById(prefillId);
+            let leftLeg = { id: f.id, name: f.name, location: "Left", type: f.type, hc: f.hc || 0, cost: f.cost || 0, desc: f.desc || '', bonus: f.bonus || null, slots: f.slots, options: [] };
+            if (prefillData) {
+              leftLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
+            }
+            state.cyberware.push(leftLeg);
+            let rightLeg = { id: f.id, name: f.name, location: "Right", type: f.type, hc: f.hc || 0, cost: 0, isLooted: true, desc: ensureLootedDesc(f.desc || '', true), bonus: f.bonus || null, slots: f.slots, options: [] };
+            if (prefillData) {
+              rightLeg.options[0] = { id: prefillData.id, name: prefillData.name, hc: prefillData.hc || 0, cost: prefillData.cost || 0, desc: prefillData.desc || '', bonus: prefillData.bonus || null, parentType: prefillData.parentType };
+            }
+            state.cyberware.push(rightLeg);
+          } else {
+            state.cyberware.push(entry);
+          }
+          budget -= (f.cost || 0);
+        }
+      }
+
+      // Try installing compatible option cyberware into installed foundation parents
+      for (let pIdx = 0; pIdx < state.cyberware.length; pIdx++) {
+        let parentObj = state.cyberware[pIdx];
+        if (parentObj.slots && budget > 0 && Math.random() < 0.6) {
+          let pType = getParentTypeForFoundationItem(parentObj);
+          let validOpts = DATA.cyberware.filter(c => c.parentType === pType && (c.cost || 0) <= budget && (c.cost || 0) > 0);
+          if (validOpts.length > 0) {
+            let opt = validOpts[Math.floor(Math.random() * validOpts.length)];
+            if (opt && (opt.cost || 0) <= budget) {
+              if (!parentObj.options) parentObj.options = [];
+              let slotIdx = 0;
+              while (parentObj.options[slotIdx] && parentObj.options[slotIdx].id) slotIdx++;
+              if (slotIdx < parentObj.slots) {
+                parentObj.options[slotIdx] = { id: opt.id, name: opt.name, type: opt.type, hc: opt.hc || 0, cost: opt.cost || 0, desc: opt.desc || '', bonus: opt.bonus || null, parentType: opt.parentType, slots: opt.slots };
+                budget -= (opt.cost || 0);
+              }
+            }
+          }
+        }
+      }
     }
   }
 
@@ -3290,20 +3775,35 @@ function initCyberdeck() {
 
   const selProg = document.getElementById('sel_program');
   if (selProg) {
-    let progOpts = '<optgroup label="Programs">';
-    if (DATA.programs) {
-      for (const p of DATA.programs) {
-        progOpts += `<option value="p_${p.id}">${p.name} (${p.cost}eb) - ${p.slots} Slot(s)</option>`;
+    let html = '';
+    const progs = DATA.programs || [];
+    const groups = {
+      'Boosters': progs.filter(p => p.type === 'Booster'),
+      'Defenders': progs.filter(p => p.type === 'Defender'),
+      'Attackers': progs.filter(p => p.type === 'Attacker'),
+      'Black ICE': progs.filter(p => p.type === 'Black ICE'),
+      'Demons': progs.filter(p => p.type === 'Demon')
+    };
+
+    for (const [groupName, groupItems] of Object.entries(groups)) {
+      if (groupItems.length > 0) {
+        html += `<optgroup label="${groupName}">`;
+        for (const p of groupItems) {
+          html += `<option value="p_${p.id}">${p.name} (${p.cost}eb) - ${p.slots} Slot(s)</option>`;
+        }
+        html += `</optgroup>`;
       }
     }
-    progOpts += '</optgroup><optgroup label="Hardware">';
-    if (DATA.hardware) {
+
+    if (DATA.hardware && DATA.hardware.length > 0) {
+      html += `<optgroup label="Hardware">`;
       for (const h of DATA.hardware) {
-        progOpts += `<option value="h_${h.id}">${h.name} (${h.cost}eb) - ${h.slots} Slot(s)</option>`;
+        html += `<option value="h_${h.id}">${h.name} (${h.cost}eb) - ${h.slots} Slot(s)</option>`;
       }
+      html += `</optgroup>`;
     }
-    progOpts += '</optgroup>';
-    selProg.innerHTML = progOpts;
+
+    selProg.innerHTML = html;
 
     document.getElementById('btn_install_program').addEventListener('click', () => {
       if (!state.cyberdeck) { alert('Equip a Cyberdeck first!'); return; }
@@ -3319,18 +3819,18 @@ function initCyberdeck() {
       const deck = DATA._index.deckById[state.cyberdeck];
       let used = 0;
       for (const p of state.programs) {
-        const pItem = p.isProg ? DATA._index.programById[p.id] : DATA._index.hardwareById[p.id];
+        const pItem = (p && typeof p === 'object' && p.isProg) ? DATA._index.programById[p.id] : DATA._index.hardwareById[p.id];
         if (pItem) used += pItem.slots;
       }
       
       if (used + item.slots > deck.slots) {
-        alert('Not enough slots in Cyberdeck!');
+        alert(`Not enough slots in Cyberdeck! Item requires ${item.slots} slot(s), but only ${deck.slots - used} slot(s) remain.`);
         return;
       }
       
       if (!deductCurrency(item.cost)) return;
       
-      state.programs.push({ id: item.id, isProg: isProg, instanceId: Date.now() + Math.random().toString() });
+      state.programs.push({ id: item.id, isProg: isProg, instanceId: Date.now() + "_" + Math.random().toString().slice(2) });
       renderCyberdeck();
     });
   }
@@ -3353,10 +3853,22 @@ function renderCyberdeck() {
   dash.classList.remove('hidden');
   document.getElementById('deck_name').innerHTML = deck.name + ' <span style="font-size:0.8rem; font-weight:normal; cursor:pointer; color:red; margin-left:1rem;" onclick="removeCyberdeck()">[Sell]</span>';
   
+  // Normalize string program IDs if present
+  if (Array.isArray(state.programs)) {
+    for (let i = 0; i < state.programs.length; i++) {
+      let p = state.programs[i];
+      if (typeof p === 'string') {
+        let isProg = !!(DATA._index && DATA._index.programById && DATA._index.programById[p]);
+        state.programs[i] = { id: p, isProg: isProg, instanceId: Date.now() + "_" + Math.random().toString().slice(2) };
+      }
+    }
+  }
+
   let used = 0;
   const tbody = document.createDocumentFragment();
   
   for (const p of state.programs) {
+    if (!p || !p.id) continue;
     const item = p.isProg ? DATA._index.programById[p.id] : DATA._index.hardwareById[p.id];
     if (!item) continue;
     used += item.slots;
@@ -3374,13 +3886,13 @@ function renderCyberdeck() {
     tdSlots.textContent = item.slots;
     
     const tdAtk = document.createElement('td');
-    tdAtk.textContent = item.atk || '-';
+    tdAtk.textContent = item.atk !== undefined ? item.atk : '-';
     
     const tdDef = document.createElement('td');
-    tdDef.textContent = item.def || '-';
+    tdDef.textContent = item.def !== undefined ? item.def : '-';
     
     const tdRez = document.createElement('td');
-    tdRez.textContent = item.rez || '-';
+    tdRez.textContent = item.rez !== undefined ? item.rez : '-';
     
     const tdAct = document.createElement('td');
     tdAct.innerHTML = `<button class="btn-action" onclick="removeProgram('${p.instanceId}', ${item.cost})">Uninstall</button>`;

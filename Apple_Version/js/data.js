@@ -36,6 +36,15 @@ var DATA = {
   // simply by checking rankDesc[4].
   roles: [
     { id: "solo", name: "Solo", ability: "Combat Awareness", desc: "Divide your Combat Awareness points (equal to Rank) among: Damage Deflection (2pts=-1 dmg), Fumble Recovery (4pts=ignore 1s on attacks), Initiative Reaction (1pt=+1 Init), Precision Attack (3pts=+1 Attack), Spot Weakness (1pt=+1 Dmg on first hit), Threat Detection (1pt=+1 Perception).",
+      subSkillsPointsPerRank: 1,
+      subSkills: [
+        { id: "damage_deflection", name: "Damage Deflection", desc: "2 pts = -1 damage taken from first hit." },
+        { id: "fumble_recovery", name: "Fumble Recovery", desc: "4 pts = ignore 1s rolled on attacks." },
+        { id: "initiative_reaction", name: "Initiative Reaction", desc: "1 pt = +1 to Initiative." },
+        { id: "precision_attack", name: "Precision Attack", desc: "3 pts = +1 to Attack Rolls." },
+        { id: "spot_weakness", name: "Spot Weakness", desc: "1 pt = +1 Damage on first successful hit." },
+        { id: "threat_detection", name: "Threat Detection", desc: "1 pt = +1 to Perception checks." }
+      ],
       rankDesc: [
         "",
         "1 Combat Awareness point to distribute.",

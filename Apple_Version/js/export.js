@@ -30,35 +30,20 @@ const buildCharList = () => {
  * Takes your character's data, converts it to JSON text, and tricks the browser
  * into downloading it as a `.json` file by creating an invisible link and clicking it.
  */
-const exportCharacter = async () => {
-  if (!await customConfirm('Export character as JSON file?')) return;
+const exportCharacter = () => {
+  if (!confirm('Export character as JSON file?')) return;
   const data = getCharacterData();
   const handle = data.handle || data.name || "character";
   const name = `${handle.replace(/[^a-zA-Z0-9_-]/g, "_")}_cpr.json`;
-  const jsonStr = JSON.stringify(data, null, 2);
-  
-  try {
-    const blob = new Blob([jsonStr], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = name;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  } catch (e) {
-    // Fallback for strict iOS / WebKit local file restrictions
-    const fallbackDiv = document.createElement("div");
-    fallbackDiv.style.cssText = "position:fixed;top:10%;left:10%;right:10%;bottom:10%;background:#111;border:2px solid #ff4040;z-index:9999;padding:20px;overflow:auto;";
-    fallbackDiv.innerHTML = `
-      <h3 style="color:#ff4040;margin-bottom:10px;">Export Fallback</h3>
-      <p style="margin-bottom:10px;">Your browser blocked the automatic download. Copy the text below and save it as a .json file manually.</p>
-      <textarea style="width:100%;height:70%;background:#000;color:#0f0;font-family:monospace;padding:10px;">${jsonStr}</textarea>
-      <button style="margin-top:10px;padding:10px;background:#ff4040;color:#fff;border:none;cursor:pointer;" onclick="this.parentElement.remove()">Close</button>
-    `;
-    document.body.appendChild(fallbackDiv);
-  }
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 };
 
 /**
@@ -66,8 +51,8 @@ const exportCharacter = async () => {
  * Takes a file you selected from your computer, reads it as text,
  * parses it back into a JavaScript object (JSON), and loads it into the app.
  */
-const importCharacter = async (file) => {
-  if (!await customConfirm(`Import character from "${file.name}"? Current data will be lost.`)) return;
+const importCharacter = (file) => {
+  if (!confirm(`Import character from "${file.name}"? Current data will be lost.`)) return;
   const reader = new FileReader();
   reader.onload = (e) => {
     try {
@@ -155,6 +140,14 @@ const printCharacter = async () => {
   `;
   document.head.appendChild(dynamicStyle);
   
+  // Open any details elements in role_info that contain selected Exec team members for print visibility
+  let roleDetails = printContainer.querySelectorAll("details");
+  roleDetails.forEach(det => {
+    if (det.querySelector(".exec-row.selected") || det.querySelector(".selected")) {
+      det.open = true;
+    }
+  });
+
   // Append the newly ordered container directly to the body
   document.body.appendChild(printContainer);
 
