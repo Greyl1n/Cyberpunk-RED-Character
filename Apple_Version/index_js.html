@@ -59,23 +59,24 @@
 <div class="scanline-overlay"></div>
 <input type="checkbox" id="dismissWelcome" style="display:none">
 <header>
-<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px var(--accent))">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v5.1.4</span></div></div>
+<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px var(--accent))">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v5.4.1</span></div></div>
 <div class="header-actions">
-<button id="import_btn" class="btn-action">Import</button>
-<button id="export_btn" class="btn-action">Export</button>
-<button id="print_btn" class="btn-action">Print</button>
-<button id="themeCustomizerBtn" class="btn-action" title="Customise Theme Colours">🎨 Themes</button>
-<button id="save_btn" class="btn-save">Save Character</button>
+<button id="themeBtn" class="btn-action" title="Color Scheme & Theme Settings">&#127912; Theme</button>
+<button id="charactersBtn" class="btn-action">&#128194; Characters</button>
+<button id="importBtn" class="btn-action">&#128229; Import</button>
+<input id="importFile" type="file" accept=".json" style="display:none">
+<button id="exportBtn" class="btn-action">&#128228; Export</button>
+<button id="printBtn" class="btn-action">&#128424; Print</button>
+<button id="randomBtn" class="btn-action">&#127922; Random</button>
+<button id="newCharBtn" class="btn-action">&#10024; New</button>
 </div>
 </header>
 
-<!-- ===== NAVIGATION TABS ===== -->
-<nav class="tabs-nav">
+<!-- ===== TAB NAVIGATION ===== -->
+<nav id="tabs" class="tabs-nav">
 <button class="tab-btn active" data-tab="tab-character"><img src="src/icons/character.jpg" class="tab-icon"> Character</button>
-<button class="tab-btn" data-tab="tab-skills">Skills</button>
-<button class="tab-btn" data-tab="tab-gear"><img src="src/icons/gear.jpg" class="tab-icon"> Gear &amp; Cyberware</button>
+<button class="tab-btn" data-tab="tab-gear"><img src="src/icons/gear.jpg" class="tab-icon"> Gear</button>
 <button class="tab-btn" data-tab="tab-cyberdeck"><img src="src/icons/cyberdeck.jpg" class="tab-icon"> Cyberdeck</button>
-<button class="tab-btn" data-tab="tab-lifepath">Lifepath</button>
 <button class="tab-btn" data-tab="tab-notes"><img src="src/icons/notes.jpg" class="tab-icon"> Notes</button>
 <button class="tab-btn" data-tab="tab-about"><img src="src/icons/about.jpg" class="tab-icon"> About</button>
 <button class="tab-btn gm-tab-btn" data-tab="tab-gm">🎲 GM Screen</button>
@@ -85,9 +86,9 @@
 <div id="welcomeOverlay" class="welcome-overlay">
 <div class="welcome-card" style="max-width:600px">
 <h1 class="welcome-title">&#9881; Cyberpunk RED Generator</h1>
-<p class="welcome-subtitle">Interactive Character &amp; GM Command Center — Version 5.1.4</p>
+<p class="welcome-subtitle">Interactive Character &amp; GM Command Center — Version 5.4.1</p>
 <div class="welcome-tabs" style="display:flex;flex-direction:column;gap:0.6rem;margin:1rem 0">
-<div class="welcome-tab"><strong>⚡ Performance Optimization &amp; Code Audit (v5.1.4)</strong> — Blazing fast single-pass cyberware summary caching, O(1) inventory &amp; item indexes, hoisted skill render calculations, fixed item selector modal scrolling, and clean synchronization across all platforms.</div>
+<div class="welcome-tab"><strong>⚡ Performance Optimization &amp; Code Audit (v5.4.1)</strong> — Blazing fast single-pass cyberware summary caching, O(1) inventory &amp; item indexes, hoisted skill render calculations, fixed item selector modal scrolling, and clean synchronization across all platforms.</div>
 <div class="welcome-tab"><strong>🦾 Cyberware Parent Requirements &amp; Inventory (v5.1.3)</strong> — Enforces parent cyberware prerequisites for options (eyes, arms, legs, neural link) and introduces a 📦 Uninstalled Cyberware Inventory box to store uninstalled items.</div>
 <div class="welcome-tab"><strong>💻 Cyberdeck &amp; Program Audit (v5.1.2)</strong> — Fixed description overwrites, restored full rulebook text, expanded 31 Programs/Black ICE/Demons &amp; 16 Hardware options, and verified exact slot calculations.</div>
 <div class="welcome-tab"><strong>🎲 Rules-Compliant Random Budget (v5.1.1)</strong> — Random character generator equips weapons (&le;500eb), armor, cyberware, and gear out of a 2550 eb creation budget. Netrunners automatically receive the cheapest Cyberdeck + software programs.</div>
@@ -358,10 +359,10 @@
 </section>
 <section id="tab-about" class="tab-panel">
 <div class="section-card">
-<h2 class="section-title">About Cyberpunk RED Generator (v5.1.4)</h2>
+<h2 class="section-title">About Cyberpunk RED Generator (v5.4.1)</h2>
 <p style="margin-bottom:0.8rem;line-height:1.7">A fully self-contained, highly-optimised interactive character manager and Game Master command center for <strong>Cyberpunk RED</strong> by R. Talsorian Games. Create, customise, save, run GM encounters, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing.</p>
-<p style="margin-bottom:0.8rem;line-height:1.7"><strong>Welcome to Version 5.1.4!</strong> This update introduces major performance optimizations and code quality audits: single-pass cyberware summary caching, comprehensive O(1) indexes for weapons, armor, gear, and vehicles, loop hoisting in skills rendering, fixed item selector modal scrolling, and clean synchronization across all builds.</p>
-<h3 style="margin:1rem 0 0.4rem">v5.1.4 Key Features</h3>
+<p style="margin-bottom:0.8rem;line-height:1.7"><strong>Welcome to Version 5.4.1!</strong> This update introduces major performance optimizations and code quality audits: single-pass cyberware summary caching, comprehensive O(1) indexes for weapons, armor, gear, and vehicles, loop hoisting in skills rendering, fixed item selector modal scrolling, and clean synchronization across all builds.</p>
+<h3 style="margin:1rem 0 0.4rem">v5.4.1 Key Features</h3>
 <ul style="line-height:1.8;padding-left:1.2rem">
 <li><strong>⚡ Single-Pass Cyberware Summary &amp; Caching</strong>: Unified Humanity Cost, STAT bonuses, skill bonuses, and status flags into a single-pass summary that caches lookups, executing 100,000 queries in ~14ms.</li>
 <li><strong>🔍 Expanded O(1) Item Indexes</strong>: Instant constant-time lookups for Weapons (214), Armor (30), Gear (84), Vehicles (45), and Vehicle Upgrades (9) in <code>DATA._index</code>.</li>
