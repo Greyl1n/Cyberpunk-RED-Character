@@ -60,3 +60,30 @@ const listCharacters = () => {
   chars.sort();
   return chars;
 };
+
+/**
+ * saveThemeSettings(theme)
+ * Saves user theme preferences (primary, accent, preset name) to localStorage.
+ */
+const saveThemeSettings = (theme) => {
+  try {
+    localStorage.setItem("cpr_theme_settings", JSON.stringify(theme));
+  } catch (e) {
+    console.error("Failed to save theme settings:", e);
+  }
+};
+
+/**
+ * loadThemeSettings()
+ * Retrieves saved user theme preferences from localStorage.
+ */
+const loadThemeSettings = () => {
+  try {
+    const raw = localStorage.getItem("cpr_theme_settings");
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (e) {
+    return null;
+  }
+};
+

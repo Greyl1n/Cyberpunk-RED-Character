@@ -5,8 +5,10 @@
   --text-secondary: #0ea5e9;
   --border: #0284c7;
   --primary: #00f3ff;
+  --primary-rgb: 0, 243, 255;
   --primary-hover: #00d2ff;
   --accent: #ff003c;
+  --accent-rgb: 255, 0, 60;
   --accent-light: rgba(255, 0, 60, 0.15);
   --tab-bg: #06101e;
   --tab-active: #0b1a30;

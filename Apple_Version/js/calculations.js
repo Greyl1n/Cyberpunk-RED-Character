@@ -90,22 +90,71 @@ const calcEvasionSkillRank = (dex, ranks, evasionBase) => {
   return calcSkillTotal(dex, rank, 0, 0);
 };
 
+// ============================================================
+// CYBERWARE SUMMARY & CACHING (Unified Single-Pass O(1) Lookups)
+// ============================================================
+let _cyberCache = null;
+
+const invalidateCyberCache = () => {
+  _cyberCache = null;
+};
+
+/**
+ * getCyberwareSummary(cyberwareList)
+ * Traverses installed cyberware in a single pass, computing:
+ * - totalHC: Total Humanity Cost
+ * - statsBonus: Map of statId -> bonus (+2 BODY, etc.)
+ * - skillsBonus: Map of skillId -> bonus (+2 Perception, etc.)
+ * - hasKerenzikov: Boolean flag for initiative calculation
+ * Results are cached until cyberware changes.
+ */
+const getCyberwareSummary = (cyberwareList) => {
+  const list = cyberwareList || (typeof state !== "undefined" ? state.cyberware : null);
+  if (!cyberwareList && _cyberCache) return _cyberCache;
+
+  let totalHC = 0;
+  const statsBonus = Object.create(null);
+  const skillsBonus = Object.create(null);
+  let hasKerenzikov = false;
+
+  const traverse = (items) => {
+    if (!items || !items.length) return;
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (!item) continue;
+      totalHC += item.hc || 0;
+      if (item.id === "kerenzikov") hasKerenzikov = true;
+      if (item.bonus) {
+        if (item.bonus.skills) {
+          for (const sk in item.bonus.skills) {
+            skillsBonus[sk] = (skillsBonus[sk] || 0) + item.bonus.skills[sk];
+          }
+        }
+        if (item.bonus.stats) {
+          for (const st in item.bonus.stats) {
+            statsBonus[st] = (statsBonus[st] || 0) + item.bonus.stats[st];
+          }
+        }
+      }
+      if (item.options && item.options.length) {
+        traverse(item.options);
+      }
+    }
+  };
+
+  traverse(list);
+
+  const summary = { totalHC, statsBonus, skillsBonus, hasKerenzikov };
+  if (!cyberwareList) _cyberCache = summary;
+  return summary;
+};
+
 /**
  * totalCyberwareHC(cyberwareList)
- * A recursive function that looks through all your cyberware (and any attachments/options
- * inside that cyberware) and adds up the total Humanity Cost (HC).
+ * Returns total Humanity Cost using the single-pass summary.
  */
 const totalCyberwareHC = (cyberwareList) => {
-  let total = 0;
-  if (!cyberwareList) return total;
-  for (const cw of cyberwareList) {
-    if (!cw) continue;
-    total += cw.hc || 0;
-    if (cw.options) {
-      total += totalCyberwareHC(cw.options);
-    }
-  }
-  return total;
+  return getCyberwareSummary(cyberwareList).totalHC;
 };
 
 /**
@@ -129,67 +178,28 @@ const calcEncumbrance = (gearItems, weapons, armor) => {
 /**
  * calcInitiative(ref, combatAwarenessRank)
  * Initiative determines turn order in combat. 
- * It's REF + Solo's Combat Awareness. 
- * If you have Kerenzikov cyberware installed, it adds a flat +2.
+ * It's REF + Solo's Combat Awareness (+2 with Kerenzikov).
  */
 const calcInitiative = (ref, combatAwarenessRank) => {
-  let init = ref + combatAwarenessRank;
-  // Check for Kerenzikov (+2 Initiative)
-  let hasKerenzikov = false;
-  const checkInit = (items) => {
-    if (!items) return;
-    for (const item of items) {
-      if (item.id === "kerenzikov") hasKerenzikov = true;
-      if (item.options) checkInit(item.options);
-    }
-  };
-  checkInit(state.cyberware);
-  if (hasKerenzikov) init += 2;
+  let init = ref + (combatAwarenessRank || 0);
+  if (getCyberwareSummary().hasKerenzikov) init += 2;
   return init;
 };
 
 /**
  * calcSkillCyberBonus(skillId)
- * Scans through your cyberware to see if any of it gives a bonus to a specific skill.
- * (e.g., A cyberaudio option that gives +2 to Perception).
+ * Returns bonus to a specific skill in O(1) from the cyberware summary.
  */
 const calcSkillCyberBonus = (skillId) => {
-  let total = 0;
-
-  const sumBonus = (items) => {
-    if (!items) return;
-    for (const item of items) {
-      if (item.bonus && item.bonus.skills && item.bonus.skills[skillId]) {
-        total += item.bonus.skills[skillId];
-      }
-      if (item.options) sumBonus(item.options);
-    }
-  };
-  sumBonus(state.cyberware);
-
-  return total;
+  return getCyberwareSummary().skillsBonus[skillId] || 0;
 };
 
 /**
  * calcCyberStatBonus(statId)
- * Scans through your cyberware to see if any of it gives a bonus to a core STAT.
- * (e.g., Muscle and Bone Lace gives +2 to BODY).
+ * Returns bonus to a core STAT in O(1) from the cyberware summary.
  */
 const calcCyberStatBonus = (statId) => {
-  let total = 0;
-  
-  const sumBonus = (items) => {
-    if (!items) return;
-    for (const item of items) {
-      if (item.bonus && item.bonus.stats && item.bonus.stats[statId]) {
-        total += item.bonus.stats[statId];
-      }
-      if (item.options) sumBonus(item.options);
-    }
-  };
-  sumBonus(state.cyberware);
-
-  return total;
+  return getCyberwareSummary().statsBonus[statId] || 0;
 };
 
 /**

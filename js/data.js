@@ -218,12 +218,12 @@ var DATA = {
       { id: "deduction", name: "Deduction" },
       { id: "education", name: "Education", basic: true },
       { id: "gamble", name: "Gamble" },
-      { id: "language", name: "Language", subs: 3, subs: 3, basic: true },
+      { id: "language", name: "Language", subs: 3, basic: true },
       { id: "library_search", name: "Library Search" },
       { id: "lip_reading", name: "Lip Reading" },
-      { id: "local_expert", name: "Local Expert", subs: 3, subs: 3, basic: true },
+      { id: "local_expert", name: "Local Expert", subs: 3, basic: true },
       { id: "perception", name: "Perception", basic: true },
-      { id: "science", name: "Science", subs: 2, subs: 2 },
+      { id: "science", name: "Science", subs: 2 },
       { id: "tactics", name: "Tactics" },
       { id: "tracking", name: "Tracking" },
       { id: "wilderness_survival", name: "Wilderness Survival" }
@@ -263,7 +263,7 @@ var DATA = {
       { id: "photography_film", name: "Photography/Film" },
       { id: "pick_lock", name: "Pick Lock" },
       { id: "pick_pocket", name: "Pick Pocket" },
-      { id: "play_instrument", name: "Play Instrument", subs: 2, subs: 2 },
+      { id: "play_instrument", name: "Play Instrument", subs: 2 },
       { id: "sea_vehicle_tech", name: "Sea Vehicle Tech" },
       { id: "weaponstech", name: "Weaponstech" }
     ],
@@ -2142,57 +2142,6 @@ var DATA = {
   ]
 };
 
-// ============================================================
-// INDEX — One-time lookup maps for O(1) access
-// ============================================================
-(function buildIndex() {
-  const idx = {
-    cyberwareById: Object.create(null),
-    cyberwareByParent: Object.create(null),
-    skillById: Object.create(null),
-    roleById: Object.create(null)
-  };
-
-  for (const cw of DATA.cyberware) {
-    idx.cyberwareById[cw.id] = cw;
-    if (cw.parentType) {
-      if (!idx.cyberwareByParent[cw.parentType]) {
-        idx.cyberwareByParent[cw.parentType] = [];
-      }
-      idx.cyberwareByParent[cw.parentType].push(cw);
-    }
-  }
-
-  for (const statId of Object.keys(DATA.skills)) {
-    for (const sk of DATA.skills[statId]) {
-      idx.skillById[sk.id] = { skill: sk, statId: statId };
-    }
-  }
-
-  for (const role of DATA.roles) {
-    idx.roleById[role.id] = role;
-  }
-
-  idx.deckById = Object.create(null);
-  for (const d of DATA.cyberdecks) {
-    idx.deckById[d.id] = d;
-  }
-
-  idx.programById = Object.create(null);
-  for (const p of DATA.programs) {
-    idx.programById[p.id] = p;
-  }
-
-  idx.hardwareById = Object.create(null);
-  for (const h of DATA.hardware) {
-    idx.hardwareById[h.id] = h;
-  }
-
-  DATA._index = idx;
-})();
-
-Object.freeze(DATA.stats);
-Object.freeze(DATA._index);
 DATA.roleLifepath = {
   Rockerboy: [
     { title: "What Kind of Rockerboy are You?", options: ["Musician", "Slam Poet", "Street Artist", "Performance Artist", "Comedian", "Orator", "Politico", "Rap Artist", "DJ", "Idoru"] },
@@ -2334,3 +2283,84 @@ DATA.vehicleUpgrades = [
     { id: "onboard_melee_weapon", name: "Onboard Melee Weapon", cost: 1000, desc: "Very Heavy Melee Weapon attached to exterior." },
     { id: "security_system", name: "Security System", cost: 1000, desc: "Shock panels and alarms (4d6 damage to unauthorized access)." }
 ];
+
+// ============================================================
+// INDEX — One-time lookup maps for O(1) access
+// ============================================================
+(function buildIndex() {
+  const idx = {
+    cyberwareById: Object.create(null),
+    cyberwareByParent: Object.create(null),
+    skillById: Object.create(null),
+    roleById: Object.create(null),
+    deckById: Object.create(null),
+    programById: Object.create(null),
+    hardwareById: Object.create(null),
+    weaponById: Object.create(null),
+    armorById: Object.create(null),
+    gearById: Object.create(null),
+    vehicleById: Object.create(null),
+    vehicleUpgradeById: Object.create(null)
+  };
+
+  for (const cw of DATA.cyberware) {
+    idx.cyberwareById[cw.id] = cw;
+    if (cw.parentType) {
+      if (!idx.cyberwareByParent[cw.parentType]) {
+        idx.cyberwareByParent[cw.parentType] = [];
+      }
+      idx.cyberwareByParent[cw.parentType].push(cw);
+    }
+  }
+
+  for (const statId of Object.keys(DATA.skills)) {
+    for (const sk of DATA.skills[statId]) {
+      idx.skillById[sk.id] = { skill: sk, statId: statId };
+    }
+  }
+
+  for (const role of DATA.roles) {
+    idx.roleById[role.id] = role;
+  }
+
+  for (const d of DATA.cyberdecks) {
+    idx.deckById[d.id] = d;
+  }
+
+  for (const p of DATA.programs) {
+    idx.programById[p.id] = p;
+  }
+
+  for (const h of DATA.hardware) {
+    idx.hardwareById[h.id] = h;
+  }
+
+  for (const w of DATA.weapons) {
+    idx.weaponById[w.id] = w;
+  }
+
+  for (const a of DATA.armor) {
+    idx.armorById[a.id] = a;
+  }
+
+  for (const g of DATA.gear) {
+    idx.gearById[g.id] = g;
+  }
+
+  if (DATA.vehicleTypes) {
+    for (const v of DATA.vehicleTypes) {
+      idx.vehicleById[v.id] = v;
+    }
+  }
+
+  if (DATA.vehicleUpgrades) {
+    for (const u of DATA.vehicleUpgrades) {
+      idx.vehicleUpgradeById[u.id] = u;
+    }
+  }
+
+  DATA._index = idx;
+})();
+
+Object.freeze(DATA.stats);
+Object.freeze(DATA._index);

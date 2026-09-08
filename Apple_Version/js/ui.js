@@ -46,6 +46,15 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
+function getBaseSkillId(id) {
+  if (!id) return '';
+  let idx = id.lastIndexOf('_');
+  if (idx !== -1 && !isNaN(id.substring(idx + 1))) {
+    return id.substring(0, idx);
+  }
+  return id;
+}
+
 function ensureLootedDesc(desc, isLooted) {
   let d = desc || '';
   if (isLooted) {
@@ -480,13 +489,15 @@ function renderSkills() {
   for (let si = 0; si < statKeys.length; si++) {
     let statId = statKeys[si];
     let skillList = DATA.skills[statId];
+    let statVal = getEffectiveStat(statId);
+    let statBonus = calcStatBonus(statVal);
+    let statUpper = statId.toUpperCase();
     for (let j = 0; j < skillList.length; j++) {
         let skill = skillList[j];
         let name = skill.name;
         if (skill.ipMult === 2) name += ' <span style="color:var(--accent);font-size:0.75rem;font-weight:bold">(x2)</span>';
         if (search && name.toLowerCase().indexOf(search) === -1) continue;
         
-        let statVal = getEffectiveStat(statId);
         let cyber = calcSkillCyberBonus(skill.id);
         
         if (skill.subs) {
@@ -939,6 +950,7 @@ function renderArmor() {
  * It uses a recursive helper function `renderCyberwareSlot` to draw options inside options.
  */
 function renderCyberware() {
+  if (typeof invalidateCyberCache === "function") invalidateCyberCache();
   let tbody = document.getElementById("cyberware_body");
   if (tbody) {
     tbody.innerHTML = "";
@@ -3217,7 +3229,17 @@ function showItemSelector(type, items, callback, groupBy) {
   box.className = "modal-box";
   box.style.maxWidth = "600px";
   let title = type.charAt(0).toUpperCase() + type.slice(1);
-  box.innerHTML = '<h2>Select ' + title + '</h2><div style="max-height:400px;overflow-y:auto;margin:1rem 0">';
+  box.style.display = "flex";
+  box.style.flexDirection = "column";
+  box.style.maxHeight = "85vh";
+  box.innerHTML = '<h2>Select ' + title + '</h2>';
+
+  let scrollContainer = document.createElement("div");
+  scrollContainer.style.overflowY = "auto";
+  scrollContainer.style.margin = "1rem 0";
+  scrollContainer.style.flex = "1";
+  scrollContainer.style.paddingRight = "4px";
+
   let list = document.createElement("div");
   list.style.display = "flex";
   list.style.flexDirection = "column";
@@ -3227,7 +3249,7 @@ function showItemSelector(type, items, callback, groupBy) {
   customBtn.style.textAlign = "left";
   customBtn.style.justifyContent = "flex-start";
   customBtn.style.width = "100%";
-  customBtn.style.background = "let(--accent)";
+  customBtn.style.background = "var(--accent)";
   customBtn.style.color = "#fff";
   customBtn.style.fontWeight = "700";
   customBtn.textContent = "\u270E Custom " + title;
@@ -3253,7 +3275,7 @@ function showItemSelector(type, items, callback, groupBy) {
       header.textContent = group;
       header.style.fontWeight = "700";
       header.style.padding = "0.5rem 0.25rem 0.25rem";
-      header.style.color = "let(--accent)";
+      header.style.color = "var(--accent)";
       header.style.fontSize = "0.85rem";
       header.style.textTransform = "uppercase";
       header.style.borderBottom = "1px solid var(--border)";
@@ -3280,7 +3302,8 @@ function showItemSelector(type, items, callback, groupBy) {
     })(items[i]);
     list.appendChild(btn);
   }
-  box.appendChild(list);
+  scrollContainer.appendChild(list);
+  box.appendChild(scrollContainer);
   let closeBtn = document.createElement("button");
   closeBtn.className = "btn-action";
   closeBtn.textContent = "Cancel";
@@ -3402,6 +3425,7 @@ function loadCharacterData(data) {
   state.weapons = data.weapons || [];
   state.armor = data.armor || [];
   state.cyberware = data.cyberware || [];
+  if (typeof invalidateCyberCache === "function") invalidateCyberCache();
   state.uninstalledCyberware = data.uninstalledCyberware || [];
   state.gear = data.gear || [];
   state.vehicles = data.vehicles || [];
@@ -3446,6 +3470,7 @@ function loadCharacterData(data) {
 }
 
 function resetCharacter() {
+  if (typeof invalidateCyberCache === "function") invalidateCyberCache();
   initState();
   document.getElementById("char_handle").value = "";
   document.getElementById("char_name").value = "";
