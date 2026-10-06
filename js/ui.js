@@ -3371,6 +3371,9 @@ function getCharacterData() {
     cyberware: JSON.parse(JSON.stringify(state.cyberware)),
     uninstalledCyberware: JSON.parse(JSON.stringify(state.uninstalledCyberware || [])),
     gear: JSON.parse(JSON.stringify(state.gear)),
+    vehicles: JSON.parse(JSON.stringify(state.vehicles || [])),
+    cyberdeck: state.cyberdeck || null,
+    programs: JSON.parse(JSON.stringify(state.programs || [])),
     ammo: JSON.parse(JSON.stringify(state.ammo)),
     roleSubRanks: JSON.parse(JSON.stringify(state.roleSubRanks)),
     execSelections: JSON.parse(JSON.stringify(state.execSelections || {})),
@@ -3429,6 +3432,8 @@ function loadCharacterData(data) {
   state.uninstalledCyberware = data.uninstalledCyberware || [];
   state.gear = data.gear || [];
   state.vehicles = data.vehicles || [];
+  state.cyberdeck = data.cyberdeck || null;
+  state.programs = Array.isArray(data.programs) ? data.programs : [];
   state.ammo = data.ammo || {};
   state.roleSubRanks = data.roleSubRanks || {};
   state.execSelections = data.execSelections || {};
@@ -3465,6 +3470,7 @@ function loadCharacterData(data) {
   renderGear();
   renderVehicles();
   renderAmmoTracker();
+  renderCyberdeck();
   updateAllDerived();
   updateStatPointsBar();
 }
@@ -3474,6 +3480,7 @@ function resetCharacter() {
   initState();
   document.getElementById("char_handle").value = "";
   document.getElementById("char_name").value = "";
+  if (document.getElementById("char_notes")) document.getElementById("char_notes").value = "";
   document.getElementById("role_select").value = "";
   document.getElementById("role_ability_rank").value = "4";
   document.getElementById("role_ability_rank").dataset.oldVal = "4";
@@ -3502,9 +3509,12 @@ function resetCharacter() {
   state.weapons = [];
   state.armor = [];
   state.cyberware = [];
+  state.uninstalledCyberware = [];
   state.gear = [];
   state.vehicles = [];
   state.ammo = {};
+  state.cyberdeck = null;
+  state.programs = [];
   
   let cb = document.getElementById("toggle_creation_mode");
   if (cb) { cb.checked = true; toggleCreationMode(true); }
@@ -3517,6 +3527,7 @@ function resetCharacter() {
   renderGear();
   renderVehicles();
   renderAmmoTracker();
+  renderCyberdeck();
   updateAllDerived();
   updateStatPointsBar();
 }

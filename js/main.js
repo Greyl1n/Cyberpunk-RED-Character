@@ -248,7 +248,8 @@ const setDefaultValues = () => {
   const hp = document.getElementById("hp_current");
   if (!hp.value || parseInt(hp.value) === 0) {
     const body = state.stats.body || 2;
-    hp.value = calcHitsMax(body);
+    const will = state.stats.will || 2;
+    hp.value = calcHitsMax(body, will);
   }
 };
 

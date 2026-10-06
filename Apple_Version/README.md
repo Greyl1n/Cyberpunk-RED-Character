@@ -1,8 +1,8 @@
-# Cyberpunk RED Character Manager & Game Master Command Center (v5.4.1)
+# Cyberpunk RED Character Manager & Game Master Command Center (v5.4.2)
 
 > **A fully self-contained, offline-first web application for Cyberpunk RED tabletop RPG players and Game Masters.**
 
-![Version](https://img.shields.io/badge/version-5.4.1-ff0055.svg)
+![Version](https://img.shields.io/badge/version-5.4.2-ff0055.svg)
 ![License](https://img.shields.io/badge/license-CC--BY--NC--4.0-blue.svg)
 ![Cyberpunk RED](https://img.shields.io/badge/game-Cyberpunk%20RED-00f3ff.svg)
 ![Offline](https://img.shields.io/badge/offline-100%25-brightgreen.svg)
@@ -122,7 +122,9 @@ Personalize your interface with instant visual customization:
   * Checkbox modal allows selecting which sections to include in printouts (Identity, Stats, Lifepath, Weapons, Cyberware, Cyberdeck, Vehicles, Notes, Skills).
   * Auto-expands active Exec team member details with high-contrast borders and `✔ (SELECTED)` badges for grayscale and color printing.
   * Restacks elements into a clean print layout that bypasses browser flex ordering bugs.
-* **JSON Export & Import**: Save characters to disk as human-readable `.json` files to easily back up, share, or import into the GM Command Center.
+* **Complete Character Saves**: Named saves in the browser (`📂 Characters`) and **JSON Export & Import** store the whole character — identity, STATs, skills & sub-skill names, role ability choices (Exec team, Solo/Tech/Medtech points), Lifepath, weapons, armor, installed & uninstalled cyberware, gear, ammunition, **vehicles & upgrades**, **Cyberdeck with installed programs & hardware** (including custom descriptions), Eurobucks, HP and notes.
+* **Human-Readable `.json` Files**: Back up, share, or import characters directly into the GM Command Center.
+* **Clean Fresh Starts**: **✨ New** and **🎲 Random** fully clear the previous character, so no gear, cyberdeck or notes carry over.
 
 ---
 
@@ -148,7 +150,9 @@ Cyberpunk_Character_v5/
 │   ├── export.js          # JSON export/import and smart selective printing
 │   ├── ui.js             # UI rendering, tab navigation, modals & event controllers
 │   ├── gm.js             # GM Command Center multi-sheet manager & session state
-│   └── main.js           # Boot sequence initialization
+│   └── main.js            # Boot sequence initialization
+├── src/                   # Icons & background images
+├── package.json           # Dev-only dependency (jsdom) for automated testing — not needed to run
 ├── Apple_Version/         # 100% synchronized build mirror for Safari & iOS devices
 └── README.md
 ```
