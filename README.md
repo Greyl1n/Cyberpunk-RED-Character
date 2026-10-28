@@ -1,8 +1,8 @@
-# Cyberpunk RED Character Manager & Game Master Command Center (v5.4.2)
+# Cyberpunk RED Character Manager & Game Master Command Center (v5.4.3)
 
 > **A fully self-contained, offline-first web application for Cyberpunk RED tabletop RPG players and Game Masters.**
 
-![Version](https://img.shields.io/badge/version-5.4.2-ff0055.svg)
+![Version](https://img.shields.io/badge/version-5.4.3-ff0055.svg)
 ![License](https://img.shields.io/badge/license-CC--BY--NC--4.0-blue.svg)
 ![Cyberpunk RED](https://img.shields.io/badge/game-Cyberpunk%20RED-00f3ff.svg)
 ![Offline](https://img.shields.io/badge/offline-100%25-brightgreen.svg)

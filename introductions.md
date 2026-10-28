@@ -1,6 +1,6 @@
 # Cyberpunk RED Character Manager & GM Command Center: User Guide & Architecture Manual
 
-> **Version:** 5.4.2  
+> **Version:** 5.4.3  
 > **Target Audience:** Tabletop Players, Game Masters (GMs), and Developers  
 > **Supported Environments:** Modern Web Browsers (Chrome, Firefox, Safari, Edge) and Android Devices (APK)
 
@@ -42,7 +42,7 @@ The **Cyberpunk RED Character Manager & GM Command Center** is an interactive, r
 2. No installation, build process, or web server is needed. You can run it directly from a local folder, a USB thumb drive, or an offline laptop.
 
 ### Option B: On Android Devices (Phones & Tablets)
-1. Transfer **`CyberpunkRED_v5.4.2.apk`** to your Android device (or download it directly).
+1. Transfer **`CyberpunkRED_v5.4.3.apk`** to your Android device (or download it directly).
 2. Tap the APK file to install (allow "Install unknown apps" if prompted).
 3. The app launches full-screen with touch-optimized controls, locked horizontal scaling, and hardware GPU acceleration.
 

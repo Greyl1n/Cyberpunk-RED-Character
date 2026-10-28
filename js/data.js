@@ -568,6 +568,7 @@ var DATA = {
     "cost": 100,
     "desc": "[CRB] Single cybernetic eye.",
     "slots": 3,
+    "slotType": "cybereye",
     "bodyPart": "eye"
   },
   {
@@ -577,21 +578,23 @@ var DATA = {
     "hc": 7,
     "cost": 500,
     "desc": "[CRB] Internal ear comms and audio processing.",
-    "slots": 3
+    "slots": 3,
+    "slotType": "cyberaudio"
   },
   {
     "id": "neural_link",
     "name": "Neural Link",
-    "type": "Internal",
+    "type": "Neuralware",
     "hc": 7,
     "cost": 500,
     "desc": "[CRB] Chip socket interface. Required for most Neuralware.",
-    "slots": 5
+    "slots": 5,
+    "slotType": "neural_link"
   },
   {
     "id": "chipware_socket",
     "name": "Chipware Socket",
-    "type": "Internal",
+    "type": "Neuralware",
     "hc": 7,
     "cost": 500,
     "desc": "[CRB] Extra skill chip socket.",
@@ -636,15 +639,16 @@ var DATA = {
   {
     "id": "pain_editor",
     "name": "Pain Editor",
-    "type": "Internal",
+    "type": "Neuralware",
     "hc": 14,
     "cost": 1000,
-    "desc": "[CRB] Disables pain. User ignores penalties due to being Seriously Wounded."
+    "desc": "[CRB] Disables pain. User ignores penalties due to being Seriously Wounded.",
+    "parentType": "neural_link"
   },
   {
     "id": "nanosurgeons",
     "name": "Nanosurgeons",
-    "type": "Internal",
+    "type": "Internal Body",
     "hc": 3,
     "cost": 1500,
     "desc": "[CRB] Auto-stabilize at 0 HP once per day."
@@ -652,7 +656,7 @@ var DATA = {
   {
     "id": "synth_lungs",
     "name": "Synth Lungs",
-    "type": "Internal",
+    "type": "Internal Body",
     "hc": 3,
     "cost": 1000,
     "desc": "[CRB] Filter toxins, breathe smoke."
@@ -660,7 +664,7 @@ var DATA = {
   {
     "id": "gills",
     "name": "Gills",
-    "type": "Internal",
+    "type": "Internal Body",
     "hc": 2,
     "cost": 1000,
     "desc": "[CRB] Breathe underwater."
@@ -673,6 +677,7 @@ var DATA = {
     "cost": 500,
     "desc": "[CRB] Basic cybernetic arm.",
     "slots": 4,
+    "slotType": "cyberarm",
     "bodyPart": "arm"
   },
   {
@@ -683,6 +688,7 @@ var DATA = {
     "cost": 500,
     "desc": "[CRB] Basic cybernetic leg.",
     "slots": 3,
+    "slotType": "cyberleg",
     "bodyPart": "leg"
   },
   {
@@ -717,23 +723,23 @@ var DATA = {
   {
     "id": "subdermal_armor",
     "name": "Subdermal Armor",
-    "type": "Internal",
+    "type": "External Body",
     "hc": 14,
     "cost": 1000,
-    "desc": "[CRB] SP 7 to area implanted."
+    "desc": "[CRB] SP 11 to Head and Body."
   },
   {
     "id": "skin_weave",
     "name": "Skin Weave",
-    "type": "Internal",
+    "type": "External Body",
     "hc": 7,
     "cost": 500,
-    "desc": "[CRB] SP 4 all over."
+    "desc": "[CRB] SP 7 to Head and Body."
   },
   {
     "id": "pneumatics",
     "name": "Pneumatics",
-    "type": "Internal",
+    "type": "Internal Body",
     "hc": 3,
     "cost": 500,
     "desc": "[CRB] +2 to BODY for melee damage."
@@ -819,7 +825,7 @@ var DATA = {
     "cost": 100,
     "desc": "[CRB] An inferior audio suite at an affordable price.",
     "slots": 3,
-    "parentType": "cyberaudio"
+    "slotType": "cyberaudio"
   },
   {
     "id": "bc_explicit_memory",
@@ -838,10 +844,11 @@ var DATA = {
   {
     "id": "bc_extra_jointed",
     "name": "Extra-Jointed Cyberlimb Upgrade",
-    "type": "Cyberlimb",
+    "type": "Cyberlimb Option",
     "hc": 3,
     "cost": 500,
     "desc": "[CRB] Extra points of articulation. +2 Contortionist per limb (max +8 all limbs).",
+    "parentType": "cyberlimb",
     "bonus": {
       "skills": {
         "contortionist": 2
@@ -851,7 +858,7 @@ var DATA = {
   {
     "id": "bc_flashbulb",
     "name": "Flashbulb",
-    "type": "Cyberarm",
+    "type": "Cyberarm Option",
     "hc": 7,
     "cost": 500,
     "desc": "[CRB] Blind your enemies with your arm.",
@@ -860,7 +867,7 @@ var DATA = {
   {
     "id": "bc_hardened_cybereye",
     "name": "Hardened Cybereye Casing",
-    "type": "Cybereye",
+    "type": "Cybereye Option",
     "hc": 3,
     "cost": 500,
     "desc": "[CRB] Protect your Cybereye against EMP effects.",
@@ -877,7 +884,7 @@ var DATA = {
   {
     "id": "bc_integrated_cyberdeck",
     "name": "Integrated Cyberdeck Upgrade",
-    "type": "Cyberarm",
+    "type": "Cyberarm Option",
     "hc": 7,
     "cost": 500,
     "desc": "[CRB] An extra option slot for your arm-installed Cyberdeck.",
@@ -891,7 +898,8 @@ var DATA = {
     "cost": 100,
     "desc": "[CRB] A hand for modular Cyberfingers.",
     "parentType": "cyberarm",
-    "slots": 5
+    "slots": 5,
+    "slotType": "bc_modular_finger_hand"
   },
   {
     "id": "bc_neo_soviet_arm",
@@ -902,12 +910,12 @@ var DATA = {
     "desc": "[CRB] Neo-Soviet charm for your Cyberarm.",
     "bodyPart": "arm",
     "slots": 4,
-    "parentType": "cyberarm"
+    "slotType": "cyberarm"
   },
   {
     "id": "bc_popup_net",
     "name": "Popup Net Launcher",
-    "type": "Cyberarm",
+    "type": "Cyberarm Option",
     "hc": 7,
     "cost": 500,
     "desc": "[CRB] Shoot nets from your arm.",
@@ -916,7 +924,7 @@ var DATA = {
   {
     "id": "bc_popup_shotgun",
     "name": "Popup Shotgun",
-    "type": "Cyberarm",
+    "type": "Cyberarm Option",
     "hc": 7,
     "cost": 1000,
     "desc": "[CRB] A shotgun in your arm.",
@@ -942,10 +950,11 @@ var DATA = {
   {
     "id": "bc_reinforced_limb",
     "name": "Reinforced Cyberlimb Upgrade",
-    "type": "Cyberlimb",
+    "type": "Cyberlimb Option",
     "hc": 3,
     "cost": 1000,
-    "desc": "[CRB] Say goodbye to breaking this limb."
+    "desc": "[CRB] Say goodbye to breaking this limb.",
+    "parentType": "cyberlimb"
   },
   {
     "id": "bc_sponsored_cybereye",
@@ -956,7 +965,7 @@ var DATA = {
     "desc": "[CRB] A cheap Cybereye with Chyron and pop-up ads.",
     "bodyPart": "eye",
     "slots": 3,
-    "parentType": "cybereye"
+    "slotType": "cybereye"
   },
   {
     "id": "bc_trauma_nanomatrix",
@@ -1284,11 +1293,11 @@ var DATA = {
   {
     "id": "superchrome_covering",
     "name": "Superchrome Covering",
-    "type": "Cyberarm Option",
+    "type": "Cyberlimb Option",
     "hc": 2,
     "cost": 500,
     "desc": "[CRB] Mirror-chrome finish. +2 Wardrobe & Style.",
-    "parentType": "cyberarm",
+    "parentType": "cyberlimb",
     "bonus": {
       "skills": {
         "wardrobe_style": 2
@@ -1307,10 +1316,11 @@ var DATA = {
   {
     "id": "quick_change_mount",
     "name": "Quick Change Mount",
-    "type": "Cyberarm",
+    "type": "Cyberarm Option",
     "hc": 7,
     "cost": 100,
-    "desc": "[CRB] Remove/install a Cyberarm as an Action."
+    "desc": "[CRB] Remove/install a Cyberarm as an Action.",
+    "parentType": "cyberarm"
   },
   {
     "id": "rippers",
@@ -1422,8 +1432,7 @@ var DATA = {
     "type": "Fashionware",
     "hc": 0,
     "cost": 100,
-    "desc": "[CRB] Eye color changes with mood (red=anger, blue=sadness, etc.). Requires Neural Link.",
-    "parentType": "neural_link"
+    "desc": "[CRB] Eye color changes with mood (red=anger, blue=sadness, etc.)."
   },
   {
     "id": "neutongue",
@@ -1484,7 +1493,8 @@ var DATA = {
     "type": "Cyberlimb Option",
     "hc": 0,
     "cost": 50,
-    "desc": "[CRB] Illuminated ad on cyberlimb. Pays 20eb/month. Does not take an Option Slot. Requires Cyberarm or Cyberleg."
+    "desc": "[CRB] Illuminated ad on cyberlimb. Pays 20eb/month. Does not take an Option Slot. Requires Cyberarm or Cyberleg.",
+    "parentType": "cyberlimb"
   },
   {
     "id": "cyberscanner_integrated",
@@ -1521,9 +1531,8 @@ var DATA = {
     "cost": 500,
     "desc": "[CRB] Oversized Cybereye. Contains 5 slots for Cybereye Options.",
     "slots": 5,
-    "parentType": "cybereye",
-    "bodyPart": "eye",
-    "takesBoth": true
+    "slotType": "cybereye",
+    "bodyPart": "eye"
   },
   {
     "id": "deathtrance",
@@ -1542,7 +1551,7 @@ var DATA = {
     "cost": 500,
     "desc": "[CRB] Single wide-angle cyberoptic visor. Contains 3 slots. Options count as paired.",
     "slots": 3,
-    "parentType": "cybereye",
+    "slotType": "cybereye",
     "bodyPart": "eye",
     "takesBoth": true
   },
@@ -1612,7 +1621,7 @@ var DATA = {
     "desc": "[CRB] Paired Cyberlegs. 3 Option Slots each. Pre-installed Talon Feet.",
     "bodyPart": "leg",
     "slots": 3,
-    "parentType": "cyberleg",
+    "slotType": "cyberleg",
     "takesBoth": true
   },
   {
@@ -1652,7 +1661,7 @@ var DATA = {
     "desc": "[CRB] Paired Cyberlegs. 2 Option Slots each. Pre-installed Jump Boosters. +3d6 dmg vs cover with leg attacks.",
     "bodyPart": "leg",
     "slots": 2,
-    "parentType": "cyberleg",
+    "slotType": "cyberleg",
     "takesBoth": true
   },
   {
@@ -1697,11 +1706,12 @@ var DATA = {
   {
     "id": "dynalar_xtradex_glove",
     "name": "Dynalar Xtra-Dex Smart Glove",
-    "type": "Cyberarm Option",
+    "type": "Cyberarm",
     "hc": 0,
     "cost": 1000,
     "desc": "[CRB] 2 Option Slots. Counts as Modular Finger Cyberhand (up to 5 Cyberfingers). Requires Interface Plugs.",
-    "parentType": "cyberarm"
+    "slots": 5,
+    "slotType": "bc_modular_finger_hand"
   }
 ],
 
@@ -2306,10 +2316,19 @@ DATA.vehicleUpgrades = [
   for (const cw of DATA.cyberware) {
     idx.cyberwareById[cw.id] = cw;
     if (cw.parentType) {
-      if (!idx.cyberwareByParent[cw.parentType]) {
-        idx.cyberwareByParent[cw.parentType] = [];
+      if (cw.parentType === "cyberlimb") {
+        for (const pt of ["cyberlimb", "cyberarm", "cyberleg"]) {
+          if (!idx.cyberwareByParent[pt]) {
+            idx.cyberwareByParent[pt] = [];
+          }
+          idx.cyberwareByParent[pt].push(cw);
+        }
+      } else {
+        if (!idx.cyberwareByParent[cw.parentType]) {
+          idx.cyberwareByParent[cw.parentType] = [];
+        }
+        idx.cyberwareByParent[cw.parentType].push(cw);
       }
-      idx.cyberwareByParent[cw.parentType].push(cw);
     }
   }
 

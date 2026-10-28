@@ -35,7 +35,12 @@ const exportCharacter = () => {
   const data = getCharacterData();
   const handle = data.handle || data.name || "character";
   const name = `${handle.replace(/[^a-zA-Z0-9_-]/g, "_")}_cpr.json`;
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const jsonStr = JSON.stringify(data, null, 2);
+  if (window.AndroidBridge && typeof window.AndroidBridge.saveJsonFile === 'function') {
+    window.AndroidBridge.saveJsonFile(name, jsonStr);
+    return;
+  }
+  const blob = new Blob([jsonStr], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
