@@ -78,3 +78,12 @@ input:focus, select:focus { outline: none; border-color: var(--focus-ring); box-
 .btn-welcome { background: var(--primary); color: #000; font-family: 'Orbitron', sans-serif; text-transform: uppercase; font-weight: 900; letter-spacing: 0.1em; transition: all 0.2s; }
 .btn-welcome:hover { background: var(--primary-hover); box-shadow: 0 0 15px var(--primary); transform: scale(1.02); }
 select option { color: var(--primary); background: #000; }
+@media (max-width: 1024px), (pointer: coarse) {
+  body {
+    background-attachment: scroll;
+  }
+  .welcome-overlay {
+    backdrop-filter: none;
+    background: rgba(0, 0, 0, 0.94);
+  }
+}

@@ -1,5 +1,5 @@
 // ============================================================
-// GAME MASTER (GM) SCREEN & MULTI-SHEET MANAGEMENT (v5.4.2)
+// GAME MASTER (GM) SCREEN & MULTI-SHEET MANAGEMENT (v5.4.3)
 // ============================================================
 
 /**
@@ -891,7 +891,12 @@ function exportGMCharacterJSON(index) {
   if (!char) return;
   const handle = char.handle || "character";
   const filename = `${handle.replace(/[^a-zA-Z0-9_-]/g, "_")}_gm_export.json`;
-  const blob = new Blob([JSON.stringify(char, null, 2)], { type: "application/json" });
+  const jsonStr = JSON.stringify(char, null, 2);
+  if (window.AndroidBridge && typeof window.AndroidBridge.saveJsonFile === 'function') {
+    window.AndroidBridge.saveJsonFile(filename, jsonStr);
+    return;
+  }
+  const blob = new Blob([jsonStr], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -982,12 +987,17 @@ function exportGMSessionFile() {
     return;
   }
   const data = {
-    _gmSessionVersion: "5.4.2",
+    _gmSessionVersion: "5.4.3",
     savedAt: new Date().toISOString(),
     sheets: gmState.loadedSheets
   };
   const filename = `Cyberpunk_GM_Session_${new Date().toISOString().slice(0, 10)}.json`;
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const jsonStr = JSON.stringify(data, null, 2);
+  if (window.AndroidBridge && typeof window.AndroidBridge.saveJsonFile === 'function') {
+    window.AndroidBridge.saveJsonFile(filename, jsonStr);
+    return;
+  }
+  const blob = new Blob([jsonStr], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
