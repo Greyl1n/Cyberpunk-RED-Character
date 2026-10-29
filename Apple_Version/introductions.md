@@ -1,6 +1,6 @@
 # Cyberpunk RED Character Manager & GM Command Center: User Guide & Architecture Manual
 
-> **Version:** 5.4.3  
+> **Version:** 5.5.0  
 > **Target Audience:** Tabletop Players, Game Masters (GMs), and Developers  
 > **Supported Environments:** Modern Web Browsers (Chrome, Firefox, Safari, Edge) and Android Devices (APK)
 
@@ -42,7 +42,7 @@ The **Cyberpunk RED Character Manager & GM Command Center** is an interactive, r
 2. No installation, build process, or web server is needed. You can run it directly from a local folder, a USB thumb drive, or an offline laptop.
 
 ### Option B: On Android Devices (Phones & Tablets)
-1. Transfer **`CyberpunkRED_v5.4.3.apk`** to your Android device (or download it directly).
+1. Transfer **`CyberpunkRED_v5.5.0.apk`** to your Android device (or download it directly).
 2. Tap the APK file to install (allow "Install unknown apps" if prompted).
 3. The app launches full-screen with touch-optimized controls, locked horizontal scaling, and hardware GPU acceleration.
 
@@ -189,11 +189,14 @@ The **About Tab** contains technical documentation, changelogs, rulebook citatio
 
 ### Module 6: GM Screen (Encounter Command Center)
 
-The **GM Screen Tab** is a purpose-built tactical combat dashboard allowing Game Masters to run combat encounters with up to 5 characters or NPCs simultaneously without juggling sheets.
+The **GM Screen Tab** is a purpose-built tactical combat dashboard featuring two dedicated sub-tabs — **👥 Players (up to 6 slots)** and **🤖 Quick NPCs (up to 6 slots)** — allowing Game Masters to run full party encounters and generate rulebook-compliant adversaries on the fly.
 
-#### 1. Dynamic Side-by-Side Encounter Grid
-* Displays **1 to 5 character sheets** side-by-side in responsive columns that automatically scale across desktop monitors, laptops, and tablets.
-* Load combatants directly from **Exported JSON files** or your browser's **Saved Characters** roster.
+#### 1. Dynamic Side-by-Side Encounter Grid (Players & Quick NPCs)
+* **👥 Players Sub-Tab (1 to 6 Sheets):** Displays **1 to 6 player character sheets** side-by-side in responsive columns that automatically scale across desktop monitors, laptops, and tablets. Load combatants directly from **Exported JSON files** or your browser's **Saved Characters** roster.
+* **🤖 Quick NPCs Sub-Tab (1 to 6 NPCs + Rulebook Generator):** Features a 3-mode **Rulebook Quick NPC Generator** paired with a 6-slot side-by-side NPC combat tracker:
+  1. **📖 Rulebook Archetypes (CRB p.412–417 & DLCs):** Spawn official *Mooks/Grunts* (Bodyguard, Boosterganger, Road Ganger, Security Operative), *Lieutenants* (Netrunner, Reclaimer Chief, Security Officer), *Mini-Bosses* (Cyberpsycho, Outrider, Pyro), *Hardened Mooks/Lts*, and *Lawman Backup / Exec Team Members*.
+  2. **🎲 Fast & Dirty / Streetrat Role Generator (CRB p.74–89):** Choose any Role (or Random) and Threat Tier (*Mook*, *Lieutenant*, *Mini-Boss*, *Boss*) to roll role-tailored STATs, 20 role skills, weapons, armor, and cyberware.
+  3. **⚔️ Combat Number (CN) Quick Builder:** Lawman Backup / 3-Goon style builder using a single **Combat Number (CN)** for all attack and skill rolls (`1d10 + CN`), with 1-click presets (*CN 8*, *CN 11*, *CN 14*, *CN 16*).
 
 #### 2. On-Card Instant Combat Controls
 Each combatant card on the field displays:

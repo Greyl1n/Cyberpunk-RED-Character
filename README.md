@@ -1,8 +1,8 @@
-# Cyberpunk RED Character Manager & Game Master Command Center (v5.4.3)
+# Cyberpunk RED Character Manager & Game Master Command Center (v5.5.0)
 
 > **A fully self-contained, offline-first web application for Cyberpunk RED tabletop RPG players and Game Masters.**
 
-![Version](https://img.shields.io/badge/version-5.4.3-ff0055.svg)
+![Version](https://img.shields.io/badge/version-5.5.0-ff0055.svg)
 ![License](https://img.shields.io/badge/license-CC--BY--NC--4.0-blue.svg)
 ![Cyberpunk RED](https://img.shields.io/badge/game-Cyberpunk%20RED-00f3ff.svg)
 ![Offline](https://img.shields.io/badge/offline-100%25-brightgreen.svg)
@@ -21,7 +21,12 @@ The application is built to be 100% self-contained in a single file (`index.html
 
 Run fast-paced Cyberpunk RED encounters and manage your entire party simultaneously without juggling tabs or character sheets:
 
-* **Side-by-Side Dynamic Encounter Field (1–5 Sheets)**: Load up to 5 full character sheets side-by-side. The responsive display field automatically balances column widths (`1 to 5 columns`) according to active cards.
+* **Dual Sub-Tabs: 👥 Players (1–6 Sheets) & 🤖 Quick NPCs (1–6 NPCs)**:
+  * **👥 Players Tab**: Load up to **6** full player character sheets side-by-side. The responsive display field automatically balances column widths (`1 to 6 columns`) according to active cards.
+  * **🤖 Quick NPCs Tab**: Build and track up to **6** adversary cards side-by-side using 3 rulebook-compliant Quick NPC creation methods:
+    1. **📖 Rulebook Archetypes (CRB p.412–417 & DLCs)**: One-click spawning of *Mooks/Grunts* (Bodyguard, Boosterganger, Road Ganger, Security Operative), *Lieutenants* (Netrunner, Reclaimer Chief, Security Officer), *Mini-Bosses* (Cyberpsycho, Outrider, Pyro), *Hardened Mooks/Lts*, and *Lawman Backup / Exec Team Members*.
+    2. **🎲 Fast & Dirty / Streetrat Role Generator (CRB p.74–89)**: Select any of the 10 Roles (or Random Role) and a Threat Tier (*Mook Rank 2*, *Lieutenant Rank 4*, *Mini-Boss Rank 6*, *Boss Rank 8*) to auto-roll STATs, 20 role skills, weapons, armor, and cyberware.
+    3. **⚔️ Combat Number (CN) Quick Builder**: Lawman Backup / 3-Goon style single-number combatant creator (`1d10 + CN` for all attacks & skill checks) with quick presets (*CN 8 Easy Mook*, *CN 11 Average Lt.*, *CN 14 Tough Elite*, *CN 16 Cyber-Boss*), custom HP, SP, MOVE/BODY, and weapons.
 * **On-Card Quick Controls**:
   * **Interactive Vitals**: Color-coded percentage health bar with instant `+1`, `+5`, `+10`, `-1`, `-5`, `-10` HP adjustment buttons.
   * **Armor SP Steppers**: Track Head SP and Body SP combat abrasion directly on each card with live recalculation.

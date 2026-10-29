@@ -413,16 +413,18 @@ function renderStats() {
     let s = DATA.stats[i];
     let baseVal = state.stats[s.id] || 2;
     let cyberBonus = calcCyberStatBonus(s.id);
-    let effVal = baseVal + cyberBonus;
+    let gearBonus = typeof calcGearStatBonus === "function" ? calcGearStatBonus(s.id) : 0;
+    let effVal = baseVal + cyberBonus + gearBonus;
     let bonus = calcStatBonus(effVal);
     let row = document.createElement("div");
     row.className = "stat-row";
-    let cyberStr = cyberBonus > 0 ? ' <span class="cyber-stat-bonus">(+' + cyberBonus + ' chrome)</span>' : '';
+    let cyberStr = cyberBonus !== 0 ? ' <span class="cyber-stat-bonus">(' + (cyberBonus > 0 ? '+' : '') + cyberBonus + ' chrome)</span>' : '';
+    let gearStr = gearBonus !== 0 ? ' <span class="cyber-stat-bonus" style="color:var(--primary)">(' + (gearBonus > 0 ? '+' : '') + gearBonus + ' gear)</span>' : '';
     row.innerHTML = '<span class="stat-name" title="' + s.desc + '">' + s.name + '</span>' +
       '<button class="stat-dec" data-stat="' + s.id + '">-</button>' +
       '<input type="number" class="stat-input" data-stat="' + s.id + '" value="' + baseVal + '" min="' + STAT_MIN + '" max="' + STAT_MAX + '">' +
       '<button class="stat-inc" data-stat="' + s.id + '">+</button>' +
-      '<span class="stat-bonus">(' + (bonus >= 0 ? "+" : "") + bonus + ')</span>' + cyberStr;
+      '<span class="stat-bonus">(' + (bonus >= 0 ? "+" : "") + bonus + ')</span>' + cyberStr + gearStr;
     container.appendChild(row);
   }
   updateStatPointsBar();
@@ -512,28 +514,33 @@ function renderSkills() {
             let subName = state.subSkillNames ? (state.subSkillNames[subId] || "") : "";
             let ranks = state.skillRanks[subId] || 0;
             let item = state.skillItem[subId] || 0;
-            let total = calcSkillTotal(statVal, ranks, item, cyber);
+            let subGear = typeof calcSkillGearBonus === "function" ? calcSkillGearBonus(subId) : 0;
+            let subCyber = calcSkillCyberBonus(subId);
+            let total = calcSkillTotal(statVal, ranks, item + subGear, subCyber);
+            let gearBadge = subGear !== 0 ? ' <span class="gear-skill-bonus" style="font-size:0.75rem;color:var(--primary);font-weight:bold" title="Bonus from Gear">(' + (subGear > 0 ? '+' : '') + subGear + ')</span>' : '';
             let tr = document.createElement("tr");
             tr.innerHTML = '<td style="padding-left: 20px;"><input type="text" class="subskill-name" data-sub="' + subId + '" value="' + subName + '" placeholder="Specify..." style="width:120px"></td>' +
               '<td></td>' +
               '<td>' + calcStatBonus(statVal) + '</td>' +
               '<td><input type="number" class="skill-rank" data-skill="' + subId + '" value="' + ranks + '" min="0" max="10" style="width:50px"></td>' +
-              '<td><input type="number" class="skill-item" data-skill="' + subId + '" value="' + item + '" style="width:50px"></td>' +
-              '<td>' + (cyber > 0 ? '+' + cyber : '0') + '</td>' +
+              '<td><input type="number" class="skill-item" data-skill="' + subId + '" value="' + item + '" style="width:50px">' + gearBadge + '</td>' +
+              '<td>' + (subCyber > 0 ? '+' + subCyber : (subCyber < 0 ? subCyber : '0')) + '</td>' +
               '<td><strong>' + (total >= 0 ? "+" : "") + total + '</strong></td>';
             frag.appendChild(tr);
           }
         } else {
           let ranks = state.skillRanks[skill.id] || 0;
           let item = state.skillItem[skill.id] || 0;
-          let total = calcSkillTotal(statVal, ranks, item, cyber);
+          let gearBonus = typeof calcSkillGearBonus === "function" ? calcSkillGearBonus(skill.id) : 0;
+          let total = calcSkillTotal(statVal, ranks, item + gearBonus, cyber);
+          let gearBadge = gearBonus !== 0 ? ' <span class="gear-skill-bonus" style="font-size:0.75rem;color:var(--primary);font-weight:bold" title="Bonus from Gear">(' + (gearBonus > 0 ? '+' : '') + gearBonus + ')</span>' : '';
           let tr = document.createElement("tr");
           tr.innerHTML = '<td>' + name + '</td>' +
             '<td>' + statId.toUpperCase() + '</td>' +
             '<td>' + calcStatBonus(statVal) + '</td>' +
             '<td><input type="number" class="skill-rank" data-skill="' + skill.id + '" value="' + ranks + '" min="0" max="10" style="width:50px"></td>' +
-            '<td><input type="number" class="skill-item" data-skill="' + skill.id + '" value="' + item + '" style="width:50px"></td>' +
-            '<td>' + (cyber > 0 ? '+' + cyber : '0') + '</td>' +
+            '<td><input type="number" class="skill-item" data-skill="' + skill.id + '" value="' + item + '" style="width:50px">' + gearBadge + '</td>' +
+            '<td>' + (cyber > 0 ? '+' + cyber : (cyber < 0 ? cyber : '0')) + '</td>' +
             '<td><strong>' + (total >= 0 ? "+" : "") + total + '</strong></td>';
           frag.appendChild(tr);
         }
@@ -638,9 +645,10 @@ function updateSkillRow(id) {
   let statId = idxItem.statId;
   let ranks = state.skillRanks[id] || 0;
   let item = state.skillItem[id] || 0;
+  let gearBonus = typeof calcSkillGearBonus === "function" ? calcSkillGearBonus(id) : 0;
   let statVal = getEffectiveStat(statId);
-  let cyber = calcSkillCyberBonus(baseId);
-  let total = calcSkillTotal(statVal, ranks, item, cyber);
+  let cyber = calcSkillCyberBonus(id);
+  let total = calcSkillTotal(statVal, ranks, item + gearBonus, cyber);
   
   let input = document.querySelector('.skill-rank[data-skill="' + id + '"]');
   if (input) {
@@ -747,8 +755,8 @@ function attachSkillEvents() {
  * It also determines your "Seriously Wounded" threshold and Death Save number.
  */
 function renderHealth() {
-  let body = state.stats.body || 2;
-  let will = state.stats.will || 2;
+  let body = getEffectiveStat("body");
+  let will = getEffectiveStat("will");
   let hpMax = calcHitsMax(body, will);
   document.getElementById("hp_max").value = hpMax;
   document.getElementById("hp_seriously").value = calcSeriouslyWounded(hpMax);
@@ -808,8 +816,9 @@ function renderWeapons() {
       let statVal = getEffectiveStat(map.stat);
       let ranks = state.skillRanks[map.skill] || 0;
       let item = state.skillItem[map.skill] || 0;
+      let gearBonus = typeof calcSkillGearBonus === "function" ? calcSkillGearBonus(map.skill) : 0;
       let cyber = calcSkillCyberBonus(map.skill);
-      let total = calcSkillTotal(statVal, ranks, item, cyber);
+      let total = calcSkillTotal(statVal, ranks, item + gearBonus, cyber);
       skillTotal = (total >= 0 ? "+" : "") + total;
     }
 
@@ -1470,7 +1479,9 @@ function renderCyberwareSlot(tbody, parent, parentPath, slotIdx, depth) {
   
   let customSel = (option && option.id && option.id.startsWith("custom_")) ? ' selected' : '';
   if (option && option.id && option.id.startsWith("custom_")) {
-    selectHtml += '<option value="' + option.id + '"' + customSel + '>' + option.name + ' (' + option.cost + 'eb, ' + (option.hc || 0) + 'HC) [Custom]</option>';
+    let optBonusStr = option.bonus ? formatCyberBonus(option.bonus) : '';
+    let optBonusTag = optBonusStr ? ' [' + optBonusStr + ']' : '';
+    selectHtml += '<option value="' + option.id + '"' + customSel + '>' + option.name + ' (' + option.cost + 'eb, ' + (option.hc || 0) + 'HC)' + optBonusTag + ' [Custom]</option>';
   }
   selectHtml += '<option value="custom">-- Custom Option --</option>';
   selectHtml += '</select>';
@@ -1479,6 +1490,12 @@ function renderCyberwareSlot(tbody, parent, parentPath, slotIdx, depth) {
   if (option) {
     let optDescVal = escapeHtml(option.desc || '');
     optionDescHtml = ' <textarea class="cyber-option-desc-input" data-path="' + currentPath + '" placeholder="Option Description" rows="1" style="width:45%;">' + optDescVal + '</textarea>';
+    if (option.bonus) {
+      let bStr = formatCyberBonus(option.bonus);
+      if (bStr) {
+        optionDescHtml += ' <small style="color:var(--primary);font-weight:bold;white-space:nowrap">[' + escapeHtml(bStr) + ']</small>';
+      }
+    }
   }
   
   let indent = 1.5 + (depth * 1.5);
@@ -1689,6 +1706,8 @@ function showCustomSlotOptionModal(isCyberware, callback) {
 
   html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Cost in eb (0 = looted)</label><input type="number" id="custom_opt_cost" value="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
 
+  html += buildCustomBonusPickerHtml("custom_opt");
+
   html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Description</label><textarea id="custom_opt_desc" placeholder="Option details, stats, rules..." rows="3" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px;resize:vertical"></textarea></div>`;
 
   html += `</div>`;
@@ -1702,6 +1721,7 @@ function showCustomSlotOptionModal(isCyberware, callback) {
   overlay.appendChild(box);
   document.body.appendChild(overlay);
 
+  let getOptBonus = setupCustomBonusPicker("custom_opt");
   document.getElementById("custom_opt_name").focus();
 
   function closeModal() {
@@ -1726,12 +1746,12 @@ function showCustomSlotOptionModal(isCyberware, callback) {
     let cost = parseInt(document.getElementById("custom_opt_cost").value) || 0;
     let desc = document.getElementById("custom_opt_desc").value || "";
     let slots = parseInt(document.getElementById("custom_opt_slots").value) || 0;
-    let res = { id: "custom_" + Date.now(), name: name, cost: cost, desc: desc, slots: slots > 0 ? slots : undefined };
+    let bonusObj = getOptBonus ? getOptBonus() : null;
+    let res = { id: "custom_" + Date.now(), name: name, cost: cost, desc: desc, bonus: bonusObj, slots: slots > 0 ? slots : undefined };
 
     if (isCyberware) {
       res.type = document.getElementById("custom_opt_type").value || "Option";
       res.hc = parseInt(document.getElementById("custom_opt_hc").value) || 0;
-      res.bonus = null;
     }
 
     closeModal();
@@ -1918,6 +1938,7 @@ function renderVehicles() {
 }
 
 function renderGear() {
+  if (typeof invalidateGearCache === "function") invalidateGearCache();
   let tbody = document.getElementById("gear_body");
   if (!tbody) return;
   tbody.innerHTML = "";
@@ -1985,6 +2006,12 @@ function renderGearRow(tbody, g, idx, isLootedSection) {
   }
   let descVal = escapeHtml(g.desc || '');
   let displayName = escapeHtml(g.name);
+  if (g.bonus) {
+    let bonusStr = formatCyberBonus(g.bonus);
+    if (bonusStr) {
+      displayName += ' <span class="gear-item-bonus-badge" style="font-size:0.7rem; padding:0.1rem 0.35rem; border-radius:3px; background:rgba(0, 240, 255, 0.12); color:var(--primary); border:1px solid var(--primary); margin-left:0.35rem; vertical-align:middle;">' + escapeHtml(bonusStr) + '</span>';
+    }
+  }
   if (isLootedSection || g.isLooted || g.cost === 0) {
     displayName += ' <span style="font-size:0.7rem; padding:0.1rem 0.35rem; border-radius:3px; background:rgba(255, 0, 60, 0.15); color:var(--accent); border:1px solid var(--accent); margin-left:0.35rem; vertical-align:middle;">Looted</span>';
   }
@@ -2013,7 +2040,9 @@ function renderGearSlot(tbody, parent, parentPath, slotIdx, depth) {
   
   let customSel = (option && option.id && option.id.startsWith("custom_")) ? ' selected' : '';
   if (option && option.id && option.id.startsWith("custom_")) {
-    selectHtml += '<option value="' + option.id + '"' + customSel + '>' + option.name + ' (' + option.cost + 'eb) [Custom]</option>';
+    let optBonusStr = option.bonus ? formatCyberBonus(option.bonus) : '';
+    let optBonusTag = optBonusStr ? ' [' + optBonusStr + ']' : '';
+    selectHtml += '<option value="' + option.id + '"' + customSel + '>' + option.name + ' (' + option.cost + 'eb)' + optBonusTag + ' [Custom]</option>';
   }
   selectHtml += '<option value="custom">-- Custom Option --</option>';
   selectHtml += '</select>';
@@ -2022,6 +2051,12 @@ function renderGearSlot(tbody, parent, parentPath, slotIdx, depth) {
   if (option) {
     let optDescVal = escapeHtml(option.desc || '');
     optionDescHtml = ' <textarea class="gear-option-desc-input" data-path="' + currentPath + '" placeholder="Option Description" rows="1" style="width:45%;">' + optDescVal + '</textarea>';
+    if (option.bonus) {
+      let bStr = formatCyberBonus(option.bonus);
+      if (bStr) {
+        optionDescHtml += ' <small style="color:var(--primary);font-weight:bold;white-space:nowrap">[' + escapeHtml(bStr) + ']</small>';
+      }
+    }
   }
   
   let indent = 1.5 + (depth * 1.5);
@@ -2030,8 +2065,9 @@ function renderGearSlot(tbody, parent, parentPath, slotIdx, depth) {
 
   if (option) {
     let optBase = getDataItemById(option.id);
-    if (optBase && optBase.slots > 0) {
-      for (let s = 0; s < optBase.slots; s++) {
+    let optSlots = option.slots || (optBase && optBase.slots) || 0;
+    if (optSlots > 0) {
+      for (let s = 0; s < optSlots; s++) {
         renderGearSlot(tbody, option, currentPath, s, depth + 1);
       }
     }
@@ -2092,6 +2128,8 @@ function attachGearEvents() {
         state.gear.splice(idx, 1);
         renderGear();
         renderAmmoTracker();
+        renderStats();
+        updateAllDerived();
       });
     };
   }
@@ -2113,6 +2151,8 @@ function attachGearEvents() {
         state.gear.splice(idx, 1);
         renderGear();
         renderAmmoTracker();
+        renderStats();
+        updateAllDerived();
       });
     };
   }
@@ -2129,6 +2169,8 @@ function attachGearEvents() {
       state.gear.splice(idx, 1);
       renderGear();
       renderAmmoTracker();
+      renderStats();
+      updateAllDerived();
     };
   }
   for (let i = 0; i < qtys.length; i++) {
@@ -2167,9 +2209,11 @@ function attachGearEvents() {
                 isLooted: true,
                 cat: g.cat,
                 desc: lootedDesc,
+                bonus: g.bonus || null,
                 qty: diff,
                 ammo: g.ammo,
                 slots: g.slots,
+                slotType: g.slotType,
                 parentType: g.parentType
               };
               if (g.slots) { lootedEntry.options = []; }
@@ -2240,6 +2284,8 @@ function attachGearEvents() {
           let el = document.getElementById("currency_eb");
           el.value = (parseInt(el.value) || 0) - diff;
           renderGear();
+          renderStats();
+          updateAllDerived();
         });
         return;
       } else if (optionId && !optionId.startsWith("custom_")) {
@@ -2248,11 +2294,13 @@ function attachGearEvents() {
           showSlotOptionPurchaseModal(item, false, function(res) {
             if (!res) { gearSelects[i].value = oldOption ? oldOption.id : ''; return; }
             let actualCost = res.cost;
-            currentObj.options[slotIdx] = { id: item.id, name: item.name, cost: actualCost, desc: item.desc || '', parentType: item.parentType, slots: item.slots };
+            currentObj.options[slotIdx] = { id: item.id, name: item.name, cost: actualCost, desc: item.desc || '', bonus: item.bonus || null, parentType: item.parentType, slots: item.slots };
             let diff = actualCost - oldCost;
             let el = document.getElementById("currency_eb");
             el.value = (parseInt(el.value) || 0) - diff;
             renderGear();
+            renderStats();
+            updateAllDerived();
           });
           return;
         }
@@ -2264,6 +2312,8 @@ function attachGearEvents() {
           el.value = (parseInt(el.value) || 0) + sellPrice;
           currentObj.options[slotIdx] = null;
           renderGear();
+          renderStats();
+          updateAllDerived();
         });
         return;
       }
@@ -2275,6 +2325,8 @@ function attachGearEvents() {
       el.value = (parseInt(el.value) || 0) - diff;
       
       renderGear();
+      renderStats();
+      updateAllDerived();
     };
   }
 }
@@ -2699,10 +2751,7 @@ function initAddButtons() {
           });
         }
       } else {
-        showItemPurchaseModal(item, "Install Option Cyberware", {}, function(res) {
-          if (!res) return;
-          let actualCost = res.cost;
-          let actualHc = res.hc !== undefined ? res.hc : (item.hc || 0);
+        let installOptionToParent = function(actualCost, actualHc) {
           let parentObj = check.targetParent;
           let slotIdx = check.firstOpenSlotIndex;
           if (!parentObj.options) parentObj.options = [];
@@ -2713,7 +2762,15 @@ function initAddButtons() {
           renderHumanity();
           renderStats();
           renderSkills();
-        });
+        };
+        if (item.id && item.id.startsWith("custom_")) {
+          installOptionToParent(item.cost || 0, item.hc || 0);
+        } else {
+          showItemPurchaseModal(item, "Install Option Cyberware", {}, function(res) {
+            if (!res) return;
+            installOptionToParent(res.cost, res.hc !== undefined ? res.hc : (item.hc || 0));
+          });
+        }
       }
     }, "type");
   };
@@ -2784,19 +2841,21 @@ function initAddButtons() {
         let actualCost = item.cost || 0;
         let isLooted = (actualCost === 0);
         let desc = ensureLootedDesc(item.desc || "", isLooted);
-        let gearEntry = { id: item.id, ammoKey: item.id, name: item.name, cost: actualCost, isLooted: isLooted, cat: item.cat || "Gear", desc: desc, qty: 1, ammo: item.ammo, slots: item.slots, parentType: item.parentType };
+        let gearEntry = { id: item.id, ammoKey: item.id, name: item.name, cost: actualCost, isLooted: isLooted, cat: item.cat || "Gear", desc: desc, bonus: item.bonus || null, qty: 1, ammo: item.ammo, slots: item.slots, slotType: item.slotType, parentType: item.parentType };
         if (item.slots) { gearEntry.options = []; }
         state.gear.push(gearEntry);
         let el = document.getElementById("currency_eb");
         el.value = (parseInt(el.value) || 0) - actualCost;
         renderGear();
+        renderStats();
+        updateAllDerived();
       } else {
         showItemPurchaseModal(item, item.cat || "Gear", {}, function(res) {
           if (!res) return;
           let actualCost = res.cost;
           let isLooted = (actualCost === 0);
           let desc = ensureLootedDesc(item.desc || "", isLooted);
-          let gearEntry = { id: item.id, ammoKey: item.id, name: item.name, cost: actualCost, isLooted: isLooted, cat: item.cat || "Gear", desc: desc, qty: 1, ammo: item.ammo, slots: item.slots, parentType: item.parentType };
+          let gearEntry = { id: item.id, ammoKey: item.id, name: item.name, cost: actualCost, isLooted: isLooted, cat: item.cat || "Gear", desc: desc, bonus: item.bonus || null, qty: 1, ammo: item.ammo, slots: item.slots, slotType: item.slotType, parentType: item.parentType };
           if (item.slots) { gearEntry.options = []; }
           state.gear.push(gearEntry);
           let el = document.getElementById("currency_eb");
@@ -2809,6 +2868,8 @@ function initAddButtons() {
           }
           renderGear();
           renderAmmoTracker();
+          renderStats();
+          updateAllDerived();
         });
       }
     }, "cat");
@@ -3195,6 +3256,124 @@ function showAmmoWeaponTypeModal(item, callback) {
   };
 }
 
+function buildCustomBonusPickerHtml(prefix) {
+  let optsHtml = '<option value="">-- Select Stat or Skill --</option>';
+  if (DATA.stats && DATA.stats.length) {
+    optsHtml += '<optgroup label="Core Stats (STAT)">';
+    for (let i = 0; i < DATA.stats.length; i++) {
+      let st = DATA.stats[i];
+      optsHtml += `<option value="stat:${st.id}">${escapeHtml(st.name)} (${escapeHtml(st.full || st.name)})</option>`;
+    }
+    optsHtml += '</optgroup>';
+  }
+  if (DATA.skills) {
+    let statKeys = Object.keys(DATA.skills);
+    for (let si = 0; si < statKeys.length; si++) {
+      let statId = statKeys[si];
+      let skillList = DATA.skills[statId] || [];
+      optsHtml += `<optgroup label="${escapeHtml(statId.toUpperCase())} Skills">`;
+      for (let j = 0; j < skillList.length; j++) {
+        let sk = skillList[j];
+        if (sk.subs) {
+          optsHtml += `<option value="skill:${sk.id}">${escapeHtml(sk.name)} (All)</option>`;
+          for (let s = 1; s <= sk.subs; s++) {
+            let subId = sk.id + "_" + s;
+            let customSub = (state.subSkillNames && state.subSkillNames[subId]) ? state.subSkillNames[subId] : ("#" + s);
+            optsHtml += `<option value="skill:${subId}">${escapeHtml(sk.name)} (${escapeHtml(customSub)})</option>`;
+          }
+        } else {
+          optsHtml += `<option value="skill:${sk.id}">${escapeHtml(sk.name)}</option>`;
+        }
+      }
+      optsHtml += '</optgroup>';
+    }
+  }
+
+  return `<div style="border:1px solid var(--border);padding:0.65rem;border-radius:4px;background:rgba(0,0,0,0.2)">
+    <label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.35rem;color:var(--primary)">Skill / Stat Bonuses (Optional)</label>
+    <div style="display:flex;gap:0.4rem;align-items:center;flex-wrap:wrap">
+      <select id="${prefix}_bonus_target" style="flex:2;min-width:170px;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px">
+        ${optsHtml}
+      </select>
+      <input type="number" id="${prefix}_bonus_val" value="1" placeholder="+1" style="width:70px;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px;text-align:center" title="Bonus amount (e.g. 1, 2, -1)">
+      <button type="button" id="${prefix}_bonus_add" class="btn-action" style="padding:0.4rem 0.7rem;white-space:nowrap">+ Add Bonus</button>
+    </div>
+    <div id="${prefix}_bonus_list" style="display:flex;flex-wrap:wrap;gap:0.35rem;margin-top:0.4rem"></div>
+  </div>`;
+}
+
+function setupCustomBonusPicker(prefix) {
+  let selectEl = document.getElementById(prefix + "_bonus_target");
+  let valEl = document.getElementById(prefix + "_bonus_val");
+  let addBtn = document.getElementById(prefix + "_bonus_add");
+  let listEl = document.getElementById(prefix + "_bonus_list");
+  if (!selectEl || !valEl || !addBtn || !listEl) return function() { return null; };
+
+  let bonuses = { stats: {}, skills: {} };
+
+  function renderChips() {
+    listEl.innerHTML = "";
+    for (let stId in bonuses.stats) {
+      let v = bonuses.stats[stId];
+      if (!v) continue;
+      let chip = document.createElement("span");
+      chip.style = "display:inline-flex;align-items:center;gap:0.3rem;padding:0.15rem 0.45rem;border-radius:3px;background:var(--stat-row-bg);border:1px solid var(--primary);font-size:0.8rem";
+      chip.innerHTML = `<strong>${v > 0 ? '+' : ''}${v} ${escapeHtml(stId.toUpperCase())}</strong> <button type="button" data-kind="stats" data-id="${escapeHtml(stId)}" style="background:none;border:none;color:var(--accent);cursor:pointer;font-weight:bold;padding:0 2px">\u2715</button>`;
+      listEl.appendChild(chip);
+    }
+    for (let skId in bonuses.skills) {
+      let v = bonuses.skills[skId];
+      if (!v) continue;
+      let chip = document.createElement("span");
+      chip.style = "display:inline-flex;align-items:center;gap:0.3rem;padding:0.15rem 0.45rem;border-radius:3px;background:var(--stat-row-bg);border:1px solid var(--primary);font-size:0.8rem";
+      chip.innerHTML = `<strong>${v > 0 ? '+' : ''}${v} ${escapeHtml(skillNameById(skId))}</strong> <button type="button" data-kind="skills" data-id="${escapeHtml(skId)}" style="background:none;border:none;color:var(--accent);cursor:pointer;font-weight:bold;padding:0 2px">\u2715</button>`;
+      listEl.appendChild(chip);
+    }
+    let rmBtns = listEl.querySelectorAll("button[data-kind]");
+    for (let i = 0; i < rmBtns.length; i++) {
+      rmBtns[i].onclick = function() {
+        let kind = this.dataset.kind;
+        let id = this.dataset.id;
+        if (bonuses[kind]) delete bonuses[kind][id];
+        renderChips();
+      };
+    }
+  }
+
+  function addCurrentSelection() {
+    let target = selectEl.value;
+    let val = parseInt(valEl.value) || 0;
+    if (!target || val === 0) return false;
+    let parts = target.split(":");
+    if (parts.length < 2) return false;
+    let kind = parts[0] === "stat" ? "stats" : "skills";
+    let id = parts.slice(1).join(":");
+    bonuses[kind][id] = (bonuses[kind][id] || 0) + val;
+    if (bonuses[kind][id] === 0) delete bonuses[kind][id];
+    selectEl.value = "";
+    valEl.value = "1";
+    renderChips();
+    return true;
+  }
+
+  addBtn.onclick = function() {
+    addCurrentSelection();
+  };
+
+  return function getBonusObject() {
+    if (selectEl.value) {
+      addCurrentSelection();
+    }
+    let hasStats = Object.keys(bonuses.stats).length > 0;
+    let hasSkills = Object.keys(bonuses.skills).length > 0;
+    if (!hasStats && !hasSkills) return null;
+    let out = {};
+    if (hasStats) out.stats = Object.assign({}, bonuses.stats);
+    if (hasSkills) out.skills = Object.assign({}, bonuses.skills);
+    return out;
+  };
+}
+
 function showCustomItemModal(type, callback) {
   let overlay = document.createElement("div");
   overlay.className = "modal-overlay active";
@@ -3230,6 +3409,10 @@ function showCustomItemModal(type, callback) {
 
   html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Cost in eb (0 = looted)</label><input type="number" id="custom_modal_cost" value="0" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px"></div>`;
 
+  if (type === "cyberware" || type === "gear") {
+    html += buildCustomBonusPickerHtml("custom_modal");
+  }
+
   html += `<div><label style="font-weight:bold;font-size:0.85rem;display:block;margin-bottom:0.2rem">Description</label><textarea id="custom_modal_desc" placeholder="Item details, stats, effects..." rows="3" style="width:100%;padding:0.4rem;background:var(--stat-row-bg);border:1px solid var(--border);color:inherit;border-radius:4px;resize:vertical"></textarea></div>`;
 
   html += `</div>`;
@@ -3243,6 +3426,7 @@ function showCustomItemModal(type, callback) {
   overlay.appendChild(box);
   document.body.appendChild(overlay);
 
+  let getModalBonus = (type === "cyberware" || type === "gear") ? setupCustomBonusPicker("custom_modal") : null;
   document.getElementById("custom_modal_name").focus();
 
   function closeModal() {
@@ -3278,6 +3462,7 @@ function showCustomItemModal(type, callback) {
     } else if (type === "cyberware") {
       let cType = document.getElementById("custom_modal_cType").value || "Fashionware";
       itemObj.type = cType;
+      itemObj.hc = parseInt(document.getElementById("custom_modal_hc").value) || 0;
       let mapped = mapTypeToParentType(cType);
       let isStandaloneCategory = !mapped || ['internal', 'external', 'fashionware', 'borgware'].includes(mapped);
       let slots = parseInt(document.getElementById("custom_modal_slots").value) || 0;
@@ -3287,7 +3472,7 @@ function showCustomItemModal(type, callback) {
       } else if (!isStandaloneCategory) {
         itemObj.parentType = mapped;
       }
-      itemObj.bonus = null;
+      itemObj.bonus = getModalBonus ? getModalBonus() : null;
     } else if (type === "vehicle") {
       itemObj.sdp = parseInt(document.getElementById("custom_modal_sdp").value) || 25;
       itemObj.seats = parseInt(document.getElementById("custom_modal_seats").value) || 2;
@@ -3302,6 +3487,7 @@ function showCustomItemModal(type, callback) {
       if (slots > 0) {
         itemObj.slotType = mapTypeToParentType(cat) || mapTypeToParentType(name);
       }
+      itemObj.bonus = getModalBonus ? getModalBonus() : null;
       if (cat.toLowerCase() === "ammunition") itemObj.ammo = 10;
       if (cat.toLowerCase() === "grenades") itemObj.ammo = 1;
     }
@@ -3519,6 +3705,7 @@ function loadCharacterData(data) {
   state.armor = data.armor || [];
   state.cyberware = data.cyberware || [];
   if (typeof invalidateCyberCache === "function") invalidateCyberCache();
+  if (typeof invalidateGearCache === "function") invalidateGearCache();
   state.uninstalledCyberware = data.uninstalledCyberware || [];
   state.gear = data.gear || [];
   state.vehicles = data.vehicles || [];
@@ -3567,6 +3754,7 @@ function loadCharacterData(data) {
 
 function resetCharacter() {
   if (typeof invalidateCyberCache === "function") invalidateCyberCache();
+  if (typeof invalidateGearCache === "function") invalidateGearCache();
   initState();
   document.getElementById("char_handle").value = "";
   document.getElementById("char_name").value = "";

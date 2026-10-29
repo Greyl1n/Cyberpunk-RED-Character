@@ -62,7 +62,7 @@
 <div class="scanline-overlay"></div>
 <input type="checkbox" id="dismissWelcome" style="display:none">
 <header>
-<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px var(--accent))">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v5.4.3</span></div></div>
+<div class="header-logo"><span style="font-size:1.8rem;filter:drop-shadow(0 0 4px var(--accent))">&#9881;</span><div><h1>Cyberpunk RED Generator</h1><span class="sub-brand">Character Manager v5.5.0</span></div></div>
 <div class="header-actions">
 <button id="themeBtn" class="btn-action" title="Color Scheme & Theme Settings">&#127912; Theme</button>
 <button id="charactersBtn" class="btn-action">&#128194; Characters</button>
@@ -89,8 +89,9 @@
 <div id="welcomeOverlay" class="welcome-overlay">
 <div class="welcome-card" style="max-width:600px">
 <h1 class="welcome-title">&#9881; Cyberpunk RED Generator</h1>
-<p class="welcome-subtitle">Interactive Character &amp; GM Command Center — Version 5.4.3</p>
+<p class="welcome-subtitle">Interactive Character &amp; GM Command Center — Version 5.5.0</p>
 <div class="welcome-tabs" style="display:flex;flex-direction:column;gap:0.6rem;margin:1rem 0">
+<div class="welcome-tab"><strong>🎲 GM Command Center &amp; Quick NPC Generator (v5.5.0)</strong> — Expanded Players tab to 6 side-by-side character slots and added a dedicated 6-slot 🤖 Quick NPCs tab with 3 rulebook creation modes: Rulebook Archetypes (Mooks, Lieutenants, Mini-Bosses, Hardened DLC, Lawman Backup, Exec Team), Fast &amp; Dirty / Streetrat Role Generator, and Combat Number (CN) Quick Builder.</div>
 <div class="welcome-tab"><strong>🦾 Cyberware Rules &amp; Slot Hierarchy Audit (v5.4.3)</strong> — Fixed foundation cyberware (Bug Eye, MonoVision, Sponsored Cybereye, Neo-Soviet Cyberarm, Discount Cyberaudio, Romanova Cyberlegs, Skydrivers) so they install standalone without requiring a parent, enabled nested Cyberfinger lookup inside Modular Finger Cyberhands, added Cyberlimb Option support across both arms and legs, and corrected paired Cyberleg Humanity Cost.</div>
 <div class="welcome-tab"><strong>💾 Complete Save Data &amp; Project Cleanup (v5.4.2)</strong> — Cyberdecks, programs, hardware and vehicles now persist through save/load and JSON export/import, ✨ New / 🎲 Random fully clear the previous character, and unused development files were removed.</div>
 <div class="welcome-tab"><strong>⚡ Performance Optimization &amp; Code Audit (v5.4.1)</strong> — Blazing fast single-pass cyberware summary caching, O(1) inventory &amp; item indexes, hoisted skill render calculations, fixed item selector modal scrolling, and clean synchronization across all platforms.</div>
@@ -98,7 +99,7 @@
 <div class="welcome-tab"><strong>💻 Cyberdeck &amp; Program Audit (v5.1.2)</strong> — Fixed description overwrites, restored full rulebook text, expanded 31 Programs/Black ICE/Demons &amp; 16 Hardware options, and verified exact slot calculations.</div>
 <div class="welcome-tab"><strong>🎲 Rules-Compliant Random Budget (v5.1.1)</strong> — Random character generator equips weapons (&le;500eb), armor, cyberware, and gear out of a 2550 eb creation budget. Netrunners automatically receive the cheapest Cyberdeck + software programs.</div>
 <div class="welcome-tab"><strong>🎨 Custom Color Schemes (v5.1.0)</strong> — Personalise your UI with 8 preset color themes (Cyber Cyan, Arasaka Red, Netrunner Yellow, Matrix Green, etc.) or custom Main &amp; Accent color pickers, saved automatically across sessions.</div>
-<div class="welcome-tab"><strong>🎲 GM Command Center (v5.0.0)</strong> — Load up to 5 character sheets side-by-side with dynamic scaling, interactive sheet modals, live 1d10/d6 dice rolling, and session auto-save.</div>
+<div class="welcome-tab"><strong>🎲 GM Command Center &amp; Quick NPC Generator</strong> — Load up to 6 player sheets side-by-side plus a dedicated 6-slot Quick NPC tab featuring Rulebook Archetypes (Mooks, Lieutenants, Mini-Bosses), Streetrat/Fast &amp; Dirty Role Generator, and Combat Number (CN) builder.</div>
 <div class="welcome-tab"><strong><img src="src/icons/character.jpg" class="tab-icon" style="box-shadow:none; border-color:transparent"> Complete Character Creation</strong> — Point-buy stats, 86 skills, role abilities, humanity loss tracking, and instant Lifepath generator.</div>
 <div class="welcome-tab"><strong><img src="src/icons/gear.jpg" class="tab-icon" style="box-shadow:none; border-color:transparent"> Gear &amp; Cyberware Manager</strong> — Weapons, armor SP abrasion tracking, cyberware slot installation, ammunition tracker, and currency management.</div>
 </div>
@@ -364,10 +365,10 @@
 </section>
 <section id="tab-about" class="tab-panel">
 <div class="section-card">
-<h2 class="section-title">About Cyberpunk RED Generator (v5.4.3)</h2>
+<h2 class="section-title">About Cyberpunk RED Generator (v5.5.0)</h2>
 <p style="margin-bottom:0.8rem;line-height:1.7">A fully self-contained, highly-optimised interactive character manager and Game Master command center for <strong>Cyberpunk RED</strong> by R. Talsorian Games. Create, customise, save, run GM encounters, and print characters with full support for stats, skills, role abilities, gear, cyberware, lifepath generation, and multiclassing.</p>
-<p style="margin-bottom:0.8rem;line-height:1.7"><strong>Welcome to Version 5.4.3!</strong> This update audits and fixes the complete cyberware ruleset: foundation replacements (Bug Eye, MonoVision, Sponsored Cybereye, Neo-Soviet Cyberarm, Discount Cyberaudio Suite, Romanova Cyberlegs, Skydrivers, Arc-Thrower Cyberarm, Xtra-Dex Smart Glove) now install as standalone items without falsely requiring a parent, Cyberfingers properly detect a Modular Finger Cyberhand mounted inside a Cyberarm, Cyberlimb Options can be installed in either a Cyberarm or Cyberleg, and paired cyberlegs no longer double-count Humanity Cost.</p>
-<h3 style="margin:1rem 0 0.4rem">v5.4.3 Key Features</h3>
+<p style="margin-bottom:0.8rem;line-height:1.7"><strong>Welcome to Version 5.5.0!</strong> This major GM Command Center update expands the Players encounter view to 6 side-by-side character slots and introduces a dedicated 6-slot <strong>🤖 Quick NPCs</strong> tab with 3 rulebook-compliant NPC creation engines: Official Rulebook &amp; DLC Archetypes (Mooks, Lieutenants, Mini-Bosses, Hardened variants, Lawman Backup &amp; Exec Team), the Fast &amp; Dirty / Streetrat Role Generator across 4 threat tiers, and a Combat Number (CN) Quick Builder.</p>
+<h3 style="margin:1rem 0 0.4rem">v5.5.0 Key Features</h3>
 <ul style="line-height:1.8;padding-left:1.2rem">
 <li><strong>🦾 Standalone Foundation Cyberware Fix</strong>: Separated foundation <code>slotType</code> from option <code>parentType</code> so Bug Eye, MonoVision, Sponsored Cybereye, Discount Cyberaudio Suite, Neo-Soviet Cyberarm, Romanova Cyberlegs, Skydrivers, Arc-Thrower Cyberarm, and Xtra-Dex Smart Glove install directly without requiring a parent and no longer appear inside option dropdowns.</li>
 <li><strong>🖐️ Nested Cyberfinger Installation</strong>: Installing Cyberfingers via <code>+ Add Cyberware</code> or Uninstalled Inventory now traverses nested option slots to locate an installed <em>Modular Finger Cyberhand</em> inside a Cyberarm.</li>
@@ -390,7 +391,7 @@
 <li><strong>💻 Netrunner Starting Cyberdeck &amp; Software</strong>: Generated Netrunners automatically receive the cheapest Cyberdeck (100 eb) and 1–2 software programs.</li>
 <li><strong>🎨 Customizable Color Schemes &amp; Themes</strong>: Switch between 8 curated preset palettes (Cyber Cyan, Arasaka Red, Netrunner Yellow, Matrix Green, Tech Purple, Edgerunner Orange, Trauma Blue, Ghost White) or pick custom Main &amp; Accent colors with quick swatches.</li>
 <li><strong>💾 Persistent Theme Loading</strong>: Theme preferences save automatically to <code>localStorage</code> and load instantly on boot before rendering without screen flicker.</li>
-<li><strong>🎲 GM Command Center</strong>: Load up to 5 character sheets side-by-side with dynamic responsive scaling (1 to 5 columns).</li>
+<li><strong>🎲 GM Command Center (6 Player Slots + 6 Quick NPC Slots)</strong>: Load up to 6 player character sheets side-by-side in the Players tab, and build/run up to 6 adversaries in the dedicated Quick NPCs tab using Rulebook Archetypes (Mooks, Lieutenants, Mini-Bosses, Hardened variants, Lawman Backup, Exec Team), Streetrat/Fast &amp; Dirty Role Generator, or Combat Number (CN) quick builder.</li>
 <li><strong>⚡ Interactive GM Popup Modal</strong>: Click any sheet card to open a tabbed modal featuring live Vitals &amp; STAT editing, Combat attack &amp; damage rolling, searchable Skills &amp; Check rolls (+1d10 critical explosion/fumble calculation), Armor &amp; Gear overview, and GM Encounter Notes.</li>
 <li><strong>💾 Automatic Session Persistence</strong>: Active GM Screen sheets automatically persist to local storage across browser refreshes until cleared with <code>🗑️ Clear All</code>.</li>
 <li><strong>🔄 Live Sheet Re-syncing &amp; Updates</strong>: Update individual character cards from fresh <code>.json</code> files or re-sync all cards against local storage while retaining GM session notes.</li>
@@ -446,35 +447,207 @@ This license requires that reusers give credit to the creator. It allows reusers
 
 <!-- ===== TAB: GM SCREEN ===== -->
 <section id="tab-gm" class="tab-panel">
-  <div class="gm-header-bar">
-    <div>
-      <h2 class="section-title" style="margin:0;border:none;padding:0">🎲 Game Master Command Center</h2>
-      <p style="font-size:0.85rem;color:var(--text-secondary);margin-top:0.2rem">Open up to 5 exported JSON character sheets side-by-side with dynamic scaling. Click any sheet to open an interactive popup modal.</p>
+  <!-- GM SUB-NAVIGATION BAR (Players vs Quick NPCs) -->
+  <div class="gm-subnav-bar">
+    <div class="gm-subnav-tabs">
+      <button id="gmSubTabPlayersBtn" class="gm-subtab-btn active" onclick="switchGMSubTab('players')">
+        👥 Players <span id="gm_subtab_players_count" class="gm-subtab-pill">0 / 6</span>
+      </button>
+      <button id="gmSubTabNpcsBtn" class="gm-subtab-btn" onclick="switchGMSubTab('npcs')">
+        🤖 Quick NPCs <span id="gm_subtab_npcs_count" class="gm-subtab-pill">0 / 6</span>
+      </button>
     </div>
-    <div class="gm-header-actions">
-      <span id="gm_count_badge" class="gm-badge">0 / 5 Sheets</span>
-      <button id="gmLoadJsonBtn" class="btn-action">➕ Load Exported JSON</button>
-      <input id="gm_import_file" type="file" accept=".json" multiple style="display:none">
-      <button id="gmLoadSavedBtn" class="btn-action">📂 Load Saved Character</button>
-      <button id="gmExportSessionBtn" class="btn-action" style="background:#0284c7;color:#fff">💾 Export Session</button>
-      <button id="gmImportSessionBtn" class="btn-action" style="background:#0284c7;color:#fff">📂 Import Session</button>
+    <div class="gm-subnav-global-actions">
+      <button id="gmExportSessionBtn" class="btn-action" style="background:#0284c7;color:#fff" title="Export both Players & Quick NPCs into one GM Session file">💾 Export Session</button>
+      <button id="gmImportSessionBtn" class="btn-action" style="background:#0284c7;color:#fff" title="Import a saved GM Session file">📂 Import Session</button>
       <input id="gm_import_session_file" type="file" accept=".json" style="display:none">
       <input id="gm_update_slot_file" type="file" accept=".json" style="display:none">
-      <button id="gmRefreshAllBtn" class="btn-action" style="background:#8b5cf6;color:#fff">🔄 Refresh All</button>
       <button id="gmDiceRollerBtn" class="btn-action">🎲 Quick Dice Roller</button>
-      <button id="gmClearAllBtn" class="btn-action" style="background:#ef4444;color:#fff">🗑️ Clear All</button>
     </div>
   </div>
 
-  <div id="gm_sheets_container" class="gm-sheets-grid"></div>
+  <div id="gmCardRollToast" class="gm-roll-result-banner" style="display:none"></div>
 
-  <div id="gm_empty_state" class="gm-empty-card">
-    <div style="font-size:3rem">🎲</div>
-    <h3 style="font-family:'Orbitron',sans-serif;color:var(--primary)">No Character Sheets Loaded</h3>
-    <p style="max-width:500px;font-size:0.9rem">Load exported <code>.json</code> character files or pick from your locally saved characters to display up to 5 character sheets side-by-side.</p>
-    <div style="display:flex;gap:0.5rem;margin-top:0.5rem">
-      <button class="btn-action" onclick="document.getElementById('gmLoadJsonBtn').click()">➕ Load Exported JSON Files</button>
-      <button class="btn-action" onclick="document.getElementById('gmLoadSavedBtn').click()">📂 Select Saved Character</button>
+  <!-- SUB-PANEL 1: PLAYERS (Up to 6 Slots) -->
+  <div id="gm-subpanel-players" class="gm-subpanel active">
+    <div class="gm-header-bar">
+      <div>
+        <h2 class="section-title" style="margin:0;border:none;padding:0">👥 Player Party Sheets</h2>
+        <p style="font-size:0.85rem;color:var(--text-secondary);margin-top:0.2rem">Open up to 6 exported JSON or saved player character sheets side-by-side with dynamic scaling. Click any sheet to open an interactive popup modal.</p>
+      </div>
+      <div class="gm-header-actions">
+        <span id="gm_count_badge" class="gm-badge">0 / 6 Sheets</span>
+        <button id="gmLoadJsonBtn" class="btn-action">➕ Load Exported JSON</button>
+        <input id="gm_import_file" type="file" accept=".json" multiple style="display:none">
+        <button id="gmLoadSavedBtn" class="btn-action">📂 Load Saved Character</button>
+        <button id="gmRefreshAllBtn" class="btn-action" style="background:#8b5cf6;color:#fff">🔄 Refresh All</button>
+        <button id="gmClearAllBtn" class="btn-action" style="background:#ef4444;color:#fff">🗑️ Clear Players</button>
+      </div>
+    </div>
+
+    <div id="gm_sheets_container" class="gm-sheets-grid"></div>
+
+    <div id="gm_empty_state" class="gm-empty-card">
+      <div style="font-size:3rem">👥</div>
+      <h3 style="font-family:'Orbitron',sans-serif;color:var(--primary)">No Player Character Sheets Loaded</h3>
+      <p style="max-width:520px;font-size:0.9rem">Load exported <code>.json</code> character files or pick from your locally saved characters to display up to 6 player sheets side-by-side.</p>
+      <div style="display:flex;gap:0.5rem;margin-top:0.5rem;flex-wrap:wrap;justify-content:center">
+        <button class="btn-action" onclick="document.getElementById('gmLoadJsonBtn').click()">➕ Load Exported JSON Files</button>
+        <button class="btn-action" onclick="document.getElementById('gmLoadSavedBtn').click()">📂 Select Saved Character</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUB-PANEL 2: QUICK NPCs (Up to 6 Slots + Rulebook Quick NPC Generator) -->
+  <div id="gm-subpanel-npcs" class="gm-subpanel" style="display:none">
+    <div class="gm-header-bar">
+      <div>
+        <h2 class="section-title" style="margin:0;border:none;padding:0">🤖 Quick NPC Generator &amp; Encounter Tracker</h2>
+        <p style="font-size:0.85rem;color:var(--text-secondary);margin-top:0.2rem">Create rulebook-compliant Mooks, Lieutenants, Mini-Bosses, Role NPCs, or Combat Number grunts and track up to 6 NPCs side-by-side.</p>
+      </div>
+      <div class="gm-header-actions">
+        <span id="gm_npc_count_badge" class="gm-badge">0 / 6 NPCs</span>
+        <button id="gmToggleNpcBuilderBtn" class="btn-action" onclick="toggleGMNpcBuilderPanel()">⚡ Hide Builder</button>
+        <button id="gmNpcLoadJsonBtn" class="btn-action">➕ Load JSON as NPC</button>
+        <input id="gm_npc_import_file" type="file" accept=".json" multiple style="display:none">
+        <button id="gmNpcLoadSavedBtn" class="btn-action">📂 Load Saved as NPC</button>
+        <button id="gmClearAllNpcsBtn" class="btn-action" style="background:#ef4444;color:#fff">🗑️ Clear NPCs</button>
+      </div>
+    </div>
+
+    <!-- RULEBOOK QUICK NPC GENERATOR PANEL -->
+    <div id="gm_npc_builder_panel" class="gm-npc-builder-card">
+      <div class="gm-npc-mode-tabs">
+        <button id="gmNpcModeArchetypeBtn" class="gm-npc-mode-btn active" onclick="switchGMNpcBuilderMode('archetype')">📖 1. Rulebook Archetypes (Mooks / Lts / Mini-Bosses)</button>
+        <button id="gmNpcModeRoleBtn" class="gm-npc-mode-btn" onclick="switchGMNpcBuilderMode('role')">🎲 2. Fast &amp; Dirty / Streetrat Role Generator</button>
+        <button id="gmNpcModeCnBtn" class="gm-npc-mode-btn" onclick="switchGMNpcBuilderMode('cn')">⚔️ 3. Combat Number (CN) Quick Builder</button>
+      </div>
+
+      <!-- MODE 1: RULEBOOK ARCHETYPES -->
+      <div id="gm_npc_mode_archetype" class="gm-npc-mode-body">
+        <div class="grid-4" style="align-items:end;gap:0.75rem">
+          <label>Threat Category
+            <select id="gm_arch_category" onchange="populateGMArchetypeOptions()"></select>
+          </label>
+          <label>Rulebook Archetype Template
+            <select id="gm_arch_template" onchange="updateGMArchetypePreview()"></select>
+          </label>
+          <label>Custom Handle / Name (Optional)
+            <div style="display:flex;gap:0.35rem">
+              <input id="gm_arch_handle" type="text" placeholder="Auto-numbered or custom...">
+              <button type="button" class="btn-action" title="Roll Random Street Handle" onclick="document.getElementById('gm_arch_handle').value = generateGMStreetHandle()">🎲</button>
+            </div>
+          </label>
+          <div style="display:flex;gap:0.4rem">
+            <button type="button" class="btn-save" style="flex:1;padding:0.55rem;font-weight:700" onclick="spawnGMArchetypeNPC()">➕ Spawn Archetype NPC</button>
+          </div>
+        </div>
+        <div id="gm_arch_preview" class="gm-npc-preview-strip"></div>
+      </div>
+
+      <!-- MODE 2: FAST & DIRTY / STREETRAT ROLE GENERATOR -->
+      <div id="gm_npc_mode_role" class="gm-npc-mode-body" style="display:none">
+        <div class="grid-4" style="align-items:end;gap:0.75rem">
+          <label>Role Template (CRB Streetrat / Edgerunner)
+            <select id="gm_role_npc_role">
+              <option value="random">🎲 Random Role</option>
+              <option value="solo">Solo (Combat Awareness)</option>
+              <option value="rockerboy">Rockerboy (Charismatic Impact)</option>
+              <option value="netrunner">Netrunner (Interface)</option>
+              <option value="tech">Tech (Maker)</option>
+              <option value="medtech">Medtech (Medicine)</option>
+              <option value="media">Media (Credibility)</option>
+              <option value="exec">Exec (Teamwork)</option>
+              <option value="lawman">Lawman (Backup)</option>
+              <option value="fixer">Fixer (Operator)</option>
+              <option value="nomad">Nomad (Moto)</option>
+            </select>
+          </label>
+          <label>Threat Tier &amp; Power Level
+            <select id="gm_role_npc_tier">
+              <option value="mook">🟢 Tier 1: Mook / Streetrat (Rank 2 | Base ~10 | Kevlar/Leathers)</option>
+              <option value="lieutenant" selected>🟡 Tier 2: Edgerunner / Lieutenant (Rank 4 | Base ~12 | Light Armorjack)</option>
+              <option value="miniboss">🟠 Tier 3: Veteran / Mini-Boss (Rank 6 | Base ~14 | Heavy Armorjack + Chrome)</option>
+              <option value="boss">🔴 Tier 4: Cyber-Boss / Legend (Rank 8 | Base ~16 | Elite Gear + Heavy Chrome)</option>
+            </select>
+          </label>
+          <label>Custom Handle / Name (Optional)
+            <div style="display:flex;gap:0.35rem">
+              <input id="gm_role_npc_handle" type="text" placeholder="Auto-rolls Street Handle if blank...">
+              <button type="button" class="btn-action" title="Roll Random Street Handle" onclick="document.getElementById('gm_role_npc_handle').value = generateGMStreetHandle()">🎲</button>
+            </div>
+          </label>
+          <div style="display:flex;gap:0.4rem">
+            <button type="button" class="btn-save" style="flex:1;padding:0.55rem;font-weight:700" onclick="spawnGMRoleGeneratedNPC()">🎲 Generate &amp; Spawn Role NPC</button>
+          </div>
+        </div>
+        <div class="gm-npc-preview-strip">
+          <span><strong>📖 Rulebook Method:</strong> Rolls official 1d10 Role STAT arrays, assigns the 20 Role Streetrat skills scaled to the selected Threat Tier, and equips role-appropriate weapons, armor, and cyberware.</span>
+        </div>
+      </div>
+
+      <!-- MODE 3: COMBAT NUMBER (CN) QUICK BUILDER -->
+      <div id="gm_npc_mode_cn" class="gm-npc-mode-body" style="display:none">
+        <div class="gm-cn-presets-row">
+          <span style="font-size:0.8rem;font-weight:700;color:var(--primary)">⚡ Quick Presets:</span>
+          <button type="button" class="btn-action gm-cn-preset-pill" onclick="applyGMCombatNumberPreset('easy')">🟢 Easy Mook (CN 8 | 25 HP | SP 7)</button>
+          <button type="button" class="btn-action gm-cn-preset-pill" onclick="applyGMCombatNumberPreset('avg')">🟡 Average Lt. (CN 11 | 35 HP | SP 11)</button>
+          <button type="button" class="btn-action gm-cn-preset-pill" onclick="applyGMCombatNumberPreset('tough')">🟠 Tough Elite (CN 14 | 45 HP | SP 13)</button>
+          <button type="button" class="btn-action gm-cn-preset-pill" onclick="applyGMCombatNumberPreset('boss')">🔴 Cyber-Boss (CN 16 | 55 HP | SP 15)</button>
+        </div>
+        <div class="gm-cn-form-grid">
+          <label>Handle / Name
+            <div style="display:flex;gap:0.3rem">
+              <input id="gm_cn_handle" type="text" placeholder="e.g. Maelstrom Goon #1">
+              <button type="button" class="btn-action" title="Roll Street Handle" onclick="document.getElementById('gm_cn_handle').value = generateGMStreetHandle()">🎲</button>
+            </div>
+          </label>
+          <label>Faction / Archetype
+            <input id="gm_cn_role" type="text" value="Boosterganger (Mook)" placeholder="e.g. Arasaka Security">
+          </label>
+          <label title="Single Base (STAT + Skill) used for all attacks and skill checks">⚔️ Combat Number (CN)
+            <input id="gm_cn_val" type="number" value="10" min="4" max="22">
+          </label>
+          <label>Max HP
+            <input id="gm_cn_hp" type="number" value="30" min="5" max="120">
+          </label>
+          <label>Armor SP (Head &amp; Body)
+            <input id="gm_cn_sp" type="number" value="7" min="0" max="25">
+          </label>
+          <label>MOVE / BODY
+            <div style="display:flex;gap:0.3rem">
+              <input id="gm_cn_move" type="number" value="5" min="1" max="12" title="MOVE Stat">
+              <input id="gm_cn_body" type="number" value="6" min="1" max="15" title="BODY Stat">
+            </div>
+          </label>
+          <label>Primary Weapon
+            <select id="gm_cn_weapon1"></select>
+          </label>
+          <label>Secondary / Melee Weapon
+            <select id="gm_cn_weapon2"></select>
+          </label>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.65rem;flex-wrap:wrap;gap:0.5rem">
+          <span style="font-size:0.8rem;color:var(--text-secondary)"><strong>⚔️ Combat Number Rule:</strong> Roll <code>1d10 + CN</code> for all attacks, defense, and combat checks (Lawman Backup / 3-Goon rulebook method).</span>
+          <button type="button" class="btn-save" style="padding:0.5rem 1.1rem;font-weight:700" onclick="spawnGMCombatNumberNPC()">➕ Spawn CN NPC</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDE-BY-SIDE NPC ENCOUNTER GRID (Up to 6 Slots) -->
+    <div id="gm_npcs_container" class="gm-sheets-grid"></div>
+
+    <div id="gm_npc_empty_state" class="gm-empty-card">
+      <div style="font-size:3rem">🤖</div>
+      <h3 style="font-family:'Orbitron',sans-serif;color:var(--primary)">No Active NPCs in Encounter</h3>
+      <p style="max-width:560px;font-size:0.9rem">Use the <strong>Quick NPC Generator</strong> above to spawn rulebook Mooks, Lieutenants, Mini-Bosses, Role NPCs, or Combat Number grunts (up to 6 side-by-side), or quick-spawn below:</p>
+      <div style="display:flex;gap:0.5rem;margin-top:0.5rem;flex-wrap:wrap;justify-content:center">
+        <button class="btn-action" onclick="quickSpawnArchetypeById('mook_boosterganger')">⚡ Spawn Boosterganger (Mook)</button>
+        <button class="btn-action" onclick="quickSpawnArchetypeById('mook_security_operative')">🛡️ Spawn Security Operative (Mook)</button>
+        <button class="btn-action" onclick="quickSpawnArchetypeById('lt_security_officer')">⚔️ Spawn Security Officer (Lt.)</button>
+        <button class="btn-action" onclick="quickSpawnArchetypeById('miniboss_cyberpsycho')">💀 Spawn Cyberpsycho (Mini-Boss)</button>
+        <button class="btn-action" onclick="spawnGMRoleGeneratedNPC()">🎲 Spawn Random Edgerunner NPC</button>
+      </div>
     </div>
   </div>
 </section>
